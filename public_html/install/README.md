@@ -1,4 +1,4 @@
-Better reads raw.
+Reads best raw.
 
 #Getting started, a few notes
 This install directory should be deleted after a successful installation.
