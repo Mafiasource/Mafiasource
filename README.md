@@ -21,3 +21,14 @@ Contents of the web server home directory (one directory above public_html) wher
 - security.php = sensitive statics that can restrict non authorized developers access. (Authorize devs to public_html/)
 - error_log should log all cronjob thrown errors. Not necessarily localhost.
 - public_html/ the actual web app root directory.
+
+
+#Missing resources
+Can be downloaded from: https://www.mafiasource.nl/web/downloads/public_html.zip
+These include all images and 2 ckeditor packages excluded in gitignore.
+
+
+#Donate
+Any spare crypto sent my way is greatly appreciated!
+ETH: 0x6508a7d92fF6eE978E82481C98E991D808283FE5
+BTC: bc1qcj2fr8t6feaedzmy5fxmtnyyn2qe52n2re59nc
