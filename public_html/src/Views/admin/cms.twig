@@ -1,0 +1,33 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">CMS pagina's beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            {% set tableRows = cms %}
+            {% set dataTable = 'cms' %}
+            {% set startvar = pagination.from %}
+            {% set skipFields = ['id','memberID','content_nl','content_en'] %} 
+            {% if memberObj.getStatus != 1 and memberObj.getStatus != 2 and memberObj.getStatus != 3 %}
+                {% set skipFields = ['id','memberID','categorie','content_nl','content_en'] %}
+            {% endif %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            {% if memberObj.getStatus == 1 or memberObj.getStatus == 2 or memberObj.getStatus == 3 %}
+                <a href="#" class="btn btn-default editOrNew">Nieuwe CMS content aanmaken</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

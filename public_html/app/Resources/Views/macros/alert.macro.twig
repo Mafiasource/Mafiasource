@@ -1,0 +1,7 @@
+{% macro build(type, class, icon, message) %}
+    <div class="alert fade show {{ class }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <img src="{{ staticRoot }}/foto/web/public/images/icons/{{ icon }}.png" class="icon" alt="{{ type }}" title="{{ type }}" border="0" />
+        {{ message|raw }}
+    </div>
+{% endmacro build %}

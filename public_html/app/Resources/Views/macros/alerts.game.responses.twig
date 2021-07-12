@@ -1,0 +1,39 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% if response.0 is not iterable %}
+    {# Single response in one go #}
+    {% if response.alert is iterable %}
+        {% set alertMessage = response.alert.message %}
+        {% if response.alert.success %}
+            {% set type, alertClass, alertIcon = 'Success', 'alert-success', 'tick' %}
+        {% elseif response.alert.warning %}
+            {% set type, alertClass, alertIcon = 'Warning', 'alert-warning', 'bell' %}
+        {% elseif response.alert.danger %}
+            {% set type, alertClass, alertIcon = 'Error', 'alert-danger', 'cross' %}
+        {% endif %}
+        {{ alert.build(alertType, alertClass, alertIcon, alertMessage) }}
+    {% else %}
+        {% if response %}
+            {{ response|raw }}
+        {% endif %}
+    {% endif %}
+{% else %}
+    {# Multiple responses in one go #}
+    {% for r in response %}
+        {% if r.alert is iterable %}
+            {% set alertMessage = r.alert.message %}
+            {% if r.alert.success %}
+                {% set type, alertClass, alertIcon = 'Success', 'alert-success', 'tick' %}
+            {% elseif r.alert.warning %}
+                {% set type, alertClass, alertIcon = 'Warning', 'alert-warning', 'bell' %}
+            {% elseif r.alert.danger %}
+                {% set type, alertClass, alertIcon = 'Error', 'alert-danger', 'cross' %}
+            {% endif %}
+            {{ alert.build(alertType, alertClass, alertIcon, alertMessage) }}
+        {% else %}
+            {% if r %}
+                {{ r|raw }}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}

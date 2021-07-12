@@ -1,0 +1,35 @@
+function checkAll(elementFrm) {
+	for (i = 0; i < elementFrm.length; i++)	{
+		if(elementFrm.elements[i].type == "checkbox")
+			elementFrm.elements[i].checked = true;
+	}
+}
+		
+function uncheckAll(elementFrm)	{
+	for (i = 0; i < elementFrm.length; i++) {
+		if(elementFrm.elements[i].type == "checkbox")
+			elementFrm.elements[i].checked = false;
+	}
+}
+
+function toogle(elementFrm){
+	
+	var d = 1;
+	
+	var j = 0;
+	
+	for(i = 0; i < elementFrm.length; i++){
+		if(elementFrm.elements[i].type == "checkbox"){
+			j = j + 1;
+			if(elementFrm.elements[i].checked == true){
+				d = d + 1;
+			}
+		}
+	}
+    
+	if(d == j){
+		uncheckAll(elementFrm);
+	} else {
+		checkAll(elementFrm);
+	}
+}

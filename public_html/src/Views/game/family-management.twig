@@ -1,0 +1,143 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/record.tile.macro.twig" as recordTile %}
+
+{% block stylesheets %}
+    {{ recordTile.css('membets-container', 'memberRecord') }}
+    {{ recordTile.css('families-container', 'familyRecord') }}
+    <style type="text/css">
+        div.joinpolicy {display:block;width:440px;max-width:100%;margin:0 auto;}
+        .markupBtns .button {margin: 3px 0;}
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY }} {{ langs.MANAGEMENT }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'members' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('family-management') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt=""/> {{ langs.MEMBERS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'profile' %}tab_on{% endif %}  t-33">
+        <a href="{{ routing.getRouteByRouteName('family-management-profile') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/layout_edit.png" class="icon" alt=""/> {{ langs.PROFILE }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'mass-message' %}tab_on{% endif %}  t-33">
+        <a href="{{ routing.getRouteByRouteName('family-management-mass-message') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/email_go.png" class="icon" alt=""/> Mass{% if lang == 'nl' %}a{{ langs.MESSAGE|lower }}{% else %} {{ langs.MESSAGE }}{% endif %}
+        </a>
+    </div>
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'message' %}tab_on{% endif %}  t-33">
+        <a href="{{ routing.getRouteByRouteName('family-management-message') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/email_edit.png" class="icon" alt=""/> {{ langs.FAMILY }} {{ langs.MESSAGE }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'alliances' %}tab_on{% endif %}  t-33">
+        <a href="{{ routing.getRouteByRouteName('family-management-alliances') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt=""/> {{ langs.ALLIANCES }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'manage-family' %}tab_on{% endif %}  t-33">
+        <a href="{{ routing.getRouteByRouteName('family-management-manage-family') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/database_gear.png" class="icon" alt=""/> {{ langs.FAMILY }} {{ langs.MANAGEMENT }}
+        </a>
+    </div>
+</div>
+<div class="content-container cf">
+    {% include "/src/Views/game/tabs/family-management/"~tab~".twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script src="{{ staticRoot }}/web/lib/ckeditorgame/ckeditor.js"></script>
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+    {% if tab == 'manage-family' %}
+        {# Hack autosubmit onchange select through ajax, AJAX DOES NOT WORK straight in html element like:  onchange="this.form.submit();", too bad.. #}
+        $(document).on( "change", "select[name=boss]", function() {
+            $(this).parents('form:first').submit();
+        });
+        $(document).on( "change", "select[name=bankmanager]", function() {
+            $(this).parents('form:first').submit();
+        });
+        $(document).on( "change", "select[name=underboss]", function() {
+            $(this).parents('form:first').submit();
+        });
+        $(document).on( "change", "select[name=forummod]", function() {
+            $(this).parents('form:first').submit();
+        });
+    {% endif %}
+    
+    $(document).ready(function(){
+        {# Our 2 CKEditor fields, need an customized ajax call. #}
+        if($("#editFamilyProfile").length)
+        {
+            CKEDITOR.replace('editFamilyProfile', {
+                enterMode: CKEDITOR.ENTER_BR,
+                shiftEnterMode: CKEDITOR.ENTER_P
+            });
+            $("form#familyProfileForm").submit(function(e){
+                for(let instanceName in CKEDITOR.instances){ CKEDITOR.instances[instanceName].updateElement(); }
+                let postData = new FormData($(this)[0]);
+                let formURL = $(this).attr("action");
+                let method = $(this).attr("method");
+                let responseField = $(this).attr("data-response");
+                $.ajax(
+                {
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                	url : formURL,
+                	type: method,
+                	data : postData,
+                	success:function(data, textStatus, jqXHR) 
+                	{
+                	  $(responseField).html(data);
+                	}
+                });
+                e.preventDefault();
+            });
+        }
+        if($("#editFamilyMessage").length)
+        {
+            CKEDITOR.replace('editFamilyMessage', {
+                enterMode: CKEDITOR.ENTER_BR,
+                shiftEnterMode: CKEDITOR.ENTER_P
+            });
+            $("form#familyMessageForm").submit(function(e){
+                for(let instanceName in CKEDITOR.instances){ CKEDITOR.instances[instanceName].updateElement(); }
+                let postData = new FormData($(this)[0]);
+                let formURL = $(this).attr("action");
+                let method = $(this).attr("method");
+                let responseField = $(this).attr("data-response");
+                $.ajax(
+                {
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                	url : formURL,
+                	type: method,
+                	data : postData,
+                	success:function(data, textStatus, jqXHR) 
+                	{
+                	  $(responseField).html(data);
+                	}
+                });
+                e.preventDefault();
+            });
+        }
+    });
+    let frm = 'massMessageForm';
+    let fld = 'mass-message';
+    function addsmiley(short){
+    	document.forms[frm].elements[fld].value += short + " ";
+    	document.forms[frm].elements[fld].focus();
+    }
+</script>
+{% endblock javascripts %}

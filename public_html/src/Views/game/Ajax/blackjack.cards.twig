@@ -1,0 +1,24 @@
+<form class="ajaxForm center" method="POST" action="{{ actionUri }}" data-response="#playBlackjackResponse">
+    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+    <p><strong>{{ langs.YOUR }} {{ cardCards|lower }}:</strong></p>
+    {% for c in cards %}
+        <img src="/foto/web/public/images/blackjack/cards/{{ c }}.png" alt="{{ langs.CARD }}"/>&nbsp;&nbsp;
+    {% endfor %}
+    <p>{{ langs.POINTS }}: <strong>{{ score }}{% if blackjack %}&nbsp;<span class="black">BLACKJACK</span>{% endif %}</strong></p>
+    <br />
+    <p><strong>{{ langs.HIS }} {{ langs.CARDS|lower }}:</strong></p>
+    {% for cc in computerCards %}
+        {% if loop.first or scoreComputer %}
+            <img src="/foto/web/public/images/blackjack/cards/{{ cc }}.png" alt="{{ langs.CARD }}"/>&nbsp;&nbsp;
+        {% else %}
+            <img src="/foto/web/public/images/blackjack/cards/back.png" alt="{{ langs.CARD }}"/>&nbsp;&nbsp;
+        {% endif %}
+    {% endfor %}
+    <p>{{ langs.POINTS }}: <strong>{% if scoreComputer %}{{ scoreComputer }}{% else %}{{ allCards[computerCards[0]] }}{% endif %}{% if computerBlackjack %}&nbsp;<span class="black">BLACKJACK</span>{% endif %}</strong></p>
+    <br />
+    {% if stake %}
+        {{ langs.STAKE }}:&nbsp;<input type="number" class="blackjack-field" name="stake" placeholder="{{ langs.STAKE }}" value="{{ stake }}"/>&nbsp;<input type='submit' name='play-blackjack' value='{{ langs.PLAY }}' /><br /><br />
+    {% else %}
+        <input type='submit' name='pick-a-card' value='{{ langs.PICK_A_CARD }}..' /> <input type='submit' name='stop' value='{{ langs.QUIT }}!' /><br />
+    {% endif %}
+</form>

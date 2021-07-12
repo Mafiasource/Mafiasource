@@ -1,0 +1,53 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="subtop">
+            Crusher &amp; Converter
+        </div>
+        <div class="content-container">
+            <div class="row cols cf">
+                <div class="c-50 column center">
+                    <img src="{{ staticRoot }}/web/public/images/crusher.jpg" alt="Crusher"/>
+                    {% if crusherConverter.getCrusher == 0 %}
+                        <p>{{ langs.FAMILY_HAS_NO_CRUSHER|raw }}</p>
+                        {% if hasRights %}
+                            <div id="buyCrusherResponse">
+                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('buy-family-crusher') }}" method="POST" data-response="#buyCrusherResponse">Crusher:&nbsp;
+                                <select name="crusher">
+                                    {% for k, c in crushers %}
+                                        <option value="{{ k }}">{{ c.size }} | {{ c.capacity }} {{ langs.VEHICLES }} | {{ c.price|moneyFormat }}</option>
+                                    {% endfor %}
+                                </select>&nbsp;
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="buy-crusher-crusher" value="{{ langs.BUY }}"/>
+                            </form>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p>{{ langs.FAMILY_CAN_CRUSH_X_VEHICLES|raw }}</p>
+                    {% endif %}
+                </div>
+                <div class="c-50 column center">
+                    <img src="{{ staticRoot }}/web/public/images/converter.jpg" alt="Converter"/>
+                    {% if crusherConverter.getConverter == 0 %}
+                        <p>{{ langs.FAMILY_HAS_NO_CONVERTER|raw }}</p>
+                        {% if hasRights %}
+                            <div id="buyConverterResponse">
+                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('buy-family-converter') }}" method="POST" data-response="#buyConverterResponse">Converter:&nbsp;
+                                <select name="converter">
+                                    {% for k, c in converters %}
+                                        <option value="{{ k }}">{{ c.size }} | {{ c.capacity }} {{ langs.VEHICLES }} | {{ c.price|moneyFormat }}</option>
+                                    {% endfor %}
+                                </select>&nbsp;
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="buy-converter-converter" value="{{ langs.BUY }}"/>
+                            </form>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p>{{ langs.FAMILY_CAN_CONVERT_X_VEHICLES|raw }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

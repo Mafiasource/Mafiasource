@@ -1,0 +1,101 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="table-reponsive">
+            <table class="table table-sm table-bordered table-dark">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">{{ langs.VICTIM }}</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">{{ langs.TIME_LEFT }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for d in detectives %}
+                    <tr>
+                        <td class="center">{{ loop.index }}</td>
+                        <td><a href="/game/profile/{{ d.getVictim }}">{{ d.getVictim }}</a></td>
+                        <td>
+                        {% if d.getCity %}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" class="icon" alt="{{ langs.NOW_IN }}"/> {{ langs.NOW_IN }} {{ d.getCity }}
+                        {% elseif d.getFoundCity %}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/calendar.png" class="icon" alt="{{ langs.LAST_SEEN_IN }}"/> {{ langs.LAST_SEEN_IN }} {{ d.getFoundCity }}
+                        {% else %}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/magnifier.png" class="icon" alt="{{ langs.SEARCHING }}"/> {{ langs.SEARCHING }}
+                        {% endif %}
+                        </td>
+                        <td><span id="cDetectiveTime_{{ d.getId }}">{{ "DetectiveTime_#{d.getId}"|countdownHmsTime(d.getTimeLeft)|raw }}</span></td>
+                    </tr>
+                {% endfor %}
+                {% if detectives is empty %}
+                    <tr>
+                      <td colspan="4"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ langs.NO_DETECTIVES }}</td>
+                    </tr>
+                {% endif %}
+              </tbody>
+            </table>
+        </div>
+        <br class="clear"/>
+        <form class="ajaxForm middle" style="max-width: 440px;" action="{{ routing.getAjaxRouteByRouteName('hire-detective') }}" method="POST" data-response="#hireDetectiveResponse">
+            <div class="subtop">
+                {{ langs.HIRE_DETECTIVE }}
+            </div>
+            <div class="content-container">
+                <div id="hireDetectiveResponse" class="rowMsg"></div>
+                <div class="row cols cf">
+                    <div class="c-30 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.VICTIM }}"/> {{ langs.VICTIM }}
+                    </div>
+                    <div class="c-70 column">
+                        <input type="text" name="username" placeholder="{{ langs.WRITE_A_PLAYERNAME }}"/>
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-30 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/clock.png" class="icon" alt="{{ langs.TIME }}"/> {{ langs.TIME }}
+                    </div>
+                    <div class="c-70 column">
+                        <select name="time">
+                            <option value="0">{{ langs.MAKE_A_CHOICE }}</option>
+                            {% for h, c in hourCosts %}
+                                <option value="{{ h }}">{{ h }} {{ langs.HOUR|lower }} - {{ c|moneyFormat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                {% if userData.getRankID >= 4 %}
+                    <div class="row cols cf">
+                        <div class="c-30 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.SHADOW }}"/> {{ langs.SHADOW }}
+                        </div>
+                        <div class="c-70 column">
+                            <div class="form-check{% if userData.getRankID < 4 %} disabled{% endif %}">
+                              <input class="form-check-input" type="checkbox" name="shadow" value="" id="shadow"{% if userData.getRankID < 4 %} disabled="disabled"{% endif %}/>
+                              <label class="form-check-label" for="shadow">
+                                {{ langs.SHADOW_INFO }} <small>($2,500,000 extra)</small>
+                              </label>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="hire-detective" value="{{ langs.HIRE_DETECTIVE }}"/>
+                </div>
+            </div>
+        </form>
+        <div id="buyPossessResponse"></div>
+        <div class="center">
+            {% if possessionData.getPossessDetails.getUserID == 0 %}
+                <p>{{ langs.THIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                    <input type="hidden" name="id" value="{{ possessId }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                </form>
+            {% else %}
+                <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.THIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

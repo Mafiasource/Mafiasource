@@ -1,0 +1,10 @@
+{% import "app/Resources/Views/macros/admin/alert.macro.twig" as alert %}
+
+{% if check == TRUE %}
+    {{ alert.build('alert-success', '<p><i class="fas fa-check"></i>' ~ ' Record successvol <strong>verwijderd</strong>.</p>') }}
+    <script type="text/javascript">
+        $("table.table.table-bordered.sortable").find("tr#{{ rowid }}").remove();
+    </script>
+{% else %}
+    {% include "/src/Views/admin/Ajax/general.fail.msg.twig" %}
+{% endif %}

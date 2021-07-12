@@ -1,0 +1,56 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% block content %}
+<div class="top">
+    {{ langs.CREATE_FAMILY }}
+</div>
+<div class="content-container">
+    <div class="c-row">
+        {{ alert.build('Info', 'alert-info', 'help', langs.CREATE_FAMILY_INFO) }}
+    </div>
+    {#
+    <div class="c-row">
+        {{ alert.build('Warning', 'alert-warning', 'bell', langs.CREATE_FAMILY_WARNING) }}
+    </div>
+    #}
+    <div id="ajaxLoader"></div>
+    <div id="createFamilyResponse" class="rowMsg"></div>
+    <div style="display: block;width: 300px;max-width:100%;margin: 0 auto;">
+        <div class="row">
+            <div class="subtop">
+                {{ langs.FAMILY }} Info
+            </div>
+            <div class="content-container">
+                <form id="create-family" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('create-family-AJAX') }}" method="POST" data-response="#createFamilyResponse">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" alt="{{ langs.FAMILY }} {{ langs.NAME }}" class="icon"/> {{ langs.FAMILY }} {{ langs.NAME }}:
+                        </div>
+                        <div class="c-50 column">
+                            <input type="text" name="familyname" value=""/>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="{{ langs.SEED_MONEY }}" class="icon"/> {{ langs.SEED_MONEY }}:
+                        </div>
+                        <div class="c-50 column">
+                            <input type="number" name="seedmoney" value=""/>
+                        </div>
+                    </div>
+                    <div class="row cf">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="create-family" class="button right" value="{{ langs.CREATE_FAMILY }}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

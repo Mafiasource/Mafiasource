@@ -1,0 +1,27 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Plattegronden beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            {% set tableRows = ground %}
+            {% set dataTable = 'ground' %}
+            {% set startvar = pagination.from %}
+            {# {% set skipFields = ['article_nl','article_en'] %} #}
+            {% set onlyFields = ['cID','stateID','userID'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

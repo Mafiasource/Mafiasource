@@ -1,0 +1,70 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+ 
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">AdminCP account aanmaken</div>
+		</div>
+		<div class="content-box-large box-with-header clearfix">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p>Nieuwe accounts krijgen standaard een Moderator toegang. Op de <a href="{{ routing.getRouteByRouteName('admin-members') }}"><strong>Gebruikers</strong></a> pagina bewerk je de status van een account.</p>
+            </div>
+            {% block actionMessage %}
+                {{ message|raw }}
+            {% endblock actionMessage %}
+            <br class="clear"/>
+            <div class="row justify-content-md-center">
+              <div class="col-md-5">
+                <form id="form" action="{{ routing.getRouteByRouteName('admin-create-member') }}" class="ajaxForm" method="POST" data-response="#create-memberResponse">
+                    <div id="create-memberResponse"></div>
+                    <div class="form-group">
+                        <label for="input_naam">Naam</label>
+                        <input type="text" class="form-control" name="naam" id="input_naam" placeholder="Naam" value="{{ settings.naam }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_voornaam">Voornaam</label>
+                        <input type="text" class="form-control" name="voornaam" id="input_voornaam" placeholder="Voornaam" value="{{ settings.voornaam }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_email">Email*</label>
+                        <input type="email" class="form-control" name="email" id="input_email" placeholder="Email" value="{{ settings.email }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_password">Wachtwoord*</label>
+                        <input type="password" class="form-control" name="password" id="input_password" placeholder="Wachtwoord" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_password_check">Wachtwoord check*</label>
+                        <input type="password" class="form-control" name="password_check" id="input_password_check" placeholder="Wachtwoord check" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_adres">Adres</label>
+                        <input type="text" class="form-control" name="adres" id="input_adres" placeholder="Adres" value="{{ settings.adres }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_postcode">Postcode</label>
+                        <input type="number" class="form-control" name="postcode" id="input_postcode" placeholder="Postcode" value="{{ settings.postcode }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_gemeente">Gemeente</label>
+                        <select name="gemeente" class="form-control" id="input_gemeente">
+                            {% for key, value in gemeentes %}
+                                {% if value == settings.gemeente %}
+                                    <option value="{{ value }}" selected="selected">{{ value }}</option>
+                                {% else %}
+                                    <option value="{{ value }}">{{ value }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="hidden" name="submit-create-member" value="{{ securityToken }}"/>
+                    <input type="submit" name="submit-create-member" class="btn btn-primary" value="Account aanmaken"/>
+                </form>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

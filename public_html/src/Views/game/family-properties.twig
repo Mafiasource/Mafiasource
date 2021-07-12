@@ -1,0 +1,55 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    @media (max-width: 688px) {
+        section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY }} {{ langs.PROPERTIES }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'bullet-factory' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('family-properties') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/bullet_black.png" class="icon" alt=""/> {{ langs.BULLET_FACTORY }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'brothel' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('family-properties-brothel') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt=""/> {{ langs.BROTHEL }}
+        </a>
+    </div>
+</div>
+{% include "/src/Views/game/tabs/family-properties/"~tab~".twig" %}
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+    $(document).on( "change", "select[name=production]", function() {
+        if($("#ajaxLoader").length)
+        {
+            $('#ajaxLoader').show();
+        }
+        var val = $("select[name=production] option:selected").val();
+        $.ajax(
+        {
+        	url : "{{ routing.getAjaxRouteByRouteName('interact-family-property') }}",
+        	type: "POST",
+        	data : {'security-token': "{{ securityToken }}", produce: val},
+        	success:function(data, textStatus, jqXHR) 
+        	{
+     	      if($("#ajaxLoader" ).length)
+              {
+                $('#ajaxLoader').hide();
+              }
+              $("#interactPropertyResponse").html(data)
+        	}
+        });
+    });
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,62 @@
+{% apply spaceless %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>{{ settings.domainBase|capitalize }} - Online Mafia RPG</title>
+    <link rel="publisher" href="https://plus.google.com/101698024520604422391"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png"/>
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ staticRoot }}/foto/web/public/images/favicon/android-icon-192x192.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-96x96.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-16x16.png"/>
+    <link rel="manifest" href="{{ docRoot }}/web/public/images/favicon/manifest.json"/>
+    <meta name="theme-color" content="#333" />
+    <meta name="msapplication-TileColor" content="#333"/>
+    <meta name="msapplication-TileImage" content="{{ staticRoot }}/foto/web/public/images/favicon/ms-icon-144x144.png"/>
+    <link rel="preload" href="{{ staticRoot }}/foto/web/public/images/bg-ingame.jpg" as="image" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/css/game.min.css" as="style" />
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand" as="style" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/js/default/jquery.bootstrap.min.js" as="script" />
+    <link rel="stylesheet" href="{{ staticRoot }}/web/public/css/game.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand" />
+    {# Twig stylesheets #}
+    {% block stylesheets %}{% endblock stylesheets %}
+</head>
+<body>
+<section id="container" class="cf">
+    {# Center container #}
+    <section id="ccontainer">
+        <section id="content" class="cf">
+            {% block content %}
+                Hello world!
+            {% endblock content %}
+        </section>
+        <footer id="footer">
+            <span class="hideMobile">Copyright&nbsp;</span>{{ "now"|date("Y") }} &copy; {{ settings.domainBase|lower }}<span class="hideMobile"> - {{ langs.END_COPY }}</span> - 
+            <a href="{% if lang == 'nl' %}{{ routing.getRouteByRouteName('set_lang_en') }}{% else %}{{ routing.getRouteByRouteName('set_lang_nl') }}{% endif %}">
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/lang_{% if lang == 'nl' %}en{% else %}nl{% endif %}_small.gif" alt="" class="icon langico"/>
+            </a>
+        </footer>
+    </section>
+    {# // END Center container #}
+</section>
+<div id="openTab"></div>
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.bootstrap.min.js"></script>
+
+{# Twig javascripts #}
+{% block javascripts %}
+{% endblock javascripts %}
+
+</body>
+</html>
+{% endapply %}

@@ -1,0 +1,29 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Poll vragen beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            {% set tableRows = poll_question %}
+            {% set dataTable = 'poll_question' %}
+            {% set startvar = pagination.from %}
+            {# {% set skipFields = [''] %} #}
+            {% set onlyFields = ['question_nl', 'startDate'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            <a href="#" class="btn btn-default editOrNew">Nieuwe poll vraag aanmaken</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

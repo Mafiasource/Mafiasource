@@ -1,0 +1,12 @@
+{% import "app/Resources/Views/macros/admin/alert.macro.twig" as alert %}
+
+{% if check == TRUE %}
+    {{ alert.build('alert-success', '<p><i class="fas fa-check"></i>' ~ ' Record successvol <strong>aangepast</strong>, je wordt in minder dan <b>2 seconden</b> omgeleid.</p>') }}
+    <script type="text/javascript">
+    window.setTimeout(function(){
+        window.location.href = "{{ docRoot }}{{ routing.getPrevRoute }}";
+    }, 1);
+    </script>
+{% else %}
+    {% include "/src/Views/admin/Ajax/general.fail.msg.twig" %}
+{% endif %}

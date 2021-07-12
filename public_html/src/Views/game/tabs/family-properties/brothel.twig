@@ -1,0 +1,96 @@
+{% set bLv = pageInfo.brothel.getBrothel %}
+<div class="content-container">
+    <div class="c-row cols cf">
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {{ langs.BROTHEL }}
+                </div>
+                <div class="content-container">
+                    <div id="interactPropertyResponse">
+                        {% include "src/Views/game/Ajax/family-properties/brothel/property.twig" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {{ langs.ADD }}
+                </div>
+                <div class="content-container">
+                    {% if bLv %}
+                        <div id="addResponse" class="rowMsg"></div>
+                        <form id="donate" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-property') }}" method="POST" data-response="#addResponse">
+                            <div class="row cols cf">
+                                <div class="c-50 column">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt="{{ langs.WHORES }}"/> {{ langs.WHORES }}
+                                </div>
+                                <div class="c-50 column">
+                                    {{ streetWhores|valueFormat }}
+                                </div>
+                            </div>
+                            <div class="row cols cf">
+                                <div class="c-50 column">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt="{{ langs.AMNT }}"/> {{ langs.AMNT }}
+                                </div>
+                                <div class="c-50 column">
+                                    {% set storableWhores = capacity - pageInfo.whores.getTotal %}
+                                    {% if streetWhores < storableWhores %}
+                                        {% set storableWhores = streetWhores %}
+                                    {% endif %}
+                                    <input type="number" name="whores" value="{{ storableWhores }}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="add" value="{{ langs.ADD }}"/>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="row">
+                            {% set noPropertyInfo = routing.replaceMessagePart(langs.BROTHEL|lower, langs.HAS_NO_PROPERTY_TYPE, '/{property}/') %}
+                            <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ noPropertyInfo }}
+                        </div>
+                    {% endif %}
+                </div>
+                <br class="clear"/>
+                <div class="subtop">
+                    {{ langs.TAKE_AWAY }}
+                </div>
+                <div class="content-container">
+                    {% if bLv %}
+                        <div id="takeAwayResponse" class="rowMsg"></div>
+                        <form id="donate" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-property') }}" method="POST" data-response="#takeAwayResponse">
+                            <div class="row cols cf">
+                                <div class="c-50 column">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt="{{ langs.WHORES }}"/> {{ langs.WHORES }}
+                                </div>
+                                <div class="c-50 column">
+                                    {{ pageInfo.whores.getWhores|valueFormat }}
+                                </div>
+                            </div>
+                            <div class="row cols cf">
+                                <div class="c-50 column">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt="{{ langs.AMNT }}"/> {{ langs.AMNT }}
+                                </div>
+                                <div class="c-50 column">
+                                    <input type="number" name="whores" value="{{ pageInfo.whores.getWhores }}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="take-away" value="{{ langs.TAKE_AWAY }}"/>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="row">
+                            {% set noPropertyInfo = routing.replaceMessagePart(langs.BROTHEL|lower, langs.HAS_NO_PROPERTY_TYPE, '/{property}/') %}
+                            <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ noPropertyInfo }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

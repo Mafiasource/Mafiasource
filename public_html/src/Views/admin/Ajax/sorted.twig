@@ -1,0 +1,7 @@
+{% import "app/Resources/Views/macros/admin/alert.macro.twig" as alert %}
+
+{% if check == TRUE %}
+    {{ alert.build('alert-success', '<p><i class="fas fa-check"></i> Volgorde van de records werd succesvol aangepast.</p>') }}
+{% else %}
+    {% include "/src/Views/admin/Ajax/general.fail.msg.twig" %}
+{% endif %}

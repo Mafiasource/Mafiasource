@@ -1,0 +1,95 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="table-reponsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">#</th>
+                        <th scope="col" class="center">{{ type }}</th>
+                        <th scope="col" class="center">{{ langs.OWNER }}</th>
+                        <th scope="col" class="center">{{ langs.PRICE }}</th>
+                        <th scope="col" class="center">{{ langs.BUY }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="buyMarketItemResponse" class="rowMsg"></tr>
+                    {% for o in offers %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td class="center">{{ loop.index }}</td>
+                          <td>{{ o.getAmount|valueFormat }}</td>
+                          <td>{% if o.getAnonymous %}{{ langs.ANONYMOUS }}{% else %}{{ o.getUsername }}{% endif %}</td>
+                          <td>{{ o.getPrice|moneyFormat }}</td>
+                          <td>
+                            <form id="buyMarketItem_{{ o.getId }}" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-market-item') }}" method="POST" data-response="#buyMarketItemResponse">
+                                <input type="hidden" name="id" value="{{ o.getId }}"/>
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="buy" class="button" value="{{ langs.BUY }}"/>
+                            </form>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                    {% if offers is empty %}
+                        <tr>
+                          <td colspan="5">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_ITEMS_IN_MARKET }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                      <td colspan="5">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" class="icon"/> {{ langs.ITEMS_SALE_INFO }}
+                      </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<br class="clear"/>
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="table-reponsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">#</th>
+                        <th scope="col" class="center">{{ type }}</th>
+                        <th scope="col" class="center">{{ langs.USER }}</th>
+                        <th scope="col" class="center">{{ langs.OFFER }}</th>
+                        <th scope="col" class="center">{{ langs.ACCEPT }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="requestMarketItemResponse" class="rowMsg"></tr>
+                    {% for r in requests %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td>{{ loop.index }}</td>
+                          <td>{{ r.getAmount|valueFormat }}</td>
+                          <td>{% if r.getAnonymous %}{{ langs.ANONYMOUS }}{% else %}{{ r.getUsername }}{% endif %}</td>
+                          <td>{{ r.getPrice|moneyFormat }}</td>
+                          <td>
+                            <form id="requestMarketItem_{{ r.getId }}" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-market-item') }}" method="POST" data-response="#requestMarketItemResponse">
+                                <input type="hidden" name="id" value="{{ r.getId }}"/>
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="buy" class="button" value="{{ langs.SELL }}"/>
+                            </form>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                    {% if requests is empty %}
+                        <tr>
+                          <td colspan="5">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_REQUESTS_IN_MARKET }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                      <td colspan="5">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" class="icon"/> {{ langs.ITEMS_REQUEST_INFO }}
+                      </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

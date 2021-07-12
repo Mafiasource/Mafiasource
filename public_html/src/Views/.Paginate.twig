@@ -1,0 +1,43 @@
+{% if pagination.pagination %}
+    {% set adjacents = 2 %}
+    <div class="pagination right">
+        <ul>
+        {% if pagination.page == 1 %}
+            <li><span>&lsaquo;</span></li>
+        {% elseif pagination.page == 2 %}
+            <li><a href="{{ pagination.uri }}">&lsaquo;</a></li>
+        {% else %}
+            <li><a href="{{ pagination.uri }}/page/{{ pagination.page-1 }}">&lsaquo;</a></li>
+        {% endif %}
+        
+        {% if pagination.page > (1 + adjacents) %}
+            <li><a href="{{ pagination.uri }}/page/1">1</a></li>
+        {% endif %}
+        
+        {% set pmin = (pagination.page > adjacents)?(pagination.page - adjacents):1 %}
+        {% set pmax = (pagination.page < (pagination.tpages - adjacents))?(pagination.page + adjacents):pagination.tpages %}
+        
+        {% for i in pmin..pmax %}
+            {% if i <= pmax %}
+                {% if i == pagination.page %}
+                    <li class="active"><a href="javascript:void(0);">{{ i }}</a></li>
+                {% elseif i == 1 %}
+                    <li><a href="{{ pagination.uri }}">{{ i }}</a></li>
+                {% else %}
+                    <li><a href="{{ pagination.uri }}/page/{{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        {% if pagination.page < (pagination.tpages - adjacents) %}
+            <li><a href="{{ pagination.uri }}/page/{{ pagination.tpages }}">{{ pagination.tpages }}</a></li>
+        {% endif %}
+        
+        {% if pagination.page < pagination.tpages %}
+            <li><a href="{{ pagination.uri }}/page/{{ pagination.page+1 }}">&rsaquo;</a></li>
+        {% else %}
+            <li><span>&rsaquo;</span></li>
+        {% endif %}
+        </ul>
+    </div>
+{% endif %}

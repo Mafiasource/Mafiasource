@@ -1,0 +1,49 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+.carousel {height:269px;width:100%;}
+.carousel-inner > .carousel-item > div > form > h2 {display:block;background:rgba(10, 10, 10, 0.5);padding:0.5em;}
+.carousel-inner > .carousel-item > div > form > .possess-info{display:block;max-width:100%;width:300px;background:rgba(10,10,10,0.75);margin:0 auto;padding:15px;box-sizing: border-box;border-radius:10px;text-align:left;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<a href="javascript:void(0);" class="ajaxTab right" data-tab="possession.manage"><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.MANAGE }}"/> {% if lang == 'en' %}{{ langs.MANAGE }} {{ langs.POSSESSIONS }}{% else %}{{ langs.POSSESSIONS }} {{ langs.MANAGE }}{% endif %}</a>
+<br class="clear"/><br />
+<div id="ajaxLoader"></div>
+<div id="selectLocationResponse">
+    {% include "/src/Views/game/Ajax/possessions.twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+    $('.carousel').carousel({
+      interval: false//1000 * 10
+    });
+    $( document ).on( "change", "select[name=cityID]", function() {
+        if($("#ajaxLoader").length)
+        {
+            $('#ajaxLoader').show();
+        }
+        $("#selectLocationResponse").slideUp('fast');
+        var val = $("select[name=cityID] option:selected").text();
+        $.ajax(
+        {
+        	url : "{{ routing.getAjaxRouteByRouteName('possessions-state-select') }}",
+        	type: "POST",
+        	data : {city: val},
+        	success:function(data, textStatus, jqXHR) 
+        	{
+     	      if($("#ajaxLoader" ).length)
+              {
+                $('#ajaxLoader').hide();
+              }
+        	  $("#selectLocationResponse").html(data).slideDown('fast');
+        	}
+        });
+    });
+</script>
+{% endblock %}

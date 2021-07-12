@@ -1,0 +1,265 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+{% import "app/Resources/Views/macros/record.tile.macro.twig" as recordTile %}
+
+{% block stylesheets %}
+    {{ recordTile.css('members-container', 'memberRecord', '136px') }}
+    <style type="text/css">
+        img.famIcon {margin:2px 2px;}
+        .left {display:inline-block;width:auto;float:left;box-sizing:border-box;margin:5px;}
+        .faminfo, .fammissions, .famalliances, .famproperties {display:inline-block;width:100%; min-width:326px;float:left;margin-left:5px;}
+        .allianceFamIcon {padding:3px 3px 0 3px;}
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY_PAGE_HEADING }}
+</div>
+<div class="content-container cf">
+    <div class="left">
+        <img class="middle" src="{{ staticRoot }}/foto/web/public/images/families/{% if familyPage.getImage %}{{ familyPage.getId }}/uploads/{{ familyPage.getImage }}{% else %}no-fampic.png{% endif %}" alt="{{ langs.FAMILY }} {{ langs.IMAGE }}"/>
+        {% if familyPage.getIcon is not empty %}<br class="clear"/><img class="right famIcon" src="{{ staticRoot }}/foto/web/public/images/families/{{ familyPage.getId }}/uploads/{{ familyPage.getIcon }}" alt="{{ langs.FAMILY }} icon"/>{% endif %}
+    </div>
+    <div class="left">
+        <div class="subtop faminfo">
+            {{ langs.FAMILY }} {{ langs.INFORMATION }}
+        </div>
+        <div class="content-container faminfo">
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt="{{ langs.NAME }}"/> {{ langs.NAME }}
+                </div>
+                <div class="c-50 column">
+                    {% if familyPage.getVip %}<span class="vip">{{ familyPage.getName }}</span>{% else %}{{ familyPage.getName }}{% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_suit.png" class="icon" alt="{{ langs.BOSS }}"/> {{ langs.BOSS }}
+                </div>
+                <div class="c-50 column">
+                    <a href="/game/profile/{{ familyPage.getBoss }}">{{ familyPage.getBoss }}</a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_gray.png" class="icon" alt="{{ langs.BANKMANAGER }}"/> {{ langs.BANKMANAGER }}
+                </div>
+                <div class="c-50 column">
+                    {% if familyPage.getBankmanager %}<a href="/game/profile/{{ familyPage.getBankmanager }}">{{ familyPage.getBankmanager }}</a>{% else %}{{ langs.NONE }}{% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.UNDERBOSS }}"/> {{ langs.UNDERBOSS }}
+                </div>
+                <div class="c-50 column">
+                    {% if familyPage.getUnderboss %}<a href="/game/profile/{{ familyPage.getUnderboss }}">{{ familyPage.getUnderboss }}</a>{% else %}{{ langs.NONE }}{% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_comment.png" class="icon" alt="Forum mod"/> Forum mod
+                </div>
+                <div class="c-50 column">
+                    {% if familyPage.getForummod %}<a href="/game/profile/{{ familyPage.getForummod }}">{{ familyPage.getForummod }}</a>{% else %}{{ langs.NONE }}{% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/stats.png" class="icon" alt="Forum mod"/> {{ langs.FAMILY }} Score
+                </div>
+                <div class="c-50 column">
+                    {{ familyPage.getTotalScore|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.FAMILY }} Bank"/> {{ langs.FAMILY }} Bank
+                </div>
+                <div class="c-50 column">
+                    {{ familyPage.getMoney|moneyFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.LEAVE_COSTS }}"/> {{ langs.LEAVE_COSTS }}
+                </div>
+                <div class="c-50 column">
+                    {{ familyPage.getLeaveCosts|moneyFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/clock.png" class="icon" alt="Start {{ langs.DATE }}"/> Start {{ langs.DATE }}
+                </div>
+                <div class="c-50 column">
+                    {{ familyPage.getStartDate }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt="{{ langs.MEMBERS_AMOUNT }}"/> {{ langs.MEMBERS_AMOUNT }}
+                </div>
+                <div class="c-50 column">
+                    {{ familyPage.getTotalMembers|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt="{{ langs.AVERAGE }} rank"/> {{ langs.AVERAGE }} rank
+                </div>
+                <div class="c-50 column">
+                    {{ familyPage.getAverageRank }}
+                </div>
+            </div>
+            <div id="joinLeaveFamilyResponse" class="rowMsg"></div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user_add.png" class="icon" alt="{{ langs.JOIN }}"/> {{ langs.JOIN }}
+                </div>
+                <div class="c-50 column">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    {% if familyPage.getId == userData.getFamilyID %}
+                        <a href="javascript:void(0);" class="leave-family button" data-family="{{ familyPage.getName }}">{{ langs.LEAVE }}</a>
+                    {% else %}
+                        {% if familyPage.getJoin == 0 %}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/>
+                        {% else %}
+                            {% if userData.getFamilyID == 0 %}                        
+                                <a href="javascript:void(0);" class="join-family button" data-family="{{ familyPage.getName }}">{{ langs.JOIN }}</a>
+                            {% endif %}                            
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="left">
+        <div class="subtop fammissions">
+            {{ langs.FAMILY }} {{ langs.MISSIONS }}
+        </div>
+        <div class="content-container fammissions">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.FAMILY_HAS_NO_MISSIONS }}
+            </div>
+        </div>
+    </div>
+    <div class="left">
+        <div class="subtop famalliances">
+            {{ langs.FAMILY }} {{ langs.ALLIANCES }}
+        </div>
+        <div class="content-container famalliances">
+            <div class="famalliances-container center cf">
+                {% for a in familyAlliances %}
+                    <a href="/game/family-page/{{ a.getAllianceFamily }}">
+                        <img class="allianceFamIcon" src="{{ staticRoot }}/foto/web/public/images/families/{% if a.getAllianceFamilyIcon is not empty %}{{ a.getAllianceFamilyID }}/uploads/{{ a.getAllianceFamilyIcon }}{% else %}nopic_small.jpg{% endif %}" title="{{ a.getAllianceFamily }}"/>
+                    </a>
+                {% endfor %}
+            </div>
+            {% if familyAlliances is empty %}
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.FAMILY_HAS_NO_ALLIANCES }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="left">
+        <div class="subtop famproperties">
+            {{ langs.FAMILY }} {{ langs.PROPERTIES }}
+        </div>
+        <div class="content-container famproperties">
+            {% if familyPage.getBulletFactory > 0 %}
+                <div class="row">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.BULLET_FACTORY }}"/> {{ langs.BULLET_FACTORY }} Lv. {{ familyPage.getBulletFactory }}
+                </div>
+            {% endif %}
+            {% if familyPage.getBrothel > 0 %}
+                <div class="row">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.BROTHEL }}"/> {{ langs.BROTHEL }} Lv. {{ familyPage.getBrothel }}
+                </div>
+            {% endif %}
+            {% if familyPage.getBulletFactory == 0 and familyPage.getBrothel == 0 %}
+                <div class="row">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.FAMILY_HAS_NO_PROPERTIES }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="content-container">
+    <div class="row">
+        {% if familyPage.getProfile is not empty %}
+            {{ familyPage.getProfile|raw }}
+        {% else %}
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.FAMILY_HAS_NO_PROFILE }}
+        {% endif %}
+    </div>
+</div>
+<br class="clear"/>
+<div class="members-container cf">
+    {% for member in familyMembers %}
+        <style type="text/css">
+            span#member_{{ member.getScorePosition }} {background: url({{ staticRoot }}/foto/web/public/images/users/{% if member.getAvatar %}{{ member.getId }}/uploads/{{ member.getAvatar }}{% else %}nopic.jpg{% endif %}) no-repeat -1.15em -0.9em;display:inline-block;background-size: 225%; width: 24px; height: 24px; border: 1px solid #000;}
+        </style>
+        <div class="memberRecord {{ cycle(['odd', 'even'], loop.index0) }}">
+            {{ userTagManager.write('member', member.getScorePosition, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True') }} <span class="position">#{{ member.getScorePosition }}</span>
+            <hr class="split" />
+            <small class="gray">Rank:</small> <span class="right">{{ member.getRankname }}</span>
+            <hr class="lineSplit" />
+            <small class="gray">{{ langs.MONEY }} Rank:</small> <span class="right">{{ member.getMoneyRank }}</span>
+            <hr class="lineSplit" />
+            {% set timeNow = 'now'|date('U') %}
+            {% set timeOnline = timeNow - 360 %}
+            <small class="gray">On/off:</small> <span class="right">{% if member.getLastclick > timeOnline %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_online_green.png" class="icon" alt="Online"/> <strong class="lightgreen">Online</strong>{% else %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_offline_red.png" class="icon" alt="Offline"/> <strong class="red">Offline</strong>{% endif %}</span>
+            <hr class="lineSplit" />
+            <small class="gray">{{ langs.HEALTH }}:</small> <span class="right health">{{ percentBar.create(member.getHealthBar.health, member.getHealthBar.class) }}</span>
+        </div>
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+$( document ).on( "click", ".join-family", function(e) {
+    var postData = {"security-token": $("input[name=security-token]").val(), "family": $(this).attr('data-family')};
+    var formURL = "{{ routing.getAjaxRouteByRouteName('join-family') }}";
+    var method = "POST";
+    var responseField = "#joinLeaveFamilyResponse";
+    $.ajax(
+    {
+    	url : formURL,
+    	type: method,
+    	data : postData,
+    	success:function(data, textStatus, jqXHR) 
+    	{
+    	  $(responseField).html(data);
+    	}
+    });
+    e.preventDefault();
+    e.stopPropagation(); 
+});
+$( document ).on( "click", ".leave-family", function(e) {
+    var postData = {"security-token": $("input[name=security-token]").val(), "family": $(this).attr('data-family')};
+    var formURL = "{{ routing.getAjaxRouteByRouteName('leave-family') }}";
+    var method = "POST";
+    var responseField = "#joinLeaveFamilyResponse";
+    $.ajax(
+    {
+    	url : formURL,
+    	type: method,
+    	data : postData,
+    	success:function(data, textStatus, jqXHR) 
+    	{
+    	  $(responseField).html(data);
+    	}
+    });
+    e.preventDefault();
+    e.stopPropagation(); 
+});
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,19 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="subtop">
+            {{ langs.FAMILY }} {{ langs.MESSAGE }}
+        </div>
+        <div class="content-container">
+            <div id="familyMessageResponse" class="rowMsg"></div>
+            <form id="familyMessageForm" action="{{ routing.getAjaxRouteByRouteName('update-family-message') }}" method="POST" data-response="#familyMessageResponse">
+                <div class="row">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <textarea id="editFamilyMessage" name="message" rows="10" cols="6">{{ familyMessage }}</textarea>
+                </div>
+                <div class="row">
+                    <input type="submit" name="change-message" value="{{ langs.EDIT }}"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

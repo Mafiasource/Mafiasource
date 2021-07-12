@@ -1,0 +1,9 @@
+{% macro create(xp, class='False', active='False') %}
+    {% set a = '' %}
+    {% if active == True %}
+        {% set a = ' active' %}
+    {% endif %}
+    <div class="progress">
+      <div class="progress-bar{% if class != 'False' %} {{ class }}{% endif %} progress-bar-striped{{ a }}" role="progressbar" aria-valuenow="{{ xp }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ xp }}%"></div>
+    </div>
+{% endmacro create %}

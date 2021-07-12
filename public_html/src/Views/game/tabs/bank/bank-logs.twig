@@ -1,0 +1,68 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <p class="center">{{ langs.LATEST }} 10 <strong>{{ langs.RECEIVED|lower }}</strong> {{ langs.DONATIONS|lower }}</p>
+        <div class="table-reponsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">{{ langs.SENDER }}</th>
+                        <th scope="col" class="center">{{ langs.DATE }}</th>
+                        <th scope="col" class="center">{{ langs.AMOUNT }}</th>
+                        <th scope="col" class="center">{{ langs.MESSAGE }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in bankData.getBankLogs.received %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td><a href="/game/profile/{{ log.username }}">{{ log.username }}</a></td>
+                          <td>{{ log.date }}</td>
+                          <td>{{ log.amount|moneyFormat }}</td>
+                          <td>{{ log.message }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% if bankData.getBankLogs.received is empty %}
+                        <tr>
+                          <td colspan="4">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_DONATIONS_TO_VIEW }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <p class="center">{{ langs.LATEST }} 10 <strong>{{ langs.SENT|lower }}</strong> {{ langs.DONATIONS|lower }}</p>
+        <div class="table-reponsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">{{ langs.RECEIVER }}</th>
+                        <th scope="col" class="center">{{ langs.DATE }}</th>
+                        <th scope="col" class="center">{{ langs.AMOUNT }}</th>
+                        <th scope="col" class="center">{{ langs.MESSAGE }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in bankData.getBankLogs.sent %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td><a href="/game/profile/{{ log.username }}">{{ log.username }}</a></td>
+                          <td>{{ log.date }}</td>
+                          <td>{{ log.amount|moneyFormat }}</td>
+                          <td>{{ log.message }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% if bankData.getBankLogs.sent is empty %}
+                        <tr>
+                          <td colspan="4">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_DONATIONS_TO_VIEW }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

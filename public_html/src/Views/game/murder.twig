@@ -1,0 +1,56 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    input[type=number] {max-width:120px;margin:0;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.MURDER }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'murder' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('murder') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/bomb.png" class="icon" alt=""/> {{ langs.MURDER }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'backfire' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('murder-backfire') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/bullet_black.png" class="icon" alt=""/> Backfire
+        </a>
+    </div>
+    <div class="tab {% if tab == 'detective' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('murder-detective') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/magnifier.png" class="icon" alt=""/> Detective
+        </a>
+    </div>
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'weapon-training' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('murder-weapon-training') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/gun_anchor.png" class="icon" alt=""/> {{ langs.WEAPON }} Training
+        </a>
+    </div>
+    <div class="tab {% if tab == 'logs' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('murder-logs') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/newspaper.png" class="icon" alt=""/> {{ langs.LOGS }}
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/murder/"~tab~".twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% if commit == true and tab == 'weapon-training' %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('input[type=submit]').click();
+});
+</script>
+{% endif %}
+{% endblock javascripts %}

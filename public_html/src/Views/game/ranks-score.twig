@@ -1,0 +1,173 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .table {width: 100.0039999999%;max-width: 100.0039999999%;}
+        .table > tbody > tr > td {vertical-align: middle;}
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="table-responsive">
+    <table class="table table-sm table-dark table-bordered">
+      <thead>
+        <tr>
+            <th scope="col" class="top center"><strong>Rank</strong></th>
+            <th scope="col" class="top center"><strong>{{ langs.WHO_CAN_I_ATTACK }}</strong></th>
+            <th scope="col" class="top center"><strong>Extra {{ langs.OPTIONS }} / {{ langs.REQUIREMENTS  }}</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <td class="center">
+                Scum
+            </td>
+            <td class="center">
+                Min. Scum<br />Max. Gangster
+            </td>
+            <td class="center">
+                &nbsp;
+            </td>
+        </tr>
+        
+        <tr class="even">
+            <td class="center">
+                Pee Wee
+            </td>
+            <td class="center">
+                Min. Scum<br />Max. Hitman
+            </td>
+            <td class="center">
+                &nbsp;
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="center">
+                Thug
+            </td>
+            <td class="center">
+                Min. Scum<br />Max. Assassin
+            </td>
+            <td class="center">
+                &nbsp;
+            </td>
+        </tr>
+        
+        <tr class="even">
+            <td class="center">
+                Gangster
+            </td>
+            <td class="center">
+                Min. Scum<br />Max. Boss
+            </td>
+            <td class="center">
+                &nbsp;
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="center">
+                Hitman
+            </td>
+            <td class="center">
+                Min. Pee Wee<br />Max. Godfather
+            </td>
+            <td class="center">
+                {{ langs.SHADOW }} detective
+            </td>
+        </tr>
+        
+        <tr class="even">
+            <td class="center">
+                Assassin
+            </td>
+            <td class="center">
+                Min. Thug<br />Max. Legendary Godfather
+            </td>
+            <td class="center">
+                &nbsp;
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="center">
+                Boss
+            </td>
+            <td class="center">
+                Min. Gangster<br />Max. Don
+            </td>
+            <td class="center">
+                &nbsp;
+            </td>
+        </tr>
+        
+        <tr class="even">
+            <td class="center">
+                Godfather
+            </td>
+            <td class="center">
+                Min. Hitman<br />Max. Respectable Don
+            </td>
+            <td class="center">
+                &nbsp;
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="center">
+                Legendary Godfather
+            </td>
+            <td class="center">
+                Min. Assassin<br />Max. Respectable Don
+            </td>
+            <td class="center">
+                {{ langs.CREATE_FAMILY }}
+            </td>
+        </tr>
+        
+        <tr class="even">
+            <td class="center">
+                Don
+            </td>
+            <td class="center">
+                Min. Boss<br />Max. Respectable Don
+            </td>
+            <td class="center">
+                2 kills, 200 {{ langs.HONOR_POINTS|lower }} &amp; 2,000 {{ langs.WHORES|lower }}
+            </td>
+        </tr>
+        
+        <tr>
+            <td class="center">
+                Respectable Don
+            </td>
+            <td class="center">
+                Min. Godfather<br />Max. Respectable Don
+            </td>
+            <td class="center">
+                5 kills, 500 {{ langs.HONOR_POINTS|lower }} &amp; 5,000 {{ langs.WHORES|lower }}
+            </td>
+        </tr>
+        
+        <tr class="even">
+            <td class="center">
+                Legendary Don
+            </td>
+            <td class="center">
+                Min. Legendary Don<br />Max. Legendary Don
+            </td>
+            <td class="center">
+                15 kills, 1,500 {{ langs.HONOR_POINTS|lower }}, 10,000 {{ langs.WHORES|lower }} &amp; {{ langs.WITHOUT_PROTECTION|lower }}
+            </td>
+        </tr>
+        
+        <tr>
+            <td colspan="3" class="center">
+                {{ langs.RANKS_SCORE_INFO|raw }}
+            </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+{% endblock content %}

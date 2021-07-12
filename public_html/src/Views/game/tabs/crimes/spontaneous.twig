@@ -1,0 +1,62 @@
+{% import "app/Resources/Views/macros/percent.bar.level.macro.twig" as percentLevelBar %}
+
+<div class="row">
+    <div class="inner-c-container">
+        <div id="ajaxLoader"></div>
+        <div id="commitCrimeResponse"></div>
+        <div class="subtop">
+            {{ langs.CRIMES }} &amp; Stats
+        </div>
+        <div class="content-container">
+            <div id="crimes" class="row cols cf">
+                <div class="c-70 column no-padding">
+                    
+                    <div id="carousel-crimes" class="carousel slide" data-ride="carousel">
+                      <ol class="carousel-indicators">
+                        {% for item in crimesPage.crimes %}
+                            <li data-target="#carousel-crimes" data-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
+                        {% endfor %}
+                      </ol>
+                      <!-- Wrapper for slides -->
+                      <div class="carousel-inner center">
+                        {% for item in crimesPage.crimes %}
+                            <div class="carousel-item {% if item.getActive == true %}active{% endif %}">
+                              <form id="commitCrime_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('commit-crime') }}" data-response="#commitCrimeResponse">
+                                  <h2>{{ item.getName }} - <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="Money" class="icon"/> {{ item.getMinProfit|moneyFormat }} - {{ item.getMaxProfit|moneyFormat }} - <img src="{{ staticRoot }}/foto/web/public/images/icons/star.png" alt="Level" class="icon"/> Lv. {{ item.getLevel }}</h2>
+                                  <p>{{ item.getDescription }}</p>
+                                  {% if item.getPicture is not empty %}<img src="{{ staticRoot }}/foto/300x70/1/web/public/images/crime/{{ item.getPicture }}{#&w=300&h=70&zc=1#}" class="middle" alt="{{ item.getName }}"/>{% endif %}
+                                  <br />
+                                  <input type="hidden" name="id" value="{{ item.getId }}"/>
+                                  <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                  <input type="submit" name="commit-crime" class="execbutton{% if item.getActive == true %} active{% endif %}" value="{{ langs.COMMIT_CRIME }}"/>
+                              </form>
+                            </div>
+                        {% endfor %}
+                      </div>
+                      <!-- Controls left/right -->
+                      <a class="left carousel-control-prev" href="#carousel-crimes" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">&nbsp;</span>
+                      </a>
+                      <a class="right carousel-control-next" href="#carousel-crimes" role="button" data-slide="next">
+                        <span class="sr-only">&nbsp;</span>
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      </a>
+                      
+                    </div>
+
+                </div>
+                <div class="c-30 column center">
+                    <i class="darkgray">{{ langs.CRIME_PROFITS }}:</i>&nbsp;$<span id="crimeProfits">{{ crimesPage.user.getCrimesProfit|valueFormat }}</span><span id="crimeProfitsChange"></span><br />
+                    <i class="darkgray">{{ langs.SUCCESS_FAIL_RATIO }}:</i>&nbsp;<span id="crimeSFRatio">{{ crimesPage.user.getCrimesSFRatio }}</span><br />
+                    <i class="darkgray">{{ langs.RANK_POINTS_COLLECTED }}:</i>&nbsp;<span id="crimeRankPoints">{{ crimesPage.user.getCrimesRankpoints|valueFormat }}</span><span id="crimeRankPointsChange"></span><br /><br />
+                    <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/crimes.png" alt="Level" />
+                    <span id="crimesLvl">Lv. <span class="number"><span id="crimesLv">{{ crimesPage.user.getCrimesLv }}</span><span id="crimesLvChange"></span></span></span>
+                    <div style="max-width:150px;margin: 0 auto 1.65em auto;">
+                        <span id="crimesPercent">{{ percentLevelBar.create(crimesPage.user.getCrimesXp.experience) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

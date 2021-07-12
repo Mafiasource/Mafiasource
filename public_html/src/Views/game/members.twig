@@ -1,0 +1,99 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+{% block content %}
+<div class="top">
+    {{ langs.MEMBERS }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'toplist' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('toplist') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/stats.png" class="icon" alt=""/> {{ langs.TOPLIST }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'online' %}tab_on{% endif %}  t-50">
+        <a href="{{ routing.getRouteByRouteName('members') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt=""/> Online {{ langs.MEMBERS }}
+        </a>
+    </div>
+</div>
+<br class="clear"/>
+<div class="subtop">
+    Online {{ langs.MEMBERS }}
+</div>
+<div class="content-container">
+    {% if onlineMembers is not empty %}
+        <div class="row cf">
+        {% for member in onlineMembers %}
+            {{ userTagManager.write('member', member.id, member.id, member.username, member.donatorID, member.usernameClassName) }}&nbsp;
+        {% endfor %}
+        </div>
+    {% else %}
+    <div class="row">
+        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt=""/> {{ langs.NO_MEMBERS_ONLINE }}
+    </div>
+    {% endif %}
+</div>
+<br class="clear"/>
+{% if onlineFam != false %}
+    <div class="subtop">
+        Online {{ langs.FAMILY }} {{ langs.MEMBERS }}
+    </div>
+    <div class="content-container">
+        {% if onlineFam is not empty %}
+            <div class="row cf">
+            {% for member in onlineFam %}
+                {{ userTagManager.write('famMember', member.id, member.id, member.username, member.donatorID, member.usernameClassName) }}&nbsp;
+            {% endfor %}
+            </div>
+        {% else %}
+        <div class="row">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon"  alt=""/> {{ langs.NO_FAM_MEMBERS_ONLINE }}
+        </div>
+        {% endif %}
+    </div>
+    <br class="clear"/>
+{% endif %}
+<div class="subtop">
+    Online Team {{ langs.MEMBERS }}
+</div>
+<div class="content-container">
+    {% if onlineTeam  is not empty %}
+        <div class="row cf">
+        {% for member in onlineTeam %}
+            {{ userTagManager.write('teamMember', member.id, member.id, member.username, member.donatorID, member.usernameClassName) }}&nbsp;
+        {% endfor %}
+        </div>
+    {% else %}
+    <div class="row">
+        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon"  alt=""/> {{ langs.NO_TEAM_MEMBERS_ONLINE }}
+    </div>
+    {% endif %}
+</div>
+<br class="clear"/>
+<div class="subtop">
+    Legenda
+</div>
+<div class="content-container">
+    <div class="row">
+        {# <span class="webmaster txt-shadow">Webmaster</span>,&nbsp; #}
+        <span class="administrator txt-shadow">Administrator</span>,&nbsp;
+        <span class="moderator txt-shadow">Moderator</span>,&nbsp;
+        {#
+        <span class="game-moderator txt-shadow">Game Moderator</span>,&nbsp;
+        <span class="forum-moderator txt-shadow">Forum Moderator</span>,&nbsp;
+        #}
+        <span class="helpdesk txt-shadow">Helpdesk</span>,&nbsp;
+        <span class="gold-member txt-shadow">Gold member</span>&nbsp;<img src="{{ staticRoot }}/foto/web/public/images/icons/goldmember_icon.png" alt="" border="0"/>,&nbsp;
+        <span class="vip txt-shadow">VIP</span>,&nbsp;
+        <span class="donator txt-shadow">{% if lang == 'nl' %}Donateur{% else %}Donator{% endif %}</span>,&nbsp;
+        <span class="txt-shadow">{% if lang == 'nl' %}Lid{% else %}Member{% endif %}</span>
+    </div>
+</div>
+<br class="clear"/>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

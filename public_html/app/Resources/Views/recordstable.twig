@@ -1,0 +1,132 @@
+{% if pagination.pagination is not empty and not search-records %}
+<form id="search-form-records" method="POST" action="{{ docRoot }}/admin/search">
+    <div class="row">
+        <div class="col-5">
+            <input type="text" name="search" class="form-control" placeholder="Zoekterm.."/>
+        </div>
+        <div class="col-4">
+            <select name="search-by" class="form-control searchBy">
+                <option value="0">Op welke kolom wens je te zoeken?</option>
+                {% for row in tableRows %}
+                    {% if loop.first %}
+                        {% for values in row %}
+                            {% for key,name in values %}
+                                {% if onlyFields is iterable %}
+                                    {% if key in onlyFields and key|isstr %}    
+                                        <option value="{{ key }}">{{ key|ucfirst }}</option>
+                                    {% endif %}
+                                {% else %}
+                                    {% if key not in skipFields and key != 'position' and key != 'active' and key != 'deleted' and key|isstr %}    
+                                        <option value="{{ key }}">{{ key|ucfirst }}</option>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}                                
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-3">
+            {% if onlyFields is iterable %}<input type="hidden" name="fields" value="{{ onlyFields|implode }}" />{% endif %}
+            {% if skipFields is iterable %}<input type="hidden" name="skipFields" value="{{ skipFields|implode }}" />{% endif %}
+            <input type="hidden" name="table" value="{{ dataTable }}"/>
+            <input type="hidden" name="securityToken" value="{{ securityToken }}"/>
+            <input type="submit" name="submit-search" class="form-control btn btn-info" value="&#128269;"/>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3 offset-md-9">
+            <span class="right">Of alles ophalen en:</span> <input type="submit" name="submit-positionchange" class="form-control positionchange btn btn-light" value="Volgorde aanpassen"/>
+        </div>
+    </div>
+</form>
+{% endif %}
+<div id="ajaxLoader"><br /><img src="{{ docRoot }}/web/public/images/ajax-loader.gif" alt="Loading..."/> Bezig met zoeken...<br /><br /></div>
+{% if not search-records %}<div id="searchFormResponse">{% endif %}
+    <div id="orderChangeConfirm"></div>
+    <div id="deleteConfirm"></div>
+    <div id="editOrNewConfirm"></div>
+    <div id="activateDeactivateConfirm"></div>
+    {% if not search-records %}<div class="cf">{% include "src/Views/admin/.Paginate.twig" %}</div>{% endif %}
+    <div class="table-responsive">
+        <table class="table table-bordered sortable" data-table="{{ dataTable }}" start="{{ startvar }}">
+            <input type="hidden" name="security-token" id="security-token" value="{{ securityToken }}"/>
+            <thead>
+                {% for row in tableRows %}
+                    {% if loop.first %}
+                        <tr id="0">
+                            {% for values in row %}
+                                {% for key,name in values %}
+                                    {% if onlyFields is iterable %}
+                                        {% if key in onlyFields and key|isstr %}    
+                                            <th>{{ key|ucfirst }}</th>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if key not in skipFields and key != 'position' and key != 'active' and key != 'deleted' and key|isstr %}    
+                                            <th>{{ key|ucfirst }}</th>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                            <th class="txt-center thOpties">Opties</th>
+                        </tr>
+                    {% endif %}                                
+                {% endfor %}
+            </thead>
+            <tbody>
+                {% set hiddenFields = skipFields|join(' ') %}
+                {% set visibleFields = onlyFields|join(' ') %}
+                {% for row in tableRows %}
+                    {% for values in row %}
+                        {% set iterateFields = [] %}
+                        {% for key,name in values %}
+                            {% if onlyFields is iterable %}
+                                {% if key in onlyFields and key|isstr %}
+                                    {% set iterateFields = iterateFields|merge([key]) %}
+                                {% endif %}
+                            {% else %}
+                                {% if key not in skipFields and key != 'position' and key != 'active' and key != 'deleted' and key|isstr %}
+                                    {% set iterateFields = iterateFields|merge([key]) %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if loop.first %}
+                            <tr id="{{ values.id }}">
+                        {% endif %}
+                        {% for field in iterateFields %}
+                            <td>{{ attribute(values, field) }}</td>
+                        {% endfor %}
+                        <td class="txt-center opties">
+                            {% if tableRows|length > 1 %}
+                                <span class="glyph-icon moveRow float-left"><i class="fas fa-sort"></i></span>
+                            {% endif %}
+                            {% if values.active == 1 %}
+                                <a href="javascript:void(0);" data-id="{{ values.id }}" class="deactivate glyph-icon green">
+                                    <i class="fas fa-check"></i>
+                                </a>&nbsp;
+                            {% else %}
+                                <a href="javascript:void(0);" data-id="{{ values.id }}" class="activate glyph-icon red">
+                                    <i class="fas fa-power-off"></i>
+                                </a>&nbsp;
+                            {% endif %}
+                            <a href="javascript:void(0);" data-id="{{ values.id }}" class="editOrNew glyph-icon">
+                                <i class="fas fa-edit"></i>
+                            </a>&nbsp;
+                            {% if memberObj.getStatus == 1 or memberObj.getStatus == 2 or memberObj.getStatus == 3 %}
+                                <a href="javascript:void(0);" data-id="{{ values.id }}" data-hide-elements="{{ hiddenFields }}" data-show-elements="{{ visibleFields }}" class="delete glyph-icon red">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            {% endif %}
+                        </td>
+                        {% if loop.last %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if not search-records %}
+    <div class="cf">{% include "src/Views/admin/.Paginate.twig" %}</div>
+</div>{% endif %}

@@ -1,0 +1,42 @@
+<div id="setBackfireResponse" class="rowMsg"></div>
+<form class="ajaxForm row" action="{{ routing.getAjaxRouteByRouteName('set-backfire') }}" method="POST" data-response="#setBackfireResponse">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="backfire-type" id="backfirePercentage" value="0"{% if bf.backfireType == 0 %} checked{% endif %}>
+      <label class="form-check-label" for="backfirePercentage">
+        Percentage: <input type="number" name="backfire-percentage" min="0" max="100" value="{% if bf.backfireType == 0 %}{{ bf.backfireNumber }}{% endif %}"/> %
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="backfire-type" id="backfireNumber" value="1"{% if bf.backfireType == 1 %} checked{% endif %}>
+      <label class="form-check-label" for="backfireNumber">
+        {% if lang == 'en' %}{{ langs.BULLETS }} {{ langs.AMNT|lower }}{% else %}{{ langs.AMNT }} {{ langs.BULLETS|lower }}{% endif %}: <input type="number" name="backfire-number" min="0" value="{% if bf.backfireType == 1 %}{{ bf.backfireNumber }}{% endif %}"/>
+      </label>
+    </div>
+    <div class="form-check disabled">
+      <input class="form-check-input" type="radio" name="backfire-type" id="backfireAll" value="2"{% if bf.backfireType == 2 %} checked{% endif %}>
+      <label class="form-check-label" for="backfireAll">
+        {{ langs.ALL_YOUR }} {{ langs.BULLETS|lower }}
+      </label>
+    </div>
+    <div class="form-check disabled">
+      <input class="form-check-input" type="radio" name="backfire-type" id="backfireDouble" value="3"{% if bf.backfireType == 3 %} checked{% endif %}>
+      <label class="form-check-label" for="backfireDouble">
+        {{ langs.DOUBLE_OF_ATTACKER }}
+      </label>
+    </div>
+    <div class="form-check disabled">
+      <input class="form-check-input" type="radio" name="backfire-type" id="backfireEven" value="4"{% if bf.backfireType == 4 %} checked{% endif %}>
+      <label class="form-check-label" for="backfireEven">
+        {{ langs.SAME_AS_ATTACKER }}
+      </label>
+    </div>
+    <div class="form-check disabled">
+      <input class="form-check-input" type="radio" name="backfire-type" id="backfireHalf" value="5"{% if bf.backfireType == 5 %} checked{% endif %}>
+      <label class="form-check-label" for="backfireHalf">
+        {{ langs.HALF_OF_ATTACKER }}
+      </label>
+    </div>
+    <br class="clear"/>
+    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+    <input type="submit" name="set-backfire" value="{{ langs.SAVE }}"/>
+</form>

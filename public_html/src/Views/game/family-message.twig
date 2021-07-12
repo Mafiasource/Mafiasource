@@ -1,0 +1,25 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY }} {{ langs.MESSAGE }}
+</div>
+<div class="content-container">
+    {% if hasRights %}
+        <div class="row">
+            <a href="{{ routing.getRouteByRouteName('family-management-message') }}">
+                <img src="{{ staticRoot }}/web/public/images/icons/email_edit.png" class="icon" alt="{{ langs.EDIT }}"/> {% if lang == 'en' %}{{ langs.EDIT }} {% endif %}{{ langs.FAMILY }} {{ langs.MESSAGE }}{% if lang == 'nl' %} {{ langs.EDIT|lower }}{% endif %}
+            </a>
+        </div>
+    {% endif %}
+    {% if familyMessage is empty %}
+        <div class="row">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_FAMILY_MESSAGE }}
+        </div>
+    {% else %}
+        <div class="row">
+            {{ familyMessage|raw }}
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

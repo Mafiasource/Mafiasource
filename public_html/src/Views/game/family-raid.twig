@@ -1,0 +1,323 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+.middle {display: block !important;float:none !important;}
+option.online {background-color: #047f03;-webkit-appearance: none;}
+select[name=new-driver], select[name=new-bombExpert], select[name=new-weaponExpert], select.supplySelect {display:inline;max-width:100px;}
+.select.supplySelect {max-width:180px;}
+input[name=bullets] {max-width:60px;}
+@media (max-width: 688px) {
+    section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY }} {{ langs.RAID }}
+</div>
+<div class="content-container cf">
+    {% if not available %}
+        <div class="row">
+            <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="Please wait"/> Je moet nog <span id="cfrFamilyRaid">{{ 'frFamilyRaid'|countClean(userData.getCFamilyRaid)|raw }}</span> seconden wachten.
+        </div>
+    {% elseif not familyRaid and available %} {# START A NEW FAMILY RAID #}
+        <div class="row">
+            <div class="c-row cf">
+                <div class="c-row-50 col middle">
+                    <div class="inner-c-container center">
+                        {{ langs.NOT_IN_RAID_INFO|raw }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="organizeFamilyRaidResponse" class="rowMsg"></div>
+        <div class="row">
+            {% if available %}
+            <div class="c-row cf">
+                <div class="c-row-50 col middle">
+                    <div class="inner-c-container">
+                        <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('organize-family-raid') }}"s method="POST" data-response="#organizeFamilyRaidResponse">
+                            <div class="c-row cf">
+                                <div class="c-row-60 col">
+                                    <div class="inner-c-container">
+                                        <img src="{{staticRoot }}/web/public/images/icons/world.png" class="icon" alt="{{ langs.STATE }}" /> {{ langs.STATE }}
+                                    </div>
+                                </div>
+                                <div class="c-row-40 col">
+                                    <div class="inner-c-container">
+                                        {{ userData.getState }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c-row cf">
+                                <div class="c-row-60 col">
+                                    <div class="inner-c-container">
+                                        <img src="{{staticRoot }}/web/public/images/icons/car.png" class="icon" alt="{{ langs.DRIVER }}" /> {{ langs.DRIVER }}
+                                    </div>
+                                </div>
+                                <div class="c-row-40 col">
+                                    <div class="inner-c-container">
+                                        <select name="driver">
+                                            {% for m in members %}
+                                                <option value="{{ m.username }}"{% if m.online %} class="online"{% endif %}>
+                                                    {{ m.username }}{% if m.online %} (Online){% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c-row cf">
+                                <div class="c-row-60 col">
+                                    <div class="inner-c-container">
+                                        <img src="{{staticRoot }}/web/public/images/icons/bomb.png" class="icon" alt="{{ langs.BOMB }} Expert" /> {{ langs.BOMB }} Expert
+                                    </div>
+                                </div>
+                                <div class="c-row-40 col">
+                                    <div class="inner-c-container">
+                                        <select name="bombExpert">
+                                            {% for m in members %}
+                                                <option value="{{ m.username }}"{% if m.online %} class="online"{% endif %}>
+                                                    {{ m.username }}{% if m.online %} (Online){% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c-row cf">
+                                <div class="c-row-60 col">
+                                    <div class="inner-c-container">
+                                        <img src="{{staticRoot }}/web/public/images/icons/gun.png" class="icon" alt="{{ langs.WEAPON }} Expert" /> {{ langs.WEAPON }} Expert
+                                    </div>
+                                </div>
+                                <div class="c-row-40 col">
+                                    <div class="inner-c-container">
+                                        <select name="weaponExpert">
+                                            {% for m in members %}
+                                                <option value="{{ m.username }}"{% if m.online %} class="online"{% endif %} {# {% if familyRaid.getWeaponExpert == m.username %} selected="selected"{% endif %} #} >
+                                                    {{ m.username }}{% if m.online %} (Online){% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c-row center">
+                                <div class="inner-c-container">
+                                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                    <input type="submit" name="organize-raid" value="{% if lang == 'nl' %}{{ langs.RAID }} {% endif %}{{ langs.ORGANIZE }}{% if lang == 'en' %} {{ langs.RAID }}{% endif %}"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    {% elseif familyRaid and available %} {# ORGANIZED FAMILY RAID READY TO START OR NOT? #}
+        <div class="inner-c-container">
+            <div id="familyRaidResponse"></div>
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-raid') }}" method="POST" data-response="#familyRaidResponse">
+                <input type="hidden" name="familyRaidID" value="{{ familyRaid.getId }}" />
+                <input type="hidden" name="security-token" value="{{ securityToken }}" />
+                <div class="table-responsive">
+                    <table class="table table-sm table-dark table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="center">
+                                    <strong>Type</strong>
+                                </th>
+                                <th scope="col" class="center">
+                                    <strong>{{ langs.USER }}s</strong>
+                                </th>
+                                <th scope="col" class="center">
+                                    <strong>Status</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <img src="{{staticRoot }}/web/public/images/icons/user.png" class="icon" alt="{{ langs.LEADER }}" /> {{ langs.LEADER }}
+                                </td>
+                                <td>
+                                    <a href="/game/profile/{{ familyRaid.getLeader }}">{{ familyRaid.getLeader }}</a>
+                                </td>
+                                <td>
+                                    <span class="lightgreen">{{ langs.READY }}!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{staticRoot }}/web/public/images/icons/car.png" class="icon" alt="{{ langs.DRIVER }}" /> {{ langs.DRIVER }}
+                                </td>
+                                <td>
+                                    {% if familyRaid.getDriver %}
+                                        <a href="/game/profile/{{ familyRaid.getDriver }}">{{ familyRaid.getDriver }}</a>
+                                    {% else %}
+                                        <span class="red">{{ langs.DENIED }}!</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if familyRaid.getDriverReady %}
+                                        <span class="lightgreen">{{ langs.READY }}!</span> {{ familyRaid.getVehicle }}
+                                        {% if familyRaid.getDriver == userData.getUsername %}
+                                            <input type="submit" name="driver-quit" value="{{ langs.QUIT }}"/>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if not familyRaid.getDriver %}
+                                            <span class="red">{{ langs.DENIED }}!&nbsp;</span>
+                                        {% else %}
+                                            <span class="game-moderator">{{ langs.WAITING }}...&nbsp;</span>
+                                            {% if familyRaid.getDriver == userData.getUsername %}
+                                                <select name="vehicleID" class="supplySelect">
+                                                    <option value="0">{{ langs.MAKE_A_CHOICE }}</option>
+                                                    {% for v in vehicles %}
+                                                        <option value="{{ v.getId }}">{{ v.getVehicleName }}</option>
+                                                    {% endfor %}
+                                                    {% if vehicles is empty %}
+                                                        <option value="-1">{{ langs.HIRE_VEHICLE }}</option>
+                                                    {% endif %}
+                                                </select>
+                                                <input type="submit" name="driver-accept" value="{{ langs.ACCEPT }}"/>&nbsp;
+                                                <input type="submit" name="driver-deny" value="{{ langs.DENY }}"/>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if familyRaid.getLeader == userData.getUsername %}
+                                            <select name="new-driver">
+                                                {% for m in members %}
+                                                    <option value="{{ m.username }}"{% if m.online %} class="online"{% endif %}>
+                                                        {{ m.username }}{% if m.online %} (Online){% endif %}
+                                                    </option>
+                                                {% endfor %}
+                                                {% if members is empty %}
+                                                    <option value="0">{{ langs.NONE }}</option>
+                                                {% endif %}
+                                            </select>
+                                            <input type="submit" name="change-driver" value="{{ langs.EDIT }}"/>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{staticRoot }}/web/public/images/icons/bomb.png" class="icon" alt="{{ langs.BOMB }} Expert" /> {{ langs.BOMB }} Expert
+                                </td>
+                                <td>
+                                    {% if familyRaid.getBombExpert %}
+                                        <a href="/game/profile/{{ familyRaid.getBombExpert }}">{{ familyRaid.getBombExpert }}</a>
+                                    {% else %}
+                                        <span class="red">{{ langs.DENIED }}!</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if familyRaid.getBombExpertReady %}
+                                        <span class="lightgreen">{{ langs.READY }}!</span> {{ familyRaid.getBomb.name }}
+                                        {% if familyRaid.getBombExpert == userData.getUsername %}
+                                            <input type="submit" name="bombExpert-quit" value="{{ langs.QUIT }}"/>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if not familyRaid.getBombExpert %}
+                                            <span class="red">{{ langs.DENIED }}!&nbsp;</span>
+                                        {% else %}
+                                            <span class="game-moderator">{{ langs.WAITING }}...&nbsp;</span>
+                                            {% if familyRaid.getBombExpert == userData.getUsername %}
+                                                <select name="bombType" class="supplySelect">
+                                                    {% for k, b in bombs %}
+                                                        <option value="{{ k }}">{{ b.name }} - {{ b.price|moneyFormat }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <input type="submit" name="bombExpert-accept" value="{{ langs.ACCEPT }}"/>&nbsp;
+                                                <input type="submit" name="bombExpert-deny" value="{{ langs.DENY }}"/>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if familyRaid.getLeader == userData.getUsername %}
+                                            <select name="new-bombExpert">
+                                                {% for m in members %}
+                                                    <option value="{{ m.username }}"{% if m.online %} class="online"{% endif %}>
+                                                        {{ m.username }}{% if m.online %} (Online){% endif %}
+                                                    </option>
+                                                {% endfor %}
+                                                {% if members is empty %}
+                                                    <option value="0">{{ langs.NONE }}</option>
+                                                {% endif %}
+                                            </select>
+                                            <input type="submit" name="change-bombExpert" value="{{ langs.EDIT }}"/>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="{{staticRoot }}/web/public/images/icons/gun.png" class="icon" alt="{{ langs.WEAPON }} Expert" /> {{ langs.WEAPON }} Expert
+                                </td>
+                                <td>
+                                    {% if familyRaid.getWeaponExpert %}
+                                        <a href="/game/profile/{{ familyRaid.getWeaponExpert }}">{{ familyRaid.getWeaponExpert }}</a>
+                                    {% else %}
+                                        <span class="red">{{ langs.DENIED }}!</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if familyRaid.getWeaponExpertReady %}
+                                        <span class="lightgreen">{{ langs.READY }}!</span>
+                                        {{ familyRaid.getWeapon.name }} {{ langs.WITH|lower }} {{ familyRaid.getBullets|valueFormat }} {{ langs.BULLETS|lower }}
+                                        {% if familyRaid.getWeaponExpert == userData.getUsername %}
+                                            <input type="submit" name="weaponExpert-quit" value="{{ langs.QUIT }}"/>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if not familyRaid.getWeaponExpert %}
+                                            <span class="red">{{ langs.DENIED }}!&nbsp;</span>
+                                        {% else %}
+                                            <span class="game-moderator">{{ langs.WAITING }}...&nbsp;</span>
+                                            {% if familyRaid.getWeaponExpert == userData.getUsername %}
+                                                <select name="weaponType" class="supplySelect">
+                                                    {% for k, w in weapons %}
+                                                        <option value="{{ k }}">{{ w.name }} - {{ w.price|moneyFormat }}</option>
+                                                    {% endfor %}
+                                                </select>&nbsp;
+                                                {{ langs.BULLETS }}: <input type="text" name="bullets" maxlength="4" required="required"/> {{ langs.BULLETS_INFO }}
+                                                <input type="submit" name="weaponExpert-accept" value="{{ langs.ACCEPT }}"/>&nbsp;
+                                                <input type="submit" name="weaponExpert-deny" value="{{ langs.DENY }}"/>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if familyRaid.getLeader == userData.getUsername %}
+                                            <select name="new-weaponExpert">
+                                                {% for m in members %}
+                                                    <option value="{{ m.username }}"{% if m.online %} class="online"{% endif %}>
+                                                        {{ m.username }}{% if m.online %} (Online){% endif %}
+                                                    </option>
+                                                {% endfor %}
+                                                {% if members is empty %}
+                                                    <option value="0">{{ langs.NONE }}</option>
+                                                {% endif %}
+                                            </select>
+                                            <input type="submit" name="change-weaponExpert" value="{{ langs.EDIT }}"/>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br class="clear"/>
+                {% if familyRaid.getLeader == userData.getUsername %}
+                    <div class="c-row center">
+                        {% if familyRaid.getDriverReady and familyRaid.getBombExpertReady and familyRaid.getWeaponExpertReady %}
+                            <input type="submit" name="start" value="Start{% if lang == 'nl' %}en{% endif %}"/>&nbsp;
+                        {% endif %}
+                        <input type="submit" name="quit" value="{{ langs.QUIT }}"/>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

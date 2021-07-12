@@ -1,0 +1,21 @@
+<div class="table-responsive">
+    <table class="table table-sm table-dark table-bordered">
+        <thead>
+            <tr>
+                {% for k, c in colors %}
+                    <th scope="col" class="center">
+                        <strong># {{ loop.index }}</strong>
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for k, c in colors %}
+                    <td style="background: {{ c }};{% if k in blackFonts|keys %}color: black;{% endif %}" class="center">&nbsp;</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+<br class="clear"/>

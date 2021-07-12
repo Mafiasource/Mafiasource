@@ -1,0 +1,52 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    @media (max-width: 530px) {
+        .map-container {height:520px !important;}
+    }
+    @media (max-width: 430px) {
+        .map-container {height:480px !important;}
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div id="ajaxLoader"></div>
+<div id="selectLocationResponse">
+    {% include "/src/Views/game/Ajax/ground.twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/jquery-imageMapResizer.custom.js"></script>
+<script type="text/javascript">
+    $( document ).on( "change", "select[name=stateID]", function() {
+        if($("#ajaxLoader").length)
+        {
+            $('#ajaxLoader').show();
+        }
+        $("#selectLocationResponse").slideUp('fast');
+        var val = $("select[name=stateID] option:selected").text();
+        $.ajax(
+        {
+        	url : "{{ routing.getAjaxRouteByRouteName('ground-state-select') }}",
+        	type: "POST",
+        	data : {state: val},
+        	success:function(data, textStatus, jqXHR) 
+        	{
+     	      if($("#ajaxLoader" ).length)
+              {
+                $('#ajaxLoader').hide();
+              }
+        	  $("#selectLocationResponse").html(data).slideDown('fast');
+              $('map').imageMapResize();
+        	}
+        });
+    });
+    $(document).ready(function() {
+        $('map').imageMapResize();
+    });
+</script>
+{% endblock javascripts %}

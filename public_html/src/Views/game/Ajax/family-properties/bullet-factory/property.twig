@@ -1,0 +1,76 @@
+{% set bfLv = pageInfo.bf.getBulletFactory %}
+<div class="row">
+    <img src="{{ staticRoot }}/web/public/images/bulletfactory.jpg" class="middle" alt="{{ langs.BULLET_FACTORY }}"/>
+    {% if bfLv %}
+        <p class="center">
+            {{ langs.FAMILY_BF_IS_CURRENTLY }}: {% if pageInfo.bf.getBfProduction != 0 %}<span class="lightgreen">{{ langs.PRODUCING|lower }}.</span>{% else %}<span class="red">{{ langs.DORMANT|lower }}.</span>{% endif %}
+        </p>
+    {% endif %}
+</div>
+{% if bfLv %}
+    {% if response %}
+        <div class="rowMsg">{% include "app/Resources/Views/macros/alerts.game.responses.twig" %}</div>
+    {% endif %}
+    <div class="row cols cf">
+        <div class="c-50 column">
+            Level:
+        </div>
+        <div class="c-50 column">
+            <strong>{{ bfLv }}</strong>
+        </div>
+    </div>
+    {% if hasRights %}
+        {% if bfLv < 15 %}
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    Upgrade{% if lang == 'nl' %}n{% endif %}:
+                </div>
+                <div class="c-50 column">
+                    <script type="text/javascript">if(typeof timeoutCBulletFactory !== 'undefined') clearTimeout(timeoutCBulletFactory);</script>
+                    <form class="row ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-property') }}" method="POST" data-response="#interactPropertyResponse">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="hidden" name="property" value="bullet-factory"/>
+                        {% set upgradePrice = upgradePrices[bfLv] %}
+                        <input type="submit" name="upgrade" value="{{ upgradePrice|moneyFormat }} "/>&nbsp;
+                        <img src="{{ staticRot }}/web/public/images/icons/clock.png" class="icon" alt="Clock"/> <span id="cBulletFactory{{ loop.index }}">{{ 'BulletFactory'|count(pageInfo.bf.getCBulletFactory)|raw }}</span>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row cols cf">
+            <div class="c-50 column">
+                {{ langs.PRODUCE }} / {{ langs.HOUR|lower }}:
+            </div>
+            <div class="c-50 column">
+                <select name="production">
+                    {% for k, p in productions %}
+                        <option value="{{ k }}"{% if pageInfo.bf.getBfProduction == p %} selected="selected"{% endif %}>{{ p|valueFormat }} {{ langs.BULLETS|lower }} {{ productionCosts[k]|moneyFormat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    {% if response %}
+        <div class="rowMsg">{% include "app/Resources/Views/macros/alerts.game.responses.twig" %}</div>
+    {% endif %}
+    <div class="row">
+        {% set noPropertyInfo = routing.replaceMessagePart(langs.BULLET_FACTORY|lower, langs.HAS_NO_PROPERTY_TYPE, '/{property}/') %}
+        <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ noPropertyInfo }}
+    </div>
+    {% if hasRights %}
+        <form class="row ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-property') }}" method="POST" data-response="#interactPropertyResponse">
+            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+            <input type="hidden" name="property" value="bullet-factory"/>
+            <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ langs.BULLET_FACTORY|lower }}{% else %}{{ langs.BULLET_FACTORY|ucfirst }} {{ langs.BUY|lower }}{% endif %} {{ langs.FOR|lower }} {{ price|moneyFormat }}"/>
+        </form>
+    {% endif %}
+{% endif %}
+<div class="row cols cf">
+    <div class="c-50 column">
+        {{ langs.BULLETS }}:
+    </div>
+    <div class="c-50 column">
+        {{ pageInfo.bf.getBullets|valueFormat }} / <strong>{{ capacity|valueFormat }}</strong>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+{% for message in messages %}
+    <div class="row shoutRow {{ cycle(['odd', 'even'], loop.index0) }}">
+     <span style="line-height:15px;max-width:73%;display:inline-block;">
+      {{ userTagManager.write('shoutMember', message.getId, message.getUserID, message.getUsername, message.getDonatorID, message.getUsernameClassName, message.getAvatar, 'True') }}: {{ message.getMessage|raw }}</span>
+     <small style="display:inline-block;max-width: 27%;padding:3px;box-sizing:border-box;text-align:right;" class="right gray">{{ message.getDate }}</small>
+    </div>
+{% endfor %}
+{% if messages is empty %}
+    <div class="row">
+        <p class="center">{{ langs.LOOKS_SILENT }}</p>
+    </div>
+{% endif %}

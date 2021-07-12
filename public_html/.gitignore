@@ -1,0 +1,15 @@
+# App cache & backups
+/app/cache/sessions/*
+/app/cache/TwigCompilation/*
+/app/cronjob/backup/*
+
+# Web assets (Can de downloaded from mafiasource.nl)
+/web/downloads/*
+/web/lib/*
+/web/public/cache/*
+
+/web/public/images/*
+!web/public/images/captcha/
+
+# Root files
+/.ftpquota

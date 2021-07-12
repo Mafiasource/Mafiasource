@@ -1,0 +1,109 @@
+{% if familyData.getVip %}
+    <div id="buyPossessResponse"></div>
+    <div class="center">
+        {% if possessionData.getPossessDetails.getUserID == 0 %}
+            <p>{{ langs.THIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+            <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                <input type="hidden" name="id" value="{{ possessId }}"/>
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+            </form>
+        {% else %}
+            <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.THIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+        {% endif %}
+    </div>
+    <div class="c-row">
+        <div class="inner-c-container">
+            <form class="table-reponsive ajaxForm" action="{{ routing.getAjaxRouteByRouteName('mass-family-message') }}" method="POST" data-response="#massMessageResponse" name="massMessageForm">
+                <table class="table table-sm table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="2" class="center">Nieuw Mass{% if lang == 'nl' %}a{{ langs.MESSAGE|lower }}{% else %} {{ langs.MESSAGE }}{% endif %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.COSTS }}"/> {{ langs.AMOUNT }}:
+                            </td>
+                            <td>
+                                {{ possessionData.getPossessDetails.getStake|moneyFormat }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt="{{ langs.TO }}"/> {{ langs.TO }}:
+                            </td>
+                            <td>
+                                All{% if lang == 'nl' %}e{% endif %} {{ langs.FAMILY|lower }} {{ langs.MEMBERS|lower }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" class="icon" alt="{{ langs.TO }}"/> {{ langs.MESSAGE }}:
+                            </td>
+                            <td>
+                                <textarea name="mass-message" rows="8"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/palette.png" class="icon" alt="{{ langs.TO }}"/> {{ langs.MARKUP }}:
+                            </td>
+                            <td>
+                                <img src="{{ staticRoot }}/web/public/images/smileys/lol.gif" alt=":D" title=":D" onClick="addsmiley(':D');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/smile.gif" alt=":)" title=":)" onClick="addsmiley(':)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/wink.gif" alt=";)" title=";)" onClick="addsmiley(';)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/confused.gif" alt=":s" title=":s" onClick="addsmiley(':s');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/neutral.gif" alt=":|" title=":|" onClick="addsmiley(':|');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/razz.gif" alt=":P" title=":P" onClick="addsmiley(':P');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/sad.gif" alt=":(" title=":(" onClick="addsmiley(':(');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/surprised.gif" alt=":O" title=":O" onClick="addsmiley(':O');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/twisted.gif" alt=":twisted:" title=":twisted:" onClick="addsmiley(':twisted:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/cry.gif" alt=":cry:" title=":cry:" onClick="addsmiley(':cry:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/mad2.gif" alt=":mad:" title=":mad:" onClick="addsmiley(':mad:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/cool.gif" alt="8)" title="8)" onClick="addsmiley('8)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/silenced.gif" alt=":x" title=":x" onClick="addsmiley(':x');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/question.gif" alt=":?:" title=":?:" onClick="addsmiley(':?:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/exclaim.gif" alt=":!:" title=":!:" onClick="addsmiley(':!:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/naugthy.gif" alt=":no:" title=":no:" onClick="addsmiley(':no:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/ehh.gif" alt=":huh:" title=":huh:" onClick="addsmiley(':huh:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/ashamed.gif" alt=":$" title=":$" onClick="addsmiley(':$');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/applause.gif" alt=":applause:" title=":applause:" onClick="addsmiley(':applause:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/biggrin.gif" alt=":grin:" title=":grin:" onClick="addsmiley(':grin:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/rolleyes.gif" alt=":rolleyes:" title=":rolleyes:" onClick="addsmiley(':rolleyes:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/whistle.gif" alt=":whistle:" title=":whistle:" onClick="addsmiley(':whistle:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        		<img src="{{ staticRoot }}/web/public/images/smileys/angel.gif" alt="(A)" title="(A)" onClick="addsmiley('(A)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        	   <br/>
+                               <div class="markupBtns">
+                                <input type="button" class="button" id="bold" name="bold" onclick="addsmiley('[b] [/b]')" value="{{ langs.BOLD }}" />&nbsp;
+                                <input type="button" class="button" id="italic" name="italic" onclick="addsmiley('[i] [/i]')" value="{{ langs.ITALIC }}" />&nbsp;
+                                <input type="button" class="button" id="underline" name="underline" onclick="addsmiley('[u] [/u]')"value="{{ langs.UNDERLINE }}" />&nbsp;
+                                <input type="button" class="button" id="striketrough" name="striketrough" onclick="addsmiley('[s] [/s]')" value="{{ langs.STRIKETROUGH }}" />&nbsp;
+                                <input type="button" class="button" id="img" name="img" onclick="addsmiley('[img] [/img]')" value="{{ langs.IMAGE }}" />&nbsp;
+                                {#
+                                <input type="button" class="button" id="center" name="center" onclick="addsmiley('[center] [/center]')" value="Centreren" />&nbsp;
+                                <input type="button" class="button" id="right" name="right" onclick="addsmiley('[right] [/right]')" value="Rechts Uitlijnen" />&nbsp;
+                                #}
+                                <input type="button" class="button" id="size" name="size" onclick="addsmiley('[size=*] [/size]')" value="{{ langs.FONT_SIZE }}" />&nbsp;
+                                <input type="button" class="button" id="color" name="color" onclick="addsmiley('[color=*] [/color]')" value="{{ langs.FONT_COLOR }}" />&nbsp;
+                               </div>
+                            </td>
+                        </tr>
+                        <tr id="massMessageResponse" class="rowMsg"></tr>
+                        <tr>
+                            <td colspan="2">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}" />
+                                <input type="submit" name="send-mass-message" class="button" value="{{ langs.SEND }}"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <div class="row">
+        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="VTP"/> {{ langs.FAMILY_NEEDS_VIP_STATUS|raw }}
+    </div>
+{% endif %}

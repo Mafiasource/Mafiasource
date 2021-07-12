@@ -1,0 +1,249 @@
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.WHORES_HOUR }}
+            </div>
+            <div class="content-container">
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.WHORES_STREET }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ bankData.getWhoresStreet|moneyFormat }}
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.WHORES_WINDOW }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ bankData.getWhoresRLD|moneyFormat }}
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <strong>{{ langs.TOTAL }}</strong>
+                    </div>
+                    <div class="c-50 column">
+                       <strong>{% set WhoresTotal = bankData.getWhoresStreet + bankData.getWhoresRLD %}
+                            {{ WhoresTotal|moneyFormat }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {{ langs.POSSESSIONS_TOTAL }} (Still unfunctional)
+                </div>
+                <div class="content-container">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.BULLET_FACTORIES }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Red Light District
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Mafiasource Bank
+                        </div>
+                        <div class="c-50 column">
+                           $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.TRAVEL_AGENCY }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.EQUIPMENT_STORES }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.ESTATE_AGENCY }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.HOSPITAL }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Garage
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.PRISON }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Detective Bureau
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.LOTTERY }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.DOBBLING }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Racetrack
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Roulette
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Card War
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Blackjack
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.SLOT_MACHINE }}
+                        </div>
+                        <div class="c-50 column">
+                            $0
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <strong> {{ langs.TOTAL }} </strong>
+                        </div>
+                        <div class="c-50 column">
+                            <strong>$0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="c-row cf">
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {{ langs.GROUND_HOUR }}
+                </div>
+                <div class="content-container">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Casino ({{ bankData.getGround.b1.count }}&times;)
+                        </div>
+                        <div class="c-50 column">
+                            {{ bankData.getGround.b1.income|moneyFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Coffeeshop ({{ bankData.getGround.b2.count }}&times;)
+                        </div>
+                        <div class="c-50 column">
+                            {{ bankData.getGround.b2.income|moneyFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Irish Pub ({{ bankData.getGround.b3.count }}&times;)
+                        </div>
+                        <div class="c-50 column">
+                            {{ bankData.getGround.b3.income|moneyFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            Motel ({{ bankData.getGround.b4.count }}&times;)
+                        </div>
+                        <div class="c-50 column">
+                            {{ bankData.getGround.b4.income|moneyFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.NIGHTCLUB }} ({{ bankData.getGround.b5.count }}&times;)
+                        </div>
+                        <div class="c-50 column">
+                            {{ bankData.getGround.b5.income|moneyFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <strong>{{ langs.TOTAL }}</strong>
+                        </div>
+                        <div class="c-50 column">
+                            {% set groundIncome = bankData.getGround.b1.income + bankData.getGround.b2.income + bankData.getGround.b3.income + bankData.getGround.b4.income + bankData.getGround.b5.income %}
+                            <strong>{{ groundIncome|moneyFormat }}</strong>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>

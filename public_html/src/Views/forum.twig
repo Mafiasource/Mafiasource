@@ -1,0 +1,205 @@
+{% extends "/app/Resources/Views/base.twig" %}
+
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
+<style>
+.spoiler-content {display:none;}
+h2 {margin:0;}
+h3 {margin:0;}
+p{margin:0;}
+img {max-width:100%;}
+#forum {width:100%;margin: 0 0 3.5em 0;}
+.forum-cat-row {min-height:5.25em;}
+.forum-cat-row, .forum-topic-row, .forum-message-row {padding:.5em 0;}
+.forum-message-row {margin:.5em -15px;}
+.forum-cat-row > .c-15, .forum-cat-row > .c-25, .forum-cat-row > .c-60 {height:100%;}
+.forum-topic-row > .c-80, .forum-topic-row > .c-20 {height:auto;min-height:34px;}
+.forum-topic-row:first-child {border-top: 1px solid #000;}
+.button.topic {top: 0.2em;}
+.subtitle-span {font-size:11px;position:relative;top:-.3em;}
+blockquote {padding-left:10px;border-left:5px solid #808080;box-sizing:border-box;}
+section#content section#forum hr {display:block;width:100%;height:1px;margin:.1em 0 .5em 0;padding:0;background-color:#444;}
+section#content section#forum h1 {text-align:left;}
+section#content section#forum .dateActions {position: relative;top:.25em;margin-bottom: 0em;margin-left: 1em;}
+@media (max-width: 991px) {section#content section#forum h3 {font-size:24px;}}
+/*@media (max-width: 768px) {section#content section#forum h3 {font-size:20px;}}*/
+@media (max-width: 530px) {
+    section#content section#forum h1 {font-size:28px;}
+    section#content section#forum h3 {font-size:20px;}.subtitle-span {top:-.1em;}p {font-size:.9rem;}
+}
+.pagination {display: inline-block;padding-left: 0;margin: 5px 0;border-radius: 4px;}
+.pagination.right {float:right;}
+.pagination > ul {list-style:none;margin:0;padding:0;}
+.pagination > ul > li {display: inline;}
+.pagination > ul > li > a, .pagination > ul > li > span {position: relative;float: left;padding: 6px 12px;margin-left: -1px;line-height: 1.42857143;color: #FFFFFF;text-decoration: none;background-color: rgba(70,70,70,0.7);border: 1px solid #000;}
+.pagination > ul > li:first-child > a, .pagination > ul > li:first-child > span {margin-left: 0;border-top-left-radius: 4px;border-bottom-left-radius: 4px;}
+.pagination > ul > li:last-child > a, .pagination > ul > li:last-child > span {border-top-right-radius: 4px;border-bottom-right-radius: 4px;}
+.pagination > ul > li > a:hover, .pagination > ul > li > span:hover, .pagination > ul > li > a:focus, .pagination > ul > li > span:focus {z-index: 2;color: #23527c;background-color: #eee;border-color: #ddd;}
+.pagination > ul > .active > a, .pagination > ul > .active > span, .pagination > ul > .active > a:hover, .pagination > ul > .active > span:hover, .pagination > ul > .active > a:focus, .pagination > ul > .active > span:focus {z-index: 3;color: #fff;cursor: default;background-color: #5F838F;border-color: #fff;}
+.pagination > ul > .disabled > span, .pagination > ul > .disabled > span:hover, .pagination > ul > .disabled > span:focus, .pagination > ul > .disabled > a, .pagination > ul > .disabled > a:hover, .pagination > ul > .disabled > a:focus {color: #777;cursor: not-allowed;background-color: #fff;border-color: #ddd;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<section id="content">
+    <div class="container">
+        {% include "/src/Views/.cookies.twig" %}
+        {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+        <section id="forum">
+            <h1>{{ forumTitle|raw }}</h1>
+            {% if navigation is not empty and (catData is not empty or topicData is not empty) %}
+                <div class="row">
+                    <div class="col-12">
+                        {{ navigation|raw }}
+                    </div>
+                </div>
+                <br class="clear"/>
+            {% endif %}
+            {% if catID is empty %}
+                {% for cat in categories %}
+                    <div class="row forum-cat-row {{ cycle(['odd', 'even'], loop.index0) }} align-items-center">
+                        <div class="col-1 d-none d-md-block">
+                            <a href="{{ routing.getRouteByRouteName('forum') }}/{{ cat.getUrl }}">
+                                <img src="{{ staticRoot }}/foto/web/public/images/forum_category/{{ cat.getPicture }}" class="middle" alt="{{ cat.getCategory }}"/>
+                            </a>
+                        </div>
+                        <div class="col-9">
+                            <h3><a href="{{ routing.getRouteByRouteName('forum') }}/{{ cat.getUrl }}">{{ cat.getCategory }}</a></h3>
+                            <p><a href="{{ routing.getRouteByRouteName('forum') }}/{{ cat.getUrl }}">{{ cat.getDescription }}</a></p>
+                        </div>
+                        <div class="col-3 col-md-2">
+                            <p><a href="{{ routing.getRouteByRouteName('forum') }}/{{ cat.getUrl }}"><small>{{ cat.getTopics }} Topics &amp; {{ cat.getReactions }} {{ langs.REACTION }}s</small></a></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% if topicID is empty %}
+                    {% if userData is not empty %}
+                        <div class="row">
+                            <div class="col-12">
+                                <a id="newTopic" href="javascript:void(0);" class="button topic float-right ajaxTab" data-tab="forum.new.topic" data-category="{{ catData.getCategory }}">{{ langs.NEW_TOPIC }}</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <br class="clear"/>
+                    {% for topic in topics %}
+                        <div class="row forum-topic-row {{ cycle(['odd', 'even'], loop.index0) }} align-items-center">
+                            <div class="col-9">
+                                <a href="{{ routing.getRouteByRouteName('forum') }}/{{ catData.getUrl }}/{{ topic.getCleanUrl }}"><h3><img src="{{ staticRoot }}/foto/web/public/images/forum_status/{{ topic.statusPicture }}" class="icon" alt="Pinned"/>&nbsp;{{ topic.getTitle|raw }}&nbsp;<span class="subtitle-span">|&nbsp;<span class="hideMobile">{{ langs.BY }} </span>{{ topic.getStarter }}<span class="hideMobile"> {{ langs.ON|lower }} {{ topic.getDate }}</span></span></h3></a>
+                            </div>
+                            <div class="col-3">
+                                <p class="center"><a href="{{ routing.getRouteByRouteName('forum') }}/{{ catData.getUrl }}/{{ topic.getCleanUrl }}"><small>{{ topic.getReactions }} {{ langs.REACTION }}s</small></a></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% if topics is empty %}
+                        <div class="row">
+                            <div class="col-12">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="Cross"/> {{ langs.NO_TOPICS_YET }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="row forum-message-row">
+                        <div class="col-2 d-none d-md-block">
+                            {{ userTagManager.write('topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
+                            <br />
+                            <img src="{{ staticRoot }}/foto/web/public/images/users/{% if topicData.getStarterAvatar %}{{ topicData.getStarterUID }}/uploads/{{ topicData.getStarterAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ topicData.getStarter|strip }}" /><br />
+                            <small>Posts: {{ topicData.getStarterPostsCnt }}</small>
+                        </div>
+                        <div class="col-sm-12 col-md-10">
+                            <div class="d-block d-md-none">
+                                {{ userTagManager.write('topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
+                                <small>Posts: {{ topicData.getStarterPostsCnt }}</small><br />
+                            </div>
+                            <small class="float-right darkgray dateActions">{{ topicData.getDate }}<br />
+                                {% if topicData.getStarter == userData.getUsername %}
+                                    <a href="javascript:void(0);" class="ajaxTab" data-tab="forum.edit.topic" data-topic-id="{{ topicData.getId }}" data-topic-title="{{ topicData.getTitle|pureHtml }}" data-topic-content="{{ topicData.getContent|pureHtml }}">Bewerk</a>
+                                {% endif %}
+                            </small>
+                            {{ topicData.getContent|raw}}
+                        </div>
+                    </div>
+                    {% if userData is not empty %}
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="javascript:void(0);" class="button ajaxTab" data-tab="forum.new.reaction" data-topic-id="{{ topicData.getId }}">{{ langs.NEW_REACTION }}</a>
+                                {% if pagination.pagination is empty %}<br class="clear"/><br /><br />{% else %}{% include "src/Views/.Paginate.twig" %} {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% for reaction in topicData.getReactions %}
+                        <div class="row forum-message-row {{ cycle(['odd', 'even'], loop.index) }}">
+                            <div class="col-2 d-none d-md-block">
+                                {{ userTagManager.write('topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
+                                <br />
+                                <img src="{{ staticRoot }}/foto/web/public/images/users/{% if reaction.getReactorAvatar %}{{ reaction.getReactorUID }}/uploads/{{ reaction.getReactorAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ reaction.getReactor|strip }}" /><br />
+                                <small>Posts: {{ reaction.getReactorPostsCnt }}</small>
+                            </div>
+                            <div class="col-sm-12 col-md-10">
+                                <div class="d-block d-md-none">
+                                    {{ userTagManager.write('topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
+                                    <small>Posts: {{ reaction.getReactorPostsCnt }}</small><br />
+                                </div>
+                                <small class="float-right darkgray dateActions">
+                                    {{ reaction.getDate }}<br />
+                                    {% if userData is not empty %}
+                                        {% if reaction.getReactor != userData.getUsername %}
+                                            <a href="javascript:void(0);" class="ajaxTab" data-tab="forum.new.quoted.reaction" data-topic-id="{{ topicData.getId }}" data-quote-content="{{ reaction.getQuoteContent|pureHtml }}">Quote</a>
+                                        {% endif %}
+                                        {% if reaction.getReactor == userData.getUsername %}
+                                            <a href="javascript:void(0);" class="ajaxTab" data-tab="forum.edit.reaction" data-topic-id="{{ topicData.getId }}" data-reaction-id="{{ reaction.getId }}" data-reaction-content="{{ reaction.getContent|pureHtml }}">Bewerk</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </small>
+                                {{ reaction.getContent|raw }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% if topicData.getReactions is empty %}
+                        <div class="row">
+                            <div class="col-12">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="Cross"/> {{ langs.NO_REACTIONS_YET }}
+                            </div>
+                        </div>
+                    {% endif %}
+                
+                    {% if topicData.getReactions is not empty %}
+                        {% if userData is not empty %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <a href="javascript:void(0);" class="button ajaxTab" data-tab="forum.new.reaction" data-topic-id="{{ topicData.getId }}">{{ langs.NEW_REACTION }}</a>
+                                    {% if pagination.pagination is empty %}<br class="clear"/><br />{% else %}{% include "src/Views/.Paginate.twig" %} {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    <br class="clear"/>
+                    {% if userData is not empty %}
+                        <div id="forumReplyResponse"></div>
+                        <h4>{{ langs.REACT_FAST }}</h4>
+                        <form id="forum-quick-reply" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('forum-reply') }}" method="POST" data-response="#forumReplyResponse">
+                            <input type="hidden" name="topicID" value="{{ topicData.getId }}"/>
+                            <textarea id="quickReply" name="reply-message" rows="10" cols="80"></textarea>
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="submit" name="reply" class="button" value="{{ langs.PLACE_REACTION }}"/>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </section>
+    </div>
+</section>
+<div id="openTab"></div>
+{% endblock content %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/popup-open-tab.js"></script>
+    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+    <script src="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
+    {% if topicID is not empty or catID is not empty %}
+        <script src="{{ staticRoot }}/web/lib/ckeditorgame/ckeditor.js"></script>
+    {% endif %}
+{% endblock javascripts %}

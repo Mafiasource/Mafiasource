@@ -1,0 +1,48 @@
+<div class="top">
+    {{ langs.VIEW }} {{ langs.GROUND_MAP|lower }} {{ langs.FROM|lower }} {{ groundMap.0.getState }}
+</div>
+<div class="content-container">
+    <div class="row cols cf">
+        <div class="c-30 column">
+            {{ langs.LOCATION }}
+        </div>
+        <div class="c-70 column">
+            <select name="stateID">
+                <option value="0">{{ langs.MAKE_A_CHOICE }}</option>
+                {% for s in states %}
+                    <option value="{{ s.getId }}">{{ s.getName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        {% if hometownFamily %}
+            {% set hometownFamily = '<a href="/game/family-page/'~hometownFamily~'">'~hometownFamily~'</a>' %}
+            <h2 class="center">{{ groundMap.0.getState }} - Hometown {{ langs.OF|lower }} <strong class="gray">{{ hometownFamily|raw }}</strong></h2>
+        {% else %}
+            {% set hometownFamily = langs.NO_ONE %}
+            <h2 class="center"><strong class="gray">{{ hometownFamily }}</strong> {{ langs.IS_THE_OWNER_OF_THIS|lower }} hometown in {{ groundMap.0.getState }}.</h2>
+        {% endif %}
+    </div>
+</div>
+<br class="clear"/>
+{% set lastGroundMap = groundMap|last %}
+<div class="map-container" style="position: relative;margin-left:0px;margin-top: 5px;width:692px;max-width:100%;height:{% if lastGroundMap.getCoordsTopPx >= 500 %}560{% else %}500{% endif %}px;">
+    <img style="position: absolute; left: 0px; top: 0px; z-index: 4;" border=0 src="{{ staticRoot }}/web/public/images/ground-map/state-borders/{{ groundMap.0.getStateID }}.png" usemap="#Map"/>
+    <img style="position: absolute; left: 0px; top: 0px; z-index: 3;" border=0 src="{{ staticRoot }}/web/public/images/ground-map/state-grid/{{ groundMap.0.getStateID }}.png"/>
+    <map name="Map">
+        {% for g in groundMap %}
+            {% set hPx = 38 %}
+            {% if g.getStateID == 5 %}
+                {% if g.getGID > 0 and g.getGID < 5 %}
+                    {% set hPx = 37 %}
+                {% endif %}
+            {% endif %}
+            <div class="areaDiv" style="position: absolute;left: {{ g.getCoordsLeftPx }}px;top: {{ g.getCoordsTopPx }}px;z-index: 2;width: 38px;height: {{ hPx }}px;background-color: #999999;background-image:url({{ staticRoot }}/foto/web/public/images/{{ g.getPicture }});background-size:contain;"></div>
+        {% endfor %}
+        {% for i in range(1, groundMap|length) %}
+            {% set gc = groundCoords[i] %}
+      		<area class="ajaxTab" style="position:relative;z-index:4;" shape=rect href="javascript:void(0);" data-tab="ground" data-g-id="{{ i }}" data-state-id="{{ groundMap.0.getStateID }}" coords="{{ gc.coords }}" target="_top" />
+        {% endfor %}
+	</map>
+</div>

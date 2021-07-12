@@ -1,0 +1,32 @@
+{% extends "/app/Resources/Views/base.twig" %}
+ 
+{% block content %}
+    <h1 style="position: absolute;top: -10em;">{{ langs.MOOD_IMAGES }}</h1>
+    <section id="content">
+        <div id="carouselIndicators" class="carousel slide" data-ride="carousel" style="margin-top:-1.05rem;">
+          <ol class="carousel-indicators">
+            {% for s in screenshots %}
+                <li data-target="#carouselIndicators" data-slide-to="{{ loop.index0 }}"{% if loop.first %} class="active"{% endif %}></li>
+            {% endfor %}
+          </ol>
+          <div class="carousel-inner">
+            {% for s in screenshots %}
+                <div id="carousel_{{ loop.index }}" class="carousel-item{% if loop.first %} active{% endif %}">
+                    <picture>
+                        <source media="(min-width: 766px)" srcset="{{ staticRoot }}/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.png">
+                        <img class="d-block w-100" src="{{ staticRoot }}/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.mobile.png" alt="{{ s.name }}"/>
+                    </picture>
+                </div>
+            {% endfor %}
+          </div>
+          <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+    </section>
+{% endblock content %}

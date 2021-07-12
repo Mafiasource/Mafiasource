@@ -1,0 +1,68 @@
+{% set bLv = pageInfo.brothel.getBrothel %}
+<div class="row">
+    <img src="{{ staticRoot }}/web/public/images/red_light_district.jpg" class="middle" alt="Red Light District"/>
+</div>
+{% if bLv %}
+    {% if response %}
+        <div class="rowMsg">{% include "app/Resources/Views/macros/alerts.game.responses.twig" %}</div>
+    {% endif %}
+    <div class="row cols cf">
+        <div class="c-50 column">
+            Level:
+        </div>
+        <div class="c-50 column">
+            <strong>{{ bLv }}</strong>
+        </div>
+    </div>
+    {% if hasRights %}
+        {% if bLv < 15 %}
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    Upgrade{% if lang == 'nl' %}n{% endif %}:
+                </div>
+                <div class="c-50 column">
+                    <script type="text/javascript">if(typeof timeoutCBrothel !== 'undefined') clearTimeout(timeoutCBrothel);</script>
+                    <form class="row ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-property') }}" method="POST" data-response="#interactPropertyResponse">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="hidden" name="property" value="brothel"/>
+                        {% set upgradePrice = upgradePrices[bLv] %}
+                        <input type="submit" name="upgrade" value="{{ upgradePrice|moneyFormat }} "/>&nbsp;
+                        <img src="{{ staticRot }}/web/public/images/icons/clock.png" class="icon" alt="Clock"/> <span id="cBrothel{{ loop.index }}">{{ 'Brothel'|count(pageInfo.brothel.getCBrothel)|raw }}</span>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% else %}
+    {% if response %}
+        <div class="rowMsg">{% include "app/Resources/Views/macros/alerts.game.responses.twig" %}</div>
+    {% endif %}
+    <div class="row">
+       {% set noPropertyInfo = routing.replaceMessagePart(langs.BROTHEL|lower, langs.HAS_NO_PROPERTY_TYPE, '/{property}/') %}
+       <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ noPropertyInfo }}
+    </div>
+    {% if hasRights %}
+        <form class="row ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-property') }}" method="POST" data-response="#interactPropertyResponse">
+            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+            <input type="hidden" name="property" value="brothel"/>
+            <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ langs.BROTHEL|lower }}{% else %}{{ langs.BROTHEL|ucfirst }} {{ langs.BUY|lower }}{% endif %} {{ langs.FOR|lower }} {{ price|moneyFormat }}"/>
+        </form>
+    {% endif %}
+{% endif %}
+<div class="row cols cf">
+    <div class="c-50 column">
+        {{ langs.WHORES }}:
+    </div>
+    <div class="c-50 column">
+        {{ pageInfo.whores.getTotal|valueFormat }} / <strong>{{ capacity|valueFormat }}</strong>
+    </div>
+</div>
+<div class="row cols cf">
+    <div class="c-50 column">
+        {{ langs.AVERAGE }} {{ langs.PROFIT|lower }} / {{ langs.HOUR|lower }}:
+    </div>
+    <div class="c-50 column">
+        {% set profitHour = pageInfo.whores.getTotal * 20 %}
+        {{ profitHour|moneyFormat }}
+    </div>
+</div>

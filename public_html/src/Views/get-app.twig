@@ -1,0 +1,67 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% extends "/app/Resources/Views/base.twig" %}
+ 
+{% block content %}
+    <section id="content">
+        <div class="container">
+            {% include "/src/Views/.cookies.twig" %}
+            <div class="online-txt">
+                <p>{{ langs.ONLINE_MSG|raw }}</p>
+            </div>
+            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <h1>{{ langs.DOWNLOAD_APP }}</h1>
+                    <p>{{ langs.ANDROID_BETA_INFO|raw }} <small>v1.0.3</small></p>
+                    Scan: <a href="https://www.virustotal.com/gui/file/362a65732f7668a9064ce850d345eb20573cb0ed3d397e46ca9e6c7c6c10cf81/detection" rel="noreferrer" target="_blanc">VirusTotal.com</a>
+                </div>
+                <div class="col-lg-6">
+                    <section id="slider">
+                        <ul>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER1|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER2|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER3|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER4|raw }}
+                                </div>
+                            </li>
+                            {# As you can see, following remain invisible on the website. Expand CSS animation if needed #}
+                            <li>
+                                <div class="slider-container">
+                                    <h2>Team up</h2>
+                                    <p>Maak deel uit van een familie en neem deel aan oorlogen en familie overvallen!</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    <h2>Investeer</h2>
+                                    <p>Waag je kans op de Beurs en maak tot 100 den miljoenen met tactiek en inzicht!</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    <h2>Presteer</h2>
+                                    <p>Zorg voor eeuwige roem door in de hall van onze helden te staan!</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </section><br /><br />
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

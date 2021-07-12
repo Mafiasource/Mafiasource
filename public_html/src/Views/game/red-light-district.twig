@@ -1,0 +1,57 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .carousel {height:276px;}
+        span.slide-left {display:inline-block;width:35px;height:70px;position:relative;margin-top:65px;margin-left:10px;float:left;background: url({{ staticRoot }}/foto/web/public/images/slider-btns.png) 0 0 no-repeat;}
+        span.slide-right {display:inline-block;width:35px;height:70px;position:relative;margin-top:65px;margin-right:10px;float:right;background: url({{ staticRoot }}/foto/web/public/images/slider-btns.png) -35px 0 no-repeat;}
+        span.slide-left:hover{background-position:0 -75px;}
+        span.slide-right:hover{background-position:-35px -75px;}
+        span.slide-left.disabled, a.slide-right.disabled {opacity:.15;cursor:default;}
+        #pimpLvl {position:relative;display:block;margin-top: -3.85em;margin-bottom:2.5em;}
+        #pimpLvl > .number {font-size: 18px !important;}
+        @media (max-width: 688px) {
+            section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+            
+            section#ccontainer section#content #pimp.row.cols.cf > .c-30.column, section#ccontainer section#content #pimp.row.cols.cf > .c-70.column {width:100%;border:none;}
+            section#ccontainer section#content #pimp.row.cols.cf > .c-70.column {border-bottom:1px solid #000;}
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    Red Light District
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'pimp' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('red-light-district') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt=""/> {{ langs.PIMP_WHORES }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'rld' %}tab_on{% endif %}  t-50">
+        <a href="{{ routing.getRouteByRouteName('buy-hooker-windows') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/building_add.png" class="icon" alt=""/> {{ langs.BUY_WINDOWS }}
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/red-light-district/"~tab~".twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script>
+$('.execbutton').on("click", function(){
+    $("#pimpWhoresResponse").empty();
+});
+</script>
+{% if commit == true %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('input.execbutton.active').click();
+});
+</script>
+{% endif %}
+{% endblock javascripts %}

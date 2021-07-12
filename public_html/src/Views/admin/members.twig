@@ -1,0 +1,28 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Gebruikers beheren (Back-end gebruikers)</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            {% set tableRows = members %}
+            {% set dataTable = 'member' %}
+            {% set startvar = pagination.from %}
+            {% set skipFields = ['id','password'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            <a href="{{ routing.getRouteByRouteName('admin-create-member') }}" class="btn btn-light">Nieuwe Back-end gebruiker aanmaken</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

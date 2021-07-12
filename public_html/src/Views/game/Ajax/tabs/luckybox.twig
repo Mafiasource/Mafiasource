@@ -1,0 +1,109 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+<style type="text/css">
+    #luckybox-container .luckybox-more-info {display: none;}
+    .luckybox-back-btn, .more-info {display:none;}
+    .luckybox-back-btn.active, .more-info.active {display:inline-block;}
+</style>
+<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Lucky Box</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div id="luckybox-container">
+            <div class="luckybox">
+                {% if luckybox > 0 %}
+                    <img src="{{ staticRoot }}/foto/web/public/images/luckybox.png" class="middle" alt="Lucky Box"/>
+                    <div id="openLuckyBoxResponse">
+                        {% include "/src/Views/game/Ajax/luckybox.twig" %}
+                    </div>
+                {% else %}
+                    <div class="center"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.YOU_HAVE }} {% if luckybox == 0 %}{{ langs.NONE|lower }}{% else %}<strong>{{ luckybox|valueFormat }}</strong>{% endif %} lucky box{% if luckybox != 1 %}{% if lang == 'nl' %}en{% else %}es{% endif %}{% endif %}!</div>
+                {% endif %}
+            </div>
+            <div class="luckybox-more-info">
+                <table class="table table-sm table-dark table-bordered">
+                  <thead>
+                    <th scope="col"class="center"><strong>{{ langs.PRIZE }}</strong></th>
+                    <th scope="col"class="center"><strong>{{ langs.CHANCE }}</strong></th>
+                  </thead>
+                  <tbody>
+                    {% set topIcon = 'star' %}
+                    {% for cl in chanceList %}
+                        {% if loop.index == 2 %}
+                            {% set topIcon = 'award_star_gold_1' %}
+                        {% elseif loop.index == 3 %}
+                            {% set topIcon = 'award_star_silver_1' %}
+                        {% elseif loop.index == 4 %}
+                            {% set topIcon = 'award_star_bronze_1' %}
+                        {% endif %}
+                        <tr>
+                            <td>
+                                {% if loop.index >= 1 and loop.index < 5 %}<img src="{{ staticRoot }}/foto/web/public/images/icons/{{ topIcon }}.png" class="icon" alt="Top {{ langs.PRIZE }}"/>&nbsp;{% endif %}{% if cl.amount is iterable %}{% if cl.prizeDb != 'bank' and cl.prizeDb != 'bullets' %}{{ langs.BETWEEN }} {% endif %}{% if cl.prizeDb == 'bank' %}${% endif %}{{ cl.amount.0|valueFormat }} {% if cl.prizeDb == 'bank' or cl.prizeDb == 'bullets' %}{{ langs.TO|lower }}{% else %}{{ langs.AND|lower }}{% endif %} {% if cl.prizeDb == 'bank' %}${% endif %}{{ cl.amount.1|valueFormat }}{% else %}{% if cl.prizeDb == 'bank' %}${% endif %}{{ cl.amount|valueFormat }}{% endif %} {{ cl.prize|lower }}
+                            </td>
+                            <td class="center">
+                                {{ cl.chanceShow }}%
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <br class="clear"/>
+                {% if userData.getDonatorID == 0 %}
+                    {% set boxes = 5 %}
+                {% elseif userData.getDonatorID == 1 %}
+                    {% set boxes = 7 %}
+                {% elseif userData.getDonatorID == 5 %}
+                    {% set boxes = 10 %}
+                {% elseif userData.getDonatorID == 10 %}
+                    {% set boxes = 15 %}
+                {% endif %}
+                {% set luckyMsgReplaces = [
+                    {part: boxes, message: langs.LUCKY_BOX_INFO, pattern: '/{boxes}/'},
+                    {part: routing.settings.gamename, message: 'False', pattern: '/{gamename}/'},
+                ] %}
+                {% set luckyMsg = routing.replaceMessageParts(luckyMsgReplaces) %}
+                {{ alert.build('Info', 'alert-info', 'help', luckyMsg) }}
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default button more-info active" rel="luckybox-more-info">{{ langs.MORE_INFO }}</button>
+        <button type="button" class="btn btn-default button luckybox-back-btn">{{ langs.BACK }}</button>&nbsp;
+        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
+    var x = document.createElement('script');
+    x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
+    document.getElementsByTagName("body")[0].appendChild(x);
+}
+$(document).ready(function(){
+    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    $('#modal').on('hidden.bs.modal', function () {
+        $("#openTab").empty();
+    });
+    
+    $('.more-info').click(function(e){
+        $("#luckybox-container > .luckybox").slideUp(250);
+        $("#luckybox-container > ."+$(this).attr('rel')).slideDown(250);
+        $(".luckybox-back-btn").addClass('active');
+        $(".more-info").removeClass('active');
+        e.preventDefault();
+    });
+    $('.luckybox-back-btn').click(function(e){
+        $(".luckybox-more-info").slideUp(250);
+        $("#luckybox-container > .luckybox").slideDown(250);
+        $(".luckybox-back-btn").removeClass('active');
+        $(".more-info").addClass('active');
+        e.preventDefault();
+    });
+});
+</script>

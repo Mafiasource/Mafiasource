@@ -1,0 +1,146 @@
+{% import "app/Resources/Views/macros/percent.bar.level.macro.twig" as percentLevelBar %}
+
+<div id="interactCrimeResponse"></div>
+{% if response %}
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}
+<div class="subtop">
+    {{ langs.ORGANIZED }}{% if lang == 'nl' %}e{% endif %} {{ langs.CRIMES }} &amp; Stats
+</div>
+<div class="content-container">
+    <div id="crimes" class="row cols cf">
+        <div class="c-70 column no-padding">
+            <div id="carousel-crimes" class="carousel slide" data-ride="carousel">
+              <ol class="carousel-indicators">
+                {% for item in crimesPage.crimes %}
+                    <li data-target="#carousel-crimes" data-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
+                {% endfor %}
+              </ol>
+              <div class="carousel-inner center">
+                {% for item in crimesPage.crimes %}
+                    {# FRONT END LOGIC REGARDING PREPARATIONS #}
+                    {% set routeName, responseField, crimeReadyToCommit = 'commit-organized-crime', 'interactCrimeResponse', 0 %}
+                    {% if item.getType == 2 or item.getType == 3 %}
+                      {% if item.getType == 2 and item.getPreparedCrime.getUserReady and item.getPreparedCrime.getParticipantReady %}
+                        {% set crimeReadyToCommit = 1 %}
+                      {% elseif item.getType == 3 and item.getPreparedCrime.getUserReady and item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getParticipant2Ready and item.getPreparedCrime.getParticipant3Ready %}
+                        {% set crimeReadyToCommit = 1 %}
+                      {% endif %}
+                      {% if crimeReadyToCommit == 0 %}
+                        {% set routeName = 'prepare-organized-crime' %}
+                        {% if item.getType == 2 %}
+                          {% set responseField = 'refreshCrimeResponse' %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                    <div class="carousel-item {% if item.getActive == true %}active{% endif %}">
+                      <form id="commitOrganizedCrime_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName(routeName) }}" data-response="#{{ responseField }}">
+                          <h2>{{ item.getName }} - <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="Money" class="icon"/> {{ item.getMinProfit|moneyFormat }} - {{ item.getMaxProfit|moneyFormat }}</h2>
+                          <p>{{ item.getDescription }}</p>
+                          {% if item.getPicture is not empty %}<img src="{{ staticRoot }}/foto/300x70/1/web/public/images/crime/{{ item.getPicture }}{#&w=300&h=70&zc=1#}" class="middle" alt="{{ item.getName }}"/>{% endif %}
+                          <input type="hidden" name="id" value="{{ item.getId }}"/>
+                          <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                          {% set commitBtn = '<input type="submit" name="' ~ routeName ~ '" class="execbutton" value="' ~ langs.COMMIT_CRIME ~ '"/>' %}
+                          {% if item.getActive == true %}
+                            {% set commitBtn = '<input type="submit" name="' ~ routeName ~ '" class="execbutton active" value="' ~ langs.COMMIT_CRIME ~ '"/>' %}
+                          {% endif %}
+                          {% if item.getType == 1 %}
+                            <br />
+                            {{ commitBtn|raw }}
+                          {% elseif item.getType == 2 %}
+                            {% if item.getPreparedCrime %}
+                                <br />
+                                {% if item.getPreparedCrime.getUserID == userData.getId %}
+                                    {% if item.getPreparedCrime.getJob == 1 %}
+                                        <p><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="Starter"/> {{ userData.getUsername }}: {% if item.getPreparedCrime.getUserReady and item.getPreparedCrime.getGarageID > 0 %}<span class="lightgreen">{{ langs.READY }}</span>{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% endif %}&nbsp;{% if item.getPreparedCrime.getUserReady and item.getPreparedCrime.getGarageID > 0 %}{{ item.getPreparedCrime.getVehicle }}{% else %}<select name="vehicleID" class="supplySelect"><option value="0">{{ langs.VEHICLE }}</option>{% for v in vehicles %}<option value="{{ v.getId }}">{{ v.getVehicleName }}</option>{% endfor %}</select><input type="submit" class="button" name="ready-up" value="Ready up"/>{% endif %}</p>
+                                    {% elseif item.getPreparedCrime.getJob == 2 %}
+                                        <p><img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" class="icon" alt="Starter"/> {{ userData.getUsername }}: {% if item.getPreparedCrime.getUserReady and item.getPreparedCrime.getWeaponType > 0 %}<span class="lightgreen">{{ langs.READY }}</span>{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% endif %}&nbsp;{% if item.getPreparedCrime.getUserReady and item.getPreparedCrime.getWeaponType > 0 %}{{ item.getPreparedCrime.getWeapon.name }}{% else %}<select name="weaponType" class="supplySelect"><option value="0">Backup {{ langs.WEAPON }}</option>{% for k, w in weapons %}<option value="{{ k }}">{{ w.name }} - {{ w.price|moneyFormat }}</option>{% endfor %}</select><input type="submit" class="button" name="ready-up" value="Ready up"/>{% endif %}</p>
+                                    {% endif %}
+                                    <p><img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="Partner"/> {{ item.getPreparedCrime.getParticipant }}: {% if item.getPreparedCrime.getParticipantReady %}<span class="lightgreen">{{ langs.READY }}</span>{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% endif %}{% if not (item.getPreparedCrime.getUserReady and item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getGarageID != 0 and item.getPreparedCrime.getWeaponType != 0) %}&nbsp;<input type="text" name="username" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select><input type="submit" class="button" name="change-participant" value="{{ langs.EDIT }}"/>{% endif %}</p>
+                                {% elseif item.getPreparedCrime.participantID == userData.getId %}
+                                    <p><img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="Starter"/> {{ item.getPreparedCrime.getUsername }}: {% if item.getPreparedCrime.getUserReady %}<span class="lightgreen">{{ langs.READY }}</span>{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% endif %}</p>
+                                    {% if item.getPreparedCrime.getJob == 1 %}
+                                        <p><img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" class="icon" alt="Partner"/> {{ userData.getUsername }}: {% if item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getWeaponType > 0 %}<span class="lightgreen">{{ langs.READY }}</span>{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% endif %}&nbsp;{% if item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getWeaponType > 0 %}{{ item.getPreparedCrime.getWeapon.name }}{% else %}<select name="weaponType" class="supplySelect"><option value="0">Backup {{ langs.WEAPON }}</option>{% for k, w in weapons %}<option value="{{ k }}">{{ w.name }} - {{ w.price|moneyFormat }}</option>{% endfor %}</select><input type="submit" class="button" name="accept" value="{{ langs.ACCEPT }}"/><input type="submit" class="button" name="deny" value="{{ langs.DENY }}"/>{% endif %}</p>
+                                    {% elseif item.getPreparedCrime.getJob == 2 %}
+                                        <p><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="Partner"/> {{ userData.getUsername }}: {% if item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getGarageID > 0 %}<span class="lightgreen">{{ langs.READY }}</span>{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% endif %}&nbsp;{% if item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getGarageID > 0 %}{{ item.getPreparedCrime.getVehicle }}{% else %}<select name="vehicleID" class="supplySelect"><option value="0">{{ langs.VEHICLE }}</option>{% for v in vehicles %}<option value="{{ v.getId }}">{{ v.getVehicleName }}</option>{% endfor %}</select><input type="submit" class="button" name="accept" value="{{ langs.ACCEPT }}"/><input type="submit" class="button" name="deny" value="{{ langs.DENY }}"/>{% endif %}</p>
+                                    {% endif %}
+                                {% endif %}
+                                {% if item.getPreparedCrime.getUserReady and item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getGarageID != 0 and item.getPreparedCrime.getWeaponType != 0 %}
+                                    <br />
+                                    {{ commitBtn|raw }}
+                                {% else %}
+                                    {% if item.getPreparedCrime.getUserID == userData.getId %}
+                                        <br /><br />
+                                        <p><input type="submit" class="button" name="stop" value="Stop{% if lang == 'nl' %}pen{% endif %}"/></p>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <div class="radio">
+                                    {{ userData.getUsername }}:&nbsp;
+                                    <label>
+                                        <input type="radio" name="job" value="driver" checked="checked"/> Driver
+                                    </label>&nbsp;
+                                    <label>
+                                        <input type="radio" name="job" value="raider"/> Raider
+                                    </label>
+                                </div>
+                                <br class="clear"/>
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="Partner"/> Partner: <input type="text" name="username" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select></p>
+                                <br class="clear"/>
+                                <input type="submit" name="{{ routeName }}" class="execbutton{% if item.getActive == true %} active{% endif %}" value="{{ langs.PREPARE }}Prepare"/>
+                            {% endif %}
+                          {% elseif item.getType == 3 %}
+                            {% if item.getPreparedCrime %}
+                                {% if item.getPreparedCrime.getCommitTime > 0 %}
+                                    <p><img src="{{ staticRoot }}/foto/web/public/images/icons/bell.png" class="icon" alt=""/>&nbsp;<strong class="donator">{{ langs.IN_PROGRESS }}</strong></p>
+                                {% endif %}
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/user_gray.png" class="icon" alt="{{ langs.LEADER }}"/> {{ langs.LEADER }}: {{ item.getPreparedCrime.getUsername }}</p>
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="Getaway"/> {{ item.getPreparedCrime.getParticipant }}: {% if item.getPreparedCrime.getParticipantReady %}<span class="lightgreen">{{ langs.READY }}</span>{% if item.getPreparedCrime.getGarageID > 0 %}&nbsp;{{ item.getPreparedCrime.getVehicle }}{% endif %}{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% if userData.getId == item.getPreparedCrime.getParticipantID %}<select name="vehicleID" class="supplySelect"><option value="0">{{ langs.VEHICLE }}</option>{% for v in vehicles %}<option value="{{ v.getId }}">{{ v.getVehicleName }}</option>{% endfor %}</select><input type="submit" class="button" name="accept" value="{{ langs.ACCEPT }}"/><input type="submit" class="button" name="deny" value="{{ langs.DENY }}"/>{% endif %}{% endif %}{% if userData.getId == item.getPreparedCrime.getUserID and not (item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getGarageID != 0) %}&nbsp;<input type="text" name="getaway" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend-getaway"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select><input type="submit" class="button" name="change-driver" value="{{ langs.EDIT }}"/>{% endif %}</p>
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" class="icon" alt="Ground"/> {{ item.getPreparedCrime.getParticipant2 }}: {% if item.getPreparedCrime.getParticipant2Ready %}<span class="lightgreen">{{ langs.READY }}</span>{% if item.getPreparedCrime.getWeaponType > 0 %}&nbsp;{{ item.getPreparedCrime.getWeapon.name }}{% endif %}{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% if userData.getId == item.getPreparedCrime.getParticipant2ID %}<select name="weaponType" class="supplySelect"><option value="0">Backup {{ langs.WEAPON }}</option>{% for k, w in weapons %}<option value="{{ k }}">{{ w.name }} - {{ w.price|moneyFormat }}</option>{% endfor %}</select><input type="submit" class="button" name="accept" value="{{ langs.ACCEPT }}"/><input type="submit" class="button" name="deny" value="{{ langs.DENY }}"/>{% endif %}{% endif %}{% if userData.getId == item.getPreparedCrime.getUserID and not (item.getPreparedCrime.getParticipant2Ready and item.getPreparedCrime.getWeaponType != 0) %}&nbsp;<input type="text" name="ground" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend-ground"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select><input type="submit" class="button" name="change-ground" value="{{ langs.EDIT }}"/>{% endif %}</p>
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/magnifier.png" class="icon" alt="Intel"/> {{ item.getPreparedCrime.getParticipant3 }}: {% if item.getPreparedCrime.getParticipant3Ready %}<span class="lightgreen">{{ langs.READY }}</span>{% if item.getPreparedCrime.getIntelType > 0 %}&nbsp;{{ item.getPreparedCrime.getIntel.name }}{% endif %}{% else %}<span class="game-moderator">{{ langs.PENDING }}</span>{% if userData.getId == item.getPreparedCrime.getParticipant3ID %}<select name="intelType" class="supplySelect"><option value="0">Intel {{ langs.PACKAGE }}</option>{% for k, i in intel %}<option value="{{ k }}">{{ i.name }} - {{ i.price|moneyFormat }}</option>{% endfor %}</select><input type="submit" class="button" name="accept" value="{{ langs.ACCEPT }}"/><input type="submit" class="button" name="deny" value="{{ langs.DENY }}"/>{% endif %}{% endif %}{% if userData.getId == item.getPreparedCrime.getUserID and not (item.getPreparedCrime.getParticipant3Ready and item.getPreparedCrime.getIntelType != 0) %}&nbsp;<input type="text" name="intel" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend-intel"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select><input type="submit" class="button" name="change-intel" value="{{ langs.EDIT }}"/>{% endif %}</p>
+                            {% else %}
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/user_gray.png" class="icon" alt="{{ langs.LEADER }}"/> {{ langs.LEADER }}: <strong>{{ userData.getUsername }}</strong></p>
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="Getaway"/> Getaway: <input type="text" name="getaway" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend-getaway"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select></p>
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" class="icon" alt="Ground"/> {{ langs.GROUND }}: <input type="text" name="ground" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend-ground"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select></p>
+                                <p><img src="{{ staticRoot }}/foto/web/public/images/icons/magnifier.png" class="icon" alt="Intel"/> Intel: <input type="text" name="intel" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend-intel"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select></p>
+                                <br class="clear"/>
+                                <input type="submit" name="{{ routeName }}" class="execbutton{% if item.getActive == true %} active{% endif %}" value="{{ langs.PREPARE }}Prepare"/>
+                            {% endif %}
+                            {% if item.getPreparedCrime.getUserID == userData.getId %}
+                                {% if item.getPreparedCrime.getUserReady and item.getPreparedCrime.getParticipantReady and item.getPreparedCrime.getParticipant2Ready and item.getPreparedCrime.getParticipant3Ready and item.getPreparedCrime.getGarageID != 0 and item.getPreparedCrime.getWeaponType != 0 and item.getPreparedCrime.getIntelType != 0 %}
+                                    <br />
+                                    {{ commitBtn|raw }}
+                                {% else %}
+                                    <br /><br />
+                                    <p><input type="submit" class="button" name="stop" value="Stop{% if lang == 'nl' %}pen{% endif %}"/></p>
+                                {% endif %}
+                            {% endif %}
+                          {% endif %}
+                          {# commitBtn|raw #}
+                      </form>
+                    </div>
+                {% endfor %}
+              </div>
+              <a class="left carousel-control-prev" href="#carousel-crimes" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">&nbsp;</span>
+              </a>
+              <a class="right carousel-control-next" href="#carousel-crimes" role="button" data-slide="next">
+                <span class="sr-only">&nbsp;</span>
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              </a>
+            </div>
+        </div>
+        <div class="c-30 column center">
+            <i class="darkgray">{{ langs.BULLETS }}:</i>&nbsp;<span id="crimeBullets">{{ crimesPage.user.getBullets|valueFormat }}</span><span id="crimeBulletsChange"></span><br />
+            <i class="darkgray">{{ langs.CRIME_PROFITS }}:</i>&nbsp;$<span id="crimeProfits">{{ crimesPage.user.getCrimesProfit|valueFormat }}</span><span id="crimeProfitsChange"></span><br />
+            <i class="darkgray">{{ langs.SUCCESS_FAIL_RATIO }}:</i>&nbsp;<span id="crimeSFRatio">{{ crimesPage.user.getCrimesSFRatio }}</span><br />
+            <i class="darkgray">{{ langs.RANK_POINTS_COLLECTED }}:</i>&nbsp;<span id="crimeRankPoints">{{ crimesPage.user.getCrimesRankpoints|valueFormat }}</span><span id="crimeRankPointsChange"></span><br /><br />
+            <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/crimes.png" alt="Level" />
+            <span id="crimesLvl">Lv. <span class="number"><span id="crimesLv">{{ crimesPage.user.getCrimesLv }}</span><span id="crimesLvChange"></span></span></span>
+            <div style="max-width:150px;margin: 0 auto 1.65em auto;">
+                <span id="crimesPercent">{{ percentLevelBar.create(crimesPage.user.getCrimesXp.experience) }}</span>
+            </div>
+        </div>
+    </div>
+</div>

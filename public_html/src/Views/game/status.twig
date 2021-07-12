@@ -1,0 +1,498 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+
+{% block stylesheets %}
+<style type="text/css">
+.center {text-align:center;}
+#referral-link {max-width:280px;}
+        @media (max-width: 688px) {
+            section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+        }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    Referral link
+</div>
+<div class="content-container">
+    <div class="row center">
+        <p>
+            <strong>Referral link:</strong>&nbsp;<input id="referral-link" type="text" value="https://{{ settings.domain|lower }}/register/referral/{{ userData.getUsername }}"/>
+            &nbsp;<button onclick="copyReferralLink()" class="button">{{ langs.COPY }}</button>
+        </p>
+    </div>
+    <div class="row center">
+        <a href="javascript:void(0);" onClick="document.getElementById('desc_referral').style.display='block'; this.style.display='none';" id="show_desc">{{ langs.CLICK_FOR_REFERRAL_INFO|raw }}</a>
+        <div id="desc_referral" style="display: none;text-align:left;">
+            {{ langs.REFERRAL_INFO|raw }}
+        </div>
+    </div>
+</div>
+<br />
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="top">
+            Status
+        </div>
+        <div class="content-container">
+            {% if statusData.getIsProtected %}
+                <div class="row">
+                    <a href="javascript:void(0);" class="remove-protection">
+                        {{ langs.PROTECTED }} {{ statusData.getIsProtected }}.<br />
+                        {{ langs.TAKE_AWAY_PROTECTION|raw }}
+                    </a>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="center">
+                    {{ statusData.getActiveTime|secondsToPlaytime }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.USERNAME }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ userData.getUsername }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>Status</strong>
+                </div>
+                <div class="c-50 column">
+                    {% if userData.getStatusID < 7 %}
+                        <strong class="{{ userData.getStatus|lower|replace({' ': '-'}) }} txt-shadow">{{ userData.getStatus }}</strong>
+                    {% else %}
+                        <strong class="{{ userData.getDonator|lower|replace({' ': '-'}) }} txt-shadow">{{ userData.getDonator }}</strong>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.MONEY }} Rank</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ userData.getMoneyRank }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>Rank</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ userData.getRankname }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.STATE }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ userData.getState }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>Kills <span class="gray">:</span>&nbsp;<span class="darkgray">Deaths</span><small class="game-moderator"> (Ratio)</small></strong>
+                </div>
+                <div class="c-50 column">
+                    {% if statusData.getDeaths == 0 and statusData.getKills == 0 %}
+                        {% set kDRatio = 'NaN' %}
+                    {% elseif statusData.getDeaths == 0 and statusData.getKills > 0 %}
+                        {% set kDRatio = '<span style="font-size: 24px;line-height: 9px;position: relative;top: 4px;">&infin;</span>' %}
+                    {% elseif statusData.getDeaths == statusData.getKills %}
+                        {% set kDRatio = 1|number_format(2, '.', ',') %}
+                    {% elseif statusData.getDeaths > 0 and statusData.getKills == 0 %}
+                        {% set kDRatio = 0|number_format(2, '.', ',') %}
+                    {% elseif statusData.getDeaths > 0 and statusData.getKills > 0 and statusData.getDeaths != statusData.getKills %}
+                        {% set kDRatio = (statusData.getKills / statusData.getDeaths)|number_format(2, '.', ',') %}
+                    {% endif %}
+                    {{ statusData.getKills }} <span class="gray">:</span>&nbsp;<span class="darkgray">{{ statusData.getDeaths }}</span><small class="game-moderator"> ({{ kDRatio|raw }})</small>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong><span class="red txt-shadow">Headshots</span></strong>
+                </div>
+                <div class="c-50 column">
+                    <span class="red txt-shadow"><strong>{{ statusData.getHeadshots }}</strong></span>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.HONOR_POINTS }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ statusData.getHonorPoints|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.WHORES }} {{ langs.STREET }} / {{ langs.WINDOW }} <small>({{ langs.TOTAL }})</small></strong>
+                </div>
+                <div class="c-50 column">
+                    {% set whoresTotal = statusData.getWhoresStreet() + statusData.getWhoresRLD() %}
+                    {{ statusData.getWhoresStreet|valueFormat }} / {{ statusData.getWhoresRLD|valueFormat }} <small>({{ whoresTotal|valueFormat }})</small>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.WARNS }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {% if statusData.getWarns == 0 %}
+                        <span class="lightgreen">0</span>
+                    {% elseif statusData.getWarns == 1 %}
+                        <span class="green">1</span>
+                    {% elseif statusData.getWarns == 2 %}
+                        <span class="game-moderator">2</span>
+                    {% else %}
+                        <span class="red">3 <small>({{ langs.LAST_CHANCE }}!)</small></span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <br class="clear"/>
+    </div>
+    <div class="c-row-50 col">
+        <div class="top">
+            {{ langs.WAITING_TIMES }}
+        </div>
+        <div class="content-container">
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.CRIMES }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a href="{{ routing.getRouteByRouteName('crimes-do') }}">
+                        <span id="csCrimes">{{ 'sCrimes'|count(userData.getCCrimes)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.WEAPON }} Training</strong>
+                </div>
+                <div class="c-50 column">
+                    <a href="{{ routing.getRouteByRouteName('weapon-training-do') }}">
+                        <span id="csWeaponTraining">{{ 'sWeaponTraining'|count(userData.getCWeaponTraining)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.GYM }} Training</strong>
+                </div>
+                <div class="c-50 column">
+                    <a href="{{ routing.getRouteByRouteName('gym-do') }}">
+                        <span id="csGymTraining">{{ 'sGymTraining'|count(userData.getCGymTraining)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.STEAL_VEHICLES }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="stealvehicles" href="{{ routing.getRouteByRouteName('steal-vehicles-do') }}">
+                        <span id="csStealVehicles">{{ 'sStealVehicles'|count(userData.getCStealVehicles)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.PIMP_WHORES }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="pimpwhores" href="{{ routing.getRouteByRouteName('red-light-district-do') }}">
+                        <span id="csPimpWhores">{{ 'sPimpWhores'|count(userData.getCPimpWhores)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.FAMILY }} {{ langs.RAID }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="familyraid" href="{{ routing.getRouteByRouteName('family-raid') }}">
+                        <span id="csFamilyRaid">{{ 'sFamilyRaid'|count(userData.getCFamilyRaid)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.FAMILY }} {{ langs.CRIMES }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="familycrimes" href="{{ routing.getRouteByRouteName('family-crimes') }}">
+                        <span id="csFamilyCrimes">{{ 'sFamilyCrimes'|count(userData.getCFamilyCrimes)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.BOMBARDEMENT }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="bombardement" href="{{ routing.getRouteByRouteName('ground-map') }}">
+                        <span id="csBombardement">{{ 'sBombardement'|count(userData.getCBombardement)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.TRAVEL }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a href="{{ routing.getRouteByRouteName('airport') }}">
+                        <span id="csTravelTime">{{ 'sTravelTime'|count(userData.getCTravelTime)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.PRISON }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a href="{{ routing.getRouteByRouteName('prison') }}">
+                        <span id="csPrisonTime">{{ 'sPrisonTime'|count(userData.getCTravelTime)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.PIMP_WHORES }} {{ langs.FOR|lower }} {{ langs.USER }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="pimpwhoresFor" href="{{ routing.getRouteByRouteName('toplist') }}">
+                        <span id="csPimpWhoresFor">{{ 'sPimpWhoresFor'|count(userData.getCPimpWhoresFor)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br class="clear"/>
+    </div>
+</div>
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="top">
+            {{ langs.SCORE_HOUR }}
+        </div>
+        <div class="content-container">
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.HONOR_POINTS }} ({{ statusData.getHonorPoints|valueFormat }})</strong>
+                </div>
+                <div class="c-50 column">
+                    {% set scoreHonorHour = statusData.getHonorPoints * 3 %}
+                    {{ scoreHonorHour|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {% set killsTotal = statusData.getKills + statusData.getHeadshots %}
+                    <strong>Kills ({{ killsTotal|valueFormat }})</strong>
+                </div>
+                <div class="c-50 column">
+                    {% set scoreKillsTotal = killsTotal * 10 %}
+                    {{ scoreKillsTotal|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.WHORES }} ({{ whoresTotal|valueFormat }})</strong>
+                </div>
+                <div class="c-50 column">
+                    {% set whoresTotal = statusData.getWhoresStreet + statusData.getWhoresRLD %}
+                    {% set scoreWhoresTotal = whoresTotal * 2 %}
+                    {{ scoreWhoresTotal|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>Rank ({{ userData.getRankname }})</strong>
+                </div>
+                <div class="c-50 column">
+                    {% if userData.getRankpoints > 1500 %}
+                        {% set scoreRank = 1500 %}{# {% set scoreRank = userData.getRankID * 100 %} #}
+                    {% else %}
+                        {% set scoreRank = userData.getRankpoints %}
+                    {% endif %}
+                    {% set scoreRank = scoreRank|round(0, 'floor') %}
+                    {{ scoreRank|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.GROUND }} ({{ statusData.getGround }})</strong>
+                </div>
+                <div class="c-50 column">
+                    {% set scoreGround = statusData.getGround * 100 %}
+                    {{ scoreGround|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.TOTAL }} {{ langs.SCORE_HOUR|lower }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {% set scoreTotal = scoreHonorHour + scoreKillsTotal + scoreWhoresTotal + scoreRank + scoreGround %}
+                    {{ scoreTotal|valueFormat }}
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="top">
+            {{ langs.EQUIPMENT }}
+        </div>
+        <div class="content-container">
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.BULLETS }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ statusData.getBullets|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.WEAPON }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {% if lang == 'en' %}
+                        {% if statusData.getWeapon == 'Mes' %}
+                            {% set weapon = 'Knife' %}
+                        {% endif %}
+                    {% endif %}
+                    {% if statusData.getProtection == 'Geen' %}
+                        {% set protection = langs.NONE %}
+                    {% endif %}
+                    {% if statusData.getAirplane == 'Geen' %}
+                        {% set airplane = langs.NONE %}
+                    {% endif %}
+                    {% if not residenceData.getResidence %}
+                        {% set residence = langs.NONE %}
+                    {% endif %}
+                    {% if weapon %}
+                        {{ weapon }}
+                    {% else %}
+                        {{ statusData.getWeapon }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.PROTECTION }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {% if protection %}
+                        {{ protection }}
+                    {% else %}
+                        {{ statusData.getProtection }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.AIRPLANE }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {% if airplane %}
+                        {{ airplane }}
+                    {% else %}
+                        {{ statusData.getAirplane }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.RESIDENCE }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {% if residence %}
+                        {{ residence }}
+                    {% else %}
+                        {{ residenceData.getResidence }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <br class="clear"/>
+    </div>
+    <div class="c-row-50 col">
+        <div class="top">
+            {{ langs.STATUSBARS }}
+        </div>
+        <div class="content-container">
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.HEALTH }}</strong>
+                </div>
+                <div class="c-50 column health">
+                    {{ percentBar.create(userData.getHealthBar.health, userData.getHealthBar.class) }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>Rank</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ percentBar.create(userData.getRankpercentBar.rankpercent, userData.getRankpercentBar.class) }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.WEAPON }} {{ langs.EXPERIENCE }}</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ percentBar.create(statusData.getWeaponExperienceBar.experience, statusData.getWeaponExperienceBar.class) }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.WEAPON }} Training</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ percentBar.create(statusData.getWeaponTrainingBar.training, statusData.getWeaponTrainingBar.class) }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.GYM }} Training</strong>
+                </div>
+                <div class="c-50 column">
+                    {{ percentBar.create(statusData.getGymTrainingBar.training, statusData.getGymTrainingBar.class) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript">
+function copyReferralLink() {
+  var copyText = document.getElementById("referral-link");
+  
+  copyText.select();
+  copyText.setSelectionRange(0, 9999);
+  
+  document.execCommand("copy");
+  
+  alert("{{ langs.COPIED }}: " + copyText.value);
+}
+$('.remove-protection').on("click", function(e){
+    $.ajax({
+        url : "{{ routing.getAjaxRouteByRouteName('remove-protection') }}",
+        type: "POST",
+        data : {'security-token': '{{ securityToken }}'}
+    });
+    $(".remove-protection").parent().remove();
+    e.preventDefault();
+});
+</script>
+{% endblock javascripts %}

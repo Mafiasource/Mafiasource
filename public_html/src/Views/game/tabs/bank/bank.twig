@@ -1,0 +1,111 @@
+<div class="c-row cf">
+    <div id="ajaxLoader"></div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.DONATE }}
+            </div>
+            <div class="content-container">
+                <div id="bankDonateResponse" class="rowMsg"></div>
+                <form id="bank-donate" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('bank-donate') }}" data-response="#bankDonateResponse">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="" class="icon" border="0" /> {{ langs.RECEIVER }}
+                        </div>
+                        <div class="c-50 column">
+                            <input type="text" name="receiver" placeholder="{{ langs.RECEIVER }}" value=""/>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" alt="" class="icon" border="0" /> {{ langs.AMOUNT }}
+                        </div>
+                        <div class="c-50 column">
+                            <input type="number" name="amount" placeholder="{{ langs.AMOUNT }}" value="{% if userData.getBank > 999999999 %}999999999{% else %}{{ userData.getBank }}{% endif %}"/>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" alt="" class="icon" border="0" /> {{ langs.MESSAGE }}
+                        </div>
+                        <div class="c-50 column">
+                            <input type="text" name="message" placeholder="{{ langs.MESSAGE }}" value=""/>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/database_gear.png" alt="" class="icon" border="0" /> Code
+                            {# Captchas nooit vanuit staticRoot ophalen! #}
+                            <img src="{{ docRoot }}/web/public/images/captcha/captcha.php" class="right" alt=""/>
+                        </div>
+                        <div class="c-50 column">
+                            <input type="text" name="captcha_code" placeholder="Code" value=""/>
+                        </div>
+                    </div>
+                    <div class="row cf">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="donate-money" class="right" value="{{ langs.DONATE }}!"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.BANK_TRANSFER }}
+            </div>
+            <div class="content-container">
+                <div id="bankTransferResponse" class="rowMsg"></div>
+                <form id="bank-transfer" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('bank-transfer') }}" data-response="#bankTransferResponse">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_refresh.png" alt="" class="icon" border="0" /> {{ langs.ACTION }}
+                        </div>
+                        <div class="c-50 column">
+                            <select id="bankTransferAction" name="action">
+                                <option value="getMoney">{{ langs.WITHDRAW_MONEY_FROM_BANK }}</option>
+                                <option value="putMoney">{{ langs.STORE_MONEY_IN_BANK }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" alt="" class="icon" border="0" /> {{ langs.AMOUNT }}
+                        </div>
+                        <div class="c-50 column">
+                            <input id="bankTransferValueField" type="number" name="amount" placeholder="{{ langs.AMOUNT }}" value="{% if userData.getBank > 999999999 %}999999999{% else %}{{ userData.getBank }}{% endif %}"/>
+                        </div>
+                    </div>
+                    <div class="row cf">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="transfer-money" class="right" value="{{ langs.BANK_TRANSFER }}!"/>
+                    </div>
+                    <div class="row">
+                        {% set interestMultiplier = 0.01 %}
+                        {% if userData.getCharType == 5 %}{% set interestMultiplier = 0.03 %}{% endif %}
+                        {% set interest = userData.getBank * interestMultiplier %}
+                        <img src="{{ staticRoot }}/web/public/images/icons/coins.png" class="icon" alt="{{ langs.INTEREST }}"/> {{ langs.DAILY }} {{ langs.INTEREST|lower }}: <strong>{{ interest|moneyFormat }}</strong>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="c-row cf">
+    <div class="inner-c-container">
+    <div id="buyPossessResponse"></div>
+        <div class="center">
+            {% if possessionData.getPossessDetails.getUserID == 0 %}
+                <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                    <input type="hidden" name="id" value="{{ possessId }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                </form>
+            {% else %}
+                <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

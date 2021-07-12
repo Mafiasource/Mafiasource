@@ -1,0 +1,44 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        input.blackjack-field {display:inline-block;max-width:60px;margin:0;}
+        #playBlackjackResponse .alert {margin-bottom: 0;}
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div style="max-width: 520px;margin: 0 auto">
+    <div class="top">
+        Blackjack
+    </div>
+    <div class="content-container cf">
+        <p class="center"><img src="{{ staticRoot }}/foto/web/public/images/blackjack.jpg" alt="{{ langs.BLACKJACK }}" /></p>
+        <div id="playBlackjackResponse">
+            <form class="ajaxForm center" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-blackjack') }}" data-response="#playBlackjackResponse">
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                {{ langs.STAKE }}:&nbsp;<input type="number" class="blackjack-field" name="stake" placeholder="{{ langs.STAKE }}"/>&nbsp;<input type='submit' name='play-blackjack' value='{{ langs.PLAY }}' />
+            </form>
+        </div>
+        <p class="center">{{ langs.BLACKJACK_INFO|raw }}</p>
+        <div id="buyPossessResponse"></div>
+        <div class="center">
+            {% if possessionData.getPossessDetails.getUserID == 0 %}
+                <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                    <input type="hidden" name="id" value="{{ possessId }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                </form>
+                <br class="clear"/>
+            {% else %}
+                <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

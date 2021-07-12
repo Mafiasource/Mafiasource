@@ -1,0 +1,15 @@
+{% extends "/app/Resources/Views/base.twig" %}
+ 
+{% block content %}
+    <section id="content">
+        <div class="container">
+            {% include "/src/Views/.cookies.twig" %}
+            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+            <div class="row">
+                <div class="col-lg-12">
+                    {{ linkPartners|raw }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

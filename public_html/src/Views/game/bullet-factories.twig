@@ -1,0 +1,132 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        @media (max-width: 688px) {
+            section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+            .c-row.cf > .c-row-50.col:first-child {margin-bottom:15px;}
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="top">
+            {{ langs.BULLET_FACTORY }} &amp; {% if lang == 'en' %}{{ langs.BUY }} {% endif %}{{ langs.BULLETS }}{% if lang == 'nl' %} {{ langs.BUY }}{% endif %}
+        </div>
+        <div class="content-container">
+            <div id="buyPossessResponse" class="rowMsg"></div>
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/bulletfactory.jpg" class="middle" alt="{{ langs.BULLET_FACTORY }}"/>
+                <div class="center">
+                    {% if possessionData.getPossessDetails.getUserID == 0 %}
+                        <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                        <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                            <input type="hidden" name="id" value="{{ possessId }}"/>
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                        </form>
+                        <br class="clear"/> {# ADDED #}
+                    {% else %}
+                        <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+                    {% endif %}
+                    {{ langs.THIS_BF_IS_CURRENTLY }}: {% if bfInfo.producing %}<span class="lightgreen">{{ langs.PRODUCING|lower }}.</span>{% else %}<span class="red">{{ langs.DORMANT|lower }}.</span>{% endif %}
+                    <br class="clear"/>
+                </div>
+            </div>
+            {% if bfInfo.getBullets > 0 %}<form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('buy-bullets') }}" method="POST" data-response="#buyBulletsResponse">{% endif %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/bullet_black.png" class="icon" alt="{{ langs.BULLETS }}"/> {{ langs.BULLETS_FOR_SALE }}:
+                    </div>
+                    <div class="c-50 column">
+                        <strong><span id="factoryBullets">{{ bfInfo.getBullets|valueFormat }}</span><span id="factoryBulletsChange"></span></strong>
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.PRICE }}"/> {{ langs.PRICE_EACH_BULLET }}:
+                    </div>
+                    <div class="c-50 column">
+                        <strong>{{ bfInfo.getPriceEachBullet|moneyFormat }}</strong>
+                    </div>
+                </div>
+                <div id="buyBulletsResponse" class="rowMsg"></div>
+                {% if bfInfo.getBullets > 0 %}
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/basket_put.png" class="icon" alt="{{ langs.AMOUNT }}"/>  {{ langs.AMNT }}{% if lang == 'en' %} of{% endif %} {{ langs.BULLETS|lower }}:
+                        </div>
+                        <div class="c-50 column">
+                            <input type="number" name="bullets" placeholder="0" min="1" max="9999999" required="required"/>
+                        </div>
+                    </div>
+                    <div class="row center">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="buy-bullets" value="{{ langs.BUY }}" />
+                    </div>
+                {% else %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.ATM_NO_MORE_BULLETS_FOR_SALE_IN_THIS }} {{ langs.BULLET_FACTORY|lower }}.
+                    </div>
+                {% endif %}
+            {% if bfInfo.getBullets > 0 %}</form>{% endif %}
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="top">
+            {{ langs.BULLET_FACTORIES }} In {{ routing.settings.gamename }}
+        </div>
+        <div class="content-container">
+            <div class="c-row cf">
+                <div class="inner-c-container">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-dark table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="center">
+                                        <strong>{{ langs.STATE }}</strong>
+                                    </th>
+                                    <th scope="col" class="center">
+                                        <strong>{{ langs.OWNER }}</strong>
+                                    </th>
+                                    <th scope="col" class="center">
+                                        <strong>{{ langs.BULLETS }}</strong>
+                                    </th>
+                                    <th scope="col" class="center">
+                                        <strong>{{ langs.PRICE }}</strong>
+                                    </th>
+                                    <th scope="col" class="center">
+                                        <strong>{{ langs.PRODUCTION }}</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bf in bulletFactories %}
+                                    {% if bf.getOwner == '' %}
+                                        {% set owner = "<span class='gray'>" ~ langs.NONE ~ "</span>" %}
+                                    {% else %}
+                                        {% set owner = "<a href='/game/profile/" ~ bf.getOwner ~ "'>" ~ bf.getOwner ~ "</a>" %}
+                                    {% endif %}
+                                    <tr{% if bf.getState == userData.getState %} class="even"{% endif %}>
+                                        <td>{{ bf.getState }}</td>
+                                        <td>{{ owner|raw }}</td>
+                                        <td>{% if bf.getState == userData.getState %}<span id="listedFactoryBullets">{{ bf.getBullets|valueFormat }}</span><span id="listedFactoryBulletsChange"></span>{% else %}{{ bf.getBullets|valueFormat }}{% endif %}</td>
+                                        <td>{{ bf.getPriceEachBullet|moneyFormat }}</td>
+                                        <td>{{ bf.getProduction|valueFormat }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

@@ -1,0 +1,26 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block content %}
+<div class="top">
+    {{ langs.HONOR_POINTS }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'honor-points' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('honor-points') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/shield.png" class="icon" alt=""/> {{ langs.HONOR_POINTS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'send-honor-points' %}tab_on{% endif %}  t-50">
+        <a href="{{ routing.getRouteByRouteName('send-honor-points') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/shield_add.png" class="icon" alt=""/> {{ langs.SEND }}
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/honor-points/"~tab~".twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

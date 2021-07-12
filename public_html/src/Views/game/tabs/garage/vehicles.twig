@@ -1,0 +1,72 @@
+{% if hasGarage %}
+    <div class="center">
+        <h2>{% if spaceLeft == FALSE %}{{ langs.NO_SPACE_LEFT_GARAGE_IN_STATE }}{% else %}{{ langs.X_SPACE_LEFT_GARAGE_IN_STATE }}{% endif %}</h2>
+    </div>
+{% else %}
+    <div class="center">
+        <h2>{{ langs.NO_GARAGE_IN_STATE }}</h2>
+    </div>
+{% endif %}
+<img src="{{ staticRoot }}/foto/web/public/images/garage_banner.jpg" alt="Garage" class="middle"/>
+<br />
+{% if hasGarage %}
+    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+    <style>h3, h4 {margin:0.25em;}#ajaxLoader{position:relative;margin-bottom:.5em;}</style>
+    <div class="c-row cf">
+        <div class="inner-c-container">
+            <div id="ajaxLoader"></div>
+            {% if vehicles is not empty %}
+                {# HIER NOG AJAX FORM VOOR VOORZIEN
+                <a href="#" style="position: relative; display:inline-block;" class="button">{% if lang == 'nl' %}Alles {% endif %}{{ langs.REPAIR }}{% if lang == 'en' %} all{% endif %}</a>&nbsp;
+                <a href="#" style="position: relative; display:inline-block;" class="button">{% if lang == 'nl' %}Alles {% endif %}{{ langs.SELL }}{% if lang == 'en' %} all{% endif %}</a>
+                <br class="clear"/>
+                #}
+            {% endif %}
+            {% include "src/Views/.Paginate.twig" %}
+            <br class="clear"/>
+            {% for v in vehicles %}
+                <div class="subtop row">
+                    {% set noVehicle = loop.index + pagination.from %}
+                    {{ langs.VEHICLE }} #{{ noVehicle }}
+                </div>
+                <div class="content-container">
+                    <div class="row cf {{ cycle(['odd', 'even'], loop.index0) }}">
+                        <h3>{{ v.getVehicleName }} {{ langs.WITH|lower }} {{ v.getDamage }}% {{ langs.DAMAGE|lower }}.</h3>
+                        <h4><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.VALUE }}" /> {{ langs.VALUE }}: {{ v.getVehicleValue|moneyFormat }}&nbsp;{% if v.getRepairCosts != 0 %}<img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.COSTS }}" />{% if lang == 'nl' %} Repareer{% else %} {{ langs.REPAIR }}{% endif %} {{ langs.COSTS|lower }}: {{ v.getRepairCosts|moneyFormat }}</h4>{% endif %}
+                        <img src="{{ staticRoot }}/foto/420x240/1/web/public/images/vehicle/{{ v.getVehiclePicture }}{#&zc=1#}" class="middle" alt="{{ v.getVehicleName }}"/><br class="clear"/>
+                        <div id="vehicleActionResponse_{{ v.getId }}"></div>
+                        <div class="right" style="margin: 5px 0; clear:both;">
+                            {% if v.getRepairCosts != 0 %}
+                                <a href="javascript:void(0);" class="button action repair" data-id="{{ v.getId }}" data-action="repair">{{ langs.REPAIR }}</a>&nbsp;
+                            {% endif %}
+                            <a href="javascript:void(0);" class="button action sell" data-id="{{ v.getId }}" data-action="sell">{{ langs.SELL }} {{ v.getVehicleValue|moneyFormat }}</a>&nbsp;
+                            {% if userData.getId == 1 %} <a href="javascript:void(0);" class="ajaxTab button tune" data-tab="vehicle.tune" data-id="{{ v.getId }}">{{ langs.TUNE }}</a>&nbsp; {% endif %}
+                            <a href="{{ routing.getRouteByRouteName('travel-vehicle') }}/{{ v.getId }}" class="button">{{ langs.TRAVEL }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% if loop.last %}{% else %}<br class="clear"/>{% endif %}
+            {% endfor %}
+            {% include "src/Views/.Paginate.twig" %}
+        </div>
+    </div>
+{% else %}
+    <style>.space{display:block;position:relative;top:-6em;}form.buyGarage{display:inline-block;width: 200px;height: 200px;overflow:hidden;}.execbutton{position:relative;top:-3.75em;}</style>
+    <div class="c-row">
+        <div class="inner-c-container">
+            <div id="ajaxLoader"></div>
+            <div id="buyGarageResponse"></div>
+        </div>
+    </div>
+    <div class="center">
+        {% for k, o in garageOptions %}
+            <form id="buyGarage_{{ k }}" class="ajaxForm buyGarage" action="{{ routing.getAjaxRouteByRouteName('buy-garage') }}" method="POST" data-response="#buyGarageResponse">
+                <input type="hidden" name="type" value="{{ k }}"/>
+                <img src="{{ staticRoot }}/foto/web/public/images/garage/{{ k }}.png" alt="Garage option"/>
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                <small class="space">{{ langs.SPACE }}: {{ o.space }} {{ langs.VEHICLES|lower }}</small>
+                <input type="submit" name="buy-garage" class="execbutton green small" value="{{ langs.BUY }}"/>
+            </form>
+        {% endfor %}
+    </div>
+{% endif %}

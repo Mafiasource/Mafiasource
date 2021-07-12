@@ -1,0 +1,178 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{# Loop through buildings #}
+<div class="row cols cf">
+    {% for b in ground.getBuildings %}
+        <script type="text/javascript">if(typeof timeoutCBuilding{{ loop.index }} !== 'undefined') clearTimeout(timeoutCBuilding{{ loop.index }});</script>
+        <div class="c-20 no-border center">
+            <strong>{{ b.getName }}</strong><br />
+            <img src="{{ staticRoot }}/foto/web/public/images/ground_building/{{ b.getPicture }}" alt="{{ b.getName }}"/>
+            {% if ground.inPossession %}
+                {% if b.inPossession and b.getLevel >= 1 and b.getLevel <= 5 %}
+                    <br class="clear"/>
+                    {% if b.inPossession %}
+                        <span>Lv. {{ b.getLevel }}</span><br />
+                        {% if loop.index == 1 %}
+                            {% set buildTime = ground.getCBuilding1 %}
+                        {% elseif loop.index == 2 %}
+                            {% set buildTime = ground.getCBuilding2 %}
+                        {% elseif loop.index == 3 %}
+                            {% set buildTime = ground.getCBuilding3 %}
+                        {% elseif loop.index == 4 %}
+                            {% set buildTime = ground.getCBuilding4 %}
+                        {% elseif loop.index == 5 %}
+                            {% set buildTime = ground.getCBuilding5 %}
+                        {% endif %}
+                        {% if b.getLevel < 5 %}
+                            {% set element = 'Building' ~ loop.index %}
+                            <img src="{{ staticRot }}/web/public/images/icons/clock.png" class="icon" alt="Clock"/> <span id="cBuilding{{ loop.index }}">{{ element|count(buildTime)|raw }}</span>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+{# Show owner or no one txt #}
+<div class="row">
+    <hr />
+    <h2 class="center">
+        {% if ground.getUserID == 0 %}
+            {{ langs.DEZETHIS }} {{ langs.GROUND|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}
+        {% else %}
+            <a href="/game/profile/{{ ground.getUsername }}"><strong class="darkgray">{{ ground.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF_THIS|lower }} {{ langs.GROUND|lower }}!
+        {% endif %}
+    </h2>
+    <hr />
+</div>
+
+{% if buyGroundResponse %}
+    {% set response = buyGroundResponse %}
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}
+{# Call to action buy btn #}
+{% if ground.getUserID == 0 %}
+    <div id="buyGroundResponse">
+        <div class="row center">
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('buy-ground') }}" method="POST" data-response="#interactGroundAreaResponse">
+                <input type="hidden" name="state" value="{{ ground.getState }}"/>
+                <input type="hidden" name="groundID" value="{{ ground.getGID }}"/>
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                <input type="submit" name="submit-buy-ground" class="button" value="{% if lang == 'nl' %}{{ langs.GROUND }} {% endif %}{{ langs.BUY }}{% if lang == 'en' %} {{ langs.GROUND }}{% endif %} {{ langs.FOR }} $100,000"/>
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+{% if bombGroundResponse %}
+    {% set response = bombGroundResponse %}
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}
+
+{# Manage buildings on ground area, owner only #}
+{% if ground.inPossession %}
+{% if buyBuildingResponse %}
+    {% set response = buyBuildingResponse %}
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}
+{% if upgradeBuildingResponse %}
+    {% set response = upgradeBuildingResponse %}
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}
+<div id="buyBuildingResponse"></div>
+<table class="table table-sm table-hover table-bordered table-dark">
+  <thead>
+    <tr>
+      <th scope="col" class="center"><strong>{{ langs.BUILDINGS }}</strong></th>
+      <th scope="col" class="center"><strong>{{ langs.PRICE }}</strong></th>
+      <th scope="col" class="center"><strong>{{ langs.PROFIT }}</strong></th>
+      <th scope="col" class="center"><strong>{{ langs.ACTION }}</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for b in ground.getBuildings %}
+        <tr>
+          <td scope="row">{{ b.getName }}</td>
+          <td>{{ b.getPrice|moneyFormat }}</td>
+          <td>
+            {% set income = b.getIncome|round %}
+            {{ income|moneyFormat }}
+          </td>
+          <td>
+            {% if b.inPossession and b.getLevel == 5 %}
+                Lv. 5
+            {% elseif b.inPossession and b.getLevel < 5 %}
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('upgrade-ground-building') }}" method="POST" data-response="#interactGroundAreaResponse">
+                <input type="hidden" name="state" value="{{ ground.getState }}"/>
+                <input type="hidden" name="groundID" value="{{ ground.getGID }}"/>
+                <input type="hidden" name="building" value="{{ b.getId }}"/>
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                {% set upgradePrice = (b.getPrice * (b.getLevel+1)) * 0.75 %}
+                {% set upgradePrice = upgradePrice|round %}
+                <input type="submit" class="button" name="upgrade" value="Upgrade{% if lang == 'nl' %}n{% endif %} {{ upgradePrice|moneyFormat }}" />
+            </form>
+            {% else %}
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('buy-ground-building') }}" method="POST" data-response="#interactGroundAreaResponse">
+                <input type="hidden" name="state" value="{{ ground.getState }}"/>
+                <input type="hidden" name="groundID" value="{{ ground.getGID }}"/>
+                <input type="hidden" name="building" value="{{ b.getId }}"/>
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                <input type="submit" class="button" name="buy" value="{{ langs.BUY }}" />
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{# Bomb a owned (but not self-owned) ground-area #}
+{% if ground.getUserID != 0 and not ground.inPossession %}
+    {% if lang == "en" %}
+        {% if statusPage.getAirplane == 'Geen' %}
+            {% set airplane = 'None' %}
+        {% endif %}
+    {% endif %}
+    <div id="bombGroundResponse"></div>
+    <table class="table table-sm table-bordered table-dark">
+      <thead>
+        <tr>
+          <th scope="col" class="center" colspan="2"><strong>{{ langs.BOMB_GROUND }}</strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td scope="row">{{ langs.AIRPLANE }}</td>
+          <td>
+            {% if airplane %}
+                {{ airplane }}
+            {% else %}
+                {{ statusPage.getAirplane }}
+            {% endif %}
+          </td>
+        </tr>
+        {% if airplane != "None" and statusPage.getAirplane != "Geen" %}
+        <tr>
+            <td scope="row">{{ langs.BOMBS }}</td>
+            <td>
+                <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('bomb-ground') }}" method="POST" data-response="#interactGroundAreaResponse">
+                    <input style="display:inline-block;max-width:40px;margin: 5px 0;" type="number" name="bombs" required="required"/>&nbsp;{{ langs.BOMBING_INFO }}&nbsp;
+                    <input type="hidden" name="state" value="{{ ground.getState }}"/>
+                    <input type="hidden" name="groundID" value="{{ ground.getGID }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="bomb-area" value="{{ langs.BOMB }}!"/>
+                </form>
+            </td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+{% endif %}
+
+{% if userData.getId == ground.getUserID %}
+    <br class="clear"/>
+  <div class="row">{{ alert.build('Info', 'alert-info', 'help', langs.GROUND_OWNER_INFO) }}</div>
+{% endif %}
+</div>

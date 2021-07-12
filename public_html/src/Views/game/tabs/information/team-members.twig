@@ -1,0 +1,18 @@
+<div class="content-container">
+    <div class="c-row cf">
+        <div class="inner-c-container">
+            {% for status in teamMembers %}
+                {% for statusName, st in status %}
+                    <span class="{{ statusName|seoUrl }} txt-shadow">{{ statusName }}:</span> {{ st.statusDescription }}<br />
+                    <ul>
+                    {% for member in st %}
+                        {% if member.username %}<li><a href="/game/profile/{{ member.username }}">{{ member.username }}</a></li>{% endif %}
+                    {% endfor %}
+                    </ul>
+                {% endfor %}
+            {% endfor %}
+            <br class="clear"/>
+            {{ langs.THANKS_TO_ALL_DONATORS }}
+        </div>
+    </div>
+</div>

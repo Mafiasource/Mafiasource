@@ -1,0 +1,60 @@
+{% if check == TRUE %}
+<a href="#" id="deleteModal" data-toggle="modal" data-target="#delModal"></a>
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content danger">
+      <div class="modal-header">
+        <h4 class="modal-title" id="delModalLabel">Bevestigen</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div id="deleteSureConfirm"></div>      
+        <p>Ben je zeker dat je onderstaand record wilt verwijderen ?</p>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        {% set skipFields = hide %}
+                        {% if show is iterable %}
+                            {% set onlyFields = show %}
+                        {% endif %}
+                        {% for row in rows %}
+                            {% for values in row %}
+                                {% set iterateFields = [] %}
+                                {% for key,name in values %}
+                                    {% if onlyFields is iterable %}
+                                        {% if key in onlyFields and key|isstr %}    
+                                            {% set iterateFields = iterateFields|merge([key]) %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% if key not in skipFields and key != 'position' and key != 'active' and key != 'deleted' and key|isstr %}
+                                            {% set iterateFields = iterateFields|merge([key]) %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for field in iterateFields %}
+                                    <td>{{ attribute(values, field) }}</td>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
+      <div class="modal-footer">     
+        <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+        <button type="button" class="btn btn-danger deleteSure" data-id="{{ rowid }}" data-table="{{ table }}">Ja, verwijderen</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+    if($('#delModal').hasClass('in') == false) $("#deleteModal").click();
+});
+</script>
+{% else %}
+    {% include "/src/Views/admin/Ajax/general.fail.msg.twig" %}
+{% endif %}

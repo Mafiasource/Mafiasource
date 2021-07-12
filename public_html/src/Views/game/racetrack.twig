@@ -1,0 +1,63 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        input.racetrack-field {display:inline-block;max-width:60px;margin:0;}
+        #playRacetrackResponse .alert {margin-bottom: 0;}
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div style="max-width: 520px;margin: 0 auto">
+    <div class="top">
+        Racetrack
+    </div>
+    <div class="content-container cf">
+        <p class="center"><img src="{{ staticRoot }}/foto/web/public/images/racetrack.jpg" alt="Racetrack" /></p>
+        <div id="playRacetrackResponse"></div>
+        <form class="ajaxForm center" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-racetrack') }}" data-response="#playRacetrackResponse">
+            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+            <div class="table-responsive">
+                <table class="table table-sm table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            {% for k, c in colors %}
+                                <th scope="col" class="center">
+                                    <strong><input id="horse-{{ k}}" type="radio" name="horse" class="form-check-input middle" value="{{ k }}"{% if loop.first %} checked="checked"{% endif %}/></strong>
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for k, c in colors %}
+                                <td style="background: {{ c }};{% if k in blackFonts|keys %}color: black;{% endif %}" class="center"><label class="form-check-label" for="horse-{{ k}}"><small>1:{{ loop.index + 1 }}</small></label></td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {{ langs.STAKE }}:&nbsp;<input type="number" class="racetrack-field" name="stake" placeholder="{{ langs.STAKE }}"/>&nbsp;<input type='submit' name='play-racetrack' value='{{ langs.PLAY }}' />
+        </form>
+        <p class="center">{{ langs.RACETRACK_INFO|raw }}</p>
+        <div id="buyPossessResponse"></div>
+        <div class="center">
+            {% if possessionData.getPossessDetails.getUserID == 0 %}
+                <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                    <input type="hidden" name="id" value="{{ possessId }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                </form>
+                <br class="clear"/>
+            {% else %}
+                <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

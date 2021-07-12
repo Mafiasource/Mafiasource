@@ -1,0 +1,106 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% apply spaceless %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <base href="{{ docRoot }}"/>
+        <title>{{ PAGE_TITLE }}</title>
+        <link rel="publisher" href="{{ AUTHOR }}"/>
+        <meta name="description" content="{{ PAGE_DESCRIPTION }}" />
+        <meta name="keywords" content="{{ PAGE_KEYWORDS }}" />
+        <meta name="author" content="{{ AUTHOR }}" />
+        <meta name="copyright" content="2020 {{ routing.settings.domainBase }}" />
+        <meta name="application-name" content="{{ routing.settings.gamename }}" />
+        <link rel="apple-touch-icon" sizes="57x57" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png"/>
+        <link rel="apple-touch-icon" sizes="60x60" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png"/>
+        <link rel="apple-touch-icon" sizes="72x72" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png"/>
+        <link rel="apple-touch-icon" sizes="76x76" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png"/>
+        <link rel="apple-touch-icon" sizes="114x114" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png"/>
+        <link rel="apple-touch-icon" sizes="120x120" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png"/>
+        <link rel="apple-touch-icon" sizes="144x144" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png"/>
+        <link rel="apple-touch-icon" sizes="152x152" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png"/>
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png"/>
+        <link rel="icon" type="image/png" sizes="192x192"  href="{{ docRoot }}/foto/web/public/images/favicon/android-icon-192x192.png"/>
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ docRoot }}/foto/web/public/images/favicon/favicon-32x32.png"/>
+        <link rel="icon" type="image/png" sizes="96x96" href="{{ docRoot }}/foto/web/public/images/favicon/favicon-96x96.png"/>
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ docRoot }}/foto/web/public/images/favicon/favicon-16x16.png"/>
+        <link rel="manifest" href="{{ docRoot }}/web/public/images/favicon/manifest.json"/>
+        <meta name="theme-color" content="#333" />
+        <meta name="msapplication-TileColor" content="#333"/>
+        <meta name="msapplication-TileImage" content="{{ docRoot }}/foto/web/public/images/favicon/ms-icon-144x144.png"/>
+        <link href="{{ docRoot }}/web/public/bootstrap/css/bootstrap.min.css" rel="preload" as="style" />
+        <link href="{{ docRoot }}/web/public/css/homepage.min.css" rel="preload" as="style" />
+        <link href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand&display=swap" rel="preload" as="style" />
+        <link rel="preload" href="{{ docRoot }}/web/public/js/default/jquery.bootstrap.min.js" as="script" />
+        <link rel="stylesheet" href="{{ docRoot }}/web/public/bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{{ docRoot }}/web/public/css/homepage.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand&display=swap" />
+        <style type="text/css">
+            header#top .container h2 {display:inline-block;position:relative;top:1.35rem;line-height:1.25rem;}
+        </style>
+        {# Twig stylesheets #}
+        {% block stylesheets %} {% endblock stylesheets %}
+    </head>
+    <body>
+        {% block header %}
+        <header id="top" class="header">
+            <div class="container cf">
+                <div class="logo"></div>
+                <h2>| Encryption</h2>
+            </div>
+        </header>
+        {% endblock header %}
+        
+        {% block content %}
+        <form name="install" action="/install/index.php" method="POST">
+            <section id="content">
+                <div class="container">
+                    {% if message.alert is iterable %}
+                        {% set alertMessage = message.alert.message %}
+                        {% if message.alert.success %}
+                            {% set type, alertClass, alertIcon = 'Success', 'alert-success', 'tick' %}
+                        {% else %}
+                            {% set type, alertClass, alertIcon = 'Error', 'alert-danger', 'cross' %}
+                        {% endif %}
+                        {{ alert.build(alertType, alertClass, alertIcon, alertMessage) }}
+                    {% else %}
+                        {% if message %}
+                            {{ message|raw }}
+                        {% endif %}
+                    {% endif %}
+                    <div class="row">
+                        <div class="col">
+                            <h2>What is this page?</h2>
+                            <p>Generate new cryptographically secure master keys for application encryptions that need various check capabilities. This page will always force generate a new set of keys. When your Administrator account got created and you generate new master keys, your account's master encrypted email will not match anymore. Every first session visit to /install/ will automatically generate a new set of keys.</p>
+                            <h2>First visit?</h2>
+                            <p>This redirect just improved security for your future users. Go to the <a href="/install/">installation page</a> to get started.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </form>
+        {% endblock content %}
+        
+        {% block footer %}
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <em><span class="hideMobile">Copyright </span>{{ "now"|date("Y") }} &copy; {{ settings.domainBase|lower }}<span class="hideTablet"> - All rights reserved.</span></em>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        {% endblock footer %}
+        
+        {# Bootstrap core JavaScript #}
+        <script type="text/javascript" src="{{ docRoot }}/web/public/js/default/jquery.bootstrap.min.js"></script>
+        {# Twig javascripts #}
+        {% block javascripts %} {% endblock %}
+    </body>
+</html>
+{% endapply %}

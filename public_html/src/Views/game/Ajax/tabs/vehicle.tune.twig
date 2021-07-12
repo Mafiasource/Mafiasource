@@ -1,0 +1,210 @@
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+
+<style type="text/css">
+    div#vehicles-container > div.vehicles > div.row.even, div#vehicles-container > div.vehicles > div.row.odd {background-color: #e2e2e2 !important;color: #464646;padding: 5px;box-sizing: border-box;}
+    div#vehicles-container > div.vehicles > div.row.odd {background-color: #ececec !important;}
+    div#vehicles-container > div.vehicles > div.row:first-child {border-radius:5px 5px 0px 0px;}
+    div#vehicles-container > div.vehicles > div.row:last-child {border-radius:0px 0px 5px 5px;}
+    {% if id is empty %}
+        #vehicles-container .vehicle-management {display: none;}
+    {% else %}
+        #vehicles-container .vehicles {display: none;}
+    {% endif %}
+    {% for v in vehicles %}
+        {% if id is not empty and v.getId == id %}
+            .vehicle-{{ v.getId }}-manage {display:block;}
+        {% else %}
+            .vehicle-{{ v.getId }}-manage {display:none;}
+        {% endif %}
+    {% endfor %}
+    .vehicle-back-btn {display:none;}
+    .vehicle-back-btn.active {display:inline-block;}
+    input[type=text].username, input[type=number] {max-width: 110px;}
+    #vehicles-container select[name=friend] {max-width:75px;}
+</style>
+<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ langs.TUNE }} in {{ langs.THE|lower }} garage {{ langs.OF|lower }} {{ userData.getState }}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div id="vehicles-container" class="content-container">
+          <div class="vehicles">
+            {% for v in vehicles %}
+            <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}">
+              <div class="c-75 column no-border">
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="{{ langs.VEHICLE }}" /> {{ v.getVehicleName }}
+              </div>
+              <div class="c-25 column no-border">
+                <div class="right">
+                  <button type="button" class="btn btn-default button manage" rel="vehicle-{{ v.getId }}-manage">{{ langs.TUNE }}</button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="vehicle-management">
+            <div id="interactVehicleResponse"></div>
+            {% for v in vehicles %}
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-vehicle') }}" method="POST" data-response="#interactVehicleResponse">
+              <input type="hidden" name="id" value="{{ v.getId }}"/>
+              <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+              <div class="vehicle-{{ v.getId }}-manage">
+                <div class="table-reponsive">
+                  <table class="table table-sm table-dark table-bordered">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="center" colspan="2">{% if lang == 'nl' %}{{ langs.VEHICLE }} {{ langs.TUNE }}{% else %}{{ langs.TUNE }} {{ langs.VEHICLE }}{% endif %}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="{{ langs.VEHICLE }}"/> {{ langs.VEHICLE }}</td>
+                        <td>{{ v.getVehicleName }}</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/car_add.png" class="icon" alt="{{ langs.HORSEPOWER }}"/> <small>{{ langs.HORSEPOWER }}</small></td>
+                        <td>..pk</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/lightning.png" class="icon" alt="{{ langs.TOPSPEED }}"/> <small>{{ langs.TOPSPEED }}</small></td>
+                        <td>..mph</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/stats_curve.png" class="icon" alt="{{ langs.ACCELERATION }}"/> <small>{{ langs.ACCELERATION }}</small></td>
+                        <td>..progressbar</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.CONTROL }}"/> <small>{{ langs.CONTROL }}</small></td>
+                        <td>..progressbar</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" class="icon" alt="{{ langs.BREAKING }}"/> <small>{{ langs.BREAKING }}</small></td>
+                        <td>..progressbar</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br class="clear"/>
+                <div id="carousel-tune-shop-{{ v.getId }}" class="carousel slide" data-ride="carousel">
+                  {# Indicators / Active always tires #}
+                  <ol class="carousel-indicators">
+                    {% for key, item in tuneShop %}
+                    <li data-target="#carousel-tune-shop-{{ v.getId }}" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
+                    {% endfor %}
+                  </ol>
+                  {# Wrapper for slides #}
+                  <div class="carousel-inner">
+                    {% for key, items in tuneShop %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                      <div class="table-reponsive">
+                        <table class="table table-sm table-dark table-bordered">
+                          <thead>
+                            <tr>
+                              <th scope="col" class="center" colspan="3">{{ langs[key|upper] }}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              {% for item in items %}
+                              <td style="width: 32.2%;padding:0;">
+                                <small><strong class="center">{{ item.name }}</strong></small>
+                                <img src="{{ staticRoot }}/foto/web/public/images/garage/tune-shop/{{ key|seoUrl|lower }}_{{ loop.index }}.jpg" class="middle" alt="{{ langs[key|upper] }}"/>
+                                <div class="table-reponsive">
+                                  <table class="table table-sm table-dark no-border">
+                                    <tbody style="border:0;">
+                                      <tr style="border:0;">
+                                        <td style="width:70%;border:0;"><img src="{{ staticRoot }}/foto/web/public/images/icons/car_add.png" class="icon" alt="{{ langs.HORSEPOWER }}"/> <small class="hideMobile">{{ langs.HORSEPOWER }}:</small></td>
+                                        <td style="width:30%;border:0;">+{{ item.pk }} pk</td>
+                                      </tr>
+                                      <tr style="border:0;">
+                                        <td style="width:70%;border:0;"><img src="{{ staticRoot }}/foto/web/public/images/icons/lightning.png" class="icon" alt="{{ langs.TOPSPEED }}"/> <small class="hideMobile">{{ langs.TOPSPEED }}:</small></td>
+                                        <td style="width:30%;border:0;">+{{ item.ts }} mph</td>
+                                      </tr>
+                                      <tr style="border:0;">
+                                        <td style="width:70%;border:0;"><img src="{{ staticRoot }}/foto/web/public/images/icons/stats_curve.png" class="icon" alt="{{ langs.ACCELERATION }}"/> <small class="hideMobile">{{ langs.ACCELERATION }}:</small></td>
+                                        <td style="width:30%;border:0;">+{{ item.ac }}%</td>
+                                      </tr>
+                                      <tr style="border:0;">
+                                        <td style="width:70%;border:0;"><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.CONTROL }}"/> <small class="hideMobile">{{ langs.CONTROL }}:</small></td>
+                                        <td style="width:30%;border:0;">+{{ item.ct }}%</td>
+                                      </tr>
+                                      <tr style="border:0;">
+                                        <td style="width:70%;border:0;"><img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" class="icon" alt="{{ langs.BREAKING }}"/> <small class="hideMobile">{{ langs.BREAKING }}:</small></td>
+                                        <td style="width:30%;border:0;">+{{ item.br }}%</td>
+                                      </tr>
+                                      <tr style="border:0;">
+                                        <td style="width:70%;border:0;"><img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.COSTS }}"/> <small class="hideMobile">{{ langs.COSTS }}:</small></td>
+                                        <td style="width:30%;border:0;">{{ item.price|moneyFormat }}</td>
+                                      </tr>
+                                      {#
+                                      <tr style="border: 0;">
+                                        <td style="border: 0;" colspan="2" class="center"><input type="submit" name="buy" class="execbutton green small" value="{{ langs.BUY }}"/></td>
+                                      </tr>
+                                      #}
+                                    </tbody>
+                                  </table>
+                                  <br class="clear"/>
+                                  <br /><br />
+                                </div>
+                              </td>
+                              {% endfor %}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  {# Controls left/right # }
+                  <a class="left carousel-control-prev" href="#carousel-tune-shop-{{ v.getId }}" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">&nbsp;</span>
+                  </a>
+                  <a class="right carousel-control-next" href="#carousel-tune-shop-{{ v.getId }}" role="button" data-slide="next">
+                  <span class="sr-only">&nbsp;</span>
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  </a> #}
+                </div>
+              </div>
+            </form>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default button vehicle-back-btn{% if id is not empty %} active{% endif %}">{{ langs.TO }} {{ langs.OVERVIEW|lower }}</button>&nbsp;
+        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+$(document).ready(function(){
+    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    $('#modal').on('hidden.bs.modal', function () {
+        $("#openTab").empty();
+    });
+    
+    $('.manage').click(function(e){
+        $("#vehicles-container > .vehicles").slideUp(250);
+        $("#vehicles-container > .vehicle-management ."+$(this).attr('rel')).slideDown(0);
+        $("#vehicles-container > .vehicle-management").slideDown(250);
+        $(".vehicle-back-btn").addClass('active');
+        e.preventDefault();
+    });
+    $('.vehicle-back-btn').click(function(e){
+        $(".vehicle-management").slideUp(250);
+        {% for v in vehicles %}
+            $(".vehicle-management .vehicle-{{ v.getId }}-manage").slideUp(250);
+        {% endfor %}
+        $("#vehicles-container > .vehicles").slideDown(250);
+        $(".vehicle-back-btn").removeClass('active');
+        $("#interactVehicleResponse").html('');
+        e.preventDefault();
+    });
+});
+</script>

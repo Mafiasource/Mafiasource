@@ -1,0 +1,103 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        div.carousel-inner {height:auto;min-height:409px;/** 330px, 385px **/}
+        div.carousel-inner h2, div.carousel-inner p {margin:0;}
+        div.carousel-inner h2 {margin-top: 0.5em;}
+        div.carousel-inner p {margin-bottom: 0.5em;}
+        .answer {padding:10px 30px;line-height:14px;}
+        .answers-container {width:100%;max-width:540px;margin:0 auto;}
+        .answer input[type=radio] {margin-left:30px;}
+        #pollVoteResponse .alert {margin-bottom:0;}
+        input[type="radio" i] {margin:0;position: relative;top: 2px;}
+        @media (max-width: 688px) {
+            .answers-container {max-width:440px;}
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+    {% if tab == 'poll' %}
+        <div class="top">
+            {{ langs.ACTIVE }} Poll(s)
+        </div>
+        <div class="content-container">
+            <div id="ajaxLoader"></div>
+            <div id="pollVoteResponse">
+                {# View following file to see active polls code #}
+                {% include "/src/Views/game/Ajax/poll.twig" %}
+            </div>
+        </div>
+        <br class="clear"/>
+        <div class="top">
+            Poll {{ langs.HISTORY }}
+        </div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoor }}/foto/web/public/images/icons/monitor_go.png" class="icon" alt="{{ langs.VIEW }}"/>&nbsp;<a href="{{ routing.getRouteByRouteName('poll-history') }}">{{ langs.CLICK_TO_VIEW_HISTORY|raw }}</a>!
+            </div>
+        </div>
+    {% elseif tab == 'poll-history' %}
+        <div class="top">
+            Poll {{ langs.HISTORY }}
+        </div>
+        <div class="content-container">
+            {% if finishedPolls is not empty %}
+                {% for item in finishedPolls %}
+                    {% if loop.index != 1 %}<div class="subtop" style="margin-top: -1px;">&nbsp;</div>{% endif %}
+                    <div class="row">
+                        <h2>{{ item.getQuestion|capitalize }}</h2>
+                    </div>
+                    <div class="row">
+                        <div class="answers-container">
+                            {% for answer in item.getAnswers %}
+                                <div class="answer txt-left">
+                                    {% if item.getVotes != 0 %}
+                                        {% set answerPercent = (answer.getVotes / item.getVotes) * 100 %}
+                                    {% else %}
+                                        {% set answerPercent = 0 %}
+                                    {% endif %}
+                                    {{ answer.getAnswer }} <span class="right">{{ answerPercent|round }}%</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if item.getDescription %}
+                        <div class="row">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" class="icon" alt="Help"/> {{ item.getDescription|capitalize }}
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        {{ langs.TOTAL_VOTES }}: {{ item.getVotes|valueFormat }}
+                    </div>
+                    <div class="row">
+                        {{ langs.ENDED_ON }}: {{ item.getEndDate }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="row">
+                    <img src="{{ staticRoor }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_HISTORY_TO_VIEW }}
+                </div>
+            {% endif %}
+        </div>
+        <br class="clear"/>
+        <div class="top">
+            Poll
+        </div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoor }}/foto/web/public/images/icons/flag_green.png" class="icon" alt="{{ langs.VIEW }}"/>&nbsp;<a href="{{ routing.getRouteByRouteName('poll') }}"><strong>{{ langs.BACK }} {{ langs.TO|lower }}</strong> Poll {{ langs.PAGE|lower }}</a>!
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+    <script type="text/javascript">
+        $('.carousel').carousel({
+          interval: false//1000 * 10
+        });
+    </script>
+{% endblock javascripts %}

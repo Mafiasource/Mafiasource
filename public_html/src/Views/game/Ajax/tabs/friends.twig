@@ -1,0 +1,138 @@
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+{% import "app/Resources/Views/macros/record.tile.macro.twig" as recordTile %}
+
+{{ recordTile.css('members-container', 'memberRecordFBL', '110px', '24.75%') }}
+<style type="text/css">
+    /** Additional tile css and media query fixes **/
+    .memberRecordFBL {background:rgba(140,140,140,0.9) !important;} /** Color fix in white bg **/
+    .memberRecordFBL.even {background-color: rgba(130,130,130,0.9) !important;} /** Color fix in white bg **/
+    .memberRecordFBL .btn {margin:3px 0;}
+    @media (max-width: 1367px) {.memberRecordFBL{max-width:24.75% !important;}}
+    @media (max-width: 1200px) {.memberRecordFBL{max-width:32.95% !important;}}
+    @media (max-width: 992px) {.memberRecordFBL{max-width:49.25% !important;min-height:114px !important;}}
+    
+    #inviteBlockResponse {text-align:left;}
+    .blocklist-red-bg {background: #ffa8a8;border-radius: 7px;margin: -3px;padding: 3px;padding-left: 1%;padding-right: 0}
+    form.inviteBlockArea {display: block;width:100%;}
+</style>
+<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ langs.FRIENDS_BLOCK }}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        {% if friendsBlockList is not empty %}
+            <div id="interactFriendslistResponse"></div>
+                <div class="row">
+                    {% if friendsBlockList.friends is not empty %}
+                        <div>
+                            <h3>{{ langs.FRIENDS }}</h3>
+                            <br />
+                            <div class="members-container cf">
+                                {% for member in friendsBlockList.friends %}
+                                    <div class="memberRecordFBL {{ cycle(['odd', 'even'], loop.index0) }}">
+                                        <form id="interactFriendsList_{{ loop.index }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-friends-list') }}" data-response="#interactFriendslistResponse">
+                                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                            {{ userTagManager.write('fblFriendMember', member.getId, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True') }}
+                                            <hr class="split" />
+                                            {% if member.getActive == 'active' %}
+                                                <small class="lightgreen"><img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.FRIENDS }}"/> {{ langs.FRIENDS }}</small>
+                                            {% else %}
+                                                <small class="crimson"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.PENDING }}"/> {{ langs.PENDING }}</small>
+                                            {% endif %}
+                                            <hr class="lineSplit" />
+                                            <input type="hidden" name="friend" value="{{ member.getUsername }}"/>
+                                            {% if member.getActive == 'inactive' %}
+                                                {% if member.getInviterID == userData.getId %}
+                                                    <input type="submit" name="delete" class="btn" value="{{ langs.DELETE }}"/>
+                                                {% else %}
+                                                    <input type="submit" name="accept" class="btn" value="{{ langs.ACCEPT }}"/>
+                                                    <input type="submit" name="deny" class="btn" value="{{ langs.DENY }}"/>
+                                                {% endif %}
+                                            {% else %}
+                                                <input type="submit" name="delete" class="btn" value="{{ langs.DELETE }}"/>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                {% if friendsBlockList.blocks is not empty %}
+                    <br class="clear"/>
+                    <div>
+                        <div class="blocklist-red-bg">
+                            <h3>{{ langs.BLOCKLIST }}</h3>
+                            <br />
+                            <div class="members-container cf">
+                                {% for member in friendsBlockList.blocks %}
+                                    <style type="text/css">
+                                        span#member_{{ member.getId }} {background: url({{ staticRoot }}/foto/web/public/images/users/{% if member.getAvatar %}{{ member.getId }}/uploads/{{ member.getAvatar }}{% else %}nopic.jpg{% endif %}) no-repeat -1.15em -0.9em;display:inline-block;background-size: 225%; width: 24px; height: 24px; border: 1px solid #000;}
+                                    </style>
+                                    <form id="interactFriendsList_block_{{ loop.index }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-friends-list') }}" data-response="#interactFriendslistResponse">
+                                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                        <div class="memberRecordFBL {{ cycle(['odd', 'even'], loop.index0) }}">
+                                            {{ userTagManager.write('fblBlockMember', member.getId, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True') }}
+                                            <hr class="split" />
+                                            <input type="hidden" name="user" value="{{ member.getUsername }}"/>
+                                            <small class="crimson"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.BLOCKED }}"/> {{ langs.BLOCKED }}</small>
+                                            <hr class="lineSplit" />
+                                            <input type="submit" name="delete-block" class="btn" value="{{ langs.DELETE }}"/>
+                                        </div>
+                                    </form>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NONE }}
+        {% endif %}
+      </div>
+      <div id="inviteBlockResponse"></div>
+      <div class="modal-footer">
+        <form class="ajaxForm inviteBlockArea" action="{{ routing.getAjaxRouteByRouteName('invite-block-user') }}" method="POST" data-response="#inviteBlockResponse">
+            <div class="row cols cf">
+                <div class="c-30 no-border">
+                    <input type="text" name="username" placeholder="{{ langs.WRITE_PLAYERNAME }}" value="{% if inviteFriend is not empty %}{{ inviteFriend }}{% endif %}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                </div>
+                <div class="c-40 no-border center">
+                    <input type="submit" name="invite" value="{{ langs.INVITE_FRIEND }}"/>
+                </div>
+                <div class="c-30 no-border center">
+                    <input type="submit" name="block" value="{{ langs. BLOCK_USER }}"/>
+                </div>
+            </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% block javascripts %}
+<script type="text/javascript">
+if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
+    var x = document.createElement('script');
+    x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
+    document.getElementsByTagName("body")[0].appendChild(x);
+}
+$(document).ready(function(){
+    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    $('#modal').on('hidden.bs.modal', function () {
+        $("#openTab").empty();
+    });
+    $('#modal').on('shown.bs.modal', function () {
+      {% if inviteFriend is not empty %}
+        $("input[name=invite]").click();
+      {% endif %}
+    })
+});
+</script>
+{% endblock javascripts %}

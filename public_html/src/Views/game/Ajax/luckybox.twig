@@ -1,0 +1,12 @@
+<div class="center">{{ langs.YOU_HAVE }} {% if luckybox == 0 %}{% if lang == 'en' %}no{% else %}{{ langs.NONE|lower }}{% endif %}{% else %}<strong>{{ luckybox|valueFormat }}</strong>{% endif %} lucky box{% if luckybox != 1 %}{% if lang =='en' %}es{% else %}en{% endif %}{% endif %}!</div>
+{% if luckybox > 0 %}
+    <br class="clear"/>
+    <form class="ajaxForm center" action="{{ routing.getAjaxRouteByRouteName('open-luckybox') }}" method="POST" data-response="#openLuckyBoxResponse">
+        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+        <input type="submit" name="open-luckybox" class="execbutton red" value="{% if lang == 'en' %}Open{% if response %} another{% endif %} box{% else %}{% if response %}Nog een box{% else %}Box{% endif %} openen{% endif %}"/>
+    </form>
+{% endif %}
+{% if response %}
+    <br class="clear"/>
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}

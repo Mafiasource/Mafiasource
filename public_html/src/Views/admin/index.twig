@@ -1,0 +1,42 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+    {% if records == FALSE %}
+        <div class="row">
+        	<div class="col-md-12">
+                <div class="content-box-header">
+        			<div class="panel-title">Dashboard</div>
+        			
+        			<div class="panel-options">
+        				<a href="{{ routing.getRoute }}" data-rel="collapse"><i class="fas fa-sync"></i></a>&nbsp;
+        				<a href="{{ routing.getRouteByRouteName('admin-account-settings') }}" data-rel="reload"><i class="fas fa-cog"></i></a>
+        			</div>
+        		</div>
+        		<div class="content-box-large box-with-header">
+                    <h2>Welkom in de back-end van {{ routing.settings.domain }}</h2>
+                    <p>Doorblader het menu links om je website te beheren van a tot z.</p>
+                    <p>Rechtsboven in de header is het mogelijk je account instellingen aan te passen alsook uit te loggen.<br /><b>Let op:</b> Altijd Uitloggen wanneer je klaar bent met het bewerken van zaken op een openbare computer, dit om ongewenste aanpassingen te vermijden.<br /><br />Indien je de melding krijgt: 'Verkeerde gegevens ontvangen' bij eender welke actie dan moet je de de pagina eens vernieuwen. (F5)<br />Dit omdat uw beveiligings sleutel op het moment van de actie verlopen is, door de pagina te vernieuwen genereer je de nieuwe beveiligings sleutel.<br />Dit komt echter zelden voor, maar zal vooral voorkomen bij een lange inactiviteit op een pagina.</p>
+        		</div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+        	<div class="col-md-12">
+                <div class="content-box-header">
+        			<div class="panel-title">Gebruikers beheren</div>
+        			
+        			<div class="panel-options">
+        				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+        			</div>
+        		</div>
+        		<div class="content-box-large box-with-header">
+                    {% set tableRows = records %}
+                    {% set dataTable = table %}
+                    {% set startvar = 0 %}
+                    {% set onlyFields = [tableUnit,'straat','postcode','gemeente'] %}
+                    {% include "/app/Resources/Views/recordstable.twig" %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

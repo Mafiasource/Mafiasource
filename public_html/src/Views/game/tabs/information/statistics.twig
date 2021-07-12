@@ -1,0 +1,341 @@
+<br class="clear"/>
+<div class="c-row cf">
+    <div class="c-row-50 statsCol col">
+        {# stats.getGameStatistic|var_dump #}
+        <div class="top">Site {{ langs.STATISTICS|lower }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/site.png" class="middle" alt="Site {{ langs.STATISTICS }}"/>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.AMOUNT_OF_MEMBERS }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalMembers|valueFormat }}  <small class="red">(-{{ stats.getGameStatistic.getTotalBanned|valueFormat }})</small>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.TOTAL_CASH_MONEY }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalCash|moneyFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.TOTAL_BANK_MONEY }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalBank|moneyFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.TOTAL_MONEY }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalMoney|moneyFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.AVERAGE_MONEY_MEMBER }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getAverageMoney|moneyFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.AMOUNT_OF_FAMILIES }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalFamilies|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.TOTAL_MEMBER_BULLETS }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalBullets|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.AVERAGE_BULLETS_MEMBER }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getAverageBullets|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.DEAD_MEMBERS_NOW }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalDeathNow|valueFormat }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    {{ langs.TOTAL_BANNED_PLAYERS }}
+                </div>
+                <div class="c-50 column">
+                    {{ stats.getGameStatistic.getTotalBanned|valueFormat }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 statsCol col">
+        {# stats.getRichestStatistic|var_dump #}
+        <div class="top">{{ langs.RICHEST }} {{ langs.PLAYER|lower }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/wealthiest.png" class="middle" alt="Wealthiest"/>
+            </div>
+            {% for s in stats.getRichestStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|moneyFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="c-row cf">
+    <div class="c-row-50 statsCol col">
+        {# stats.getMostHonoredStatistic|var_dump #}
+        <div class="top">{{ langs.MOST_HONORABLE }} {{ langs.PLAYER|lower }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/most-honored.png" class="middle" alt="Most honored"/>
+            </div>
+            {% for s in stats.getMostHonoredStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|valueFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="c-row-50 statsCol col">
+        {# stats.getNewestMemberStatistic|var_dump #}
+        <div class="top">{{ langs.NEWEST }} {{ langs.PLAYER|lower }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/newest.png" class="middle" alt="{{ langs.NEWEST }} {{ langs.PLAYER|lower }}"/>
+            </div>
+            {% for s in stats.getNewestMemberStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="c-row cf">
+    <div class="c-row-50 statsCol col">
+        {# stats.getKillerkingStatistic|var_dump #}
+        <div class="top">Killerking</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/killerking.png" class="middle" alt="Killerking"/>
+            </div>
+            {% for s in stats.getKillerkingStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|valueFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="c-row-50 statsCol col">
+        {# stats.getPrisonBreakingStatistic|var_dump #}
+        <div class="top">{{ langs.MOST_SUCCESSFUL_BUSTS }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/prison-breaker.png" class="middle" alt="{{ langs.MOST_SUCCESSFUL_BUSTS }}"/>
+            </div>
+            {% for s in stats.getPrisonBreakingStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|valueFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="c-row cf">
+    <div class="c-row-50 statsCol col">
+        {# stats.getCarjackingStatistic|var_dump #}
+        <div class="top">{{ langs.MOST_STOLEN_VEHICLES }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/carjacker.png" class="middle" alt="Carjacker"/>
+            </div>
+            {% for s in stats.getCarjackingStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|valueFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="c-row-50 statsCol col">
+        {# stats.getCrimesStatistic|var_dump #}
+        <div class="top">{{ langs.MOST_SUCCESSFUL_CRIMES }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/thief.png" class="middle" alt="{{ langs.MOST_SUCCESSFUL_CRIMES }}"/>
+            </div>
+            {% for s in stats.getCrimesStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|valueFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="c-row cf">
+    <div class="c-row-50 statsCol col">
+        {# stats.getPimpingStatistic|var_dump #}
+        <div class="top">{{ langs.MOST_WHORES_PIMPED }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/pimp.png" class="middle" alt="{{ langs.MOST_WHORES_PIMPED }}"/>
+            </div>
+            {% for s in stats.getPimpingStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|valueFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="c-row-50 statsCol col">
+        {# stats.getSmugglingStatistic|var_dump #}
+        <div class="top">{{ langs.MOST_UNITS_SMUGGLED }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/smuggler.png" class="middle" alt="{{ langs.MOST_UNITS_SMUGGLED }}"/>
+            </div>
+            {% for s in stats.getSmugglingStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|valueFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="c-row cf">
+    <div class="c-row-50 statsCol col">
+        {# stats.getPopulationStatistic|var_dump #}
+        <div class="top">{{ langs.POPULATION }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/population.png" class="middle" alt="{{ langs.POPULATION }}"/>
+            </div>
+        </div>
+        <br class="clear"/><br />
+        {% for g in stats.getPopulationStatistic %}
+            {% if loop.index0 % 3 == 0 %}{% if not loop.first %}</div>{% endif %}<div class="c-row cf">{% endif %}
+            <div class="c-row-33 col">
+                <div class="subtop">{{ g.getGroup }}</div>
+                <div class="content-container">
+                    {% for s in g.getStatistics %}
+                        <div class="row cols cf">
+                            <div class="c-70 column">
+                                <small>{{ s.getKey }}</small>
+                            </div>
+                            <div class="c-30 column center">
+                                <small>{{ s.getValue|valueFormat }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if loop.last %}</div>{% endif %}
+        {% endfor %}
+    </div>
+    
+    <div class="c-row-50 statsCol col">
+        {# stats.getReferralStatistic|var_dump #}
+        <div class="top">{{ langs.MOST_REFERRAL_PROFITS }}</div>
+        <div class="content-container">
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/referrer.png" class="middle" alt="Referrer"/>
+            </div>
+            {% for s in stats.getReferralStatistic %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <a href="/game/profile/{{ s.getKey }}">{{ s.getKey }}</a>
+                    </div>
+                    <div class="c-50 column">
+                        {{ s.getValue|moneyFormat }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

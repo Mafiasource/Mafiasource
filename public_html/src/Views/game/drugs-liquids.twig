@@ -1,0 +1,39 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .table-bordered thead th, .table-bordered thead td {padding:4px;}
+        section#ccontainer section#content tr.rowMsg div{border:none;}
+        @media (max-width: 688px) {
+            section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.DRUGS_LIQUIDS }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'drugs' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('drugs-liquids') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/pill.png" class="icon" alt=""/> Drugslab
+        </a>
+    </div>
+    <div class="tab {% if tab == 'liquids' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('drugs-liquids-liquids') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/drink.png" class="icon" alt=""/> {{ langs.LIQUIDS_BREWERY }}
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/drugs-liquids/"~tab~".twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+    {% include "/src/Views/game/js/toogle.twig" %}
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,90 @@
+<div id="interactEquipmentResponse"></div>
+
+<div class="row cols cf">
+    {% for e in equipment %}
+        {% if loop.index0 % 2 == 0 or loop.first %}</div><div class="row cols cf">{% endif %}
+            <div class="c-50 column equipmentCol">
+                <div class="c-row cf">
+                    <div class="c-row-30 col">
+                        <img src="{{ staticRoot }}/foto/150x120/1/web/public/images/{{ table }}/{{ e.getPicture }}" class="middle" alt="{{ e.getName }}"/>
+                    </div>
+                    <div class="c-row-70 col">
+                        {# STANDARD STATS #}
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/tag_blue.png" class="icon" alt="{{ langs.NAME }}"/>&nbsp;<strong>{{ e.getName }}</strong>
+                        <hr />
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.PRICE }}"/>&nbsp;{{ langs.PRICE }}: <strong>{{ e.getPrice|moneyFormat }}</strong>
+                        
+                        {% if tab == 'weapons' %}
+                            <hr />
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" class="icon" alt="{{ langs.AVERAGE_WEAPON_EXP_TRAIN }}"/>&nbsp;{{ langs.AVERAGE_WEAPON_EXP_TRAIN }}: <strong>{{ e.getWpnExpTrain }}%</strong>
+                            <hr />
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/bomb.png" class="icon" alt="{{ langs.DAMAGE_PER_HIT }}"/>&nbsp;{{ langs.DAMAGE_PER_HIT }}: <strong>{{ e.getDamage }}</strong>
+                            <hr />
+                        {% endif %}
+                        
+                        {% if tab == 'protection' %}
+                            <hr />
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/shield.png" class="icon" alt="{{ langs.PROTECTION }}"/>&nbsp;{{ langs.PROTECTION }}: <strong>{{ e.getProtection }}</strong>
+                            <hr />
+                        {% endif %}
+                        
+                        {% if tab == 'airplanes' %}
+                            <hr />
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/bomb.png" class="icon" alt="{{ langs.BOMBING_POWER }}"/>&nbsp;{{ langs.BOMBING_POWER }}: <strong>{{ e.getPower }}</strong>
+                            <hr />
+                        {% endif %}
+                        
+                        {# INTERACTABLES (Buttons) 2 form sets wegens de beperkingen bij wapens grotendeels copy pasta #}
+                        {% if tab == 'weapons' %}
+                            {% set avgWpnExpTrain = (statusPage.getWeaponExperience + statusPage.getWeaponTraining) / 2 %}
+                            {% if avgWpnExpTrain >= e.getWpnExpTrain %}
+                                {# INTERACTABLE #}
+                                <form id="equipment_{{ e.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-equipment') }}" data-response="#interactEquipmentResponse">
+                                    <input type="hidden" name="id" value="{{ e.getId }}"/>
+                                    <input type="hidden" name="table" value="{{ table }}"/>
+                                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                    {% if e.inPossession %}
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/>&nbsp;{{ langs.IN_POSSESSION }}{% if e.equipped %} &amp; {{ langs.EQUIPPED|lower }}{% endif %}
+                                        {% if e.getId != 0 %}
+                                            <hr />
+                                            <input type="submit" name="sell" value="{{ langs.SELL }}"/>
+                                        {% else %}
+                                            <hr />
+                                        {% endif %}
+                                        {% if e.equipped != "true" %}
+                                            &nbsp;<input type="submit" name="equip" value="{{ langs.EQUIP }}"/>
+                                        {% endif %}
+                                    {% else %}
+                                        <input type="submit" name="buy" value="{{ langs.BUY }}"/>
+                                    {% endif %}
+                                </form>
+                            {% else %}
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NOT_ENOUGH_WEAPON_EXP_TRAIN }}"/>&nbsp;{{ langs.NOT_ENOUGH_WEAPON_EXP_TRAIN }}
+                            {% endif %}
+                        {% else %}
+                            <form id="equipment_{{ e.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-equipment') }}" data-response="#interactEquipmentResponse">
+                                <input type="hidden" name="id" value="{{ e.getId }}"/>
+                                <input type="hidden" name="table" value="{{ table }}"/>
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                {% if e.inPossession %}
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/>&nbsp;{{ langs.IN_POSSESSION }}{% if e.equipped %} &amp; {{ langs.EQUIPPED|lower }}{% endif %}
+                                    {% if e.getId != 0 %}
+                                        <hr />
+                                        <input type="submit" name="sell" value="{{ langs.SELL }}"/>
+                                    {% else %}
+                                        <hr />
+                                    {% endif %}
+                                    {% if e.equipped != "true" %}
+                                        &nbsp;<input type="submit" name="equip" value="{{ langs.EQUIP }}"/>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="submit" name="buy" value="{{ langs.BUY }}"/>
+                                {% endif %}
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% if loop.last  %}</div>{% endif %}
+    {% endfor %}
+</div>

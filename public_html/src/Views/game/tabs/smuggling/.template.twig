@@ -1,0 +1,77 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% import "app/Resources/Views/macros/percent.bar.level.macro.twig" as percentLevelBar %}
+
+<div class="row">
+    <div class="inner-c-container">
+        <div id="ajaxLoader"></div>
+        <div id="smuggleResponse"></div>
+        <div class="subtop">
+            {{ type }} {{ langs.SMUGGLING|lower }} &amp; Stats
+        </div>
+        <div class="content-container">
+            <div id="smuggling" class="row cols cf">
+                <div class="c-70 column no-padding">
+                    <!-- bootstrap carousel -->
+                    <div id="carousel-smuggling" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators / Active always latest smuggle unit on init -->
+                        <ol class="carousel-indicators">
+                            {% for item in sPage.smuggle %}
+                                <li data-target="#carousel-smuggling" data-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
+                            {% endfor %}
+                        </ol>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner center">
+                            {% for item in sPage.smuggle %}
+                                <div class="carousel-item {% if item.getActive == true %}active{% endif %}">
+                                    <form id="smuggleUnits_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('smuggle-units') }}" data-response="#smuggleResponse">
+                                        <h2>{{ item.getName|capitalize }} - <img src="{{ staticRoot }}/foto/web/public/images/icons/star.png" alt="Level" class="icon"/> Lv. {{ item.getLevel }}</h2>
+                                        <p>{{ item.getDescription }}</p>
+                                        {% set cityID = userData.getCityID %}
+                                        {% set index = loop.index %}
+                                        <p>{% if lang == 'en' %}{{ langs.BUY }}/{{ langs.SELL }} {% endif %}{{ item.getName|capitalize }}{% if lang == 'nl' %} {{ langs.BUY|lower }}/{{ langs.SELL|lower }}{% endif %} {{ langs.FOR|lower }} <u>${{ prices[index] }}</u> {{ langs.EACH|lower }}?</p>
+                                        {% if item.getPicture is not empty %}<img src="{{ staticRoot }}/foto/300x70/1/web/public/images/smuggle/{{ item.getPicture }}{#&w=300&h=70&zc=1#}" class="middle" alt="{{ item.getName }}"/>{% endif %}
+                                        <br />
+                                        <p>{% if item.getUnitInfo.getInPossession < 1 %}{{ langs.NONE }} {{ langs.IN_POSSESSION|lower }}{% else %}<strong>{{ item.getUnitInfo.getInPossession }}</strong> {{ langs.IN_POSSESSION|lower }}{% endif %}</p>
+                                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                        <input type="hidden" name="id" value="{{ item.getId }}"/>
+                                        <input type="hidden" name="type" value="{{ tab }}" />
+                                        <input type="number" class="smuggleInput" name="amount" placeholder="{{ langs.AMNT }}" value="{% if item.getUnitInfo.getInPossession > 0 %}{{ item.getUnitInfo.getInPossession }}{% else %}{{ sPage.unitsInfo.getMaxCapacity }}{% endif %}" />&nbsp;
+                                        <input type="submit" name="buy" class="execbutton small green{% if item.getActive == true %} active{% endif %}" value="{{ langs.BUY }}"/>&nbsp;
+                                        <input type="submit" name="sell" class="execbutton small red{% if item.getActive == true %} active{% endif %}" value="{{ langs.SELL }}"/>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if sPage.smuggle is not empty %}
+                            <!-- Controls left/right -->
+                            <a class="left carousel-control-prev" href="#carousel-smuggling" role="button" data-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                              <span class="sr-only">&nbsp;</span>
+                            </a>
+                            <a class="right carousel-control-next" href="#carousel-smuggling" role="button" data-slide="next">
+                              <span class="sr-only">&nbsp;</span>
+                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="c-30 column center">
+                    <i class="darkgray">{{ langs.SMUGGLING_PROFITS }}:</i>&nbsp;$<span id="smugglingProfits">{{ sPage.user.getSmugglingProfit|valueFormat }}</span><span id="smugglingProfitsChange"></span><br />
+                    <i class="darkgray">{{ langs.SUCCESS_FAIL_RATIO }}:</i>&nbsp;<span id="smugglingSFRatio">{{ sPage.user.getSmugglingSFRatio }}</span><br />
+                    <i class="darkgray">{{ langs.UNITS_SMUGGLED }}:</i>&nbsp;<span id="smugglingUnitsSmuggled">{{ sPage.user.getSmugglingUnits|valueFormat }}</span><span id="smugglingUnitsSmuggledChange"></span><br /><br />
+                    {{ type }}<br />
+                    <i class="darkgray">{{ langs.UNITS_IN_POSSESSION }}:</i>&nbsp;<span id="smugglingUnitsPossession">{{ sPage.unitsInfo.getInPossession|valueFormat }}</span><span id="smugglingUnitsPossessionChange"></span><br />
+                    <i class="darkgray">{{ langs.UNITS_AVAILABLE }}:</i>&nbsp;<span id="smugglingUnitsAvailable">{{ sPage.unitsInfo.getMaxCapacity|valueFormat }}</span><span id="smugglingUnitsAvailableChange"></span><br /><br />
+                    <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/smuggling.png" alt="Level" />
+                    <span id="smugglingLvl">Lv. <span class="number"><span id="smugglingLv">{{ sPage.user.getSmugglingLv }}</span><span id="smugglingLvChange"></span></span></span>
+                    <div style="max-width:150px;margin: 0 auto 1.65em auto;">
+                        <span id="smugglingPercent">{{ percentLevelBar.create(sPage.user.getSmugglingXp.experience, sPage.user.getSmugglingXp.class) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br class="clear"/>
+        {{ alert.build('Info', 'alert-info', 'help', langs.SMUGGLING_INFO) }}
+    </div>
+</div>

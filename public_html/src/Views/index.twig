@@ -1,0 +1,81 @@
+{% extends "/app/Resources/Views/base.twig" %}
+ 
+{% block content %}
+    <h1 style="position: absolute;top: -10em;">CrimeClub Maffia RPG</h1>
+    <section id="content">
+        <div class="container">
+            {% include "/src/Views/.cookies.twig" %}
+            {% if offline %}
+                <h1>{{ langs.OFFLINE_MSG|raw }}</h1>
+            {% endif %}
+            <div class="online-txt">
+                {# { # Usefull reset timer # }
+                    <p><span id="cResetTime">{{ "ResetTime"|countdownHmsTime(date('07/01/2020 13:00:00').timestamp - date().timestamp)|raw }}</span></p>
+                #}
+                <p>{{ langs.ONLINE_MSG|raw }}</p>
+            </div>
+            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <section id="slider" class="middle">
+                    {# Attention! When adjusting slider ALSO adjust game.CSS file to slide the slider further than current 4 blocks #}
+                        <ul>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER1|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER2|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER3|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER4|raw }}
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                    <br class="clear"/>
+                    <p>{{ langs.LINK_PARTNERS_INFO|raw }}</p>
+                </div>
+                <div class="col-lg-6">
+                    <section id="stats" class="middle">
+                        {{ langs.STATS|raw }}
+                    </section>
+                </div>
+            </div>
+            {% if not offline %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <section id="call-to-action-register">
+                            {% if userData is empty %}
+                                <h2>{{ langs.PLAYERS_BEFORE_MSG|raw }}</h2>
+                                <a href="{{ routing.getRouteByRouteName('register') }}" class="button">{{ langs.REGISTER_BTN }}</a>&nbsp;
+                            {% endif %}
+                            <a href="{{ routing.getRouteByRouteName('get-the-app') }}"><img src="{{ staticRoot }}/foto/web/public/images/android-beta.png" alt="Android Beta App"/></a>
+                        </section>
+                    </div>
+                </div>
+            {% endif %}
+            {# { # Social media, unused # }
+            <div class="row">
+                <div class="col-md-12">
+                    <section id="social">
+                        <a class="fb" href="https://facebook.com/{{ settings.fbPage }}" target="_blank"></a>
+                        <a class="twitter" href="https://twitter.com/{{ settings.twPage }}" target="_blank"></a>
+                        <a class="google" href="https://plus.google.com/{{ settings.gpPage }}" target="_blank"></a>
+                    </section>
+                </div>
+            </div>
+            #}
+        </div>
+        <div class="push"></div>
+    </section>
+{% endblock content %}

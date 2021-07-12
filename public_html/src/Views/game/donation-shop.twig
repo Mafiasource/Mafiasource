@@ -1,0 +1,22 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    figure {margin: .5rem 0;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="subtop">
+    {{ langs.DONATION_SHOP }}
+</div>
+<div class="content-container">
+    <div id="interactShopResponse">
+        {% include "src/Views/game/Ajax/donation-shop.twig" %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

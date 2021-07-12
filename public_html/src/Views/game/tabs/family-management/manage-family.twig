@@ -1,0 +1,117 @@
+{% block stylesheets %}
+<style type="text/css">
+.user-select {max-width:120px;float:right;}
+@media (max-width: 688px) {
+    section#ccontainer section#content .row.cols > .c-50 {width:100%;border: none;border-bottom: 1px solid #000;}
+    section#ccontainer section#content .row.cols > .c-50:last-child {border: none;}
+}
+</style>
+{% endblock stylesheets %}
+
+<div class="c-row cf">
+    <div class="inner-c-container">
+        {% if hasBossRights %}
+            <div class="subtop">
+                {{ langs.FAMILY }} Top {{ langs.MANAGEMENT }}
+            </div>
+            <div class="content-container">
+                <div id="manageFamilyTopResponse" class="rowMsg"></div>
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <form id="manageFamilyBoss" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('manage-family-top') }}" method="POST" data-response="#manageFamilyTopResponse">
+                            <img src="{{ staticRoot }}/web/public/images/icons/user_suit.png" class="icon" alt="{{ langs.BOSS }}"/> {{ langs.BOSS }}
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <select name="boss" class="user-select">
+                                <option value="0">{{ langs.NONE }}</option>
+                                {% for m in familyMembers %}
+                                    <option value="{{ m.getUsername }}"{% if m.getUsername == familyPage.getBoss %} selected="selected"{% endif %}>{{ m.getUsername }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                    <div class="c-50 column">
+                        <form id="manageFamilyBankmanager" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('manage-family-top') }}" method="POST" data-response="#manageFamilyTopResponse">
+                            <img src="{{ staticRoot }}/web/public/images/icons/user_gray.png" class="icon" alt="{{ langs.BANKMANAGER }}"/> {{ langs.BANKMANAGER }}
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <select name="bankmanager" class="user-select">
+                                <option value="0">{{ langs.NONE }}</option>
+                                {% for m in familyMembers %}
+                                    <option value="{{ m.getUsername }}"{% if m.getUsername == familyPage.getBankmanager %} selected="selected"{% endif %}>{{ m.getUsername }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <form id="manageFamilyUnderboss" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('manage-family-top') }}" method="POST" data-response="#manageFamilyTopResponse">
+                            <img src="{{ staticRoot }}/web/public/images/icons/user.png" class="icon" alt="Underboss"/> {{ langs.UNDERBOSS }}
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <select name="underboss" class="user-select">
+                                <option value="0">{{ langs.NONE }}</option>
+                                {% for m in familyMembers %}
+                                    <option value="{{ m.getUsername }}"{% if m.getUsername == familyPage.getUnderboss %} selected="selected"{% endif %}>{{ m.getUsername }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                    <div class="c-50 column">
+                        <form id="manageFamilyForummod" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('manage-family-top') }}" method="POST" data-response="#manageFamilyTopResponse">
+                            <img src="{{ staticRoot }}/web/public/images/icons/user_comment.png" class="icon" alt="Forum Mod"/> Forum Mod
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <select name="forummod" class="user-select">
+                                {% if familyData.getVip == 0 %}
+                                    <option value="0">V.I.P. only</option>
+                                {% else %}
+                                    <option value="0">{{ langs.NONE }}</option>
+                                    {% for m in familyMembers %}
+                                        <option value="{{ m.getUsername }}"{% if m.getUsername == familyPage.getForummod %} selected="selected"{% endif %}>{{ m.getUsername }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <br class="clear"/>
+            
+            <div class="subtop">
+                {% if lang == 'en' %}{{ langs.ABOLISH }} {% endif %}{{ langs.FAMILY }} {% if lang == 'nl' %}{{ langs.ABOLISH }}{% endif %}
+            </div>
+            <div class="content-container">
+                <div id="abolishFamilyResponse" class="rowMsg"></div>
+                <div class="row">
+                    <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('abolish-family') }}" method="POST" data-response="#abolishFamilyResponse">
+                        {{ langs.ABOLISH_FAMILY_AND_PROGRESS }}&nbsp;
+                        <input type="hidden" name="security-token" value="{{ securityToken }}" />
+                        <input type="submit" name="abolish" value="{{ langs.ABOLISH }}" />
+                    </form>
+                </div>
+            </div>
+            
+            <br class="clear"/>
+            
+            {#
+            <br class="clear"/>
+            <div class="middle" style="max-width: 440px;">
+                <div class="subtop">
+                    {{ langs.BANKMANAGER }} {{ langs.SETTINGS }}
+                </div>
+                <div class="content-container">
+                    <div class="row">
+                        <input type="radio" name="bank-limit" value="0" checked="checked"/> {{ langs.UNLIMITED }}
+                    </div>
+                    <div class="row">
+                        <input type="radio" name="bank-limit" value="1"/> {{ langs.UP_TO }} $ <input style="max-width:100px;" type="number" name="bank-limit-amount" value="100"/> {{ langs.EACH_DAY|lower }}.
+                    </div>
+                    <div class="row">
+                        <button type="button" name="bank-limit-change" class="button">{{ langs.SAVE }}</button>
+                    </div>
+                </div>
+            </div>
+            #}
+        {% else %}
+            <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.BOSS }}"/> {{ langs.FAMILY_MANAGEMENT_ONLY_BOSS }}
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,126 @@
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {% if type == 'Drugs' %}
+                    Drugslab
+                {% elseif type == 'Liquids' %}
+                    {{ langs.LIQUIDS_BREWERY }}
+                {% endif %}
+            </div>
+            <div class="content-container cf">
+                <div class="row">
+                    <img src="{{ staticRoot }}/foto/web/public/images/{% if type == 'Drugs' %}drugslab{% elseif type == 'Liquids' %}liquidsbrewery{% endif %}.jpg" class="middle" alt="{{ type }}"/>
+                    {% set myUnits = units|length %}
+                    {% set unitsLeft = maxUnits - myUnits %}
+                    {% set maxUnitsMessage = routing.replaceMessagePart(maxUnits, langs.MAX_UNITS_INFO, '/{maxUnits}/') %}
+                    <p class="center">{{ maxUnitsMessage|raw }}</p>
+                </div>
+                {% if response %}
+                    <div class="rowMsg">
+                        {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+                    </div>
+                {% endif %}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="{{ langs.COSTS }}"/> {{ langs.COSTS }}
+                    </div>
+                    <div class="c-50 column">
+                        $5,000 / {{ langs.EACH }} unit
+                    </div>
+                </div>
+                <form id="produceUnits" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('produce-drugs-liquids') }}" method="POST" data-response="#handleDrugsLiquidsResponse">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="hidden" name="type" value="{{ type }}"/>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/{% if type == 'Drugs' %}pill{% elseif type == 'Liquids' %}drink{% endif %}.png" alt="Type"/> Type
+                        </div>
+                        <div class="c-50 column">
+                            <select name="unit-type">
+                                {% for item in sPage.smuggle %}
+                                    <option value="{{ item.getId }}"{% if loop.last %} selected="selected"{% endif %}>{{ item.getName }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% if unitsLeft > 0 %}
+                        <div class="row">
+                            <div class="center">
+                                <input type="submit" name="create-one" value="{% if lang == 'en' %}{{ langs.CREATE }} unit{% endif %}{% if lang == 'nl' %}Unit {{ langs.CREATE|lower }}{% endif %}"/>
+                                {% if unitsLeft > 1 %}
+                                    &nbsp;<input type="submit" name="create-max" value="{% if lang == 'en' %}{{ langs.CREATE }} {% endif %}{{ unitsLeft }} units{% if lang == 'nl' %} {{ langs.CREATE|lower }}{% endif %}"/>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <form id="collectUnits" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('collect-drugs-liquids') }}" method="POST" name="collectUnits" data-response="#handleDrugsLiquidsResponse">
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                <input type="hidden" name="type" value="{{ type }}"/>
+                <table class="table table-sm table-dark table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="center"><input type="checkbox" name="all-vehicles"  onClick="toogle(document.collectUnits)" value="Check"/></th>
+                      <th scope="col" class="center"><strong>#</strong></th>
+                      <th scope="col" class="center"><strong>Type</strong></th>
+                      <th scope="col" class="center"><strong>Status</strong></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for u in units %}
+                        {# Clear previous countClean set timer #}
+                        {% if response or responseCollect %}
+                            <script type="text/javascript">
+                                if(typeof timeoutCCdlUnit_{{ loop.index }} !== 'undefined') clearTimeout(timeoutCCdlUnit_{{ loop.index }});
+                            </script>
+                        {% endif %}
+                        <tr>
+                            <td class="center">
+                                <input type="checkbox" name='units[]' value="{{ u.getId }}"/>
+                            </td>
+                            <td>
+                                {{ loop.index }}
+                            </td>
+                            <td>
+                                {{ u.getSmuggleName }}
+                            </td>
+                            <td>
+                                {% if u.getTime > time %}
+                                    <span class="red">{{ langs.PRODUCING }}</span>, <span id="cdlUnit_{{ loop.index }}">{{ "dlUnit_#{loop.index}"|countClean(u.getTime)|raw }}</span><span>&nbsp;{{ langs.SECONDS_TO_GO|lower }}.</span>
+                                {% else %}
+                                    <span class="lightgreen">{{ langs.DONE }}</span>, <span>{{ u.getUnits|valueFormat }} units {{ langs.PRODUCED|lower }}.</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% if responseCollect %}
+                        {% set response = responseCollect %}
+                        <tr>
+                            <td colspan="4" style="padding:0;">
+                                <div class="rowMsg">
+                                    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td colspan="4">
+                            {% if units is empty %}
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_UNITS_PRODUCING }}
+                            {% else %}
+                                <input type="submit" name="collect-units" value="{% if lang == 'en' %}{{ langs.COLLECT }} units{% else %}Units {{ langs.COLLECT|lower }}{% endif %}"/>
+                            {% endif %}
+                        </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>

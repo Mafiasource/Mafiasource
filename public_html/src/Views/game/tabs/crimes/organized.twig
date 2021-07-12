@@ -1,0 +1,18 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% if crimesPage.user.getCrimesLv < 15 %}
+    <div class="row">
+        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.ORGANIZED_CRIME_NEED_LV_15 }}
+    </div>
+{% else %}
+    <div class="row">
+        <div class="inner-c-container">
+            <div id="ajaxLoader"></div>
+            <div id="refreshCrimeResponse"> {# REFRESHCRIMERESPONSE ONLY TRIGGERED ON ORG CRIME TYPE/ID 2 | PREPARATION USERFRIENDLYNESS! #}
+                {% include "src/Views/game/Ajax/organized.crimes.twig" %}
+            </div>
+            <br class="clear"/>
+        {{ alert.build('Info', 'alert-info', 'help', langs.ORGANIZED_CRIME_INFO) }}
+        </div>
+    </div>
+{% endif %}

@@ -1,0 +1,117 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div id="familyBankTransferResponse"></div>
+        <div class="transfer">
+            <div class="subtop">
+                {{ langs.FAMILY }} bank
+            </div>
+            <div class="content-container">
+                {% if hasRights == TRUE %}<form id="familyBankTransfer" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('bank-transfer-family') }}" method="POST" data-response="#familyBankTransferResponse">{% endif %}
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.MONEY }}"/> {{ langs.FAMILY }} bank:
+                            </div>
+                        </div>
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                {{ familyData.getMoney|moneyFormat }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/money_add.png" class="icon" alt="{{ langs.MONEY }}"/> {{ langs.INTEREST }}:
+                            </div>
+                        </div>
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                {% if familyData.getVip %}
+                                    {% set interest = familyData.getMoney * 0.02 %}
+                                {% else %}
+                                    {% set interest = familyData.getMoney * 0.01 %}
+                                {% endif %}
+                                {{ interest|moneyFormat }}
+                            </div>
+                        </div>
+                    </div>
+                    {% if hasRights == TRUE %}
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.USER }}"/> {{ langs.USER }}:
+                            </div>
+                        </div>
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <select name="user">
+                                    <option value="">{{ langs.MAKE_A_CHOICE }}</option>
+                                    {% for u in familyMembers %}
+                                        <option value="{{ u.getUsername }}">{{ u.getUsername }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.AMOUNT }}"/> {{ langs.AMOUNT }}:
+                            </div>
+                        </div>
+                        <div class="c-row-30 col">
+                            <div class="row">
+                                <input type="number" name="amount" value=""/>
+                            </div>
+                        </div>
+                        <div class="c-row-20 col">
+                            <div class="row">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="transfer" value="{{ langs.SEND }}"/>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% if hasRights == TRUE %}</form>{% endif %}
+            </div>
+        </div>
+        {% include "src/Views/.Paginate.twig" %}
+        <br class="clear"/>
+        
+        
+        <div class="table-responsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center" colspan="4">Bank {{ langs.LOGS }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/user_suit.png" class="icon" alt="{{ langs.USER }}"/> {{ langs.SENDER }}</td>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.USER }}"/> {{ langs.RECEIVER }}</td>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.AMOUNT }}"/> {{ langs.AMOUNT }}</td>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/clock.png" class="icon" alt="{{ langs.DATE }}"/> {{ langs.DATE }}</td>
+                    </tr>
+                    {% for fb in familyBankLogs %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td><a href="/game/profile/{{ fb.getSender }}">{{ fb.getSender }}</a></td>
+                          <td><a href="/game/profile/{{ fb.getReceiver }}">{{ fb.getReceiver }}</a></td>
+                          <td>{{ fb.getAmount|moneyFormat }}</td>
+                          <td>{{ fb.getDate }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% if familyBankLogs is empty %}
+                        <tr>
+                          <td colspan="4">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_BANK_LOGS_TO_VIEW }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        {% include "src/Views/.Paginate.twig" %}
+    </div>
+</div>

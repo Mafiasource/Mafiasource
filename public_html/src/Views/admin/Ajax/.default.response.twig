@@ -1,0 +1,14 @@
+{% import "app/Resources/Views/macros/admin/alert.macro.twig" as alert %}
+
+{% if response.alert is iterable %}
+    {% if response.alert.success %}
+        {% set class = 'alert-success' %}
+        {% set icon = '<i class="fas fa-check"></i>' %}
+    {% else %}
+        {% set class = 'alert-danger' %}
+        {% set icon = '<i class="fas fa-times"></i>' %}
+    {% endif %}
+    {{ alert.build(class, '<p>' ~ icon ~ ' ' ~ response.alert.message ~ '</p>') }}
+{% else %}
+    {{ response|raw }}
+{% endif %}

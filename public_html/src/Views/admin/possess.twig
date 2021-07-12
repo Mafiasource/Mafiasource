@@ -1,0 +1,31 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Bezittingen per locatie beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            <p>Laat CityID leeg indien de bezitting een staat bezitting is.<br />
+            Laat StateID en CityID leeg indien de bezitting voor alle staten is. (Hiervan slechts 1 record aanmaken!!)</p>
+            {% set tableRows = possess %}
+            {% set dataTable = 'possess' %}
+            {% set startvar = pagination.from %}
+            {# {% set skipFields = ['article_nl','article_en'] %} #}
+            {% set onlyFields = ['pID','stateID','cityID','userID'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            {#<a href="#" class="btn btn-default editOrNew">Nieuwe bezitting per locatie invoegen</a>#}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

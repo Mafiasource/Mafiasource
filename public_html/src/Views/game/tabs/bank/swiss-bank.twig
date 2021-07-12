@@ -1,0 +1,86 @@
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.SUMMARY }}
+            </div>
+            <div class="content-container">
+                <div class="row cols cf">
+                    <div class="c-30 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="" class="icon" border="0" /> {{ langs.SPACE_VAULT }}
+                    </div>
+                    <div class="c-70 column">
+                        {{ bankData.getSwissBank|moneyFormat }}
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-30 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" alt="" class="icon" border="0" /> Max. {{ langs.SPACE_VAULT|lower }}
+                    </div>
+                    <div class="c-70 column">
+                        {{ bankData.getSwissBankMax|moneyFormat }}
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-30 column">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" alt="" class="icon" border="0" /> {{ langs.SPACE_LEFT }}
+                    </div>
+                    <div class="c-70 column">
+                        {% set swissLeft = bankData.getSwissBankMax - bankData.getSwissBank %}
+                        {{ swissLeft|moneyFormat }}
+                    </div>
+                </div>
+                <div class="row">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" class="icon" alt="Help"/> {{ langs.SWISS_BANK_INFO }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.BANK_TRANSFER }}
+            </div>
+            <div class="content-container">
+                <div id="ajaxLoader"></div>
+                <div id="swissBankTransferResponse" class="rowMsg"></div>
+                <form id="bank-transfer" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('swiss-bank-transfer') }}" data-response="#swissBankTransferResponse">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" alt="" class="icon" border="0" /> Bank
+                        </div>
+                        <div class="c-50 column">
+                            {{ userData.getBank|moneyFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" alt="" class="icon" border="0" /> {{ langs.AMOUNT }}
+                        </div>
+                        <div class="c-50 column">
+                            <input type="text" name="amount" placeholder="{{ langs.AMOUNT }}" value="{{ userData.getBank }}"/>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_refresh.png" alt="" class="icon" border="0" /> {{ langs.ACTION }}
+                        </div>
+                        <div class="c-50 column">
+                            <select name="action">
+                                <option value="getMoney">{{ langs.WITHDRAW_MONEY_FROM_BANK }}</option>
+                                <option value="putMoney">{{ langs.STORE_MONEY_IN_BANK }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        {{ langs.SWISS_TRANSACTION_INFO }}
+                    </div>
+                    <div class="row cf">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="transfer-money" class="right" value="{{ langs.BANK_TRANSFER }}!"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

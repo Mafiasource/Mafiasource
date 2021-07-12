@@ -1,0 +1,200 @@
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+<div class="c-row cf">
+    <div class="c-row">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.JOINED_MEMBERS }}
+            </div>
+            <div class="content-container">
+                <div id="handleJoinResponse" class="rowMsg"></div>
+                <div class="members-container cf">
+                    {% for member in joinedMembers %}
+                        <form class="ajaxForm memberRecord {{ cycle(['odd', 'even'], loop.index0) }}" action="{{ routing.getAjaxRouteByRouteName('handle-family-join') }}" method="POST" data-response="#handleJoinResponse">
+                            {{ userTagManager.write('joinedMember', member.getScorePosition, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True') }} <span class="position">#{{ member.getScorePosition }}</span>
+                            <hr class="split" />
+                            <small class="gray">Rank:</small> <span class="right">{{ member.getRankname }}</span>
+                            <hr class="lineSplit" />
+                            {% set timeNow = 'now'|date('U') %}
+                            {% set timeOnline = timeNow - 360 %}
+                            <small class="gray">On/off:</small> <span class="right">{% if member.getLastclick > timeOnline %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_online_green.png" class="icon" alt="Online"/> <strong class="green">Online</strong>{% else %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_offline_red.png" class="icon" alt="Offline"/> <strong class="red">Offline</strong>{% endif %}</span>
+                            <hr class="lineSplit" />
+                            <small class="gray">{{ langs.ACTION }}s:</small><span class="right">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="hidden" name="username" value="{{ member.getUsername }}"/>
+                                <input type="submit" name="accept" value="{{ langs.ACCEPT }}" class="button"/>&nbsp;
+                                <input type="submit" name="deny" value="{{ langs.DENY }}" class="button"/>
+                            </span>
+                        </form>
+                    {% endfor %}
+                </div>
+                {% if joinedMembers is empty %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_JOINED_MEMBERS_YET }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <br class="clear"/>
+            <div class="subtop">
+                {{ langs.INVITED_MEMBERS }}
+            </div>
+            <div class="content-container">
+                <div id="handleInviteResponse" class="rowMsg"></div>
+                <div class="members-container cf">
+                    {% for member in invitedMembers %}
+                        <form class="ajaxForm memberRecord {{ cycle(['odd', 'even'], loop.index0) }}"  action="{{ routing.getAjaxRouteByRouteName('handle-family-invite') }}" method="POST" data-response="#handleInviteResponse">
+                            {{ userTagManager.write('invitedMember', member.getScorePosition, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True') }} <span class="position">#{{ member.getScorePosition }}</span>
+                            <hr class="split" />
+                            <small class="gray">Rank:</small> <span class="right">{{ member.getRankname }}</span>
+                            <hr class="lineSplit" />
+                            {% set timeNow = 'now'|date('U') %}
+                            {% set timeOnline = timeNow - 360 %}
+                            <small class="gray">On/off:</small> <span class="right">{% if member.getLastclick > timeOnline %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_online_green.png" class="icon" alt="Online"/> <strong class="green">Online</strong>{% else %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_offline_red.png" class="icon" alt="Offline"/> <strong class="red">Offline</strong>{% endif %}</span>
+                            <hr class="lineSplit" />
+                            <small class="gray">{{ langs.ACTION }}s:</small><span class="right">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="hidden" name="username" value="{{ member.getUsername }}"/>
+                                <input type="submit" name="delete" value="{{ langs.DELETE }}" class="button"/>
+                            </span>
+                        </form>
+                    {% endfor %}
+                </div>
+                {% if invitedMembers is empty %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_INVITED_MEMBERS_YET }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.KICK_MEMBERS }}
+            </div>
+            <div class="content-container">
+                <div id="kickMemberResponse" class="rowMsg"></div>
+                <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('kick-family-member') }}" method="POST" data-response="#kickMemberResponse">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.USER }}"/> {{ langs.USER }}
+                        </div>
+                        <div class="c-50 column">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <select name="user">
+                                <option value="">{{ langs.MAKE_A_CHOICE }}</option>
+                                {% for m in kickList %}
+                                    <option value="{{ m.getUsername }}">{{ m.getUsername }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="submit" name="kick-user" value="Kick"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.INVITE_MEMBERS }}
+            </div>
+            <div class="content-container">
+                <div id="inviteMemberResponse" class="rowMsg"></div>
+                <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('invite-family-member') }}" method="POST" data-response="#inviteMemberResponse">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.USER }}"/> {{ langs.USER }}
+                        </div>
+                        <div class="c-50 column">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="text" name="username" value=""/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="submit" name="invite-user" value="{{ langs.INVITE }}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="joinpolicy">
+                <div class="subtop">
+                    {{ langs.JOIN_POLICY }}
+                </div>
+                <div class="content-container">
+                    <div id="familyJoinpolicyResponse" class="rowMsg"></div>
+                    <form id="familyJoinpolicy" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('family-manage-join-policy') }}" method="POST" data-response="#familyJoinpolicyResponse">
+                        <div class="c-row cf">
+                            <div class="c-row-50 col">
+                                <div class="row">
+                                    <div class="form-check">
+                                      <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                      <input class="form-check-input" type="radio" name="join" id="closed" value="0"{% if familyData.getJoin == 0 %} checked="checked"{% endif %} />
+                                      <label class="form-check-label" for="closed">
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.MEMBERS_MAY_NOT_JOIN }}"/> {{ langs.MEMBERS_MAY_NOT_JOIN|raw }}
+                                      </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="c-row cf">
+                            <div class="c-row-50 col">
+                                <div class="row">
+                                    <div class="form-check">
+                                      <input class="form-check-input" type="radio" name="join" id="open" value="1"{% if familyData.getJoin == 1 %} checked="checked"{% endif %} />
+                                      <label class="form-check-label" for="open">
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.MEMBERS_MAY_JOIN }}"/> {{ langs.MEMBERS_MAY_JOIN|raw }}
+                                      </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c-row-50 col">
+                                <div class="row">
+                                    <input type="submit" name="change-join-policy" value="{{ langs.EDIT }}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="joinpolicy">
+                <form id="manageLeaveCosts" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('manage-family-leave-costs') }}" method="POST" data-response="#manageLeaveCostsResponse">
+                    <div class="subtop">
+                        {{ langs.LEAVE_COSTS }}
+                    </div>
+                    <div class="content-container">
+                        <div id="manageLeaveCostsResponse" class="rowMsg"></div>
+                        <div class="row cols cf">
+                            <div class="c-50 column">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.AMOUNT }}"/> {{ langs.AMOUNT }}:
+                            </div>
+                            <div class="c-50 column">
+                                <input type="text" name="leave-costs" maxlength="6" value="{{ familyData.getLeaveCosts }}"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="submit" name="manage-leave-costs" class="button" value="{{ langs.SAVE }}" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

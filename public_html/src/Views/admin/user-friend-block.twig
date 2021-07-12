@@ -1,0 +1,29 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Vrienden / blokkeren beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            {% set tableRows = user_friend_block %}
+            {% set dataTable = 'user_friend_block' %}
+            {% set startvar = pagination.from %}
+            {# {% set skipFields = [''] %} #}
+            {% set onlyFields = ['inviterID', 'userID', 'friendID', 'type'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            <a href="#" class="btn btn-default editOrNew">Nieuwe gebruikers captcha aanmaken</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

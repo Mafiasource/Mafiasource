@@ -1,0 +1,48 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
+<style type="text/css">
+h2 {font-weight:lighter;font-size: 20px;color:#adadad;margin:0;}
+span.news {color: #4db5d6;}
+span.update {color: #f7ff15;}
+span.date {color:#8e8e8e;}
+.even {background-color: rgba(255, 255, 255, 0.05) !important;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.NEWS }} &amp; Updates
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'latest' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('news') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" class="icon" alt=""/> {{ langs.LATEST }} 5 items
+        </a>
+    </div>
+    <div class="tab {% if tab == 'news' %}tab_on{% endif %}  t-33">
+        <a href="{{ routing.getRouteByRouteName('news-news') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/newspaper.png" class="icon" alt=""/> {{ langs.NEWS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'updates' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('news-updates') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt=""/> Updates
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% for a in latestMessages %}
+        <div class="row {% if loop.index is divisible by(2) %}even{% else %}odd{% endif %}">
+            <h2>{% if a.getType == "news" %}<img src="{{ staticRoot }}/foto/web/public/images/icons/newspaper.png" class="icon" width="22" alt=""/><span class="news">{{ langs.NEWS }}:</span>{% else %}<img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" width="22" alt=""/><span class="update">Update:</span>{% endif %} {{ a.getTitle }}</h2>
+            <span class="date">{{ langs.POSTED_ON }}: {{ a.getDate }}</span><br />
+            {{ a.getArticle|raw }}
+        </div>
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script src="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
+{% endblock javascripts %}

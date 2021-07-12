@@ -1,0 +1,40 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% import "app/Resources/Views/macros/percent.bar.level.macro.twig" as percentLevelBar %}
+
+<div class="row">
+    <div class="inner-c-container">
+        <div id="ajaxLoader"></div>
+        <div id="pimpWhoresResponse"></div>
+        <div class="subtop">
+            {{ langs.PIMP_WHORES }} &amp; Stats
+        </div>
+        <div class="content-container">
+            <div id="pimp" class="row cols cf">
+                <div class="c-70 column no-padding"> 
+                    <div class="center">
+                        <h2>{{ userWhoresInfo|raw }}</h2>
+                        <img src="{{ staticRoot }}/foto/web/public/images/rld_banner.jpg" alt="Red Light District" />
+                        <br class="clear"/><br />
+                        <form id="pimpWhores" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('pimp-whores') }}" data-response="#pimpWhoresResponse">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="submit" name="pimp-whores" class="execbutton purple active" value="{{ langs.PIMP_WHORES }}"/>
+                        </form>
+                    </div>
+                </div>
+                <div class="c-30 column center">
+                    <i class="darkgray">{{ langs.TOTAL_PROFITS_FROM_WHORES }}:</i>&nbsp;$<span id="pimpProfits">{{ rldPage.getPimpProfit|valueFormat }}</span><span id="pimpProfitsChange"></span><br />
+                    <i class="darkgray">{{ langs.TOTAL_PIMPS_COMMITTED }}:</i>&nbsp;<span id="pimpAttempts">{{ rldPage.getPimpAttempts|valueFormat }}</span><span id="pimpAttemptsChange"></span><br />
+                    <i class="darkgray">{{ langs.TOTAL_WHORES_PIMPED }}:</i>&nbsp;<span id="pimpAmount">{{ rldPage.getPimpAmount|valueFormat }}</span><span id="pimpAmountChange"></span><br /><br />
+                    <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/pimp.png" alt="Level" />
+                    <span id="pimpLvl">Lv. <span class="number"><span id="pimpLv">{{ rldPage.getPimpLv }}</span><span id="pimpLvChange"></span></span></span>
+                    <div style="max-width:150px;margin: 0 auto 1.65em auto;">
+                        <span id="pimpPercent">{{ percentLevelBar.create(rldPage.getPimpXp.experience, rldPage.getPimpXp.class) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br class="clear"/>
+        {{ alert.build('Info', 'alert-info', 'help', langs.PIMP_WHORES_INFO) }}
+    </div>
+</div>

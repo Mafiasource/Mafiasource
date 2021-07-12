@@ -1,0 +1,83 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    hr {display:block;width:100%;height:1px;border:none;{#background:#333;#}margin:1px 0;padding:0;}
+    @media (max-width: 688px) {
+        .row.cols.cf > .residenceCol.c-50 {width:100%;border:none;}
+        .row.cols.cf > .residenceCol.c-50:first-child {border-bottom:1px solid #000;}
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.ESTATE_AGENCY }}
+</div>
+<div class="content-container">
+    <div class="c-row cf">
+        <div class="inner-c-container">
+            <div id="buyPossessResponse"></div>
+            <div class="center">
+                {% if possessionData.getPossessDetails.getUserID == 0 %}
+                    <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                    <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                        <input type="hidden" name="id" value="{{ possessId }}"/>
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                    </form>
+                {% else %}
+                    <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div id="interactResidenceResponse"></div>
+
+    <div class="row cols cf">
+        {% for r in residence %}
+            {% if loop.index0 % 2 == 0 or loop.first %}</div><div class="row cols cf">{% endif %}
+                <div class="c-50 column residenceCol">
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <img src="{{ staticRoot }}/foto/300x200/1/web/public/images/residence/{{ r.getPicture }}" class="middle" alt="{{ r.getName }}"/>
+                        </div>
+                        <div class="c-row-50 col">
+                            {# STANDARD STATS #}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/tag_blue.png" class="icon" alt="{{ langs.NAME }}"/>&nbsp;<strong>{{ r.getName }}</strong>
+                            <hr />
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.PRICE }}"/>&nbsp;{{ langs.PRICE }}: <strong>{{ r.getPrice|moneyFormat }}</strong>
+                            <hr />
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/shield.png" class="icon" alt="{{ langs.DEFENCE }}"/>&nbsp;{{ langs.DEFENCE }}: <strong>{{ r.getDefence|valueFormat }}</strong>
+                            <hr />
+                            <form id="residence_{{ r.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-residence') }}" data-response="#interactResidenceResponse">
+                                <input type="hidden" name="id" value="{{ r.getId }}"/>
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                {% if r.inPossession %}
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/>&nbsp;{{ langs.IN_POSSESSION }}{% if r.equipped %} &amp; {{ langs.EQUIPPED|lower }}{% endif %}
+                                    {% if r.getId != 0 %}
+                                        <hr />
+                                        <input type="submit" name="sell" value="{{ langs.SELL }}"/>
+                                    {% else %}
+                                        <hr />
+                                    {% endif %}
+                                    {% if r.equipped != "true" %}
+                                        &nbsp;<input type="submit" name="equip" value="{{ langs.EQUIP }}"/>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="submit" name="buy" value="{{ langs.BUY }}"/>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% if loop.last  %}</div>{% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

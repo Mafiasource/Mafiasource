@@ -1,0 +1,5 @@
+{% macro create(score, class='False') %}
+    <div class="progress">
+      <div class="progress-bar{% if class != 'False' %} {{ class }}{% endif %}" role="progressbar" aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ score }}%"></div>
+    </div>
+{% endmacro create %}

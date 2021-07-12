@@ -1,0 +1,71 @@
+{% extends "/app/Resources/Views/base.twig" %}
+
+{% block content %}
+    <h1 style="position: absolute;top: -10em;">{{ PAGE_TITLE }}</h1>
+    <section id="content">
+        <div class="container">
+            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+            <div class="not-found-page">
+                <div class="row not-found-kol">
+                    <div class="col-md-12">
+                        <div class="alert alert-warning">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/bin.png" class="icon" alt="{{ langs.NONE }}"/>&nbsp; {{ langs.PAGE_DOESNT_EXIST }} <a href="{{ routing.getPrevRoute() }}" class="button" style="float: right;">{{ langs.GO_BACK }}</a>
+                        </div>
+                        <br class="clear"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <section id="slider">
+                            <ul>
+                                <li>
+                                    <div class="slider-container">
+                                        {{ langs.SLIDER1|raw }}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="slider-container">
+                                        {{ langs.SLIDER2|raw }}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="slider-container">
+                                        {{ langs.SLIDER3|raw }}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="slider-container">
+                                        {{ langs.SLIDER4|raw }}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="slider-container">
+                                        <h2>Team up</h2>
+                                        <p>Maak deel uit van een familie en neem deel aan oorlogen en familie overvallen!</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="slider-container">
+                                        <h2>Investeer</h2>
+                                        <p>Waag je kans op de Beurs en maak tot 100 den miljoenen met tactiek en inzicht!</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="slider-container">
+                                        <h2>Presteer</h2>
+                                        <p>Zorg voor eeuwige roem door in de hall van onze helden te staan!</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </section>
+                    </div>
+                    <div class="col-md-6">
+                        <section id="stats" class="middle">
+                            {{ langs.STATS|raw }}
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

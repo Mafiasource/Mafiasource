@@ -1,0 +1,90 @@
+<input type="hidden" name="security-token" value="{{ securityToken }}"/>
+<div class="row"> {# THIS ENDS: >> #}
+{% include "src/Views/.Paginate.twig" %}
+<br class="clear"/>
+{% for v in vehicles %}
+    {% if loop.index0 % 3 == 0 or loop.first %}</div><div class="row cols cf">{% endif %} {# >> IMMEDIATELY HERE! #}
+        <div class="c-33 column">
+            <div class="subtop row">
+                {{ v.getName }}
+            </div>
+            <div class="content-container">
+                <div class="row cf {{ cycle(['odd', 'even'], loop.index0) }}">
+                    <img src="{{ staticRoot }}/foto/400x220/1/web/public/images/vehicle/{{ v.getPicture }}{#&zc=1#}" class="middle" alt="{{ v.getName }}"/><br class="clear"/>
+                    <div id="vehicleActionResponse_{{ v.getId }}"></div>
+                    <div class="right" style="margin: 5px 0; clear:both;">
+                        <a href="{{ routing.getRouteByRouteName('garage-shop-vehicle-raw') }}{{ v.getId }}" class="execbutton small">{{ langs.MORE_INFO }}</a>&nbsp;
+                        <a href="javascript:void(0);" class="execbutton green small action buy" data-id="{{ v.getId }}" data-action="buy">{{ langs.BUY }} {{ v.getPrice|moneyFormat }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% if loop.last  %}</div>{% endif %}
+{% endfor %}
+{% if vehicles is empty %} {# More INFO PAGE / 1 VEHICLE #}
+    <div class="vehicle-info-container">
+        <div class="table-responsive garage-shop-info">
+            <table class="table table-sm table-dark table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col"><small>Stat</small></th>
+                  <th scope="col"><small>{{ langs.VALUE }}</small></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ langs.NAME }}</td>
+                  <td><span>{{ vehicle.getName }}</span></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.PICTURE }}</td>
+                  <td><img src="{{ staticRoot }}/foto/400x220/1/web/public/images/vehicle/{{ vehicle.getPicture }}{#&zc=1#}" class="middle" alt="{{ v.getName }}"/></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.HORSEPOWER }}</td>
+                  <td><span>{{ vehicle.getHorsepower|valueFormat }} {{ langs.HP }}</span></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.TOPSPEED }}</td>
+                  <td><span>{{ vehicle.getTopspeed|valueFormat }} mph</span></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.ACCELERATION }}</td>
+                  <td><span><div class="progress"><div class="progress-bar bg-info " role="progressbar" aria-valuenow="{{ vehicle.getAcceleration }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ vehicle.getAcceleration }}%"></div></div></span></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.CONTROL }}</td>
+                  <td><span><div class="progress"><div class="progress-bar bg-info " role="progressbar" aria-valuenow="{{ vehicle.getControl }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ vehicle.getControl }}%"></div></div></span></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.BREAKING }}</td>
+                  <td><span><div class="progress"><div class="progress-bar bg-info " role="progressbar" aria-valuenow="{{ vehicle.getBreaking }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ vehicle.getBreaking }}%"></div></div></span></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.LV_TO_STEAL }}</td>
+                  <td><span>Lv. {{ vehicle.getStealLv|valueFormat }}</span></td>
+                </tr>
+                <tr>
+                  <td>{{ langs.PRICE }}</td>
+                  <td><span>{{ vehicle.getPrice|moneyFormat }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+    </div>
+    <br class="clear"/>
+    <div id="vehicleActionResponse_{{ vehicle.getId }}"></div>
+    {% if routing.getPrevRouteName == "garage-shop-vehicle" %}
+        {% set prevRoute = '/game/garage/vehicle-shop' %}
+    {% else %}
+        {% set prevRoute = routing.getPrevRoute %}
+    {% endif %}
+    <span class="right">
+        <a href="javascript:void(0);" class="execbutton green small action buy" data-id="{{ vehicle.getId }}" data-action="buy">{{ langs.BUY }} {{ langs.FOR }} {{ vehicle.getPrice|moneyFormat }}</a>&nbsp;
+        <a href="{{ prevRoute }}" class="execbutton small">{{ langs.BACK }}</a>
+    </span>
+{% endif %}
+<div class="row">
+    {% include "src/Views/.Paginate.twig" %}
+    <br class="clear"/>
+</div>

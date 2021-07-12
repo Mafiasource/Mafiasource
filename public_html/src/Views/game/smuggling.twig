@@ -1,0 +1,75 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+    .carousel {height:276px;}
+    div.carousel-inner h2, div.carousel-inner p {margin:0;}
+    div.carousel-inner h2 {margin-top: 0.5em;}
+    div.carousel-inner p {margin-bottom: 0.5em;}
+    #smugglingLvl {position:relative;display:block;margin-top: -3.85em;margin-bottom:2.5em;}
+    #smugglingLvl > .number {font-size: 18px !important;}
+    input.smuggleInput {height: 34px;width:100%;max-width:100px;position:relative;top:3px;margin: 0 0 13px 0;}
+    select[name='profitIndexSelector'] {display:inline;width:100%; max-width:200px;}
+    
+    @media (max-width: 688px) {
+        section#ccontainer section#content #smuggling.row.cols.cf > .c-30.column, section#ccontainer section#content #smuggling.row.cols.cf > .c-70.column {width:100%;border:none;}
+        section#ccontainer section#content #smuggling.row.cols.cf > .c-70.column {border-bottom:1px solid #000;}
+    }
+    
+    @media (max-width: 530px) {
+        input.smuggleInput {height:26px;}
+    }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.SMUGGLING }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'drugs' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('smuggling') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/pill.png" class="icon" alt=""/> Drugs
+        </a>
+    </div>
+    <div class="tab {% if tab == 'liquids' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('smuggling-liquids') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/drink.png" class="icon" alt=""/> {{ langs.LIQUIDS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'fireworks' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('smuggling-fireworks') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/asterisk_yellow.png" class="icon" alt=""/> {{ langs.FIREWORKS }}
+        </a>
+    </div>
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'weapons' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('smuggling-weapons') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" class="icon" alt=""/> {{ langs.WEAPONS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'exotic-animals' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('smuggling-exotic-animals') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/bug.png" class="icon" alt=""/> {{ langs.EXOTIC_ANIMALS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'profit-index' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('smuggling-profit-index') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/stats_curve.png" class="icon" alt=""/> {{ langs.PROFIT_INDEX }}
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/smuggling/"~tab~".twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+    $('.carousel').carousel({
+      interval: false//1000 * 10
+    });
+</script>
+{% endblock javascripts %}

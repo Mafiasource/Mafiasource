@@ -1,0 +1,118 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+<div class="row">
+    <div class="inner-c-container">
+        <div id="buyPossessResponse"></div>
+        <div class="center">
+            {% if possessionData.getPossessDetails.getUserID == 0 %}
+                <p>{{ langs.THIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                    <input type="hidden" name="id" value="{{ possessId }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                </form>
+            {% else %}
+                <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.THIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+            {% endif %}
+        </div>
+        <br class="clear"/>
+        <div class="subtop">
+            {{ langs.BUY_WINDOWS }}
+        </div>
+        <div class="content-container">
+            <div class="row">
+                <div class="center">
+                    <h2>{{ userWhoresInfo|raw }}</h2>
+                </div>
+            </div>
+            <div class="c-row cf">
+                <div class="c-row-50 col">
+                    <div class="inner-c-container">
+                        <form action="{{ routing.getAjaxRouteByRouteName('buy-rld-windows') }}" method="POST" class="ajaxForm" data-response="#buyWindowsResponse" style="max-width:100%;margin: 0 auto;display:block;">
+                            <div class="subtop">
+                                {{ langs.INFORMATION }} &amp; {{ langs.BUY_WINDOWS }}
+                            </div>
+                            <div class="content-container">
+                                <div class="row cols cf">
+                                    <div class="c-50 column">
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/building_add.png" alt="{{ langs.WINDOWS_AVAILABLE }}" class="icon"/> {{ langs.WINDOWS_AVAILABLE }}:
+                                    </div>
+                                    <div class="c-50 column">
+                                        {% set windowsLeft = rldInfo.getWindows - rldInfo.getWindowsUsed %}
+                                        {{ windowsLeft|valueFormat }} / {{ rldInfo.getWindows|valueFormat }}
+                                    </div>
+                                </div>
+                                <div class="row cols cf">
+                                    <div class="c-50 column">
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" alt="{{ langs.PRICE_EACH_WINDOW }}" class="icon"/> {{ langs.PRICE_EACH_WINDOW }}:
+                                    </div>
+                                    <div class="c-50 column">
+                                        {{ rldInfo.getPriceEachWindow|moneyFormat }}
+                                    </div>
+                                </div>
+                                <div class="row cols cf">
+                                    <div class="c-50 column">
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" alt="{{ langs.WHORES_AVAILABLE }}" class="icon"/> {{ langs.WHORES_AVAILABLE }}:
+                                    </div>
+                                    <div class="c-50 column">
+                                        {{ rldPage.getWhoresStreet|valueFormat }}
+                                    </div>
+                                </div>
+                                <div class="row cols cf">
+                                    <div class="c-50 column">
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/building_go.png" alt="{{ langs.BUY_WINDOWS }}" class="icon"/> {{ langs.BUY_ }} {{ langs.WINDOWS|lower }} in {{ userData.getState }}:
+                                    </div>
+                                    <div class="c-50 column">
+                                        <input type="number" name="amount" placeholder="{{ langs.AMNT }}" value="{% if rldPage.getWhoresStreet > 0 %}{{ rldPage.getWhoresStreet }}{% endif %}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ajaxLoader"></div>
+                            <div id="buyWindowsResponse" style="max-width: 100%;"></div>
+                            <br class="clear"/>
+                            <div class="c-row">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="buy-windows" value="{{ langs.BUY_WINDOWS }}"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="c-row-50 col">
+                    <div class="inner-c-container">
+                        <div class="subtop">
+                            {{ langs.WHORES }} {{ langs.BEHAND_A_WINDOW|lower }} {{ langs.SUMMARY|lower }}
+                        </div>
+                        <div class="content-container">
+                            {% for r in rldPage.getWhoresList %}
+                                <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}">
+                                    <div class="c-25 column">
+                                        <strong>{{ r.stateName }}</strong>
+                                    </div>
+                                    <div class="c-75 column">
+                                        {{ r.whores|valueFormat }}
+                                        <span class="right">
+                                            <form id="whores_{{ r.stateID }}" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('remove-rld-windows') }}" method="POST" data-response="#removeWindowsResponse">
+                                                <input type="hidden" name="state" value="{{ r.stateName }}"/>
+                                                <input type="number" style="max-width:75px;" name="amount" value="{{ r.whores }}"/>
+                                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                                <input type="submit" name="removeWindows" value="{{ langs.TAKE_AWAY }}!"/>
+                                            </form>
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% if rldPage.getWhoresList is empty %}
+                                <div class="row">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_WHORE_BEHIND_WINDOWS }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div id="removeWindowsResponse"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br class="clear"/>
+        {{ alert.build('Info', 'alert-info', 'help', langs.BUY_WINDOWS_INFO) }}
+    </div>
+</div>

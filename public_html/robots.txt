@@ -1,0 +1,7 @@
+user-agent: *
+disallow: /.well-known/
+disallow: /app/
+disallow: /cgi-bin/
+disallow: /src/
+disallow: /vendor/
+disallow: /cdn-cgi/

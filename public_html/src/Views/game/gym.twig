@@ -1,0 +1,299 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+{% import "app/Resources/Views/macros/record.tile.macro.twig" as recordTile %}
+
+{% block stylesheets %}
+    {{ recordTile.css('competitions-container', 'competitionRecord', '140px', '33.3%') }} {# container, class, minHeight, maxWidth #}
+    <style type="text/css">
+        @media (max-width: 697px) {.competitionRecord{min-height: 155px;}
+        @media (max-width: 603px) {.competitionRecord{max-width:50%;min-height: 140px;}}
+        
+        @media (max-width: 688px) {
+            section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.GYM }}
+</div>
+<div class="content-container">
+    <div id="ajaxLoader"></div>
+    <div id="gymTrainingResponse" class="rowMsg"></div>
+    <div class="c-row cf">
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    Train{% if lang == 'nl' %}en{% endif %}
+                </div>
+                <div class="content-container">
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            {{ langs.TRAIN_PUSH_UP }}
+                        </div>
+                        <div class="c-30 column">
+                            {{ waitingTimes.seconds.1 }} sec. <small class="gray">({{ waitingTimes.minutes.1 }} min.)</small>
+                        </div>
+                        <div class="c-30 column center">
+                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('gym-training') }}" method="POST" data-response="#gymTrainingResponse">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" class="trainButton{% if gPage.getGymFastAction == 1 %} active{% endif %}" name="push-up" value="Train{% if lang == 'nl' %}en{% endif %}"/>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            {{ langs.TRAIN_CYCLE }}
+                        </div>
+                        <div class="c-30 column">
+                            {{ waitingTimes.seconds.2 }} sec. <small class="gray">({{ waitingTimes.minutes.2 }} min.)</small>
+                        </div>
+                        <div class="c-30 column center">
+                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('gym-training') }}" method="POST" data-response="#gymTrainingResponse">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" class="trainButton{% if gPage.getGymFastAction == 2 %} active{% endif %}" name="cycle" value="Train{% if lang == 'nl' %}en{% endif %}"/>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            {{ langs.TRAIN_BENCH_PRESS }}
+                        </div>
+                        <div class="c-30 column">
+                            {{ waitingTimes.seconds.3 }} sec. <small class="gray">({{ waitingTimes.minutes.3 }} min.)</small>
+                        </div>
+                        <div class="c-30 column center">
+                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('gym-training') }}" method="POST" data-response="#gymTrainingResponse">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" class="trainButton{% if gPage.getGymFastAction == 3 %} active{% endif %}" name="bench-press" value="Train{% if lang == 'nl' %}en{% endif %}"/>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            {{ langs.TRAIN_RUN }}
+                        </div>
+                        <div class="c-30 column">
+                            {{ waitingTimes.seconds.4 }} sec. <small class="gray">({{ waitingTimes.minutes.4 }} min.)</small>
+                        </div>
+                        <div class="c-30 column center">
+                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('gym-training') }}" method="POST" data-response="#gymTrainingResponse">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" class="trainButton{% if gPage.getGymFastAction == 4 %} active{% endif %}" name="run" value="Train{% if lang == 'nl' %}en{% endif %}"/>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" class="icon" alt="Anchor"/> {{ langs.FAST_ACTION_ON }}
+                        </div>
+                        <div class="c-60 column">
+                            <select name="fastAction">
+                                <option value="0">{{ langs.MAKE_A_CHOICE }}</option>
+                                <option value="1" {% if gPage.getGymFastAction == 1 %}selected="selected"{% endif %}>{{ langs.PUSH_UPS }}</option>
+                                <option value="2" {% if gPage.getGymFastAction == 2 %}selected="selected"{% endif %}>{{ langs.CYCLING }}</option>
+                                <option value="3" {% if gPage.getGymFastAction == 3 %}selected="selected"{% endif %}>{{ langs.BENCH_PRESSING }}</option>
+                                <option value="4" {% if gPage.getGymFastAction == 4 %}selected="selected"{% endif %}>{{ langs.RUNNING }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    {% if gPage.getPower + gPage.getCardio < 200 %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" class="icon" alt="Help"/> {{ langs.TRAIN_INFO }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {{ langs.GYM }} {{ langs.INFORMATION }}
+                </div>
+                <div class="content-container">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" class="icon" alt="Anchor"/> {{ langs.GYM }} training
+                        </div>
+                        <div class="c-50 column">
+                            <span id="gymTrainingBar">{{ percentBar.create(gPage.getGymTrainingBar.training, gPage.getGymTrainingBar.class) }}</span>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/lightning.png" class="icon" alt="Power"/> {{ langs.POWER }}
+                        </div>
+                        <div class="c-50 column">
+                            <span id="gymPower">{{ gPage.getPower|valueFormat }}</span><span id="gymPowerChange"></span>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/user_green.png" class="icon" alt="Cardio"/> Cardio
+                        </div>
+                        <div class="c-50 column">
+                            <span id="gymCardio">{{ gPage.getCardio|valueFormat }}</span><span id="gymCardioChange"></span>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_refresh.png" class="icon" alt="Wins Loss"/> {{ langs.PROFIT_LOSS_RATIO }}
+                        </div>
+                        <div class="c-50 column">
+                            <span id="gymCompetitionWLRatio">{{ gPage.getGymCompetitionWLRatio }}</span><span id="gymCompetitionWLRatioChange"></span>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="Winst"/> {{ langs.TOTAL_PROFIT }}
+                        </div>
+                        <div class="c-50 column">
+                            <span id="gymProfit">{{ gPage.getGymProfit|moneyFormat }}</span><span id="gymProfitChange"></span>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_up.png" class="icon" alt="Score earned"/> {{ langs.SCORE_POINTS_EARNED }}
+                        </div>
+                        <div class="c-50 column">
+                            <span id="gymScorePointsEarned">{{ gPage.getGymScorePointsEarned|valueFormat }}</span><span id="gymScorePointsEarnedChange"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="gymCompetitionResponse"></div>
+    <div class="c-row cf">
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {{ langs.COMPETITIONS }}
+                </div>
+                <div class="content-container">
+                    {% if competitions is empty %}
+                        <div class="row">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="None"/> {{ langs.NO_COMPETITIONS_ATM }}
+                        </div>
+                    {% else %}
+                        <div class="row cols cf">
+                            <div class="competitions-container">
+                                {% for c in competitions %}
+                                    <div class="competitionRecord {{ cycle(['odd', 'even'], loop.index0) }}">
+                                        <a href="/game/profile/{{c.getUsername }}">{{ c.getUsername }}</a> <span class="position">#{{ loop.index }}</span>
+                                        <hr class="split" />
+                                        <br class="break" />
+                                        <small class="gray">{{ langs.CITY }}:</small> <span class="right">{{ c.getCity }}</span>
+                                        <hr class="lineSplit" />
+                                        <small class="gray">Type:</small> <span class="right">{{ c.getType }}</span>
+                                        <hr class="lineSplit" />
+                                        <small class="gray">{{ langs.STAKE }}:</small> <span class="right">{{ c.getStake|moneyFormat }}</span>
+                                        <hr class="lineSplit" />
+                                        <small class="gray">&nbsp;</small>
+                                        <span class="right">
+                                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('gym-competition-challenge') }}" method="POST" data-response="#gymCompetitionResponse">
+                                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                                <input type="hidden" name="competitionID" value="{{ c.getId }}"/>
+                                                <input type="submit" name="challenge" value="{{ langs.CHALLENGE }}"/>
+                                            </form>
+                                        </span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {% if lang == 'nl' %}{{ langs.COMPETITION }} Starten{% else %}Start {{ langs.COMPETITION }}{% endif %}
+                </div>
+                <form class="ajaxForm content-container" action="{{ routing.getAjaxRouteByRouteName('gym-create-competition') }}" method="POST" data-response="#gymCompetitionResponse">
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" class="icon" alt="Location"/> {{ langs.LOCATION }}
+                        </div>
+                        <div class="c-60 column">
+                            {{ userData.getCity }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/tag_blue.png" class="icon" alt="Stake"/> Type
+                        </div>
+                        <div class="c-60 column">
+                            <select name="competitionType">
+                                <option value="0">{{ langs.MAKE_A_CHOICE }}</option>
+                                <option value="1" selected="selected">{{ langs.ARM_WRESTLING }}</option>
+                                <option value="2">{{ langs.SPRINT }}</option>
+                                <option value="3">{{ langs.TUG_OF_WAR }}</option>
+                                <option value="4">{{ langs.TRIATLON }}</option>
+                                <option value="5">{{ langs.WRESTLE }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-40 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="Stake"/> {{ langs.STAKE }} <small class="right">$</small>
+                        </div>
+                        <div class="c-60 column">
+                            <input type="text" name="stake" value="500"/>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-70 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" class="icon" alt="Help"/> {{ langs.STAKE_BETWEEN_50_5M }}
+                        </div>
+                        <div class="c-30 column center">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="submit" name="startCompetition" value="Start{% if lang == 'nl' %}en{% endif %}"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br class="clear"/>
+{{ alert.build('Info', 'alert-info', 'help', langs.GYM_INFO) }}
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+    $(document).on( "change", "select[name=fastAction]", function() {
+        if($("#ajaxLoader").length)
+        {
+            $('#ajaxLoader').show();
+        }
+        var val = $("select[name=fastAction] option:selected").val();
+        var text = $("select[name=fastAction] option:selected").text();
+        $.ajax(
+        {
+        	url : "{{ routing.getAjaxRouteByRouteName('gym-fast-action') }}",
+        	type: "POST",
+        	data : {securityToken: "{{ securityToken }}", fastActionID: val, fastAction: text},
+        	success:function(data, textStatus, jqXHR) 
+        	{
+     	      if($("#ajaxLoader" ).length)
+              {
+                $('#ajaxLoader').hide();
+              }
+              $("#gymTrainingResponse").html(data)
+        	}
+        });
+    });
+</script>
+{% if commit == true %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('input.trainButton.active').click();
+});
+</script>
+{% endif %}
+{% endblock javascripts %}

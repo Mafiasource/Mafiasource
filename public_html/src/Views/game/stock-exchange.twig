@@ -1,0 +1,31 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% block content %}
+<div class="top">
+    {{ langs.STOCK_EXCHANGE }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'stocks' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('stock-exchange') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/stats_curve.png" class="icon" alt=""/> {{ langs.EXCHANGE }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'news' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('stock-exchange-news') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/newspaper.png" class="icon" alt=""/> {{ langs.NEWS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'portfolio' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('stock-exchange-portfolio') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt=""/> Portfolio
+        </a>
+    </div>
+</div>
+{% include "/src/Views/game/tabs/stock-exchange/"~tab~".twig" %}
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

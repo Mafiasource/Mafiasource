@@ -1,0 +1,84 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        {% include "src/Views/.Paginate.twig" %}
+        <br class="clear"/>
+        <h4 class="center">{{ langs.ATTACK }} {{ langs.LOGS|lower }}</h4>
+        <div class="table-responsive">
+            <table class="table table-sm table-dark table-bordered">
+              <thead>
+                <tr>
+                    <th scope="col" class="center"><strong>{{ langs.DATE }}</strong></th>
+                    <th scope="col" class="center"><strong>{{ langs.RESULT }}</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for al in logs.attacks %}
+                    <tr>
+                        <td>{{ al.getDate }}</td>
+                        <td>
+                            {{ langs.YOU }} {{ langs.SHOT|lower }} <a href="/game/profile/{{ al.getVictim }}"><strong>{{ al.getVictim }}</strong></a>,
+                            {% if al.getResult == '00' %}
+                                {{ langs.YALL|lower }} {{ langs.BOTH_DIED_BY_THE|lower }} {{ langs.SHOTS|lower }}! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% elseif al.getResult == '11' %}
+                                {{ langs.HE|lower }} {{ langs.SURVIVED_THE|lower }} {{ langs.SHOTS|lower }}!
+                            {% elseif al.getResult == '10' %}
+                                {{ langs.HE|lower }} {{ langs.DIED_BY|lower }} {{ langs.YOUR|lower }} {{ langs.SHOTS|lower }}!! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% elseif al.getResult == '05' %}
+                                {{ langs.HE|lower }} {{ langs.DIED_BY|lower }} {{ langs.YOUR|lower }} <strong><font color=red>H</font><font color=lightgrey>E</font><font color=red>A</font><font color=lightgrey>D</font><font color=red>S</font><font color=lightgrey>H</font><font color=red>O</font><font color=lightgrey>T</font></strong>! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% elseif al.getResult == '01' %}
+                                {{ langs.YOU|lower }} {{ langs.DIED_BY|lower }} {{ langs.HIS|lower }} {{ langs.SHOTS|lower }}! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% if logs.attacks is empty %}
+                    <tr>
+                        <td colspan="2"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_ATTACK_LOGS }}</td>
+                    </tr>
+                {% endif %}
+              </tbody>
+            </table>
+        </div>
+        <br class="clear" />
+        <h4 class="center">{{ langs.ATTACKED_BY }} {{ langs.LOGS|lower }}</h4>
+        <div class="table-responsive">
+            <table class="table table-sm table-dark table-bordered">
+              <thead>
+                <tr>
+                    <th scope="col" class="center"><strong>Datum</strong></th>
+                    <th scope="col" class="center"><strong>{{ langs.RESULT }}</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for hl in logs.hits %}
+                    <tr>
+                        <td>{{ hl.getDate }}</td>
+                        <td>
+                            <a href="/game/profile/{{ hl.getAttacker }}"><strong>{{ hl.getAttacker }}</strong></a> {{ langs.SHOT|lower }} {{ langs.YOUJOU|lower }},
+                            {% if hl.getResult == '00' %}
+                                {{ langs.YALL|lower }} {{ langs.BOTH_DIED_BY_THE|lower }} {{ langs.SHOTS|lower }}! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% elseif hl.getResult == '11' %}
+                                {{ langs.YOU|lower }} {{ langs.SURVIVED_THE|lower }} {{ langs.SHOTS|lower }}!
+                            {% elseif hl.getResult == '10' %}
+                                {{ langs.YOU|lower }} {{ langs.DIED_BY|lower }} {{ langs.HIS|lower }} {{ langs.SHOTS|lower }}! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% elseif hl.getResult == '05' %}
+                                {{ langs.YOU|lower }} {{ langs.DIED_BY|lower }} {{ langs.HIS|lower }} <strong><font color=red>H</font><font color=lightgrey>E</font><font color=red>A</font><font color=lightgrey>D</font><font color=red>S</font><font color=lightgrey>H</font><font color=red>O</font><font color=lightgrey>T</font></strong>! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% elseif hl.getResult == '01' %}
+                                {{ langs.HE|lower }} {{ langs.DIED_BY|lower }} {{ langs.YOUR|lower }} {{ langs.SHOTS|lower }}! <img src="{{ staticRoot }}/foto/web/public/images/rip-icon.png" class="icon" alt="Rest In Peace"/>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% if logs.hits is empty %}
+                    <tr>
+                        <td colspan="2"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_ATTACKED_LOGS }}</td>
+                    </tr>
+                {% endif %}
+              </tbody>
+            </table>
+        </div>
+        <br class="clear"/>
+        {% include "src/Views/.Paginate.twig" %}
+        <br class="clear"/>
+    </div>
+</div>

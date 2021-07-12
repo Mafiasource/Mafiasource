@@ -1,0 +1,26 @@
+<div class="content-container cf">
+    <div class="c-row cf">
+        <div class="inner-c-container" style="max-width: 640px;">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">
+                            <strong>{{ langs.BUSINESS }}</strong>
+                        </th>
+                        <th scope="col" class="center">
+                            <strong>{{ langs.MESSAGE }}</strong>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for n in news %}
+                        <tr>
+                            <td>{{ n.getBusiness }}</td>
+                            <td>{{ n.getDescription }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

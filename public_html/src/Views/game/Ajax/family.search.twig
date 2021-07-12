@@ -1,0 +1,45 @@
+{% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+
+<div class="table-reponsive">
+    <table class="table table-sm table-dark table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" class="center">#</th>
+                <th scope="col" class="center">{{ langs.NAME }}</th>
+                <th scope="col" class="center">{{ langs.MONEY }}</th>
+                <th scope="col" class="center">{{ langs.MEMBERS }}</th>
+                <th scope="col" class="center">{{ langs.ACTION }}s</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fam in families %}
+                <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                  <td scope="row" class="center">{{ loop.index }}</td>
+                  <td><a href="/game/family-page/{{ fam.getName }}"{% if fam.vip %} class="vip"{% endif %}>{{ fam.getName }}</a></td>
+                  <td>{{ fam.getMoney|moneyFormat }}</td>
+                  <td>{{ fam.getTotalMembers }}</td>
+                  <td>
+                    {% if fam.getId == userData.getFamilyID %}
+                        <a href="javascript:void(0);" class="leave-family button" data-family="{{ fam.getName }}">{{ langs.LEAVE }}</a>
+                    {% else %}
+                        {% if fam.getJoin == 0 %}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/>
+                        {% else %}
+                            {% if userData.getFamilyID == 0 %}
+                                <a href="javascript:void(0);" class="join-family button" data-family="{{ fam.getName }}">{{ langs.JOIN }}</a>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                  </td>
+                </tr>
+            {% endfor %}
+            {% if families is empty %}
+                <tr>
+                  <td colspan="5">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NONE }}
+                  </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>

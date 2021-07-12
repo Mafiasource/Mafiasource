@@ -1,0 +1,64 @@
+<div class="row center">
+    {% set crIcon = '<img src="' ~ staticRoot ~'/foto/web/public/images/icons/star.png" class="icon" alt="Credits"/>' %}
+    {% set creditsInfo = routing.replaceMessagePart(userData.getCredits|valueFormat, langs.CREDITS_INFO, '/{credits}/') %}
+    {{ crIcon|raw }} {{ creditsInfo|raw }}
+</div>
+{% if response %}
+    <div class="rowMsg">
+        {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+    </div>
+{% endif %}
+<form class="ajaxForm row cols cf" action="{{ routing.getAjaxRouteByRouteName('interact-donation-shop') }}" method="POST" data-response="#interactShopResponse">
+    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+    <div class="c-50 column center">
+        {% if userData.getDonatorID == 0 %}
+        <figure>
+          <img src="{{ staticRoot }}/foto/web/public/images/donator/{% if lang == 'nl' %}donateur{% else %}donator{% endif %}.png" alt="Donator" width="249" height="76"/>
+          <figcaption>
+            {{ crIcon|raw }} 100 <input type="submit" name="donator" value="{{ langs.BUY }}"/>
+          </figcaption>
+        </figure>
+        {% endif %}
+        {% if userData.getDonatorID < 5 %}
+        <figure>
+          <img src="{{ staticRoot }}/foto/web/public/images/donator/vip.png" alt="VIP" width="249" height="76"/>
+          <figcaption>
+            {% set creditsVIP = 500 - (userData.getDonatorID * 100) %}
+            {{ crIcon|raw }} {{ creditsVIP|valueFormat }} <input type="submit" name="vip" value="{{ langs.BUY }}"/>
+          </figcaption>
+        </figure>
+        {% endif %}
+        <figure>
+          <img src="{{ staticRoot }}/foto/web/public/images/donator/gold-member.png" alt="Gold Member" width="249" height="76"/>
+          <figcaption>
+            {% if userData.getDonatorID == 10 %}
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/> {{ langs.ACHIEVED_HIGHEST_STATUS }}
+            {% elseif userData.getDonatorID == 0 %} {# Korting #}
+                <small>{{ langs.PROFIT_DISCOUNT }}</small><br />
+                {{ crIcon|raw }}&nbsp;<s>1,500</s> 1,250
+            {% else %}
+                {% set creditsGoldMember = 1500 - (userData.getDonatorID * 100) %}
+                {{ crIcon|raw }} {{ creditsGoldMember|valueFormat }}
+            {% endif %}
+            {% if userData.getDonatorID < 10 %}
+                &nbsp;<input type="submit" name="gold-member" value="{{ langs.BUY }}"/>
+            {% endif %}
+          </figcaption>
+        </figure>
+    </div>
+    <div class="c-50 column center">
+        <figure>
+          <img src="{{ staticRoot }}/foto/web/public/images/donator/vip-{{ langs.FAMILY|lower }}.png" alt="VIP {{ langs.FAMILY }}" width="249" height="76"/>
+          <figcaption>
+            {% if familyData.getVip %}
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/> {{ langs.FAMILY_IS_VIP }}
+            {% else %}
+                {{ crIcon|raw }} 500 <input type="submit" name="vip-family" value="{{ langs.BUY }}"/>
+            {% endif %}
+          </figcaption>
+        </figure>
+    </div>
+</form>
+<div class="row center">
+    {{ langs.DONATION_SHOP_INFO|raw }}
+</div>

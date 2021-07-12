@@ -1,0 +1,84 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        input.slot-field {display:inline-block;max-width:60px;margin:0;}
+        img.fruit-image-winnings-table {width: 32px; height:32px;}
+        #playSlotMachineResponse .alert {margin-bottom: 0;}
+        @media (max-width: 688px) {
+            section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.SLOT_MACHINE }}
+</div>
+<div class="content-container cf">
+    <div class="c-row cf">
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <p class="center"><img src="{{ staticRoot }}/foto/web/public/images/slot-machine.jpg" alt="{{ langs.SLOT_MACHINE }}" /></p>
+                <div id="playSlotMachineResponse"></div>
+                <form class="ajaxForm center" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-slot-machine') }}" data-response="#playSlotMachineResponse">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    {{ langs.STAKE }}:&nbsp;<input type="number" class="slot-field" name="stake" placeholder="{{ langs.STAKE }}"/>&nbsp;<input type='submit' name='play-slot-machine' value='{{ langs.PLAY }}' />
+                </form>
+                <p class="center">{{ langs.SLOT_MACHINE_INFO|raw }}</p>
+                <div id="buyPossessResponse"></div>
+                <div class="center">
+                    {% if possessionData.getPossessDetails.getUserID == 0 %}
+                        <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                        <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                            <input type="hidden" name="id" value="{{ possessId }}"/>
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                        </form>
+                    {% else %}
+                        <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="table-reponsive">
+                    <table class="table table-sm table-dark table-bordered">
+                        <thead>
+                            <th scope="col" colspan="4" class="center">
+                                <strong> {{ langs.WINNING_COMBINATIONS }}</strong>
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr class="center">
+                                <td><strong>Slot 1</strong></td>
+                                <td><strong>Slot 2</strong></td>
+                                <td><strong>Slot 3</strong></td>
+                                <td><strong>{{ langs.PROFIT }} = {{ langs.STAKE }} x</strong></td>
+                            </tr>
+                            {% for m, wcs in winningCombinations %}
+                                <tr class="{{ cycle(['odd', 'even'], loop.index0) }} center">
+                                    <td style="vertical-align: middle;"><img src="{{ staticRoot }}/foto/web/public/images/slot-machine/{{ wcs.0 }}.png" class="fruit-image-winnings-table" alt="{{ wcs.0|ucfirst }}"/></td>
+                                    <td style="vertical-align: middle;">{% if wcs.1 != '*' %}<img src="{{ staticRoot }}/foto/web/public/images/slot-machine/{{ wcs.1 }}.png" class="fruit-image-winnings-table" alt="{{ wcs.1|ucfirst }}"/>{% else %}*{% endif %}</td>
+                                    <td style="vertical-align: middle;">{% if wcs.2 != '*' %}<img src="{{ staticRoot }}/foto/web/public/images/slot-machine/{{ wcs.2 }}.png" class="fruit-image-winnings-table" alt="{{ wcs.2|ucfirst }}"/>{% else %}*{% endif %}</td>
+                                    <td style="vertical-align: middle;">x{{ m }}{% if m == 3 or m == 4 %}<br /><span class="right gray">{{ langs.POSITION_DOESNT_MATTER }}!</span>{% elseif m == '0.5' %}&nbsp;<img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_down.png" class="icon" alt="Loss"/>{% endif %}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td style="vertical-align: middle;" colspan="4">
+                                    <span>* {{ langs.ALL_FRUITS }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

@@ -1,0 +1,121 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% block content %}
+    <div class="top">
+        {{ langs.PLACE_MESSAGE }}
+    </div>
+    <div id="shoutboxResponse" class="rowMsg"></div>
+    <div class="content-container">
+        <form id="shoutbox-post" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('shoutbox-post') }}" method="POST" data-response="#shoutboxResponse">
+            <div class="row">
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                <input type="hidden" name="famID" value="{{ shoutbox }}"/>
+                <input type="text" id="shout-message" class="writeAndFlush" name="message" style="margin:1px 0;" placeholder="{{ langs.TYPE_A_MESSAGE }}.." maxlength="200"/>
+                <input style="display:none;" type="submit" name="submit-message" value="{{ langs.SEND }}"/>
+            </div>
+            <div class="row">
+                <img src="{{ staticRoot }}/web/public/images/smileys/lol.gif" alt=":D" title=":D" onClick="addsmiley(':D');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/smile.gif" alt=":)" title=":)" onClick="addsmiley(':)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/wink.gif" alt=";)" title=";)" onClick="addsmiley(';)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/confused.gif" alt=":s" title=":s" onClick="addsmiley(':s');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/neutral.gif" alt=":|" title=":|" onClick="addsmiley(':|');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/razz.gif" alt=":P" title=":P" onClick="addsmiley(':P');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/sad.gif" alt=":(" title=":(" onClick="addsmiley(':(');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/surprised.gif" alt=":O" title=":O" onClick="addsmiley(':O');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/twisted.gif" alt=":twisted:" title=":twisted:" onClick="addsmiley(':twisted:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/cry.gif" alt=":cry:" title=":cry:" onClick="addsmiley(':cry:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/mad2.gif" alt=":mad:" title=":mad:" onClick="addsmiley(':mad:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/cool.gif" alt="8)" title="8)" onClick="addsmiley('8)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/silenced.gif" alt=":x" title=":x" onClick="addsmiley(':x');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/question.gif" alt=":?:" title=":?:" onClick="addsmiley(':?:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/exclaim.gif" alt=":!:" title=":!:" onClick="addsmiley(':!:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/naugthy.gif" alt=":no:" title=":no:" onClick="addsmiley(':no:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/ehh.gif" alt=":huh:" title=":huh:" onClick="addsmiley(':huh:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/ashamed.gif" alt=":$" title=":$" onClick="addsmiley(':$');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/applause.gif" alt=":applause:" title=":applause:" onClick="addsmiley(':applause:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/biggrin.gif" alt=":grin:" title=":grin:" onClick="addsmiley(':grin:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/rolleyes.gif" alt=":rolleyes:" title=":rolleyes:" onClick="addsmiley(':rolleyes:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/whistle.gif" alt=":whistle:" title=":whistle:" onClick="addsmiley(':whistle:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+        		<img src="{{ staticRoot }}/web/public/images/smileys/angel.gif" alt="(A)" title="(A)" onClick="addsmiley('(A)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+            </div>
+        </form>
+    </div>
+    {% include "src/Views/.Paginate.twig" %}
+    <br class="clear" />
+    <div id="ajaxLoader"></div>
+    <div class="top">
+        {% if shoutbox != 0 %}{{ langs.FAMILY }}{% endif %} Shoutbox
+    </div>
+    <div class="content-container clear">
+        <div id="refreshArea">
+            {% include "/src/Views/game/Ajax/shoutbox.twig" %}
+        </div>
+    </div>
+    <div class="clear"></div>
+    {% include "src/Views/.Paginate.twig" %}
+    {# <br class="clear" />
+    {{ alert.build('Info', 'alert-info', 'help', langs.SHOUTBOX_RESET) }} #}
+{% endblock content %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+    <script type="text/javascript">
+    function checkShout()
+    {
+        if(ajaxBusy == false)
+        {
+            $.ajax(
+            {
+                url : "{{ routing.getAjaxRouteByRouteName('shoutbox-check') }}",
+            	cache: false,
+                type: "POST",
+            	data : {famID: "{{ shoutbox }}", from: "{{ pagination.from }}", to:"{{ pagination.to }}"},
+            	success:function(data, textStatus, jqXHR) 
+            	{
+                    try 
+                    {
+                        obj = JSON.parse(data);
+   	                    if(obj.IDThen != obj.IDNow)
+                        {
+                            refreshShout();
+                            return true;
+                        }
+                    }
+                    catch(e)
+                    {
+                        console.log('Error message: ' + e.message);
+                    }
+            	}
+            });
+            return false;
+        }
+    }
+    
+    function refreshShout()
+    {
+        $.ajax({
+            url: "{{ routing.getAjaxRouteByRouteName('shoutbox-refresh') }}",
+            cache: false,
+            type: "POST",
+            dataType: "html",
+        	data : {famID: "{{ shoutbox }}", from: "{{ pagination.from }}", to:"{{ pagination.to }}"},
+        	success:function(data, textStatus, jqXHR) 
+        	{
+        	  $("#refreshArea").html(data);
+        	}
+        });
+    }
+    
+    checkShout();
+    setInterval("checkShout()", 5000);
+    
+    let frm = 'shoutbox-post';
+    let fld = 'message';
+    function addsmiley(short){
+    	document.forms[frm].elements[fld].value += short + " ";
+    	document.forms[frm].elements[fld].focus();
+    }
+    </script>
+{% endblock javascripts %}

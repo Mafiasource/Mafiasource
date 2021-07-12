@@ -1,0 +1,289 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
+    <style type="text/css">
+        .spoiler-content {display:none;}
+        .left {display:inline-block;width:auto;float:left;box-sizing:border-box;margin:5px;}
+        .right {box-sizing:border-box;margin:5px;}
+        .levels, .family, .gamertag, .friends, .actions, .missions, .possessions {display:inline-block;width:100%; min-width:280px;float:left;margin-left:5px;}
+        .friends, .actions {min-width: 170px;}
+        .gamertag {min-width: 290px;}
+        .clear {clear:both;}
+        input.pimp {display:inline;}
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <div id="ajaxLoader"></div>
+    <div id="pimpResponse"></div> 
+    <div class="top">
+        {{ langs.PROFILE_HEADING }}
+    </div>
+    <div class="content-container cf">
+        {% if profileData.getHealth <= 0%}
+            <div class="row" style="background: #464646;">
+                <img src="{{ staticRoot }}/foto/web/public/images/rest-in-peace.jpg" class="middle" alt="Rest In Pease"/>
+            </div>
+        {% endif %}
+        <div class="left">
+            <img src="{{ staticRoot }}/web/public/images/users/{% if profileData.getAvatar %}{{ profileData.getId }}/uploads/{{ profileData.getAvatar }}{% else %}nopic.jpg{% endif %}" alt="Avatar" class="middle" title="Avatar" />
+            <div class="center">
+                {{ userTagManager.write('profileMember', profileData.getId, profileData.getId, profileData.getUsername, profileData.getDonatorID, profileData.getUsernameClassName) }}<br />
+                {# <small>107{{ langs.PROFILE_VIEWS }}</small><br /> #}
+                {% set timeNow = 'now'|date('U') %}
+                {% set timeOnline = timeNow - 360 %}
+                {% if profileData.getLastclick > timeOnline %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_online_green.png" class="icon" alt="Online"/> <strong class="lightgreen">Online</strong>{% else %}<img src="{{ staticRoot }}/foto/web/public/images/icons/status_offline_red.png" class="icon" alt="Offline"/> <strong class="red">Offline</strong>{% endif %}<br />
+                <small>{{ langs.LANGUAGE }}</small>:&nbsp;<img src="{{ staticRoot }}/foto/web/public/images/icons/lang_{{ profileData.getLang }}_small.gif" alt="" class="icon langico"/>
+                {% if profileData.getId in [4, 15, 18, 20, 29, 44, 46, 86, 97, 98, 101, 102, 106, 114, 115, 117, 118, 126, 133] %}
+                    <br class="clear"/><img src="{{ staticRoot }}/foto/web/public/images/betatester.png" class="middle" alt="Beta Tester"/>
+                {% endif %}
+            </div>
+            <br class="clear"/>
+            {% if profileData.getId != userData.getId %}
+                <div class="subtop actions">
+                    {{ langs.ACTION }}s
+                </div>
+                <div class="content-container actions">
+                    <div class="row">
+                        <a id="sendMessage" href="{{ routing.getRouteByRouteName('messages') }}" class="ajaxTab" data-tab="sendmessage" data-receiver="{{ profileData.getUsername }}">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/email_add.png" class="icon" alt=""/> {{ langs.SEND_MESSAGE }}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a id="inviteFriend" href="{{ routing.getRouteByRouteName('messages') }}" class="ajaxTab" data-tab="friends" data-username="{{ profileData.getUsername }}">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/group_add.png" class="icon" alt=""/> {{ langs.SEND_FRIEND_INVITE }}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <form id="pimpForPlayer" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('pimp-for-player') }}" data-response="#pimpResponse">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="hidden" name="pimp-for" value="{{ profileData.getUsername }}"/>
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt=""/>&nbsp;{{ langs.PIMP_FOR_PLAYER|raw }}
+                        </form>
+                    </div>
+                    <div class="row">
+                        <a id="attack-player" href="/game/murder/user/{{ profileData.getUsername }}">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" class="icon" alt=""/> {{ langs.ATTACK_PLAYER }}
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="left">
+            <div class="subtop gamertag">
+                {{ langs.PLAYER_INFO }}
+            </div>
+            <div class="gamertag content-container">
+                <div class="row cols cf">
+                    <div class="c-50 column">Status:</div>
+                    <div class="c-50 column">
+                        {% if profileData.getStatusID < 7 or profileData.getStatusID == 8 %}
+                            <strong class="{{ profileData.getStatus|lower|replace({' ': '-'}) }} txt-shadow">{{ profileData.getStatus }}</strong>
+                        {% else %}
+                            <strong class="{{ profileData.getDonator|lower|replace({' ': '-'}) }} txt-shadow">{{ profileData.getDonator }}</strong>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.PROFESSION }}:</div>
+                    <div class="c-50 column">{{ profileData.getProfession }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">Rank:</div>
+                    <div class="c-50 column ">{{ profileData.getRankname }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.NO_TOPLIST }}:</div>
+                    <div class="c-50 column"><strong>#{{ profileData.getScorePosition|valueFormat }}</strong></div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">Score:</div>
+                    <div class="c-50 column">{{ profileData.getScore|valueFormat }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.MONEY }} rank:</div>
+                    <div class="c-50 column">{{ profileData.getMoneyRank }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.CASH }}:</div>
+                    <div class="c-50 column">{{ profileData.getCash|moneyFormat }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">Bank:</div>
+                    <div class="c-50 column">{{ profileData.getBank|moneyFormat }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.HONOR_POINTS }}:</div>
+                    <div class="c-50 column">{{ profileData.getHonorPoints|valueFormat }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.GROUND }}:</div>
+                    <div class="c-50 column">{{ profileData.getGround }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">Kills : <span class="darkgray">Deaths</span><span class="game-moderator"> (Ratio)</span></div>
+                    {% if profileData.getDeaths == 0 and profileData.getKills == 0 %}
+                        {% set kDRatio = 'NaN' %}
+                    {% elseif profileData.getDeaths == 0 and profileData.getKills > 0 %}
+                        {% set kDRatio = '<span style="font-size: 24px;line-height: 9px;position: relative;top: 4px;">&infin;</span>' %}
+                    {% elseif profileData.getDeaths == profileData.getKills %}
+                        {% set kDRatio = 1|number_format(2, '.', ',') %}
+                    {% elseif profileData.getDeaths > 0 and profileData.getKills == 0 %}
+                        {% set kDRatio = 0|number_format(2, '.', ',') %}
+                    {% elseif profileData.getDeaths > 0 and profileData.getKills > 0 and profileData.getDeaths != profileData.getKills %}
+                        {% set kDRatio = (profileData.getKills / profileData.getDeaths)|number_format(2, '.', ',') %}
+                    {% endif %}
+                    <div class="c-50 column">{{ profileData.getKills|valueFormat }} : <span class="darkgray">{{ profileData.getDeaths|valueFormat }}</span><span class="game-moderator"> ({{ kDRatio|raw }})</span></div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">Headshots:</div>
+                    <div class="c-50 column"><span class="red txt-shadow">{{ profileData.getHeadshots }}</span></div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">Referrals:</div>
+                    <div class="c-50 column">{{ profileData.getReferrals|valueFormat }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.LAST_ONLINE }}:</div>
+                    <div class="c-50 column">{{ profileData.getLastOnline }}</div>
+                </div>
+                <div class="row cols cf">
+                    <div class="c-50 column">{{ langs.HEALTH }}:</div>
+                    <div class="c-50 column health">{{ percentBar.create(profileData.getHealthBar.health, profileData.getHealthBar.class) }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="left">
+            <div class="subtop family">
+                {{ langs.FAMILY }} info
+            </div>
+            <div class="content-container family">
+                <div class="row cols cf">
+                    <div class="c-40 column">{{ langs.FAMILY }}:</div>
+                    <div class="c-60 column">{% if profileData.getFamilyID != 0 %}<a href="/game/family-page/{{ profileData.getFamily }}">{% endif %}<span{% if familyData.vip %} class="vip"{% endif %}>{{ profileData.getFamily }}</span>{% if profileData.getFamilyID != 0 %}</a>{% endif %}</div>
+                </div>
+                <div class="row center"><small>{{ langs.PICTURE }}:</small><br class="clear" />
+                    {% if profileData.getFamilyID > 0 %}<a href="/game/family-page/{{ profileData.getFamily }}">{% endif %}
+                        <img src="{{ staticRoot }}/foto/web/public/images/families/{% if familyData.getImage %}{{ familyData.getId }}/uploads/{{ familyData.getImage }}{% else %}no-fampic.png{% endif %}" alt="{{ langs.FAMILY }} {{ langs.IMAGE }}"/>
+                    {% if profileData.getFamilyID > 0 %}</a>{% endif %}
+                </div>
+            </div>
+            <br class="clear" /><br />
+            <div class="subtop levels">
+                Levels
+            </div>
+            <div class="content-container levels">
+                <div class="row cols cf">
+                    <div class="c-25 column center">
+                        <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/crimes.png" alt="{{ langs.CRIMES }}" title="{{ langs.CRIMES }}" style="margin-bottom: 5px;width:39px;height:auto;"/>
+                        <br /><small>{{ profileData.getCrimesLv }}</small>
+                    </div>
+                    <div class="c-25 column center">
+                        <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/steal-vehicles.png" alt="{{ langs.STEAL_VEHICLES }}" title="{{ langs.STEAL_VEHICLES }}" style="margin-bottom: 5px;width:39px;height:auto;"/>
+                        <br /><small>{{ profileData.getVehiclesLv }}</small>
+                    </div>
+                    <div class="c-25 column center">
+                        <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/pimp.png" alt="{{ langs.PIMP_WHORES }}" title="{{ langs.PIMP_WHORES }}" style="margin-bottom: 5px;width:39px;height:auto;"/>
+                        <br /><small>{{ profileData.getPimpLv }}</small>
+                    </div>
+                    <div class="c-25 column center">
+                        <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/smuggling.png" alt="{{ langs.SMUGGLING }}" title="{{ langs.SMUGGLING }}" style="margin-bottom: 5px;width:39px;height:auto;"/>
+                        <br /><small>{{ profileData.getSmugglingLv }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="left">
+            <div class="subtop friends">
+                {{ langs.FRIENDS }}
+            </div>
+            <div class="content-container friends">
+                {% if friends.friends is not empty %}
+                    {% for member in friends.friends %}
+                        <div class="row">
+                            {{ userTagManager.write('friendMember', member.getId, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True', 'True') }}
+                        </div>
+                    {% endfor %}
+                    {% if friends.friends|length > 4 %}
+                        <a href="javascript:void(0);" class="ajaxTab gray" data-tab="more.friends" data-username="{{ profileData.getUsername }}">Load more...</a>
+                    {% endif %}
+                {% else %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="" /> {{ langs.NONE }}!
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="left">
+            <div class="subtop missions">
+                {{ langs.ROUND }} {{ langs.MISSIONS }}
+            </div>
+            <div class="content-container missions">
+                <div class="row cfc">
+                    <span style="
+                        display: -webkit-box !important;
+                        display: -moz-box !important;
+                        display: -ms-flexbox !important;
+                        display: -webkit-flex !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                    " class="middle">
+                        {% for m in missions %}
+                            <img src="{{ staticRoot }}/foto/36x35/3/web/public/images/missions/{{ m.name|seoUrl }}.png"/>
+                        {% endfor %}
+                    </span>
+                    {% if missions is empty %}
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="" /> {{ langs.NONE }}!
+                    {% endif %}
+                </div>
+            </div>
+            <br class="clear" /><br />
+            <div class="subtop possessions">
+                {{ langs.POSSESSIONS }}
+            </div>
+            <div class="content-container possessions">
+                {% if residenceData.getResidence %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/house.png" class="icon" alt="Home" /> {{ residenceData.getResidence }}
+                    </div>
+                {% endif %}
+                {% for p in possessions %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ p.getName }}" /> {{ p.getName }}{% if p.getPossessDetails.getState %} in {% if p.getPossessDetails.getCity %}{{ p.getPossessDetails.getCity }}{% else %}{{ p.getPossessDetails.getState }}{% endif %}{% endif %}
+                    </div>
+                {% endfor %}
+                {% if residenceData.getResidence is empty and possessions is empty %}
+                    <div class="row">
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="" /> {{ langs.NONE }}!
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="content-container">
+        <div class="row cf">
+            {% if profileData.getProfile is not empty %}
+                 {{ profileData.getProfile|raw }}
+            {% else %}
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="" /> {{ langs.NO_PROFILE }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
+    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+    {% if commitPimp == true %}
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('input.pimp').click();
+            });
+        </script>
+    {% endif %}
+{% endblock javascripts %}

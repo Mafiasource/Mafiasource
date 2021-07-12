@@ -1,0 +1,190 @@
+{% import "app/Resources/Views/macros/admin/alert.macro.twig" as alert %}
+
+{% if check == TRUE %}
+<a href="#" id="editModal" data-toggle="modal" data-target="#edModal"></a>
+<div class="modal fade" id="edModal" tabindex="-1" role="dialog" aria-labelledby="edModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content danger">
+      <div class="modal-header">
+        <h4 class="modal-title" id="edModalLabel">Aanpassen record</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div id="editSaveConfirm"></div>
+      <form id="editForm" method="POST" action="{{ docRoot }}/admin/edit-save" enctype="multipart/form-data">
+        <input type="hidden" name="securityToken" value="{{ securityToken }}"/>
+        <input type="hidden" name="table" value="{{ table }}"/>
+        <input type="hidden" name="id" value="{{ rowid }}"/>
+        <div class="modal-body">
+            {% if newRowMessage %}
+                {{ alert.build('alert-info', '<p><i class="fas fa-question-circle"></i> ' ~ newRowMessage ~ '</p>') }}
+            {% endif %}
+            {% for row in rows %}
+                {% for values in row %}
+                    {% set iterateFields = [] %}
+                    {% for key,name in values %}
+                        {% if key != 'position' and key != 'active' and key != 'deleted' and key|isstr %}
+                            {% set iterateFields = iterateFields|merge([key]) %}
+                        {% endif %}
+                    {% endfor %}
+                    {% for field in iterateFields %}
+                        {% set dataVal = attribute(values, field) %}
+                        {% if dataVal is iterable %}
+                            <div class="form-group">
+                                {% if memberObj.getStatus != 1 and memberObj.getStatus != 2 and memberObj.getStatus !=3 and field == 'categorie' %} {# Aanvulen met verboden velden voor net bevoegden #}
+                                
+                                {% else %}
+                                <label for="input_{{ field }}">{{ field|capitalize }}</label>
+                                    {% for inputType, content in dataVal %}
+                                    
+                                        {# INPUT KOPPEL #}
+                                        {% if inputType == 'couple' %}
+                                            {% for id, val in content %}
+                                                {% if loop.first %} <select name="{{ field }}" id="input_{{ field }}" class="form-control"><option value="">Maak een keuze</option> {% endif %}
+                                                {% if val is iterable %}
+                                                    {% for key,c in val %}
+                                                        {% if c == 'checked' %}
+                                                            <option value="{{ id }}" selected="selected">{{ key }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <option value="{{ id }}">{{ val }}</option>
+                                                {% endif %}
+                                                {% if loop.last %}</select>{% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {# //INPUT KOPPEL #}
+                                        
+                                        {# INPUT UPLOAD MET SIZE #}
+                                        {% if inputType == 'uploadWithSize' %}
+                                            {% for id, val in content %}
+                                                {% if id == 'upload' %}
+                                                    {% if val is not empty %}
+                                                        <br /><img src="/web/public/images/{{ uploadDir }}/{{ val }}" alt="0"/>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if id == 'imageWidth' %}
+                                                    <input type="hidden" name="imageWidth" value="{{ val }}"/>
+                                                {% endif %}
+                                                {% if id == 'imageHeight' %}
+                                                    <input type="hidden" name="imageHeight" value="{{ val }}"/>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <input type="hidden" name="uploadDir" value="{{ uploadDir }}"/>
+                                            <input type="hidden" name="{{ field }}" value="{{ content.upload }}"/>
+                                            <input name="{{ field }}" type="file" id="upload_{{ field }}" multiple="" class="form-control" value="{{ dataVal[loop.index0] }}"/>&nbsp;
+                                        {% endif %}
+                                        {# //INPUT UPLOAD MET SIZE #}
+                                        
+                                        {# INPUT SELECT #}
+                                        {% if inputType == 'select' %}
+                                            {% for id, val in content %}
+                                                {% if loop.first %} <select name="{{ field }}" id="input_{{ field }}" class="form-control"><option value="">Maak een keuze</option> {% endif %}
+                                                {% if val is iterable %}
+                                                    {% for key, c in val %}
+                                                        {% if c == 'checked' %}
+                                                            <option value="{{ id+1 }}" selected="selected">{{ key }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <option value="{{ id+1 }}">{{ val }}</option>
+                                                {% endif %}
+                                                {% if loop.last %}</select>{% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {# //INPUT SELECT #}
+                                        
+                                        {# INPUT DISABLED #}
+                                        {% if inputType == 'disabled' %}
+                                            <input type="text" class="form-control" name="{{ field }}" id="input_{{ field }}" placeholder="{{ field|capitalize }}" value="{{ content }}" disabled="disabled"/>
+                                        {% endif %}
+                                        {# //INPUT DISABLED #}
+                                        
+                                        {# INPUT CMS #}
+                                        {% if inputType == 'cms' %}
+                                            <textarea id="cms-bewerken_{{ field }}" class="cms-bewerken form-control" name="{{ field }}" placeholder="{{ field|capitalize }}">{{ content }}</textarea>
+                                            <p><strong>Let op</strong>: Na aanpassen in code view terug switchen naar browser view alvoorens op te slaan!</p>
+                                        {% endif %}
+                                        {# //INPUT CMS #}
+                                        
+                                        {# INPUT YESNO #}
+                                        {% if inputType == 'yesno' %}
+                                            <select name="{{ field }}" id="input_{{ field }}" class="form-control">
+                                                {% if content == 0 %}
+                                                    <option value="0" selected="selected">Nee</option>
+                                                    <option value="1">Ja</option>
+                                                {% else %}
+                                                    <option value="1" selected="selected">Ja</option>
+                                                    <option value="0">Nee</option>
+                                                {% endif %}
+                                            </select>
+                                        {% endif %}
+                                        {# //INPUT YESNO #}
+                                        
+                                        {# INPUT UPLOAD #}
+                                        {% if inputType == 'upload' %}
+                                            {% if content is not empty %}
+                                                <br /><img src="/web/public/images/{{ uploadDir }}/{{ content }}" alt="0"/>
+                                            {% endif %}
+                                            <input type="hidden" name="imageWidth" value="{{ imageWidth }}"/>
+                                            <input type="hidden" name="imageHeight" value="{{ imageHeight }}"/>                                                                                        
+                                            <input type="hidden" name="uploadDir" value="{{ uploadDir }}"/>
+                                            <input type="hidden" name="{{ field }}" value="{{ content }}"/>
+                                            <input name="{{ field }}" type="file" id="upload_{{ field }}" multiple="" class="form-control" value="{{ dataVal[loop.index0] }}"/>&nbsp;
+                                        {% endif %}
+                                        {# //INPUT UPLOAD #}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="form-group">
+                                <label for="input_{{ field }}">{{ field|capitalize }}</label>
+                                <input type="text" class="form-control" name="{{ field }}" id="input_{{ field }}" placeholder="{{ field|capitalize }}" value="{{ dataVal }}"/>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="modal-footer">     
+          <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+          <button type="button" class="btn btn-primary saveRecord" name="submit-changes">Aanpassingen doorvoeren</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+    if($('#edModal').hasClass('in') == false) $("#editModal").click();
+    
+    $('.cms-bewerken').each(function(){
+        if($("#"+this.id+"").length)
+        {
+            var eID = this.id;
+            $.fn.modal.Constructor.prototype.enforceFocus = function () {
+                var $modalElement = this.$element;
+                $(document).on('focusin.modal', function (e) {
+                    var $parent = $(e.target.parentNode);
+                    if ($modalElement[0] !== e.target && !$modalElement.has(e.target).length
+                        // add whatever conditions you need here:
+                        &&
+                        !$parent.hasClass('cke_dialog_ui_input_select') && !$parent.hasClass('cke_dialog_ui_input_text')) {
+                        $modalElement.focus()
+                    }
+                })
+            };
+            var editor = CKEDITOR.replace(this.id, {
+                enterMode: CKEDITOR.ENTER_BR,
+                shiftEnterMode: CKEDITOR.ENTER_P
+            });
+            
+            editor.on( 'change', function( evt ) {
+                $("#"+eID+"").html(evt.editor.getData());
+            });
+        }
+    });
+});
+</script>
+{% else %}
+    {% include "/src/Views/admin/Ajax/general.fail.msg.twig" %}
+{% endif %}

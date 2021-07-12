@@ -1,0 +1,154 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+{% import "app/Resources/Views/macros/percent.bar.level.macro.twig" as percentLevelBar %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .carousel {height:276px;}
+        div.carousel-inner h2, div.carousel-inner p {margin:0;}
+        div.carousel-inner h2 {margin-top: 0.5em;}
+        div.carousel-inner p {margin-bottom: 0.5em;}
+        #vehiclesLvl {position:relative;display:block;margin-top: -3.85em;margin-bottom:2.5em;}
+        #vehiclesLvl > .number {font-size: 18px !important;}
+        @media (max-width: 688px) {
+            section#ccontainer section#content #vehicles.row.cols.cf > .c-30.column, section#ccontainer section#content #vehicles.row.cols.cf > .c-70.column {width:100%;border:none;}
+            section#ccontainer section#content #vehicles.row.cols.cf > .c-70.column {border-bottom:1px solid #000;}
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <div id="ajaxLoader"></div>
+    <div id="stealVehicleResponse"></div>
+    <div class="top">
+        {{ langs.STEAL_VEHICLES }} &amp; Stats
+    </div>
+    <div class="content-container">
+        <div id="vehicles" class="row cols cf">
+            <div class="c-70 column no-padding"> 
+                <!-- bootstrap carousel -->
+                <div id="carousel-sv" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators / Active always latest/hardest crime -->
+                    <ol class="carousel-indicators">
+                        {% for item in svPage.svehicles %}
+                            <li data-target="#carousel-sv" data-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
+                        {% endfor %}
+                    </ol>
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner center">
+                        {% for item in svPage.svehicles %}
+                            <div class="carousel-item {% if item.getActive == true %}active{% endif %}">
+                              <form id="stealVehicle_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('steal-vehicle') }}" data-response="#stealVehicleResponse">
+                                  <h2>{{ item.getName }} - <img src="{{ staticRoot }}/foto/web/public/images/icons/star.png" alt="Level" class="icon"/> Lv. {{ item.getLevel }}</h2>
+                                  <p>{{ item.getDescription }}</p>
+                                  {% if item.getPicture is not empty %}<img src="{{ staticRoot }}/foto/300x70/1/web/public/images/steal_vehicle/{{ item.getPicture }}{#&w=300&h=70&zc=1#}" class="middle" alt="{{ item.getName }}"/>{% endif %}
+                                  <br />
+                                  <input type="hidden" name="id" value="{{ item.getId }}"/>
+                                  <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                  <input type="submit" name="steal-vehicle" class="execbutton red{% if item.getActive == true %} active{% endif %}" value="{{ langs.STEAL_VEHICLE }}"/>
+                              </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if svPage.svehicles is not empty %}
+                        <!-- Controls left/right -->
+                        <a class="left carousel-control-prev" href="#carousel-sv" role="button" data-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="sr-only">&nbsp;</span>
+                        </a>
+                        <a class="right carousel-control-next" href="#carousel-sv" role="button" data-slide="next">
+                          <span class="sr-only">&nbsp;</span>
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="c-30 column center">
+                <i class="darkgray">{{ langs.STOLEN_VEHICLES_PROFITS }}:</i>&nbsp;$<span id="vehicleProfits">{{ svPage.user.getVehiclesProfit|valueFormat }}</span><span id="vehicleProfitsChange"></span><br />
+                <i class="darkgray">{{ langs.SUCCESS_FAIL_RATIO }}:</i>&nbsp;<span id="vehicleSFRatio">{{ svPage.user.getVehiclesSFRatio }}</span><br />
+                <i class="darkgray">{{ langs.RANK_POINTS_COLLECTED }}:</i>&nbsp;<span id="vehicleRankPoints">{{ svPage.user.getVehiclesRankpoints }}</span><span id="vehicleRankPointsChange"></span><br /><br />
+                <img src="{{ staticRoot }}/foto/web/public/images/lvlicons/steal-vehicles.png" alt="Level" />
+                <span id="vehiclesLvl">Lv. <span class="number"><span id="vehiclesLv">{{ svPage.user.getVehiclesLv }}</span><span id="vehiclesLvChange"></span></span></span>
+                <div style="max-width:150px;margin: 0 auto 1.65em auto;">
+                    <span id="vehiclesPercent">{{ percentLevelBar.create(svPage.user.getVehiclesXp.experience, svPage.user.getVehiclesXp.class) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br class="clear"/>
+    {{ alert.build('Info', 'alert-info', 'help', langs.STEAL_VEHICLES_INFO) }}
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+$('.carousel').carousel({
+  interval: false//1000 * 10
+});
+$('.execbutton').on("click", function(){
+    $("#stealVehicleResponse").empty();
+});
+$( document ).on( "click", ".store_vehicle", function(e) {
+    $("#stealVehicleResponse").slideUp(300);
+    if($("#ajaxLoader").length)
+    {
+        $('#ajaxLoader').show();
+    }
+    var postData = {securityToken:$('input[name=security-token]').val()}
+    var formURL = "{{ routing.getAjaxRouteByRouteName('store-vehicle') }}";
+    var method = "POST"
+    var responseField = "#stealVehicleResponse";
+    $.ajax(
+    {
+    	url : formURL,
+    	type: method,
+    	data : postData,
+    	success:function(data, textStatus, jqXHR) 
+    	{
+ 	      if($("#ajaxLoader" ).length)
+          {
+            $('#ajaxLoader').hide();
+          }
+    	  $(responseField).html(data);
+          $("#stealVehicleResponse").slideDown(300);
+    	}
+    });
+    e.preventDefault();
+});
+$( document ).on( "click", ".sell_vehicle", function(e) {
+    $("#stealVehicleResponse").slideUp(300);
+    if($("#ajaxLoader").length)
+    {
+        $('#ajaxLoader').show();
+    }
+    var postData = {securityToken:$('input[name=security-token]').val()}
+    var formURL = "{{ routing.getAjaxRouteByRouteName('sell-vehicle') }}";
+    var method = "POST"
+    var responseField = "#stealVehicleResponse";
+    $.ajax(
+    {
+    	url : formURL,
+    	type: method,
+    	data : postData,
+    	success:function(data, textStatus, jqXHR) 
+    	{
+ 	      if($("#ajaxLoader" ).length)
+          {
+            $('#ajaxLoader').hide();
+          }
+    	  $(responseField).html(data);
+          $(responseField).slideDown(300);
+    	}
+    });
+    e.preventDefault();
+});
+</script>
+{% if commit == true %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('input.execbutton.active').click();
+});
+</script>
+{% endif %}
+{% endblock javascripts %}

@@ -1,0 +1,29 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Families beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            {% set tableRows = family %}
+            {% set dataTable = 'family' %}
+            {% set startvar = pagination.from %}
+            {# {% set skipFields = ['bankmanagerUID','unserbossUID','forummodUID','image','icon','startDate','join','leaveCosts', 'profile', 'message', 'crusher', 'converter', 'mercenariesUsed', 'bullets', 'bulletFactory', 'bfProduction', 'brothel', 'cBulletFactory', 'cBrothel'] %} #}
+            {% set onlyFields = ['name','bossUID','vip','money'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            <a href="#" class="btn btn-default editOrNew">Nieuwe familie aanmaken</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

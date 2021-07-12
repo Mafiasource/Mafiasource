@@ -1,0 +1,79 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    input.roulette-field {display:inline-block;max-width:60px;margin:0;}
+    section#ccontainer section#content tr.rowMsg div{border:none;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div style="max-width: 520px;margin: 0 auto">
+    <form class="table-reponsive ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-roulette') }}" data-response="#playRouletteResponse">
+        <table class="table table-sm table-dark table-bordered">
+            <thead>
+                <th scope="col" colspan="3" class="center">
+                    <strong>Roulette</strong>
+                </th>
+            </thead>
+            <tbody>
+                <tr>
+                    {% set value0 = "" %}
+                    <td colspan="4" style="background: green;"><div class="center">0:&nbsp;<span class="right">$&nbsp;<input type="text" name="n0" value="{{ value0 }}" class="roulette-field" placeholder="{{ langs.STAKE }}" maxlength="7" /></span></div></td>
+                </tr>
+                {% for i in range(1, 36, 3) %}
+                    <tr>
+                        {% for j in range(0, 2) %}
+                            {% set ij = i + j %}
+                            <td style="background: #{% if ij in reds %}CC0000{% else %}101010{% endif %};">
+                                {% set value = "" %}
+                                {% if ij|length < 2 %}0{% endif %}{{ ij }}:&nbsp;<span class="right">$&nbsp;<input type="text" name="n{{ ij }}" value="{{ value }}" class="roulette-field" placeholder="{{ langs.STAKE }}" maxlength="7" /></span>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr><td colspan="3"></td></tr>
+                {% for k, v in comboFields %}
+                    {% if loop.index0 % 3 == 0 %}</tr>{% endif %}{% if loop.index0 % 3 == 0 or loop.first %}<tr>{% endif %}
+                    <td style="background: #808080;">
+                        {% set value = "" %}
+                        {% set colName = v %}
+                        {% if colName|upper in langs|keys %}
+                            {% set colName = langs[colName|upper] %}
+                        {% endif %}
+                        {% if v in ['1_col', '2_col', '3_col'] %}<img src="{{ staticRoot }}/web/public/images/icons/arrow_up.png" class="icon" alt="Col"/>{% endif %}&nbsp;{{ colName|ucfirst }}:&nbsp;<span class="right">$&nbsp;<input type="text" name="{{ v }}" value="{{ value }}" class="roulette-field" placeholder="{{ langs.STAKE }}" maxlength="7" /></span>
+                    </td>
+                {% endfor %}
+                <tr id="playRouletteResponse" class="rowMsg"></tr>
+                <tr>
+                    <td colspan="3" class="center">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type='submit' name='play-roulette' value='{{ langs.PLAY }}' />
+        				<p>{{ langs.ROULETTE_INFO|raw }}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+    <div class="content-container cf">
+        <div id="buyPossessResponse"></div>
+        <div class="center">
+            {% if possessionData.getPossessDetails.getUserID == 0 %}
+                <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                    <input type="hidden" name="id" value="{{ possessId }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                </form>
+                <br class="clear"/>
+            {% else %}
+                <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

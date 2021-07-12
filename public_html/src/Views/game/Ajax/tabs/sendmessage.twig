@@ -1,0 +1,65 @@
+<style>
+#messages-container > .row {margin: 0;padding: 0;box-sizing:border-box;border:none;}
+#message-container {display:block;width:100%;background:#e4e4e4;border:1px solid #e1e1e1;border-radius:10px;height:400px;max-height:100%;overflow-y: auto;overflow-x:hidden;box-sizing:border-box;padding:1em;}
+#message-container > div.senderRow {display:block;clear:both;}
+#message-container > div.receiverRow {float:right;display:block;clear:both;text-align:right;}
+#message-container > div.senderRow > div.senderRow {margin: 0.5em 0;background: #b0d4e3;background: -moz-linear-gradient(top,  #9bc8d0 0%,#7ca2ab 100%);background: -webkit-linear-gradient(top,  #9bc8d0 0%,#7ca2ab 100%);background: linear-gradient(to bottom,  #9bc8d0 0%,#7ca2ab 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b0d4e3', endColorstr='#88bacf',GradientType=0 );border-radius:5px;display:block;width:auto;max-width:75%;box-sizing:border-box;padding: 1em;float:left;color:#fff;}
+#message-container > div.receiverRow > div.receiverRow {margin: 0.5em 0;background: #f9fcf7;background: -moz-linear-gradient(top,  #f9fcf7 0%, #f5f9f0 100%);background: -webkit-linear-gradient(top,  #f9fcf7 0%,#f5f9f0 100%);background: linear-gradient(to bottom,  #f9fcf7 0%,#f5f9f0 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9fcf7', endColorstr='#f5f9f0',GradientType=0 );border-radius:5px;display:block;width:auto;max-width:75%;box-sizing:border-box;padding: 1em;float:right;text-align:right;}
+#message-container strong {text-shadow: 1px 0px 6px rgba(255, 255, 255, 0.5);}
+#ajaxLoaderMessages {position:absolute;margin-top:1em;margin-left:0.75em;}
+.c-100 {width:100%;display: inline-block;height: auto;float: left;box-sizing: border-box;}
+</style>
+<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ langs.NEW_MESSAGE }}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div id="messages-container">
+            <div class="row cols cf">
+                <div class="c-100 no-border">
+                <div id="ajaxLoaderMessages"></div>
+                <div id="message-container"></div>
+                <div id="actions-container">
+                    <div id="sendMessageResponse"></div>
+                    <div id="ajaxLoader"></div>
+                    <form class="ajaxForm" id="reply-message" action="{{ routing.getAjaxRouteByRouteName('reply-message') }}" method="POST" data-response="#sendMessageResponse">
+                        <div id="new-msg-info" class="row">
+                            <div class="reply-field">
+                                <input type="{% if receiver is not empty %}hidden{% else %}text{% endif %}" name="receiver" placeholder="{{ WRITE_PLAYERNAME }}" value="{{ receiver }}"/><br /><br />
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <textarea id="writeMessage" class="writeAndFlush" name="message" rows="6" cols="80"></textarea><br class="clear"/><br />
+                                <input type="submit" name="sendMessage" value="{{ langs.SEND }}"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% block javascripts %}
+<script type="text/javascript">
+if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
+    var x = document.createElement('script');
+    x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
+    document.getElementsByTagName("body")[0].appendChild(x);
+}
+$(document).ready(function(){
+    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    $('#modal').on('hidden.bs.modal', function () {
+        $("#openTab").empty();
+    });
+    reloadMessages("{{ receiver }}");
+});
+</script>
+{% endblock javascripts %}

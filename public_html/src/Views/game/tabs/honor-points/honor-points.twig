@@ -1,0 +1,108 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="center">
+            {{ langs.YOU_HAVE_X_HONOR_POINTS|raw }}
+        </div>
+        <br />
+        <div class="subtop">
+            {{ langs.EXCHANGE }}
+        </div>
+        <div id="exchangeResponse" class="rowMsg"></div>
+        <div class="content-container">
+            <form class="ajaxForm" id="exchange-hp" action="{{ routing.getAjaxRouteByRouteName('exchange-hp') }}" method="POST" data-response="#exchangeResponse">
+                {% for key, item in exchangeList %}
+                <div id="exchangeRecord_{{ loop.index }}" class="row {{ cycle(['odd', 'even'], loop.index0) }} cols cf">
+                    <div class="c-10 column center">
+                        <input type="radio" name="exchange-amount" value="{{ key }}"/>
+                    </div>
+                    <div class="c-90 column">
+                        {{ langs.EXCHANGE_SINGLE }} {{ key }} {{ langs.HONOR_POINTS|lower }} {{ langs.FOR|lower }} {% if item.what == 'contant' or item.what == 'cash' %}{{ item.val|moneyFormat }}{% else %}{{ item.val|valueFormat }}{% endif %} {{ item.what }}
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="row odd cols cf">
+                    <div class="c-80 column">
+                        <small>{{ langs.BEWARE_EXCHANGE }}</small>
+                    </div>
+                    <div class="c-20 column center">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="exchange-hp" value="{{ langs.EXCHANGE }}"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br class="clear"/>
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <p class="center">{{ langs.LATEST_10_OBTAINED_HP }}</p>
+        <div class="table-reponsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">{{ langs.FROM }}</th>
+                        <th scope="col" class="center">{{ langs.AMNT }}</th>
+                        <th scope="col" class="center">{{ langs.MESSAGE }}</th>
+                        <th scope="col" class="center">{{ langs.DATE }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in hpLogs.received %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td><a href="/game/profile/{{ row.username }}">{{ row.username }}</a></td>
+                          <td>{{ row.amount|valueFormat }}</td>
+                          <td>{{ row.message }}</td>
+                          <td>{{ row.date }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% if hpLogs.received is empty %}
+                        <tr>
+                          <td colspan="4">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_HP_LOGS_TO_VIEW }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <p class="center">{{ langs.LATEST_10_LOST_HP }}</p>
+        <div class="table-reponsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">{{ langs.TO }}</th>
+                        <th scope="col" class="center">{{ langs.AMNT }}</th>
+                        <th scope="col" class="center">{{ langs.MESSAGE }}</th>
+                        <th scope="col" class="center">{{ langs.DATE }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in hpLogs.sent %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td><a href="/game/profile/{{ row.username }}">{{ row.username }}</a></td>
+                          <td>{{ row.amount|valueFormat }}</td>
+                          <td>{{ row.message }}</td>
+                          <td>{{ row.date }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% if hpLogs.received is empty %}
+                        <tr>
+                          <td colspan="4">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_HP_LOGS_TO_VIEW }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <br class="clear" />
+        {{ alert.build('Info', 'alert-info', 'help', langs.HONOR_POINTS_INFO) }}
+    </div>
+</div>

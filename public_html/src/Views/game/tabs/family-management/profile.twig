@@ -1,0 +1,70 @@
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.FAMILY }} {{ langs.IMAGE }}
+            </div>
+            <div class="content-container">
+                <div id="uploadFamilyImageResponse" class="rowMsg"></div>
+                <form class="ajaxFormUpload" action="{{ routing.getAjaxRouteByRouteName('upload-family-image') }}" method="POST" data-response="#uploadFamilyImageResponse" enctype="multipart/form-data">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/layout_edit.png" class="icon" alt="{{ langs.IMAGE }}"/> {{ langs.IMAGE }} <small>(250x150)</small>
+                        </div>
+                        <div class="c-50 column">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="file" name="image" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="submit" name="upload-image" value="{{ langs.EDIT }}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.FAMILY }} Icon
+            </div>
+            <div class="content-container">
+                <div id="uploadFamilyIconResponse"></div>
+                <form class="ajaxFormUpload" action="{{ routing.getAjaxRouteByRouteName('upload-family-icon') }}" method="POST" data-response="#uploadFamilyIconResponse" enctype="multipart/form-data">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/tag_blue.png" class="icon" alt="{{ langs.USER }}"/> Icon <small>(38x38)</small>
+                        </div>
+                        <div class="c-50 column">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="file" name="icon" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="submit" name="upload-icon" value="{{ langs.EDIT }}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="subtop">
+            {{ langs.FAMILY }} {{ langs.PROFILE }}
+        </div>
+        <div class="content-container">
+            <div id="familyProfileResponse" class="rowMsg"></div>
+            <form id="familyProfileForm" action="{{ routing.getAjaxRouteByRouteName('update-family-profile') }}" method="POST" data-response="#familyProfileResponse">
+                <div class="row">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <textarea id="editFamilyProfile" name="profile" rows="10" cols="6">{{ familyPage.getProfile }}</textarea>
+                </div>
+                <div class="row">
+                    <input type="submit" name="change-profile" value="{{ langs.EDIT }}"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

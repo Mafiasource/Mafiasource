@@ -1,0 +1,89 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div id="familyDonationResponse"></div>
+        <div class="donate">
+            <div class="subtop">
+                {{ langs.DONATE }} {{ langs.TO|lower }} {{ userData.getFamily }}
+            </div>
+            <div class="content-container">
+                <form id="familyDonation" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('donate-family') }}" method="POST" data-response="#familyDonationResponse">
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.MONEY }}"/> {{ langs.FAMILY }} bank:
+                            </div>
+                        </div>
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                {{ familyData.getMoney|moneyFormat }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.MONEY }}"/> {% if lang == 'en' %}Your{% else %}Jouw{% endif %} bank:
+                            </div>
+                        </div>
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                {{ userData.getBank|moneyFormat }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c-row cf">
+                        <div class="c-row-50 col">
+                            <div class="row">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.MONEY }}"/> {{ langs.AMOUNT }}:
+                            </div>
+                        </div>
+                        <div class="c-row-30 col">
+                            <div class="row">
+                                <input type="number" name="amount" value="{% if userData.getBank > 999999999 %}999999999{% else %}{{ userData.getBank }}{% endif %}"/>
+                            </div>
+                        </div>
+                        <div class="c-row-20 col">
+                            <div class="row">
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="donate" value="{{ langs.DONATE }}"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br class="clear"/>
+        <div class="table-responsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center" colspan="4">{{ langs.DONATION }} {{ langs.LOGS }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.USER }}"/> {{ langs.USER }}</td>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/clock.png" class="icon" alt="{{ langs.DATE }}"/> {{ langs.LAST }} {{ langs.DONATION|lower }}</td>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.TOTAL }}"/> {{ langs.TOTALE }} {{ langs.DONATION|lower }}</td>
+                      <td><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.TOTAL }}"/> {{ langs.SINCE }} {{ langs.BEGINNING|lower }}</td>
+                    </tr>
+                    {% for fd in familyDonations %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td><a href="/game/profile/{{ fd.getUsername }}">{{ fd.getUsername }}</a></td>
+                          <td>{{ fd.getLastDonation }}</td>
+                          <td>{{ fd.getAmount|moneyFormat }}</td>
+                          <td>{{ fd.getAmountAll|moneyFormat }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% if familyDonations is empty %}
+                        <tr>
+                          <td colspan="4">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_DONATIONS_TO_VIEW }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

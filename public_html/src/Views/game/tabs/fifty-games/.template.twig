@@ -1,0 +1,80 @@
+<div class="c-row cf">
+    <div class="c-row-60 col">
+        <div class="inner-c-container">
+            <div id="challengeGameResponse"></div>
+            <div class="table-responsive">
+                <table class="table table-sm table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="center">
+                                <strong>#</strong>
+                            </th>
+                            <th scope="col" class="center">
+                                <strong>{{ langs.USER }}</strong>
+                            </th>
+                            <th scope="col" class="center">
+                                <strong>{{ typeName }}</strong>
+                            </th>
+                            <th scope="col" class="center">
+                                <strong>{{ langs.CHALLENGE }}</strong>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for g in fiftyGames %}
+                            <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                                <td class="center">{{ loop.index }}</td>
+                                <td><a href="/game/profile/{{ g.getUsername }}">{{ g.getUsername }}</a></td>
+                                <td>{% if type == 0 %}{{ g.getAmount|moneyFormat }}{% else %}{{ g.getAmount|valueFormat }}{% endif %}</td>
+                                <td>
+                                    <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('challenge-fifty-game') }}" method="POST" data-response="#challengeGameResponse">
+                                        <input type="hidden" name="gameID" value="{{ g.getId }}"/>
+                                        <input type="hidden" name="security-token" value="{{ securityToken }}"/> 
+                                        <input type="submit" name="challenge" value="{{ langs.CHALLENGE }}"/>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% if fiftyGames is empty %}
+                            <tr><td colspan="4"><img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ langs.NO_GAMES_ATM }}</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="ajaxLoader"></div>
+    <div class="c-row-40 col">
+        <div class="inner-c-container">
+            <div id="createGameResponse"></div>
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('create-fifty-game') }}" method="POST" data-response="#createGameResponse">
+                <div class="subtop">
+                    {{ langs.START_GAME }}
+                </div>
+                <div class="content-container">
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/web/public/images/icons/{% if type == 0 %}money{% elseif type == 1 %}user_female{% elseif type == 2 %}shield{% endif %}.png" class="icon" alt="{{ typeName }}"/> {{ typeName }}:
+                        </div>
+                        <div class="c-50 column">
+                            <span id='fiftyStakeAmount'>{% if type == 0 %}{{ amountPossession|moneyFormat }}{% else %}{{ amountPossession|valueFormat }}{% endif %}</span><span id='fiftyStakeAmountChange'></span>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            {{ langs.STAKE }}:
+                        </div>
+                        <div class="c-50 column">
+                            <input type="number" name="amount" value="{{ minStake }}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="hidden" name="type" value="{{ type }}" />
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="start-game" value="Start{% if lang == 'nl' %}en{% endif %}"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

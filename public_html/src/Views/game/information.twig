@@ -1,0 +1,37 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% block stylesheets %}
+<style type="text/css">
+    section#ccontainer section#content .c-row > .col.c-row-33 {width:33.29%;margin-bottom:1.25rem;}
+    @media (max-width: 688px) {
+        section#ccontainer section#content .c-row > .col.statsCol.c-row-50 {width:100%;}
+        section#ccontainer section#content .c-row > .col.statsCol.c-row-50:first-child {margin-bottom:15px;}
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.INFORMATION }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'statistics' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('information') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/stats.png" class="icon" alt=""/> {{ langs.STATISTICS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'rules' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('information-rules') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/newspaper.png" class="icon" alt=""/> {{ langs.RULES }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'team-members' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('information-team-members') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt=""/> Team {{ langs.MEMBERS }}
+        </a>
+    </div>
+</div>
+{% include "/src/Views/game/tabs/information/"~tab~".twig" %}
+{% endblock content %}

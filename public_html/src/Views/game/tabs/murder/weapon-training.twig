@@ -1,0 +1,42 @@
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+
+<div class="c-row cf">
+    <div class="inner-c-container" style="max-width: 440px;">
+        <div class="subtop">
+            {{ langs.WEAPON }} Training
+        </div>
+        <div class="content-container">
+            <div id="trainWeaponResponse" class="rowMsg"></div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" class="icon" alt="Training" /> {{ langs.CURRENT }} {{ langs.WEAPON|lower }}
+                </div>
+                <div class="c-50 column">
+                    {{ statusPage.getWeapon }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/gun_anchor.png" class="icon" alt="Training" /> {{ langs.WEAPON }} {{ langs.EXPERIENCE|lower }}
+                </div>
+                <div class="c-50 column">
+                    {{ percentBar.create(statusPage.getWeaponExperienceBar.experience, statusPage.getWeaponExperienceBar.class) }}
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" class="icon" alt="Training" /> {{ langs.WEAPON }} training
+                </div>
+                <div class="c-50 column trainingBar">
+                    {{ percentBar.create(statusPage.getWeaponTrainingBar.training, statusPage.getWeaponTrainingBar.class) }}
+                </div>
+            </div>
+            <div class="row">
+                <form id="trainWeapon" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('weapon-training') }}" method="POST" data-response="#trainWeaponResponse">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="train-weapon" value="Train{% if lang == 'nl' %}en{%endif %}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

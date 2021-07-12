@@ -1,0 +1,84 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% block content %}
+<form style="width: 420px;margin: 0 auto;" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('buy-family-mercenaries') }}" data-response="#buyFamilyMercenariesResponse">
+    <div class="top">
+        {{ langs.FAMILY }} {{ langs.MERCENARIES }}
+    </div>
+    <div class="content-container cf">
+        <div id="buyFamilyMercenariesResponse" class="rowMsg"></div>
+        <div class="rowMsg">{{ alert.build('Warning', 'alert-warning', 'bell', langs.MERCENARIES_INFO) }}</div>
+        <div class="row cols cf">
+            <div class="c-50 column">
+                <img src="{{ statiicRoot }}/foto/web/public/images/icons/group_add.png" class="icon" alt="{{ langs.MERCENARIES }}"/> {{ langs.MERCENARIES }} {{ langs.BOUGHT|lower }}
+            </div>
+            <div class="c-50 column">
+                {{ pageInfo.family.getMercenariesTotal|valueFormat }}
+            </div>
+        </div>
+        <div class="row cols cf">
+            <div class="c-50 column">
+                <img src="{{ statiicRoot }}/foto/web/public/images/icons/group_gun.png" class="icon" alt="{{ langs.MERCENARIES }}"/> {{ langs.MERCENARIES }} {{ langs.USED|lower }}
+            </div>
+            <div class="c-50 column">
+                {{ pageInfo.family.getMercenariesUsed|valueFormat }}
+            </div>
+        </div>
+        <div class="row cols cf">
+            <div class="c-50 column">
+                <img src="{{ statiicRoot }}/foto/web/public/images/icons/group.png" class="icon" alt="{{ langs.MERCENARIES }}"/> {{ langs.MERCENARIES }} {{ langs.AVAILABLE|lower }}
+            </div>
+            <div class="c-50 column">
+                {{ pageInfo.family.getMercenariesAvailable|valueFormat }}
+            </div>
+        </div>
+        <div class="row cols cf">
+            <div class="c-50 column">
+                <img src="{{ statiicRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.MERCENARIES }}"/> {{ langs.MERCENARIES }}
+            </div>
+            <div class="c-50 column">
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/> 
+                <input type="number" name="mercenaries" value="" min="1" max="999"/>
+            </div>
+        </div>
+        <div class="row">
+            <input type="submit" name="buy-mercenaries" value="{{ langs.BUY }}" />
+        </div>
+    </div>
+</form>
+{% include "src/Views/.Paginate.twig" %}
+<br class="clear"/>
+<div class="table-responsive">
+    <table class="table table-sm table-dark table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" class="center">{{ langs.BUYER }}</th>
+                <th scope="col" class="center">{{ langs.MERCENARIES }}</th>
+                <th scope="col" class="center">{{ langs.DATE }}</th>
+            </tr>
+        </thead>
+        <tbody id="refreshArea">
+            {% for mercenaryLog in pageInfo.mercenaryLog %}
+                <tr id="logRecord_{{ mercenaryLog.getId }}" class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                  <td><a href="/game/profile/{{ mercenaryLog.getUsername }}">{{ mercenaryLog.getUsername }}</a></td>
+                  <td>{{ mercenaryLog.getMercenaries|valueFormat }}</td>
+                  <td>{{ mercenaryLog.getDate }}</td>
+                </tr>
+            {% endfor %}
+            {% if pageInfo.mercenaryLog is empty %}
+                <tr>
+                  <td colspan="4">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_MERCENARIES_BOUGHT }}
+                  </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

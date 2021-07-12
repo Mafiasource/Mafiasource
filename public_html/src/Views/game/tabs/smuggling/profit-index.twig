@@ -1,0 +1,73 @@
+<div class="row center">
+    {# inits #}
+        {% set uNr = 1 %}
+        {% set unitName = '' %}
+        {% for s in sPage.smuggle %}
+            {% if s.getActive == true %}
+                {% set uNr = unitNumbers[s.getId] %}
+                {% set unitName = s.getName %}
+            {% endif %}
+        {% endfor %}
+    {# // end inits #}
+                                    
+    <h2>{{ langs.VIEWING_PROFIT_INDEX_FOR }}: <select name='profitIndexSelector' onChange="document.location='{{ routing.getRouteByRouteName('smuggling-profit-index') }}/' + this.value">
+        {% for i, t in typeNames %}
+            <optgroup label=' {{ t|capitalize }}'>
+                {% for k, s in sPage.smuggle %}
+                    {% if s.getType == i %}
+                        <option value="{{ s.getId }}"{% if s.getName == unitName %} selected="selected"{% endif %}>{{ s.getName|capitalize }}</option>
+                    {% endif %}
+                {% endfor %}
+            </optgroup>
+        {% endfor %}
+    </select></h2>
+</div>
+</div> {# END .content-container #}
+<br class="clear"/>
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-dark">
+      <thead>
+        <tr>
+          <th scope="col"><small>{{ langs.TO }}&darr;&nbsp;{{ langs.FROM }}&rarr;</small></th>
+          {% for c1 in cities1 %}
+            <th scope="col"><small>{{ c1 }}</small></th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for i, c in cities %}
+        <tr{# class="{{ cycle(['odd', 'even'], loop.index0) }}"#}>
+          <th scope="row"><small>{{ c }}</small></th>
+          {% for k, c1 in cities1 %}
+            {% set difference = prices[i][uNr] - prices[k][uNr] %}
+            <td class="center"><span class="{% if difference < 0 %}red{% elseif difference > 0 %}lightgreen{% else %}gray{% endif %}">{{ difference }}</span></td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<br />
+<div class="table-responsive">
+    <table class="table table-sm table-hover table-bordered table-dark">
+      <thead>
+        <tr>
+          <th scope="col"><small>{{ langs.TO }}&darr;&nbsp;{{ langs.FROM }}&rarr;</small></th>
+          {% for c1 in cities2 %}
+            <th scope="col"><small>{{ c1 }}</small></th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for i, c in cities %}
+        <tr{# class="{{ cycle(['odd', 'even'], loop.index0) }}"#}>
+          <th scope="row"><small>{{ c }}</small></th>
+          {% for k, c1 in cities2 %}
+            {% set difference = prices[i][uNr] - prices[k][uNr] %}
+            <td class="center"><span class="{% if difference < 0 %}red{% elseif difference > 0 %}lightgreen{% else %}gray{% endif %}">{{ difference }}</span></td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>

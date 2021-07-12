@@ -1,0 +1,82 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-12">
+        <div class="content-box-header">
+			<div class="panel-title">Account instellingen</div>
+		</div>
+		<div class="content-box-large box-with-header clearfix">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p>Pas hier de instellingen betreffende jouw account aan. <b>Merk op</b>: deze instellingen zijn niet van toepassing op jouw persoonlijke pagina en worden enkel door de administratoren gebruikt voor het herkennen van jouw account.<br /><strong>Opgepast!</strong> indien je in de algemene instellingen je email aanpast dan is je inlog email voor dit adminCP ook aangepast!<br />Lege velden worden niet overschreven met je huidige instellingen bij het opslaan.</p>
+            </div>
+            {% block actionMessage %}
+                {{ message|raw }}
+            {% endblock actionMessage %}
+            <div class="row justify-content-between">
+              <div class="col-md-5">
+                <form id="settings-form" action="{{ routing.getRouteByRouteName('admin-account-settings') }}" class="ajaxForm" method="POST" data-response="#account-settingsResponse">
+                    <h2>Algemene instellingen</h2>
+                    <div id="account-settingsResponse"></div>
+                    <div class="form-group">
+                        <label for="input_naam">Naam</label>
+                        <input type="text" class="form-control" name="naam" id="input_naam" placeholder="Naam" value="{{ settings.naam }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_voornaam">Voornaam</label>
+                        <input type="text" class="form-control" name="voornaam" id="input_voornaam" placeholder="Voornaam" value="{{ settings.voornaam }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_email">Email</label>
+                        <input type="email" class="form-control" name="email" id="input_email" placeholder="Email" value="{{ settings.email }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_adres">Adres</label>
+                        <input type="text" class="form-control" name="adres" id="input_adres" placeholder="Adres" value="{{ settings.adres }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_postcode">Postcode</label>
+                        <input type="number" class="form-control" name="postcode" id="input_postcode" placeholder="Postcode" value="{{ settings.postcode }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_gemeente">Gemeente</label>
+                        <select name="gemeente" class="form-control" id="input_gemeente">
+                            {% for key, value in gemeentes %}
+                                {% if value == settings.gemeente %}
+                                    <option value="{{ value }}" selected="selected">{{ value }}</option>
+                                {% else %}
+                                    <option value="{{ value }}">{{ value }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="hidden" name="submit-account-settings" value="{{ securityToken }}"/>
+                    <input type="submit" name="submit-account-settings" class="btn btn-primary" value="Instellingen opslaan"/>
+                </form>
+              </div>
+              <div class="col-md-4">
+                <form id="password-form" action="{{ routing.getRouteByRouteName('admin-account-settings') }}" class="ajaxForm" method="POST" data-response="#password-changeResponse">
+                    <h2>Wachtwoord veranderen</h2>
+                    <div id="password-changeResponse"></div>
+                    <div class="form-group">
+                        <label for="input_password_old">Oud wachtwoord</label>
+                        <input type="password" class="form-control" name="password_old" id="password_old" placeholder="Oud wachtwoord" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_password">Nieuw wachtwoord</label>
+                        <input type="password" class="form-control" name="password" id="input_password" placeholder="Nieuw wachtwoord" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="input_password">Herhaal nieuw wachtwoord</label>
+                        <input type="password" class="form-control" name="password_repeat" id="input_password_repeat" placeholder="Herhaal nieuw wachtwoord" value=""/>
+                    </div>
+                    <input type="hidden" name="submit-passchange" value="{{ securityToken }}"/>
+                    <input type="submit" name="submit-passchange" class="btn btn-warning" value="Wachtwoord veranderen"/>
+                </form>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

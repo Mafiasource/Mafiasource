@@ -1,0 +1,58 @@
+{% if open %}
+    <br />
+{% else %}
+    <p class="center gray">{{ langs.EXCHANGE_DORMANT }}</p>
+{% endif %}
+<div class="table-responsive">
+    <table class="table table-sm table-dark table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" class="center">
+                    <strong>#</strong>
+                </th>
+                <th scope="col" class="center">
+                    <strong>{{ langs.BUSINESS }}</strong>
+                </th>
+                <th scope="col" class="center">
+                    <strong>{{ langs.AMNT }}</strong>
+                </th>
+                <th scope="col" class="center">
+                    <strong>{{ langs.PURCHASE }} {{ langs.PRICE }}</strong>
+                </th>
+                <th scope="col" class="center">
+                    <strong>{{ langs.CURRENT }} {{ langs.PRICE }}</strong>
+                </th>
+                <th scope="col" class="center">
+                    <strong>{{ langs.PROFIT }}</strong>
+                </th>
+                <th scope="col" class="center">
+                    <strong>%</strong>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in portfolio %}
+                {% if s.getStocksPercent > 0.00 %}
+                    {% set profit = '<span class="lightgreen">' ~ s.getStocksProfit|moneyFormat ~ '</span>' %}
+                    {% set profitPercent = '<img src="' ~ staticRoot ~ '/foto/web/public/images/icons/arrow_up.png" alt="Up" /> <span class="lightgreen">' ~ s.getStocksPercent ~ '%</span>' %}
+                {% else %}
+                    {% set profit = '<span class="red">' ~ s.getStocksProfit|moneyFormat ~ '</span>' %}
+                    {% set profitPercent = '<img src="' ~ staticRoot ~ '/foto/web/public/images/icons/arrow_down.png" alt="Up" /> <span class="red">' ~ s.getStocksPercent ~ '%</span>' %}
+                {% endif %}
+                <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                    <td class="center">{{ loop.index }}</td>
+                    <td><a href="/game/stock-exchange/business/{{ s.getName }}">{{ s.getName }}</a></td>
+                    <td>{{ s.getStocksCount|valueFormat }}</td>
+                    <td>{{ s.getStocksPrice|moneyFormat }}</td>
+                    {% set currentPrice = s.getStocksPrice + s.getStocksProfit %}
+                    <td>{{ currentPrice|moneyFormat }}</td>
+                    <td>{{ profit|raw }}</td>
+                    <td>{{ profitPercent|raw  }}</td>
+                </tr>
+            {% endfor %}
+            {% if portfolio is empty %}
+                <tr><td colspan="7"><img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ langs.DONT_OWN_STOCKS }}</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>

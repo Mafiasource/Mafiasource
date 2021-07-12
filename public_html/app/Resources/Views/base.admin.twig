@@ -1,0 +1,265 @@
+{% apply spaceless %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AdminCP - {{ routing.settings.gamename }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{{ docRoot }}/web/public/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{{ docRoot }}/web/public/css/admin.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    
+    <link rel="icon" href="{{ docRoot }}/web/public/images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ docRoot }}/web/public/images/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="{{ docRoot }}/web/public/images/favicon.ico" />
+  </head>
+  <body>
+    {% block header %}
+  	<div class="header">
+	     <div class="page-content">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand navbar-dark bg-dark">
+                   <a class="navbar-brand" href="{{ docRoot }}"><img src="{{ docRot }}/web/public/foto.php?src=/web/public/images/header_image_large.png&w=250&h=auto&zc=1" class="brand-logo" alt="{{ routing.settings.gamename }}"/></a>
+                   <div class="collapse navbar-collapse">
+                     <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                          <a class="nav-link"  href="{{ docRoot }}" href="#"><span class="raquo">&nbsp;</span></a>
+                        </li>
+                     </ul>
+                     <ul class="nav navbar-nav my-2 my-lg-0">
+                       <li class="nav-item dropdown">
+                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                           {{ member.voornaam }}<b class="caret"></b>
+                         </a>
+                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                           <a class="dropdown-item" href="{{ docRoot }}/admin/account-settings">Account instellingen</a>
+                           <a class="dropdown-item" href="{{ docRoot }}/admin/logout">Uitloggen</a>
+                         </div>
+                       </li>
+                     </ul>
+                   </div>
+                 </nav>
+            </div>
+	     </div>
+	</div>
+    {% endblock header %}
+    
+    {% block main %}
+    <div class="page-content">
+    	<div class="row">
+		  <div class="col-md-2">
+            {% block sideNav %}
+		  	<div id="left-side" class="sidebar content-box" style="display: block;">
+                <ul class="nav flex-column">
+                    {% if (memberObj.getStatus == 1 or memberObj.getStatus == 2) %}
+                        <li class="current"><a href="{{ routing.getRouteByRouteName('admin') }}"><i class="fas fa-tachometer-alt"></i>&thinsp;Dashboard</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-members') }}"><i class="fas fa-graduation-cap"></i>&thinsp;Moderators</a></li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-newspaper"></i> CMS
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-cms') }}">CMS</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-seo') }}">SEO</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-news') }}">Nieuws &amp; Updates</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-helpsystem') }}">Helpsysteem</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-list-ul"></i> Poll
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-poll-questions') }}">Vragen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-poll-answers') }}">Antwoorden</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-poll-votes') }}">Stemmen</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-list-alt"></i> Forum
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-forum-statuses') }}">Statussen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-forum-categories') }}">Categorie&euml;n</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-forum-topics') }}">Topics</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-forum-reactions') }}">Reacties</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-bullhorn"></i>&thinsp;Shoutbox
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-shoutbox-nl') }}">Nederlandstalig</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-shoutbox-en') }}">Engelstalig</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-users"></i> Families
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-families') }}">Families</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-alliances') }}">Allianties</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-bullet-donations') }}">Kogel donaties</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-bullets-sent') }}">Kogels verzonden</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-brothel-whores') }}">Bordeel hoeren</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-garage') }}">Garages</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-mercenaries') }}">Huurlingen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-raid') }}">Overvallen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-family-join-invite') }}">Join / Invite</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-address-card"></i> Gebruikers
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-users') }}">Gebruikers</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-user-captcha') }}">Captchas</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-user-friend-block') }}">Vrienden / blokkeren</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-messages') }}">Berichten</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-whores-rld') }}">Raam hoeren</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-detectives') }}">Detectives</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-user-garage') }}">Garages</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-beroep') }}">Beroepen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-member-status') }}">Statussen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-users-donateur') }}">Donateur statussen</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-tools"></i> Uitrustingen
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-weapons') }}">Wapens</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-protection') }}">Bescherming</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-airplanes') }}">Vliegtuigen</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-globe-americas"></i> Plattegrond
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-ground-map') }}">Plattegronden</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-ground-buildings') }}">Gebouwen</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-building"></i> Bezittingen
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-possessions') }}">Bezittingen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-possess') }}">Locaties</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-suitcase"></i> Misdaden
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-crimes') }}">Misdaden</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-crimes-org') }}">Georganiseerde misdaden</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-steal-vehicles') }}">Voertuigen stelen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-smuggling') }}">Smokkelen</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-market') }}"><i class="fas fa-store"></i>&thinsp;Markt</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-residences') }}"><i class="fas fa-home"></i> Woningen</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-murder-log') }}"><i class="fas fa-medkit"></i> Moordlogs</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-gym-competition') }}"><i class="fas fa-medal"></i>&thinsp;Sportschool wedstrijden</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-garage') }}"><i class="fas fa-wrench"></i> Garage voertuigen</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-states') }}"><i class="fas fa-flag-usa"></i> Staten</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-cities') }}"><i class="fas fa-location-arrow"></i> Steden</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-vehicles') }}"><i class="fas fa-car"></i> Voertuigen</a></li>                     
+                    {% endif %}
+                    {% if memberObj.getStatus == 3 %}
+                        <li class="current"><a href="{{ routing.getRouteByRouteName('admin') }}"><i class="fas fa-tachometer-alt"></i>&thinsp;Dashboard</a></li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-newspaper"></i> CMS
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-news') }}">Nieuws &amp; Updates</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-helpsystem') }}">Helpsysteem</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-list-alt"></i> Forum
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-forum-topics') }}">Topics</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-forum-reactions') }}">Reacties</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#">
+                                <i class="fas fa-suitcase"></i> Misdaden
+                                <span class="caret pull-right"></span>
+                            </a>
+                             <ul>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-crimes') }}">Misdaden</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-crimes-org') }}">Georganiseerde misdaden</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-steal-vehicles') }}">Voertuigen stelen</a></li>
+                                <li><a href="{{ routing.getRouteByRouteName('admin-smuggling') }}">Smokkelen</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-residences') }}"><i class="fas fa-home"></i> Woningen</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-vehicles') }}"><i class="fas fa-car"></i> Voertuigen</a></li>
+                    {% endif %}
+                    {% if memberObj.getStatus != 1 and memberObj.getStatus != 2 and memberObj.getStatus != 3 %}
+                        <li class="current"><a href="{{ routing.getRouteByRouteName('admin') }}"><i class="fas fa-tachometer-alt"></i>&thinsp;Dashboard</a></li>
+                    {% endif %}
+                </ul>
+             </div>
+             {% endblock sideNav %}
+		  </div>
+		  <div class="col-md-10">
+            {% block content %}
+            {% endblock content %}
+		  </div>
+		</div>
+    </div>
+    {% endblock main %}
+    
+    {% block footer %}
+    <footer>
+         <div class="page-container">
+         
+            <div class="copy">
+               &copy; Copyright {{ "now"|date("Y") }} <a href="https://www.mdevwebdesign.com/" target="_blank">mdev</a><small> - AdminCP v2.0</small>
+            </div>
+            
+         </div>
+    </footer>
+    {% endblock footer %}
+    
+    <script type="text/javascript" src="{{ docRoot }}/web/public/js/default/jquery.bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{ docRoot }}/web/public/js/admin.js"></script>
+    {% block javascripts %}
+    {% endblock javascripts %}
+  </body>
+</html>
+{% endapply %}

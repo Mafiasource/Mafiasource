@@ -1,0 +1,23 @@
+This subfolder will contain all user related encryption IV's and encryption keys for all their respective database tables and fields
+Encryption is used to store a user's sensitive data. We at Mafiasource like overkill security and thats why every single user has it's own set of keys.
+After every 'encrypted data' change for example setting a new email (sensitive) their iv and key for that field will be regenerated overwritting it's original.
+Please respect usage for readability and clarity
+
+Usage USERID / DBTABLE / DBFIELD / (iv | key) . TXT - samples:
+  USERID/user/email/iv.txt | Stores the encryption iv for a user with id USERID in the database table `user` field `email`
+  USERID/user/email/key.txt | Store the encryption key for a user with id USERID in the database table `user` field `email`
+Content samples:
+  iv.txt: )Ý«µî¬Ê]mæû´Å
+  key.txt: >·5Ü'.„>™¾ÌÆ÷ß5"
+
+masterCrypts:
+Working with encrypted values that also need to be checkable in PHP code? For example email exists?
+Than use security's masterEncrypt / masterDecrypt, this will use static secret keys so the encrypted output stays the same for the same input.
+This makes checking exsitance efficiently, otherwise we whould need to loop over all users and their keys to compare their encrypted data.
+Yes masterEncrypt / decrypt is therefore less secure but still better than no encryption at all.
+Using master encrypt & decrypt it's advised to store encryptions on the local filesystem rather than in our DB. (example at UserDAO->checkEmail())
+
+TO DO Change structure to ie. /change_email/new_mail.txt serialized by key UserID with array value of 'key' => key, 'iv' => iv
+
+DISCLAIMER
+Mafiasource 3 custom encryption is NOT done by cryptographic professionals.

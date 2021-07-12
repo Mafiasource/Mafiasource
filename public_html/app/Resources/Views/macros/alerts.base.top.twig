@@ -1,0 +1,19 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+<noscript>
+    {% set alertMessage = 'Some parts of ' ~ routing.settings.gamename ~ ' will not work if <a href="https://www.enable-javascript.com/" target="_blank"><strong>JavaScript</strong></a> is disabled. Please turn it back on and reload this page to make sure this message disappears.' %}
+    {{ alert.build('Error', 'alert-danger', 'cross', alertMessage) }}
+</noscript>
+{% if message.alert is iterable %}
+    {% set alertMessage = message.alert.message %}
+    {% if message.alert.success %}
+        {% set type, alertClass, alertIcon = 'Success', 'alert-success', 'tick' %}
+    {% else %}
+        {% set type, alertClass, alertIcon = 'Error', 'alert-danger', 'cross' %}
+    {% endif %}
+    {{ alert.build(alertType, alertClass, alertIcon, alertMessage) }}
+{% else %}
+    {% if message %}
+        {{ message|raw }}
+    {% endif %}
+{% endif %}

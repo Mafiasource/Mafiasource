@@ -1,0 +1,32 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Statussen beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            <p>Om veiligheids redenen zijn de statussen Webmaster, Administrator en Moderator niet beheerbaar, deze statussen worden gebruikt door mensen die meerdere rechten hebben op bepaalde zaken in dit adminCP paneel.<br />
+                Merk op: Statussen zichtbaar hier onder hebben enkel toegang tot het bewerken van opties en functies in-game, deze hebben geen toegang tot dit adminCP.
+            </p>
+            {% set tableRows = status %}
+            {% set dataTable = 'status' %}
+            {% set startvar = pagination.from+4 %}
+            {% set skipFields = ['id', 'description_nl', 'description_en'] %}
+            
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            <a href="#" class="btn btn-default editOrNew">Nieuwe status aanmaken</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

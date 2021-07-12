@@ -1,0 +1,32 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Misdaden beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            <p>Bij het bewerken zie je veldjes: maxRankPoints en difficulty.<br />
+            - maxRankPoints is de hoeveelheid rankpunten een speler kan verdienen bij deze misdaad, dit kan maximum 9 zijn. En de bedoeling hier is dat makkelijke misdaden weinig 'rp' verdienen en bv een zeer moeilijke misdaad dan wel tot max 9 punten kan verdienen. Van het max te verdienen rank punten worden er max 3 punten afgetrokken door ons script omwile van enkele factoren. Het is dus niet zo dat als je 9 invult je ook altijd 9 rank punten zult verdienen bij die misdaad. Ook goed om weten is dat je nooit minder dan 1 rank punt kan verdienen bij een geslaagde misdaad.<br />
+            - Difficulty is de moeilijkheidsgraad van de misdaad, dit is in %en uitgedrukt en dus een waarde van 0 tot 100. 0=onfaalbaar 100=onhaalbaar</p>
+            {% set tableRows = crimes %}
+            {% set dataTable = 'crime' %}
+            {% set startvar = pagination.from %}
+            {# {% set skipFields = ['article_nl','article_en'] %} #}
+            {% set onlyFields = ['name_en','description_en','level'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            <a href="#" class="btn btn-default editOrNew">Nieuwe misdaad aanmaken</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

@@ -1,0 +1,16 @@
+{% macro css(container, class, minHeight='110px', maxWidth='20%') %}
+    <style type="text/css">
+    .{{ container }} {display:block;width:auto;height:auto;}
+    .{{ class }} {display:inline-block;float:left;width:100%;max-width: {{ maxWidth }};height: auto;min-height: {{ minHeight }};border-radius: 5px;border: 1px solid #3f646d;box-sizing:border-box;padding:5px;background:rgba(90,90,90,0.9);margin: 0px;}
+    .{{ class }}.even {background-color: rgba(80,80,80,0.9) !important;}
+    .{{ class }} .position{display: inline-block;width: 24px;height: 24px;background: rgba(81, 112, 119, 0.75);border: 1px solid rgba(96, 182, 206, 0.75);position: relative;top: 0px;float: right;border-radius: 12px;line-height: 22px;text-align: center;}
+    .{{ class }} hr.split {border:none;margin:2px 0;}
+    .{{ class }} hr.lineSplit {display: block;width: 100%;height: 0px;margin: 2px 0;padding: 0;box-sizing: border-box;border: none;border-bottom: 1px dashed #888888;}
+    .{{ class }} .health {width: 100%;max-width:100px;margin-top: .33rem;}
+    .{{ class }} .user-img-hide a {text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);}
+    .modal .{{ class }} {margin:1px;} /** Give 1px margin for tiles in a modal view to avoid ugly effect on white bg **/
+    @media (max-width: 1367px) {.{{ class }}{max-width:33.3%;}}
+    @media (max-width: 603px) {.{{ class }}{max-width:50%;}}
+    @media (max-width: 320px) {.{{ class }} .health{max-width:80px;}}
+    </style>
+{% endmacro css %}

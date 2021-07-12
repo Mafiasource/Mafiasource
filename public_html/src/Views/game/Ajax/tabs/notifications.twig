@@ -1,0 +1,48 @@
+<style type="text/css">
+div#notifications > div.row.even, div#notifications > div.row.odd {background-color: #e2e2e2 !important;color: #464646;padding: 5px;box-sizing: border-box;}
+div#notifications > div.row.odd {background-color: #ececec !important;}
+div#notifications > div.row:first-child {border-radius:5px 5px 0px 0px;}
+div#notifications > div.row:last-child {border-radius:0px 0px 5px 5px;}
+div#notifications > div.row.active {background-color:#ecf9ff !important;}
+</style>
+<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ langs.NOTIFICATION }}s ({{ langs.LATEST }} 30)</h4>      
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div id="notifications" class="content-container">
+            {% if notifications is not empty %}
+                <div class="row cols cf">
+                    <div class="c-25 column no-border"><img src="{{ staticRoot }}/foto/web/public/images/icons/clock.png" class="icon" alt="{{ langs.DATE }}"/> {{ langs.DATE }}</div>
+                    <div class="c-75 column no-border"><img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" class="icon" alt="{{ langs.NOTIFICATION }}"/> {{ langs.NOTIFICATION }}</div>
+                </div><br />
+            {% endif %}
+            {% for n in notifications %}
+                <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}{% if n.getRead == false %} active{% endif %}">
+                    <div class="c-25 column no-border">{{ n.getDate }}</div>
+                    <div class="c-75 column no-border">{{ n.getNotification|raw }}</div>
+                </div>
+            {% endfor %}
+            {% if notifications is empty %}
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_NOTIFICATIONS_TO_VIEW }}
+            {% endif %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+$(document).ready(function(){
+    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    $('#modal').on('hidden.bs.modal', function () {
+        $("#openTab").empty();
+    });
+});
+</script>

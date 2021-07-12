@@ -1,0 +1,144 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% block content %}
+    {% if userData.getTraveling %}
+        {% include "/src/Views/game/tabs/travel/traveling.twig" %}
+    {% else %}
+        <script type="text/javascript">{% include '/web/public/js/number-format.js' %}</script>
+        {% if unableTo is not empty %}
+            {% set alertMessage = langs.IN_PRISON ~ " " ~ unableTo %}
+            {{ alert.build('Warning', 'alert-warning', 'bell', alertMessage) }}
+        {% endif %}
+        <div class="top">
+            {{ langs.PRISON }}
+        </div>
+        <div class="content-container">
+            <div class="row cols cf">
+                <div class="c-25 column">
+                    <div class="inner-c-container">
+                        <img src="{{ staticRoot }}/foto/web/public/images/prison.jpg" alt="" class="middle"/>
+                    </div>
+                </div>
+                <div class="c-75 column">
+                    <div class="inner-c-container center">
+                        <a href="/game/prison"><strong>All{% if lang == 'nl' %}e{% endif %} {{ langs.MEMBERS }}</strong></a>{% if userData.getFamilyID > 0 %} - <a href="/game/family-prison"><strong>{{ langs.FAMILY }} {{ langs.MEMBERS }}</strong></a>{% endif %}
+                        <br />
+                        {% if possessionData.getPossessDetails.getUserID == 0 %}
+                            <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                            <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                                <input type="hidden" name="id" value="{{ possessId }}"/>
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                            </form>
+                        {% else %}
+                            <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="buyPossessResponse"></div>
+        <div id="ajaxLoader"></div>
+        <div id="prisonResponse"  class="no-border"></div>
+        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+        {% include "src/Views/.Paginate.twig" %}
+        <br class="clear"/>
+        
+        <div class="table-reponsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">#</th>
+                        <th scope="col" class="center">{{ langs.USER }}</th>
+                        <th scope="col" class="center">{{ langs.TIME_LEFT }}</th>
+                        <th scope="col" class="center">{{ langs.ACTION }}s</th>
+                    </tr>
+                </thead>
+                <tbody id="refreshArea">
+                    {% for prisoner in prisoners %}
+                        <tr id="pRecord_{{ prisoner.getId }}" class="{{ cycle(['odd', 'even'], loop.index0) }}"{% if prisoner.getUserID == userData.getId %} style="background:gray;"{% endif %}>
+                          <td scope="row" class="center">{% set suboutcome = prisoner.getId - prisoner.getId + loop.index + pagination.from %}{{ suboutcome }}</td>
+                          <td><a href="/game/profile/{{ prisoner.getUsername }}">{{ prisoner.getUsername }}</a></td>
+                          <td><span id="cPrisonersTime_{{ prisoner.getId }}">{{ "PrisonersTime_#{prisoner.getId}"|countClean(prisoner.getTime)|raw }}</span></td>
+                          <td>
+                            <a href="javascript:void(0);" data-action="buy-out" data-pid="{{ prisoner.getId }}" class="button action">
+                                {{ langs.BUY_OUT }}
+                                <small>$<span id="cPrisonersBuyOutMoney_{{ prisoner.getId }}">{{ "PrisonersBuyOutMoney_#{prisoner.getId}"|countPrisonMoney(prisoner.getTime)|raw }}</span></small>
+                            </a>
+                            -
+                            <a href="javascript:void(0);" data-action="break-out" data-pid="{{ prisoner.getId }}" class="button action">{{ langs.BREAK_OUT }}</a></td>
+                        </tr>
+                    {% endfor %}
+                    {% if prisoners is empty %}
+                        <tr>
+                          <td colspan="4">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_PRISONERS }}
+                          </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        {% include "src/Views/.Paginate.twig" %}
+        <br class="clear"/>
+    {% endif %}
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+function LoadPrison()
+{
+    if(ajaxBusy == false)
+    {
+        $.ajax({
+            url: "{{ routing.getAjaxRouteByRouteName('prison-refresh') }}",
+            cache: false,
+            type: "POST",
+        	data : {famID:{{ famPrison }},from: {{ pagination.from }}, to:{{ pagination.to }}},
+        	success:function(data, textStatus, jqXHR) 
+        	{
+              {% for prisoner in prisoners %}
+                clearTimeout(timeoutCCPrisonersTime_{{ prisoner.getId }});
+                clearTimeout(timeoutCPMPrisonersBuyOutMoney_{{ prisoner.getId }});
+              {% endfor %}
+              
+        	  $("#refreshArea").html(data);
+        	}
+      });
+    }
+}
+
+LoadPrison();
+setInterval("LoadPrison()",5000);
+
+$(document).on("click", ".button.action", function(e){
+    $('#ajaxLoader').show();
+    var action = $(this).attr('data-action');
+    var pid = $(this).attr('data-pid');
+    var securityToken = $("input[name=security-token]").val();
+    var postData = {action:action,pid:pid,securityToken:securityToken};
+    var formURL = '/game/prison/commit-action';
+    var method = "POST";
+    var responseField = "#prisonResponse";
+    $.ajax(
+    {
+    	url : formURL,
+    	type: method,
+    	data : postData,
+    	success:function(data, textStatus, jqXHR) 
+    	{
+ 	      if($("#ajaxLoader" ).length)
+          {
+            $('#ajaxLoader').hide();
+          }
+    	  $(responseField).html(data);
+    	}
+    });
+    e.preventDefault();
+});
+
+</script>
+{% endblock javascripts %}

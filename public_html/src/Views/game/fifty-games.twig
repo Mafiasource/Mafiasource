@@ -1,0 +1,39 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    @media (max-width: 688px) {
+        section#ccontainer section#content .c-row.cf > .c-row-60.col, section#ccontainer section#content .c-row.cf > .c-row-40.col {width:100%;border:none;}
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FIFTY_GAMES }}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'cash' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('fifty-games') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt=""/> {{ langs.CASH }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'whores' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('fifty-games-whores') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" class="icon" alt=""/> {{ langs.WHORES }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'honor-points' %}tab_on{% endif %} t-33">
+        <a href="{{ routing.getRouteByRouteName('fifty-games-honor-points') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/shield.png" class="icon" alt=""/> {{ langs.HONOR_POINTS }}
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/fifty-games/"~tab~".twig" %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

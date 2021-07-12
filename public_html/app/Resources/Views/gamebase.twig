@@ -1,0 +1,255 @@
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+
+{% apply spaceless %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>{{ settings.domainBase|capitalize }} - Online Mafia RPG</title>
+    <link rel="publisher" href="https://plus.google.com/101698024520604422391"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png"/>
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ staticRoot }}/foto/web/public/images/favicon/android-icon-192x192.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-96x96.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-16x16.png"/>
+    <link rel="manifest" href="{{ docRoot }}/web/public/images/favicon/manifest.json"/>
+    <meta name="theme-color" content="#333" />
+    <meta name="msapplication-TileColor" content="#333"/>
+    <meta name="msapplication-TileImage" content="{{ staticRoot }}/foto/web/public/images/favicon/ms-icon-144x144.png"/>
+    <link rel="preload" href="{{ staticRoot }}/foto/web/public/images/bg-ingame.jpg" as="image" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/css/game.min.css" as="style" />
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand" as="style" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/js/default/jquery.bootstrap.min.js" as="script" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/js/ms-functions.js" as="script" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/js/jquery-touchswipe.js" as="script" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/js/popup-open-tab.js" as="script" />
+    <link rel="stylesheet" href="{{ staticRoot }}/web/public/css/game.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand" />
+    {# Twig stylesheets #}
+    {% block stylesheets %}{% endblock stylesheets %}
+    {% set luckyboxes = userData.getLuckybox %}
+    {% if userData.getLuckybox > 9 %}
+        {% set luckyboxes = '9+' %}
+    {% endif %}
+    <style type="text/css">
+        section#ccontainer header#header div.options > a#luckybox:hover:before {content: "{{ luckyboxes }} {{ langs.BOXES }}";}
+        
+        {% for donatorColor in statusDonatorColors.donatorColors %}
+            .{{ donatorColor.getDonator|seoUrl }} {color:{{ donatorColor.getColorCode }};}
+        {% endfor %}
+        {% for statusColor in statusDonatorColors.statusColors %}
+            .{{ statusColor.getStatus|seoUrl }} {color:{{ statusColor.getColorCode }};}
+        {% endfor %}
+    </style>
+</head>
+<body>
+<section id="container" class="cf">
+    <section id="left-menu">
+        <nav id="leftmenu" class="menu-row">
+            <ul>
+                <li>
+                    <div class="menu-top">{{ langs.GENERAL }}</div>
+                    <ul>
+                        <li><a href="{{ routing.getRouteByRouteName('news') }}">- {{ langs.NEWS }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('status') }}">- Status</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('bank') }}">- Bank</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('prison') }}">- {{ langs.PRISON }} ({{ prisonersCount }})</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('honor-points') }}">- {{ langs.HONOR_POINTS }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('travel-airplane') }}">- {{ langs.TRAVEL }}</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="menu-top">{{ langs.GAME }}</div>
+                    <ul>
+                        <li><a href="{{ routing.getRouteByRouteName('market') }}">- {{ langs.MARKET }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('stock-exchange') }}">- {{ langs.STOCK_EXCHANGE }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('equipment-stores') }}">- {{ langs.EQUIPMENT_STORES }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('estate-agency') }}">- {{ langs.ESTATE_AGENCY }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('bullet-factories') }}">- {{ langs.BULLET_FACTORIES }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('hitlist') }}">- {{ langs.HITLIST }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('murder') }}">- {{ langs.MURDER }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('hospital') }}">- {{ langs.HOSPITAL }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('red-light-district') }}">- Red Light District</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('gym') }}">- {{ langs.GYM }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('ground-map') }}">- {{ langs.GROUND_MAP }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('missions') }}">- {{ langs.MISSIONS }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('daily-challenges') }}">- Daily Challenges</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('possessions') }}">- {{ langs.POSSESSIONS }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('donation-shop') }}">- <strong>{{ langs.DONATION_SHOP }}!</strong></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="menu-top">{{ langs.COMMUNICATION }}</div>
+                    <ul>
+                        <li><a href="{{ routing.getRouteByRouteName('poll') }}"><span{% if unvotedPoll %} class="donator"{% endif %}>- Poll</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('game-forum') }}">- Forum</a></li>
+                        <li><a href="https://discord.gg/4kFA5eh" target="_blank">- Discord</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('shoutbox') }}"><span{% if userData.getLastReadShoutboxID != lastShoutboxID and lastShoutboxID != 0 %} class="donator"{% endif %}>- Shoutbox</span></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="menu-top">Casino</div>
+                    <ul>
+                        <li><a href="{{ routing.getRouteByRouteName('fifty-games') }}">- {{ langs.FIFTY_GAMES }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('dobbling') }}">- {{ langs.DOBBLING }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('racetrack') }}">- Racetrack</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('roulette') }}">- Roulette</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('slot-machine') }}">- {{ langs.SLOT_MACHINE }}</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('blackjack') }}">- Blackjack</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('lottery') }}">- {{ langs.LOTTERY }}</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </section>
+    <div class="left-menu-swipe-area"></div>
+    <button class="trigger-menu left" name="left-menu">&raquo;</button>
+    
+    <section id="ccontainer">
+        <header id="header">
+            <div class="logo"></div>
+            <div class="options cf">
+                <a id="help" class="ajaxTab" data-tab="help" href="javascript:void(0);"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="" title="Help"/></a>
+                <a id="settings" class="ajaxTab" data-tab="settings" href="javascript:void(0);"><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" alt="" title="{{ langs.SETTINGS }}"/></a>
+                <a id="luckybox" class="ajaxTab{% if userData.getLuckybox > 0 %} active{% endif %}" data-tab="luckybox" href="javascript:void(0);"><img src="{{ staticRoot }}/foto/web/public/images/icons/luckybox.png" alt="" title="Lucky Box"/></a>
+            </div>
+            <div class="counter cf">
+                <a id="crimes" href="{{ routing.getRouteByRouteName('crimes-do') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/gun.png" alt="" title="{{ langs.COMMIT_CRIME }}"/>&nbsp;<span id="cCrimes">{{ 'Crimes'|count(userData.getCCrimes)|raw }}</span></a>
+                <a id="weapontraining" href="{{ routing.getRouteByRouteName('weapon-training-do') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/gun_anchor.png" alt="" title="{{ langs.WEAPON }} Training"/>&nbsp;{% if userData.getWeaponTraining >= 100 %}<img src="{{ staticRoor }}/foto/web/public/images/icons/cross_small.png" alt="{{ langs.NONE }}"/>{% else %}<span id="cWeaponTraining">{{ 'WeaponTraining'|count(userData.getCWeaponTraining)|raw }}</span>{% endif %}</a>
+                <a id="pimpwhores" href="{{ routing.getRouteByRouteName('red-light-district-do') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/user_female.png" alt="" title="{{ langs.PIMP_WHORES }}"/>&nbsp;<span id="cPimpWhores">{{ 'PimpWhores'|count(userData.getCPimpWhores)|raw }}</span></a>
+                <a id="stealvehicles" href="{{ routing.getRouteByRouteName('steal-vehicles-do') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" alt="" title="{{ langs.STEAL_VEHICLES }}"/>&nbsp;<span id="cStealVehicles">{{ 'StealVehicles'|count(userData.getCStealVehicles)|raw }}</span></a>
+                <a id="gymtraining" href="{{ routing.getRouteByRouteName('gym-do') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" alt="" title="{{ langs.GYM }} Training"/>&nbsp;<span id="cGymTraining">{{ 'GymTraining'|count(userData.getCGymTraining)|raw }}</span></a>
+                <a id="bombardement" href="{{ routing.getRouteByRouteName('ground-map') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/bomb.png" alt="" title="{{ langs.BOMBARDEMENT }}"/>&nbsp;<span id="cBombardement">{{ 'Bombardement'|count(userData.getCBombardement)|raw }}</span></a>
+                <a id="familyraid" href="{{ routing.getRouteByRouteName('family-raid') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" alt="" title="{{ langs.FAMILY }} {{ langs.RAID }}"/>&nbsp;{% if userData.getFamilyID == 0 %}<img src="{{ staticRoor }}/foto/web/public/images/icons/cross_small.png" alt="{{ langs.NONE }}"/>{% else %}<span id="cFamilyRaid">{{ 'FamilyRaid'|count(userData.getCFamilyRaid)|raw }}</span>{% endif %}</a>
+                <a id="familycrimes" href="{{ routing.getRouteByRouteName('family-crimes') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/group_gun.png" alt="" title="{{ langs.FAMILY }} {{ langs.CRIME }}"/>&nbsp;{% if userData.getFamilyID == 0 %}<img src="{{ staticRoor }}/foto/web/public/images/icons/cross_small.png" alt="{{ langs.NONE }}"/>{% else %}<span id="cFamilyCrimes">{{ 'FamilyCrimes'|count(userData.getCFamilyCrimes)|raw }}</span>{% endif %}</a>
+            </div>
+        </header>
+        <section id="subheader" class="cf">
+            <div class="sub-left">
+                <a href="{{ routing.getRouteByRouteName('information') }}">{{ langs.INFORMATION }}</a>
+                <a href="{{ routing.getRouteByRouteName('family-message') }}">{{ langs.FAMILY }} {{ langs.MESSAGE }}</a>
+                <a href="{{ routing.getRouteByRouteName('ranks-score') }}">Ranks &amp; Score</a>
+            </div>
+            <div class="sub-right">
+                <a href="{{ routing.getRouteByRouteName('messages') }}" class="ajaxTab{% if userData.getMessagesCount > 0 %} active{% endif %}" data-tab="messages" class="active"><img src="{{ staticRoot }}/foto/web/public/images/icons/messages.png" alt="" title="{{ langs.MESSAGES }}" border="0" />{% if userData.getMessagesCount > 0 %}<span class="sub-count" data-tab="messages">+{{ userData.getMessagesCount }}</span>{% endif %}</a>
+                <a href="{{ routing.getRouteByRouteName('friends') }}" class="ajaxTab" data-tab="friends" class="active"><img src="{{ staticRoot }}/foto/web/public/images/icons/friends.png" alt="" title="{{ langs.FRIENDS_BLOCK }}" border="0" /></a>
+                <a href="{{ routing.getRouteByRouteName('notifications') }}" class="ajaxTab{% if userData.getNotificationsCount > 0 %} active{% endif %}" data-tab="notifications"><img src="{{ staticRoot }}/foto/web/public/images/icons/notification.png" alt="" title="{{ langs.NOTIFICATIONS }}" border="0" />{% if userData.getNotificationsCount > 0 %}<span class="sub-count" data-tab="notifications">+{{ userData.getNotificationsCount }}</span>{% endif %}</a>
+                <a href="{{ routing.getRouteByRouteName('travel-airplane') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/travel.png" alt="" title="{{ langs.TRAVEL }}" border="0" /><span id="cTravelTime" class="sub-count">{{ 'TravelTime'|countAndActive(userData.getCTravelTime)|raw }}</span></a>
+                <a href="{{ routing.getRouteByRouteName('prison') }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/prison.png" alt="" title="{{ langs.PRISON }}" border="0" /><span id="cPrisonTime" class="sub-count">{{ 'PrisonTime'|countAndActive(userData.getCPrisonTime)|raw }}</span></a>
+            </div>
+        </section>
+        <div id="servertime" class="servertime">{{ serverTime }}</div>
+        <section id="content" class="cf">
+            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+            {% block content %}
+                Hello world!
+            {% endblock content %}
+        </section>
+        <div class="push"></div>
+        <footer id="footer">
+            <span class="hideMobile">Copyright&nbsp;</span>{{ "now"|date("Y") }} &copy; {{ settings.domainBase|lower }}<span class="hideMobile"> - {{ langs.END_COPY }}</span> - 
+            <a href="{% if lang == 'nl' %}{{ routing.getRouteByRouteName('set_lang_en') }}{% else %}{{ routing.getRouteByRouteName('set_lang_nl') }}{% endif %}">
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/lang_{% if lang == 'nl' %}en{% else %}nl{% endif %}_small.gif" alt="" class="icon langico"/>
+            </a>
+            {% if eventName %}
+            <span class="right" style="margin-right: 3em;"><small>{{ eventName }}:</small>&nbsp;<span id="cEventCountdown">{{ eventCountdown|raw }}</span></span>
+            {% endif %}
+        </footer>
+    </section>
+    
+    {# Right menu changed for the correct starting '-' or ending '-' depending on desktop or mobile view (class il added to make span elements inline again) #}
+    <div class="right-menu-swipe-area"></div>
+    <button class="trigger-menu right" name="right-menu">&laquo;</button>
+    <section id="right-menu">
+        <nav id="rightmenu" class="menu-row">
+            <ul>
+                <li>
+                    <div class="menu-top">{{ langs.PROFILE }}</div>
+                    <ul>
+                        <li><span class="hideMobile il">- </span>{{ userTagManager.write('userProfile', userData.getId, userData.getId, userData.getUsername, userData.getDonatorID, userData.getUsernameClassName) }}<span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>{{ langs.FAMILY }}: <strong>{% if userData.getFamilyID > 0 %}<a href="{{ docRoot }}/game/family-page/{{ userData.getFamily }}">{% endif %}{{ userData.getFamily }}{% if userData.getFamilyID > 0 %}</a>{% endif %}</strong><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>{{ langs.STATE }}: <strong>{{ userData.getState }}</strong><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>{{ langs.CITY }}: <strong>{{ userData.getCity }}</strong><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>{{ langs.PROFESSION }}: <strong>{{ userData.getProfession }}</strong><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>Rank: <strong id="rankName">{{ userData.getRankname }}</strong><span id="rankNameChange"></span><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>{{ langs.CASH }}: <strong><i id="userCash">{{ userData.getCash|moneyFormat }}</i> <span id="cashChange"></span></strong><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>Bank: <strong><i id="userBank">{{ userData.getBank|moneyFormat }}</i> <span id="bankChange"></span></strong><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>Rank: <span id="rankBar" class="profile-bar">{{ percentBar.create(userData.getRankpercentBar.rankpercent, userData.getRankpercentBar.class) }}</span><span class="hideDesktop il"> -</span></li>
+                        <li><span class="hideMobile il">- </span>{{ langs.HEALTH }}: <span id="healthBar" class="profile-bar health">{{ percentBar.create(userData.getHealthBar.health, userData.getHealthBar.class) }}</span><span class="hideDesktop il"> -</span></li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="menu-top">{{ langs.CRIMES }}</div>
+                    <ul>
+                        <li><a href="{{ routing.getRouteByRouteName('crimes') }}"><span class="hideMobile il">- </span>{{ langs.CRIMES }}<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('steal-vehicles') }}"><span class="hideMobile il">- </span>{{ langs.STEAL_VEHICLES }}<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('drugs-liquids') }}"><span class="hideMobile il">- </span>{{ langs.DRUGS_LIQUIDS }}<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('smuggling') }}"><span class="hideMobile il">- </span>{{ langs.SMUGGLING }}<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('garage') }}"><span class="hideMobile il">- </span>Garage<span class="hideDesktop il"> -</span></a></li>
+                        {# <li><a href="{{ routing.getRouteByRouteName('streetrace') }}"><span class="hideMobile il">- </span>Streetrace<span class="hideDesktop il"> -</span></a></li> #}
+                    </ul>
+                </li>
+                <li>
+                    <div class="menu-top">{{ langs.FAMILY }}</div>
+                    <ul>
+                        <li><a href="{{ routing.getRouteByRouteName('family-list') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.LIST }}<span class="hideDesktop il"> -</span></a></li>
+                        {% if userData.getFamilyID == 0 %}
+                            <li><a href="{{ routing.getRouteByRouteName('family-invitations') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.INVITATIONS }}<span class="hideDesktop il"> -</span></a></li>
+                            <li><a href="{{ routing.getRouteByRouteName('create-family') }}"><span class="hideMobile il">- </span>{{ langs.CREATE_FAMILY }}<span class="hideDesktop il"> -</span></a></li>
+                        {% else %}
+                            <li><a href="{{ docRoot }}/game/family-page/{{ userData.getFamily }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.PAGE }}<span class="hideDesktop il"> -</span></a></li>
+                            <li><a href="{{ routing.getRouteByRouteName('family-bank') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} Bank<span class="hideDesktop il"> -</span></a></li>
+                            <li><a href="{{ routing.getRouteByRouteName('family-shoutbox') }}"><span{% if userData.getLastReadFamilyShoutboxID != lastFamilyShoutboxID and lastFamilyShoutboxID != 0 %} class="donator"{% endif %}><span class="hideMobile il">- </span>{{ langs.FAMILY }} Shoutbox<span class="hideDesktop il"> -</span></span></a></li>
+                            <li><a href="{{ routing.getRouteByRouteName('family-garage') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} Garage<span class="hideDesktop il"> -</span></a></li>
+                            <li><a href="{{ routing.getRouteByRouteName('family-properties') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.PROPERTIES }}<span class="hideDesktop il"> -</span></a></li>
+                            <li><a href="{{ routing.getRouteByRouteName('family-crimes') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.CRIMES }}<span class="hideDesktop il"> -</span></a></li>
+                            {% if userData.getFamilyBoss or userData.getFamilyUnderboss %}
+                                <li><a href="{{ routing.getRouteByRouteName('family-mercenaries') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.MERCENARIES }}<span class="hideDesktop il"> -</span></a></li>
+                            {% endif %}
+                            <li><a href="{{ routing.getRouteByRouteName('family-raid') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.RAID }}<span class="hideDesktop il"> -</span></a></li>
+                            {# <li><a href="{{ routing.getRouteByRouteName('family-missions') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.MISSIONS }}<span class="hideDesktop il"> -</span></a></li> #}
+                            <li><a href="{{ routing.getRouteByRouteName('family-history') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.HISTORY }}<span class="hideDesktop il"> -</span></a></li>
+                            {% if userData.getFamilyBoss or userData.getFamilyUnderboss %}
+                                <li><a href="{{ routing.getRouteByRouteName('family-management') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.MANAGEMENT }}<span class="hideDesktop il"> -</span></a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <div class="menu-top">Extra</div>
+                    <ul>
+                        {# <li><a href="{{ routing.getRouteByRouteName('share-mafiasource') }}"><span class="hideMobile il">- </span>{{ langs.SHARE_MAFIASOURCE }}<span class="hideDesktop il"> -</span></a></li> #}
+                        <li><a href="{{ routing.getRouteByRouteName('members') }}"><span class="hideMobile il">- </span>{{ langs.MEMBERS }} ({{ online }} online)<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('toplist') }}"><span class="hideMobile il">- </span>{{ langs.TOPLIST }}<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('information') }}"><span class="hideMobile il">- </span>{{ langs.INFORMATION }}<span class="hideDesktop il"> -</span></a></li>
+                        {% if userData.getFamilyID != 0 %}<li class="mobile"><a href="{{ routing.getRouteByRouteName('family-message') }}"><span class="hideMobile il">- </span>{{ langs.FAMILY }} {{ langs.MESSAGE }}<span class="hideDesktop il"> -</span></a></li>{% endif %}
+                        <li class="mobile"><a href="{{ routing.getRouteByRouteName('ranks-score') }}"><span class="hideMobile il">- </span>Ranks &amp; Score<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('home') }}"><span class="hideMobile il">- </span>Home{{ langs.PAGE|lower }}<span class="hideDesktop il"> -</span></a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('logout') }}"><span class="hideMobile il">- </span><img src="{{ staticRoot }}/foto/web/public/images/icons/off.png" class="icon logout-ico" width="12" alt="Logout" title="Logout" />&nbsp;{{ langs.LOGOUT }}<span class="hideDesktop il"> -</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </section>
+</section>
+<div id="openTab"></div>
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.bootstrap.min.js"></script>
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/jquery-touchswipe.js"></script>
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/popup-open-tab.js"></script>
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ms-functions.js"></script>
+
+{% block javascripts %}
+{% endblock javascripts %}
+</body>
+</html>
+{% endapply %}

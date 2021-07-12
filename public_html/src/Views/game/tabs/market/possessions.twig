@@ -1,0 +1,50 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="subtop cols row cf">
+            <div class="c-5 column">
+                #
+            </div>
+            <div class="c-20 column">
+                {{ langs.POSSESSION }}
+            </div>
+            <div class="c-20 column">
+                {{ langs.OWNER }}
+            </div>
+            <div class="c-30 column">
+                {{ langs.PRICE }}
+            </div>
+            <div class="c-25 column">
+                {{ langs.BUY }}
+            </div>
+        </div>
+        <div class="content-container">
+            {% for o in offers %}
+                <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}">
+                    <div class="c-5 column center">
+                        {{ loop.index }}
+                    </div>
+                    <div class="c-20 column">
+                        {{ o.getAmount }}
+                    </div>
+                    <div class="c-20 column">
+                        {% if o.getAnonymous %}{{ langs.ANONYMOUS }}{% else %}{{ o.getUsername }}{% endif %}
+                    </div>
+                    <div class="c-30 column">
+                        {{ o.getPrice|moneyFormat }}
+                    </div>
+                    <div class="c-25 column">
+                        <button type="button" name="buy" class="button" value="{{ o.getId }}">{{ langs.BUY }}</button>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if offers is empty %}
+                <div class="row">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_ITEMS_IN_MARKET }}
+                </div>
+            {% endif %}
+            <div class="row">
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" class="icon"/> {{ langs.ITEMS_SALE_INFO }}
+            </div>
+        </div>
+    </div>
+</div>

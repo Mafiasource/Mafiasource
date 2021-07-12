@@ -1,0 +1,49 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="center">
+            {{ langs.YOU_HAVE_X_HONOR_POINTS|raw }}
+        </div>
+        <br />
+        <div class="subtop">
+            {% if lang == 'en' %}
+                {{ langs.SEND }} {{ langs.HONOR_POINTS|lower }}
+            {% else %}
+                {{ langs.HONOR_POINTS }} {{ langs.SEND|lower }}
+            {% endif %}
+        </div>
+        <div id="sendHonorPointsResponse" class="rowMsg"></div>
+        <form id="send-hp" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('send-hp') }}" data-response="#sendHonorPointsResponse">
+            <div class="content-container">
+                <div class="row cols cf">
+                    <div class="c-20 column">
+                        <select name="amount">
+                            <option value="5">5 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                            <option value="10">10 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                            <option value="20">20 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                            <option value="50">50 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                            <option value="100">100 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                            <option value="200">200 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                            <option value="500">500 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                            <option value="1000">1000 {{ langs.HONOR_POINTS|ucfirst }}</option>
+                        </select>
+                    </div>
+                    <div class="c-20 column">
+                        <input type="text" name="username" placeholder="{{ langs.USERNAME }}" value=""/>
+                    </div>
+                    <div class="c-60 column">
+                        <input type="text" name="message" placeholder="{{ langs.MESSAGE }}" value=""/>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+            <input type="submit" name="send-hp" class="right" value="{% if lang == 'en' %}{{ langs.SEND }} {{ langs.HONOR_POINTS }}{% else %}{{ langs.HONOR_POINTS }} {{ langs.SEND }}{% endif %}"/>
+        </form>
+    </div>
+    <br class="clear"/>
+    <div class="inner-c-container">
+        {{ alert.build('Info', 'alert-info', 'help', langs.SEND_HONOR_POINTS_INFO) }}
+    </div>
+</div>

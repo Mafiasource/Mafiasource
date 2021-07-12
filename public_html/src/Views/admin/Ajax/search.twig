@@ -1,0 +1,14 @@
+{% import "app/Resources/Views/macros/admin/alert.macro.twig" as alert %}
+
+{% if check == TRUE %}
+    {{ alert.build('alert-success', '<p><i class="fas fa-check"></i> Zoeken voltooid, volgende records werden gevonden:</p>') }}
+    {% set tableRows = tableRows %}
+    {% set dataTable = table %}
+    {% set startvar = 1 %}
+    {% if skipFields is iterable %}{% set skipFields = skipFiels %}{% endif %}
+    {% if fields is iterable %}{% set onlyFields = fields %} {% endif %}
+    
+    {% include "/app/Resources/Views/searchtable.twig" %}
+{% else %}
+    {% include "/src/Views/admin/Ajax/general.fail.msg.twig" %}
+{% endif %}

@@ -1,0 +1,4 @@
+All master crypts can be stored here with serialized files.
+../masterCrypts/user/emails.txt will contain all master encrypted email addresses by userID.
+emails.txt contents would be 1 line of the following example:
+a:2:{i:1;s:28:"l+5k97BrEOot/FvyO+j5Pgzw+g==";i:2;s:40:"P+cg+HMACOCh+MSeLP+mtoZm1qT3kf1MfB4QLk==";}

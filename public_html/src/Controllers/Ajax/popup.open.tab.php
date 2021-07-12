@@ -1,0 +1,174 @@
+<?PHP
+
+use src\Business\UserService;
+use src\Business\HelpsystemService;
+use src\Business\MessageService;
+use src\Business\NotificationService;
+use src\Business\GroundService;
+use src\Business\PossessionService;
+use src\Business\GarageService;
+
+require_once __DIR__ . '/.inc.head.ajax.php';
+
+$allowedTabs = array(
+    "help", "settings", "luckybox", "friends", "messages", "sendmessage", "notifications",
+    "forum.new.topic", "forum.new.reaction", "forum.new.quoted.reaction", "forum.edit.reaction",
+    "forum.edit.topic", "market.new.item", "ground", "possession.manage", "vehicle.tune",
+    "more.friends"
+);
+$tab = "help"; // Standard tab
+$content = ""; // Init
+require_once __DIR__ . '/.inc.foot.ajax.php';
+if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
+{
+    $tab = $_POST['tab'];
+    if($tab == "help")
+    {
+        $routeName = $route->getRouteNameByRoute($_SESSION['PREV_ROUTE']);
+        if(strlen($routeName) > 0)
+        {
+            $helpsystem = new HelpsystemService();
+            $content = $helpsystem->getContentByRouteName($routeName);
+            if(strlen($content) < 1)
+            {
+                $content = $langs['NO_CONTENT_YET'];
+            }
+        }
+        $twigVars['prevRoute'] = $_SESSION['PREV_ROUTE'];
+        $string = str_replace(' ', '_', $route->getRouteNameByRoute($_SESSION['PREV_ROUTE']));
+        $string = str_replace('-', '_', $string);
+        if(isset($langs[strtoupper($string)]))
+        {
+            $twigVars['prevPagename'] = $langs[strtoupper(str_replace('-', '_', $route->getRouteNameByRoute($_SESSION['PREV_ROUTE'])))];
+        }
+        else
+        {
+            $twigVars['prevPagename'] = ucfirst(str_replace('-', ' ', $route->getRouteNameByRoute($_SESSION['PREV_ROUTE'])));
+        }
+        $twigVars['helpContent'] = $content;
+    }
+    elseif($tab == "settings")
+    {
+        $userService = new UserService();
+        $twigVars['profile'] = $userService->getUserProfile($userData->getUsername())->getProfile();
+        $langs = array_merge($langs, $language->settingsLangs());
+    }
+    elseif($tab == "luckybox")
+    {
+        $userService = new UserService();
+        $twigVars['luckybox'] = $userData->getLuckybox();
+        $twigVars['chanceList'] = $userService->getLuckyboxChanceList();
+        $langs = array_merge($langs, $language->luckyboxLangs());
+    }
+    elseif($tab == "friends")
+    {
+        $userService = new UserService();
+        $twigVars['friendsBlockList'] = $userService->getFriendsBlock();
+        $twigVars['userData'] = $userData;
+        if(isset($_POST['username'])) $twigVars['inviteFriend'] = $security->xssEscape($_POST['username']);
+        $langs = array_merge($langs, $language->friendsBlockLangs());
+    }
+    elseif($tab == "messages")
+    {
+        $msg = new MessageService();
+        $twigVars['latestMessages'] = $msg->getLatestMessages();
+        $twigVars['lastMessage'] = $msg->getLastMessage();
+        $langs = array_merge($langs, $language->messagesLangs());
+    }
+    elseif($tab == "sendmessage")
+    {
+        $twigVars['receiver'] = $security->xssEscape($_POST['receiver']);
+        $langs = array_merge($langs, $language->messagesLangs());
+    }
+    elseif($tab == "notifications")
+    {
+        $notification = new NotificationService();
+        $twigVars['notifications'] = $notification->getLatestNotifications();
+        $notification->setReadNotifications();
+        $langs = array_merge($langs, $language->notificationsLangs());
+    }
+    elseif($tab == "forum.new.topic")
+    {
+        $twigVars['category'] = $security->xssEscape($_POST['category']);
+        $langs = array_merge($langs, $language->forumLangs());
+    }
+    elseif($tab == "forum.new.reaction")
+    {
+        $twigVars['topicID'] = (int)round($_POST['topicId']);
+        $langs = array_merge($langs, $language->forumLangs());
+    }
+    elseif($tab == "forum.new.quoted.reaction")
+    {
+        $twigVars['topicID'] = (int)round($_POST['topicId']);
+        $twigVars['quoteContent'] = $security->xssEscapeAndHtml(html_entity_decode($_POST['quoteContent']));
+        $langs = array_merge($langs, $language->forumLangs());
+    }
+    elseif($tab == "forum.edit.reaction")
+    {
+        $twigVars['topicID'] = (int)round($_POST['topicId']);
+        $twigVars['reactionID'] = (int)round($_POST['reactionId']);
+        $twigVars['reactionContent'] = $security->xssEscapeAndHtml(html_entity_decode($_POST['reactionContent']));
+        $langs = array_merge($langs, $language->forumLangs());
+    }
+    elseif($tab == "forum.edit.topic")
+    {
+        $twigVars['topicID'] = (int)round($_POST['topicId']);
+        $twigVars['topicTitle'] = $security->xssEscape(html_entity_decode($_POST['topicTitle']));
+        $twigVars['topicContent'] = $security->xssEscapeAndHtml(html_entity_decode($_POST['topicContent']));
+        $langs = array_merge($langs, $language->forumLangs());
+    }
+    elseif($tab == "market.new.item")
+    {
+        $twigVars['category'] = $security->xssEscape($_POST['category']);
+        $twigVars['lang'] = $lang;
+        $langs = array_merge($langs, $language->marketLangs());
+        $langs['PLACE_OR_REQUEST_X_ON_MARKET'] = $route->replaceMessagePart(strtolower($twigVars['category']), $langs['PLACE_OR_REQUEST_X_ON_MARKET'], '/{typeName}/');
+    }
+    elseif($tab == "ground" && ($_POST['gId'] > 0 && $_POST['gId'] <= 492) && ($_POST['stateId'] > 0 && $_POST['stateId'] <= 6))
+    {
+        $userService = new UserService();
+        $stateID = (int)round($_POST['stateId']);
+        $ground = new GroundService($stateID);
+        $twigVars['ground'] = $ground->getGroundDataByStateIdAndGroundID($stateID, (int)round($_POST['gId']));
+        $twigVars['statusPage'] = $userService->getStatusPageInfo();
+        $langs = array_merge($langs, $language->groundLangs());
+        if(empty($twigVars['ground'])) exit(0); //Not a valid ground obj, exit script.
+    }
+    elseif($tab == "possession.manage" && ( (!isset($_POST['id']) && !isset($_POST['transfer'])) || (((isset($_POST['id']) && $_POST['id']) || (isset($_POST['transfer']) && $_POST['transfer'])) >= 1 &&
+        ((isset($_POST['id']) && $_POST['id']) || (isset($_POST['transfer']) && $_POST['transfer']) <= 213)) )
+    )
+    {
+        $userService = new UserService();
+        $possession = new PossessionService();
+        if(isset($_POST['transfer']))
+        {
+            $twigVars['transferedPossessions'] = $possession->getTransferedPossessions();
+        }
+        else
+        {
+            $twigVars['possessions'] = $possession->getUserPossessionsManagement();
+            $twigVars['productionCosts'] = $possession->bfProductionCosts;
+            $twigVars['friends'] = $userService->getFriendsList();
+            if(isset($_POST['id'])) $twigVars['id'] = (int)round($_POST['id']);
+        }
+        $langs = array_merge($langs, $language->possessionsLangs());
+    }
+    elseif($tab == "vehicle.tune" && isset($_POST['id']))
+    {
+        $garage = new GarageService();
+        $twigVars['vehicles'] = $garage->getAllVehiclesInGarageByState($userData->getStateID());
+        if(isset($_POST['id'])) $twigVars['id'] = (int)round($_POST['id']);
+        $twigVars['tuneShop'] = $garage->tuneShop;
+        $langs = array_merge($langs, $language->garageLangs());
+    }
+    elseif($tab == "more.friends" && isset($_POST['username']))
+    {
+        $userService = new UserService();
+        $username = $security->xssEscape($_POST['username']);
+        $twigVars['username'] = $username;
+        $twigVars['friends'] = $userService->getFriendsBlock($username);
+    }
+}
+$twigVars['langs'] = $langs; // Extend base langs
+
+echo $twig->render('/src/Views/game/Ajax/tabs/'.$tab.'.twig', $twigVars);

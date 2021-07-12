@@ -1,0 +1,42 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .table {width: 100.0039999999%;max-width: 100.0039999999%;}
+        .table > tbody > tr > td {vertical-align: middle;}
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<table class="table table-sm table-dark table-bordered">
+  <thead>
+    <th scope="col" colspan="3" class="top center"><strong>Daily Challenges</strong></th>
+  </thead>
+  <tbody>
+    {% for c in challenges %}
+        <tr>
+            <td style="min-width: 64px;">
+                <img src="{{ staticRoot }}/foto/web/public/images/daily_challenge/{{ c.getChallengeName|seoUrl }}.png" class="middle"/>
+            </td>
+            <td>
+                <strong>{{ c.getChallengeName }}</strong><br />
+                <span class="gray">
+                    {{ c.getChallengeDescription }}<br />
+                    {{ langs.AMNT }}: {% if c.getChallengeID == 7 %}${% endif %}<strong>{{ c.getProgress|valueFormat }}</strong> / {% if c.getChallengeID == 7 %}${% endif %}{{ c.getAmount|valueFormat }}<br />
+                    {{ langs.PRIZE }}: <strong>{% if c.getRewardType == 'Contant' or c.getRewardType == 'Cash' %}${% endif %}{{ c.getRewardAmount|valueFormat }}</strong> {{ c.getRewardType|lower }}
+                </span>
+            </td>
+            <td style="min-width: 64px;">
+                <img src="{{ staticRoot }}/foto/web/public/images/missions/{% if c.getProgress < c.getAmount %}not-{% endif %}completed.png" class="middle"/>
+            </td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if challenges[0].getProgress < challenges[0].getAmount or challenges[1].getProgress < challenges[1].getAmount or challenges[2].getProgress < challenges[2].getAmount %}
+    <br class="clear"/>
+    {{ alert.build('Info', 'alert-info', 'help', langs.DAILY_INFO) }}
+{% endif %}
+{% endblock content %}

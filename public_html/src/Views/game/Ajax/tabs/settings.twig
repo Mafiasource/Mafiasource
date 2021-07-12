@@ -1,0 +1,141 @@
+<style type="text/css">
+    .setting-tab {display:block;width:250px;height:150px;background:url({{ staticRoot }}/web/public/images/settings.png);}
+    .setting-tab:hover {background-position: 0 -150px;}
+    .setting-tab-container {width:500px;max-width:100%;display:block;margin:0 auto;}
+    .setting-tab.security-settings {background-position: -250px 0;}
+    .setting-tab.security-settings:hover {background-position: -250px -150px;}
+    #setting-container .security, #setting-container .account {display: none;}
+    #setting-container input, #setting-container select {margin:5px auto; max-width:250px;}
+    #setting-container .row {margin: 1em 0;padding:1em 0;box-sizing:border-box;border-bottom:1px solid #e1e1e1;}
+    #setting-container #account-settings .row:last-child {border-bottom:none;}
+    #setting-container hr {width:100%;height:1px;background:#e1e1e1;margin:1em 0;border:none;}
+    .settings-back-btn {display:none;}
+    .settings-back-btn.active {display:inline-block;}
+</style>
+<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ langs.SETTINGS }}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div id="manage-settings"></div>
+        <div class="setting-tab-container cf">
+            <a href="javascript:void(0);" class="setting-tab middle" rel="account"></a><br class="clear" />
+            <a href="javascript:void(0);" class="setting-tab security-settings middle" rel="security"></a>
+        </div>
+        <div id="setting-container">
+            <div class="account">
+                <form id="account-settings" class="account-settings ajaxFormUpload" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings" enctype="multipart/form-data">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <h4>{{ langs.EDIT_EMAIL }} ({{ langs.ENCRYPTED }})</h4>
+                    <input type="email" name="email" placeholder="email"/>&nbsp;
+                    <input type="submit" name="email-change" value="{{ langs.EDIT }}"/>
+                    <hr />
+                    <h4>{{ langs.TRANSFER_TESTAMENT }}</h4>
+                    <input type="text" name="testament" placeholder="{{ langs.WRITE_PLAYERNAME }}"/>&nbsp;
+                    <input type="submit" name="testament-change" value="{{ langs.TRANSFER }}"/>
+                    <hr />
+                    <h4>{{ langs.UPLOAD_AVATAR }}</h4>
+                    <input name="avatar" type="file" multiple=""/>&nbsp;
+                    <input type="submit" name="avatar-upload" value="Upload"/>
+                    <hr />
+                    <h4>{{ langs.EDIT_PROFILE }}</h4>
+                    <textarea id="editProfile" name="profile" rows="10" cols="80">{{ profile }}</textarea><br />
+                    <input type="submit" name="profile-save" value="{{ langs.SAVE }}"/>
+                    <br /><br />
+                </form>
+            </div>
+            <div class="security">
+                <form id="security-settings" class="account-settings ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <h4>{{ langs.EDIT_PASSWORD }}</h4>
+                    <div class="form-group">
+                    <input type="password" class="form-control" name="old_pass" placeholder="{{ langs.OLD_PASSWORD }}"/>&nbsp;
+                    <input type="password" name="new_pass" placeholder="{{ langs.NEW_PASSWORD }}"/>&nbsp;
+                    <input type="password" name="new_pass_confirm" placeholder="{{ langs.NEW_PASSWORD_CONFIRM }}"/>&nbsp;
+                    <input type="submit" name="password-change" value="{{ langs.EDIT }}"/>
+                    <hr />
+                    <h4>PrivateID - coming soon</h4>
+                    <select name="privateid-grade">
+                        <option value="1">{{ langs.PRIVATEID_GRADE_1 }}</option>
+                        <option value="2">{{ langs.PRIVATEID_GRADE_2 }}</option>
+                        <option value="3">{{ langs.PRIVATEID_GRADE_3 }}</option>
+                    </select>&nbsp;
+                    <input type="submit" name="activate-privateid" value="{{ langs.GENERATE }}"/>&nbsp;
+                    <input type="submit" name="deactivate-privateid" value="{{ langs.DEACTIVATE }} ({{ langs.NOT_ACTIVE }})" disabled="disabled"/><br />
+                    <small>{{ langs.PRIVATEID_INFO|raw }}</small>
+                    <br /><br />
+                </form>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default button settings-back-btn">{{ langs.BACK }}</button>&nbsp;
+        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="{{ staticRoot }}/web/lib/ckeditorgame/ckeditor.js"></script>
+<script type="text/javascript">
+$("form.account-settings").submit(function(e){
+    for(var instanceName in CKEDITOR.instances){ CKEDITOR.instances[instanceName].updateElement(); }
+    var postData = new FormData($(this)[0]);
+    var formURL = $(this).attr("action");
+    var method = $(this).attr("method");
+    var btn = $("input[type=submit][clicked=true]").attr('name');
+    var btnVal = $("input[type=submit][clicked=true]").val();
+    postData.append(btn,btnVal);
+    var responseField = $(this).attr("data-response");
+    $.ajax(
+    {
+        cache: false,
+        contentType: false,
+        processData: false,
+    	url : formURL,
+    	type: method,
+    	data : postData,
+    	success:function(data, textStatus, jqXHR) 
+    	{
+    	  $(responseField).html(data);
+    	}
+    });
+    e.preventDefault();
+});
+$(document).ready(function(){
+    $("form.account-settings input[type=submit]").click(function() {
+        $("input[type=submit]").each(function(){
+            $(this).removeAttr("clicked");
+        });
+        $(this).attr("clicked", "true");
+    });
+    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    $('#modal').on('hidden.bs.modal', function () {
+        $("#openTab").empty();
+    });
+    $('.setting-tab').click(function(e){
+        $(this).parent().slideUp(250);
+        $("#setting-container > ."+$(this).attr('rel')).slideDown(250);
+        $(".settings-back-btn").addClass('active');
+        var editor = CKEDITOR.instances['editProfile'];
+        if (editor) { editor.destroy(true); }
+        if(!$(this).hasClass('security-settings'))
+        {
+            CKEDITOR.replace('editProfile', {
+                enterMode: CKEDITOR.ENTER_BR,
+                shiftEnterMode: CKEDITOR.ENTER_P
+            });
+        }
+        e.preventDefault();
+    });
+    $('.settings-back-btn').click(function(){
+        $('.account').slideUp(250);
+        $('.security').slideUp(250);
+        $(".settings-back-btn").removeClass('active');
+        $('.setting-tab-container').slideDown(250);
+    });
+});
+</script>

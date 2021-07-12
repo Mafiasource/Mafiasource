@@ -1,0 +1,71 @@
+{% if hasGarage %}
+<div class="row no-border">
+    <div class="center">
+        <h2>{% if spaceLeft == FALSE %}{{ langs.NO_SPACE_LEFT_FAMILY_GARAGE }}{% else %}{{ langs.X_SPACE_LEFT_FAMILY_GARAGE }}{% endif %}</h2>
+    </div>
+</div>
+{% else %}
+<div class="row no-border">
+    <div class="center">
+        <h2>{{ langs.NO_FAMILY_GARAGE }}</h2>
+    </div>
+</div>
+{% endif %}
+<img src="{{ staticRoot }}/foto/web/public/images/garage_banner.jpg" alt="Garage" class="middle"/>
+<br />
+{% if hasGarage %}
+    <style>h3, h4 {margin:0.25em;}#ajaxLoader{position:relative;margin-bottom:.5em;}</style>
+    <div class="c-row cf">
+        <div class="inner-c-container">
+            <div id="ajaxLoader"></div>
+            {% include "src/Views/.Paginate.twig" %}
+            <br class="clear"/>
+            <div class="content-container no-border">
+                <form name="familyGarage" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('family-garage-interact-vehicles') }}" method="POST" data-response="#interactFamilyVehiclesResponse">
+                <table class="table table-sm table-dark table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="center">{% if hasRights %}<input type="checkbox" name="all-vehicles"  onClick="toogle(document.familyGarage)" value="Check"/>{% else %}#{% endif %}</th>
+                      <th scope="col" class="center"><strong>{{ langs.VEHICLE }}</strong></th>
+                      <th scope="col" class="center"><strong>{{ langs.DAMAGE }}</strong></th>
+                      <th scope="col" class="center"><strong>{{ langs.VALUE }}</strong></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for v in vehicles %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td scope="row" class="center">{% if hasRights %}<input type="checkbox" name="vehicles[{{ v.getId }}]" value="{{ v.getId }}" />{% else %}{{ loop.index }}{% endif %}</td>
+                          <td>{{ v.getVehicleName }}</td>
+                          <td>{{ v.getDamage }}%</td>
+                          <td>
+                            {% set bullets = v.getVehicleValue / 2500 %}
+                            {{ v.getVehicleValue|moneyFormat }} / {{ bullets|round }} {{ langs.BULLETS|lower }}
+                          </td>
+                        </tr>
+                    {% endfor %}
+                    {% if vehicles is not empty %}
+                        {% if hasRights %}
+                            <tr id="interactFamilyVehiclesResponse" class="rowMsg"></tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                    <input type="submit" name="sell" value="{{ langs.SELL }}" />&nbsp;
+                                    <input type="submit" name="crush-convert" value="{{ langs.CRUSH_CONVERT }}Crush & Convert" />
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">
+                                <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="No vehicles"/> {{ langs.NO_VEHICLES_IN_FAMILY_GARAGE }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+                </form>
+            </div>
+            {% include "src/Views/.Paginate.twig" %}
+        </div>
+    </div>
+{% endif %}

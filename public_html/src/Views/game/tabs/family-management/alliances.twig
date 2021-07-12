@@ -1,0 +1,71 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="subtop">
+            {{ langs.FAMILY }} {{ langs.ALLIANCE }}s
+        </div>
+        <div class="content-container">
+            <div id="handleAlliancesResponse" class="rowMsg"></div>
+            <div class="families-container cf">
+                {% for a in alliances %}
+                    <form class="ajaxForm familyRecord {{ cycle(['odd', 'even'], loop.index0) }}" action="{{ routing.getAjaxRouteByRouteName('handle-family-alliance') }}" method="POST" data-response="#handleAlliancesResponse">
+                        
+                        <style type="text/css">
+                            span#familyAlliance_{{ a.getId }} {background: url({{ staticRoot }}/foto/web/public/images/families/{% if a.getAllianceFamilyIcon %}{{ a.getAllianceFamilyID }}/uploads/{{ a.getAllianceFamilyIcon }}{% else %}nopic.jpg{% endif %}) no-repeat;display:inline-block;background-size: 100%; width: 38px; height: 38px; border: none;}
+                        </style>
+                        <span style="line-height: 38px;">
+                            <span id="familyAlliance_{{ a.getId }}"
+                                    onClick="document.location='/game/family-page/{{ a.getAllianceFamily }}'"
+                                    onMouseOver="this.style.cursor='pointer';">
+                                &nbsp;
+                            </span>
+                            <a href="/game/family-page/{{ a.getAllianceFamily }}">
+                                <strong>
+                                    {{a.getAllianceFamily }}
+                                </strong>
+                            </a>
+                        </span>&nbsp;
+                        <hr class="lineSplit" />
+                        <small class="gray">Status:</small> {% if a.getAccepted %}<span class="right lightgreen"><img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.ACCEPTED }}"/> {{ langs.ACCEPTED }}</span>{% else %}<span class="right red"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.PENDING }}"/> {{ langs.PENDING }}</span>{% endif %}
+                        <hr class="lineSplit" />
+                        <small class="gray">{{ langs.ACTION }}s:</small><span class="right">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="hidden" name="family" value="{{ a.getAllianceFamily }}"/>
+                            {% if a.getRequesterFamilyID == userData.getFamilyID or a.accepted %}
+                                <input type="submit" name="remove" value="{{ langs.DELETE }}" class="button"/>
+                            {% else %}
+                                <input type="submit" name="accept" value="{{ langs.ACCEPT }}" class="button"/>&nbsp;
+                                <input type="submit" name="deny" value="{{ langs.DENY }}" class="button"/>
+                            {% endif %}
+                        </span>
+                    </form>
+                {% endfor %}
+            </div>
+            {% if alliances is empty %}
+                <div class="row">
+                    <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.FAMILY_MANAGEMENT_NO_ALLIANCES }}
+                </div>
+            {% endif %}
+        </div>
+        <br class="clear"/>
+        <form class="middle ajaxForm" action="{{ routing.getAjaxRouteByRouteName('request-family-alliance') }}" method="POST" data-response="#familyAllianceResponse" style="max-width: 440px;">
+            <div class="subtop">
+                {% if lang == 'en' %}{{ langs.REQUEST }} {% endif %}{{ langs.FAMILY }} {{ langs.ALLIANCE }}{% if lang == 'nl' %} {{ langs.REQUEST }}{% endif %}
+            </div>
+            <div class="content-container">
+                <div id="familyAllianceResponse" class="rowMsg"></div>
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        <img src="{{ staticRoot }}/web/public/images/icons/group.png" class="icon" alt="{{ langs.FAMILY }}"/> {{ langs.FAMILY }}
+                    </div>
+                    <div class="c-50 column">
+                        <input type="text" name="family" placeholder="{{ langs.FAMILY }}" value=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="request-alliance" value="{{ langs.REQUEST }}"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

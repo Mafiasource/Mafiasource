@@ -1,0 +1,58 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/record.tile.macro.twig" as recordTile %}
+
+{% block stylesheets %}
+    {{ recordTile.css('families-container', 'familyRecord') }}
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY }} {{ langs.INVITATIONS }}
+</div>
+<div class="content-container">
+    <div id="handleInvitationsResponse"></div>
+    <div class="families-container cf">
+        {% for i in invitations %}
+            <form class="ajaxForm familyRecord {{ cycle(['odd', 'even'], loop.index0) }}" action="{{ routing.getAjaxRouteByRouteName('handle-family-invitation') }}" method="POST" data-response="#handleInvitationsResponse">
+                
+                <style type="text/css">
+                    span#family_{{ i.id }} {background: url({{ staticRoot }}/foto/web/public/images/families/{% if i.icon %}{{ i.id }}/uploads/{{ i.icon }}{% else %}nopic_small.jpg{% endif %}) no-repeat;display:inline-block;background-size: 100%; width: 38px; height: 38px;}
+                </style>
+                <span style="line-height: 38px;">
+                    <span id="family_{{ i.id }}"
+                            onClick="document.location='/game/family-page/{{ i.name }}'"
+                            onMouseOver="this.style.cursor='pointer';">
+                        &nbsp;
+                    </span>
+                    <a href="/game/family-page/{{ i.name }}">
+                        <strong>
+                            {{i.name }}
+                        </strong>
+                    </a>
+                </span>&nbsp;
+                <hr class="lineSplit"/>
+                <small class="gray">{{ langs.MONEY }}:</small> <span class="right">{{ i.money|moneyFormat }}</span>
+                <hr class="lineSplit"/>
+                <small class="gray">{{ langs.MEMBERS }}:</small> <span class="right">{{ i.totalMembers|valueFormat }}</span>
+                <hr class="lineSplit" />
+                <small class="gray">{{ langs.ACTION }}s:</small><span class="right">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="hidden" name="family" value="{{ i.name }}"/>
+                    <input type="submit" name="accept" value="{{ langs.ACCEPT }}" class="button"/>&nbsp;
+                    <input type="submit" name="deny" value="{{ langs.DENY }}" class="button"/>
+                </span>
+            </form>
+        {% endfor %}
+    </div>
+    {% if invitations is empty %}
+        <div class="row">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_FAMILY_INVITATIONS_YET }}
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

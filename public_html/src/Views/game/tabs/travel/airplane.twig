@@ -1,0 +1,75 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{# Convert to .template like the majority of exact the same views with different contents #}
+
+<div class="c-row cf">
+    <div class="c-row-30 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.TRAVEL }} {{ langs.WITH|lower }} {% if lang == 'nl' %}het {% else %}a {% endif %}{{ langs.AIRPLANE|lower }}
+            </div>
+            <div class="content-container">
+                <br />
+                <div class="center">
+                    <img src="{{ staticRoot }}/foto/web/public/images/travel/4.jpg" alt=""/>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+    <div class="c-row-70 col">
+        <div class="inner-c-container">
+            <div class="subtop">
+                {{ langs.BOOK_TICKET }}
+            </div>
+            <div class="content-container">
+                <div id="ajaxLoader"></div>
+                <div id="travelResponse" class="rowMsg"></div>
+                <form id="travel" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('travel') }}" data-response="#travelResponse">
+                <div class="row cols cf">
+                    <div class="c-30 column">
+                        {{ langs.TRAVEL }} {{ langs.TO|lower }}
+                    </div>
+                    <div class="c-70 column">
+                        <select name="cityID">
+                            {% for state in states %}
+                                <optgroup label="{{ state.getName }}">
+                                    {% for city in cities %}
+                                        {% if city.getStateID == state.getId %}
+                                            <option value="{{ city.getId }}">{{ city.getName }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row cf">
+                    <small id="priceResponse">{{ price|raw }}</small>
+                    <input type="hidden" name="type" value="{{ tab }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <input type="submit" name="travel" class="right" value="{{ langs.TRAVEL }}"/>
+                </div>
+                </form>
+            </div>
+            <br class="clear"/>
+            <div id="buyPossessResponse"></div>
+            <div class="center">
+                {% if possessionData.getPossessDetails.getUserID == 0 %}
+                    <p>{{ langs.THIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
+                    <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+                        <input type="hidden" name="id" value="{{ possessId }}"/>
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+                    </form>
+                {% else %}
+                    <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.THIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+                {% endif %}
+            </div>
+            <br class="clear"/>
+        </div>
+    </div>
+</div>
+<div class="rowMsg row">
+    {{ alert.build('Info', 'alert-info', 'help', langs.AIRPLANE_INFO) }}
+</div>

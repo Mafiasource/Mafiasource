@@ -1,0 +1,14 @@
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+{% apply spaceless %}
+{% set recieiver = '' %}
+{% for msg in lastMessage %}
+<div class="row cf {% if msg.receiver == true %}senderRow{% else %}receiverRow{% endif %}">
+    {{ userTagManager.write('memberMessage', msg.getId, msg.getSenderID, msg.getSenderUsername, msg.getSenderDonatorID, msg.getSenderUsernameClassName, msg.getSenderAvatar, 'True') }}
+    {{ langs.WROTE_ON|lower }} {{ msg.getDate }}:</small><br />
+    <div class="{% if msg.receiver == true %}{% set receiver = msg.getSenderUsername|strip %}senderRow{% else %}receiverRow{% endif %}">
+        {{ msg.getMessage|raw }}
+    </div>
+</div>
+{% endfor %}
+{% endapply %}

@@ -1,0 +1,50 @@
+<div class="c-row cf">
+    <div class="inner-c-container">
+        <div class="middle" style="max-width: 440px;">
+            <div class="subtop">
+                {{ langs.MURDER }}
+            </div>
+            <div class="content-container">
+                <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('murder-player') }}" method="POST" data-response="#murderPlayerResponse">
+                    <div id="murderPlayerResponse" class="rowMsg"></div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.VICTIM }}"/> {{ langs.VICTIM }}
+                        </div>
+                        <div class="c-50 column">
+                            <input type="text" name="victim" placeholder="{{ langs.WRITE_A_PLAYERNAME }}" value="{{ username }}"/>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/bullet_black.png" class="icon" alt="{{ langs.BULLETS }}"/> {{ langs.BULLETS }} {{ langs.IN_POSSESSION|lower }}
+                        </div>
+                        <div class="c-50 column">
+                            {{ statusPage.getBullets|valueFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/bomb.png" class="icon" alt="{% if statusPage.getWeapon == 'Mes' %}{{ langs.CURRENT }} {{ langs.WEAPON|lower }}{% else %}{{ langs.BULLETS }}{% endif %}"/> {% if statusPage.getWeapon == 'Mes' %}{{ langs.CURRENT }} {{ langs.WEAPON|lower }}{% else %}{{ langs.BULLETS }}{% endif %}
+                        </div>
+                        <div class="c-50 column">
+                            {% set weapon = statusPage.getWeapon %}
+                            {% if statusPage.getWeapon == 'Mes' %}
+                                {% if lang == 'en' %}
+                                    {% set weapon = 'Knife' %}
+                                {% endif %}
+                                {{ weapon }}
+                            {% else %}
+                                <input type="number" name="bullets" value="{{ statusPage.getBullets }}"/>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        <input type="submit" name="murder-player" value="{{ langs.MURDER }}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

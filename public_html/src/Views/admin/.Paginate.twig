@@ -1,0 +1,43 @@
+{% if pagination.pagination %}
+    {% set adjacents = 2 %}
+    <div class="right">
+        <ul class="pagination">
+        {% if pagination.page == 1 %}
+            <li class="page-item"><span class="page-link">&lsaquo;</span></li>
+        {% elseif pagination.page == 2 %}
+            <li class="page-item"><a class="page-link" href="{{ pagination.uri }}">&lsaquo;</a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="{{ pagination.uri }}/pagina/{{ pagination.page-1 }}">&lsaquo;</a></li>
+        {% endif %}
+        
+        {% if pagination.page > (1 + adjacents) %}
+            <li class="page-item"><a class="page-link" style="font-size: 13px;" href="{{ pagination.uri }}/pagina/1">1</a></li>
+        {% endif %}
+        
+        {% set pmin = (pagination.page > adjacents)?(pagination.page - adjacents):1 %}
+        {% set pmax = (pagination.page < (pagination.tpages - adjacents))?(pagination.page + adjacents):pagination.tpages %}
+        
+        {% for i in pmin..pmax %}
+            {% if i <= pmax %}
+                {% if i == pagination.page %}
+                    <li class="page-item active"><a class="page-link" href="">{{ i }}</a></li>
+                {% elseif i == 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ pagination.uri }}">{{ i }}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ pagination.uri }}/pagina/{{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        {% if pagination.page < (pagination.tpages - adjacents) %}
+            <li class="page-item"><a class="page-link" style="font-size:13px;" href="{{ pagination.uri }}/pagina/{{ pagination.tpages }}">{{ pagination.tpages }}</a></li>
+        {% endif %}
+        
+        {% if pagination.page < pagination.tpages %}
+            <li class="page-item"><a class="page-link" href="{{ pagination.uri }}/pagina/{{ pagination.page+1 }}">&rsaquo;</a></li>
+        {% else %}
+            <li class="page-item"><span class="page-link">&rsaquo;</span></li>
+        {% endif %}
+        </ul>
+    </div>
+{% endif %}

@@ -1,0 +1,56 @@
+{% if response %}
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}
+<div class="subtop">
+    {% if type == 0 %}{{ langs.PRIZE_POOL }}{% else %}Superpot{% endif %}
+</div>
+<div class="content-container">
+    <div class="row cols cf">
+        <div class="c-50 column">
+            <img src="{{ staticRoot }}/web/public/images/icons/tag_blue.png" class="icon" alt="Tickets"/> {{ langs.TICKETS_SOLD }}:
+        </div>
+        <div class="c-50 column">
+            {{ ticketsSold|valueFormat }}
+        </div>
+    </div>
+    {% for r in ratios %}
+        <div class="row cols cf">
+            <div class="c-50 column">
+                {% set icon = '' %}
+                {% if loop.index == 1 %}
+                    {% set icon = 'gold' %}
+                {% elseif loop.index == 2 %}
+                    {% set icon = 'silver' %}
+                {% elseif loop.index == 3 %}
+                    {% set icon = 'bronze' %}
+                {% endif %}
+                {% if icon is not empty %}<img src="{{ staticRoot }}/web/public/images/icons/award_star_{{ icon }}_1.png" class="icon" alt="{{ places[ loop.index ] }} {{ langs.PLACE|lower }}"/>{% endif %} {{ places[ loop.index ] }} {{ langs.PLACE|lower }}:
+            </div>
+            <div class="c-50 column">
+                {% set price = (ticketsSold * (ticketPrice * 16) * r) %}
+                {{ price|moneyFormat }}
+            </div>
+        </div>
+    {% endfor %}
+    <div class="row">
+        <img src="{{ staticRoot }}/web/public/images/icons/help.png" class="icon" alt="Help"/> {% if type == 0 %}{{ langs.DAY_LOTTERY_INFO }}{% else %}{{ langs.WEEK_LOTTERY_INFO }}{% endif %}
+    </div>
+</div>
+<div class="center">
+    <p><img src="{{ staticRoot }}/web/public/images/lottery/lottery{% if type == 1 %}_week{% endif %}_{{ lang }}.jpg" alt="{{ langs.LOTTERY }}"/></p>
+    {% if superpot and type == 0 %}{# superpot returns true on superpot day #}
+        <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.DAILY_AFTER_SUPERPOT }}
+    {% else %}
+        {% if ticket %}
+            {% set lotteryCode = ticket.getId|lotteryTicket %}
+            {% set ticketInfo = routing.replaceMessagePart(lotteryCode, langs.HAS_TICKET_FOR_DRAWING, '/{code}/') %}
+            <img src="{{ staticRoot }}/web/public/images/icons/tick.png" class="icon" alt="{{ langs.TICKET }}"/> {{ ticketInfo|raw }}
+        {% else %}
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('buy-lottery-ticket') }}" method="POST" data-response="#buyTicketResponse">
+                <input type="hidden" name="type" value="{{ type }}"/>
+                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                <input type="submit" name="buy" value="{% if lang == 'nl' %}{{ langs.TICKET }} {{ langs.BUY|lower }}{% else %}{{ langs.BUY }} {{ langs.TICKET|lower }}{% endif %} {{ langs.FOR|lower }} {{ ticketPrice|moneyFormat }}"/>
+            </form>
+        {% endif %}
+    {% endif %}
+</div>

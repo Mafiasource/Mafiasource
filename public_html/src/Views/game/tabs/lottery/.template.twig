@@ -1,0 +1,51 @@
+<div class="c-row cf">
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div id="ajaxLoader"></div>
+            <div id="buyTicketResponse">
+                {% include "/src/Views/game/Ajax/lottery.twig" %}
+            </div>
+        </div>
+    </div>
+    <div class="c-row-50 col">
+        <div class="inner-c-container">
+            <div class="table-responsive">
+                <table class="table table-sm table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="3" class="center">
+                                <strong>{{ langs.LATEST_WINNERS }}</strong>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for w in lastWinners %}
+                            <tr>
+                                <td>
+                                    {% set icon = '' %}
+                                    {% if w.getPlace == 1 %}
+                                        {% set icon = 'gold' %}
+                                    {% elseif w.getPlace == 2 %}
+                                        {% set icon = 'silver' %}
+                                    {% elseif w.getPlace == 3 %}
+                                        {% set icon = 'bronze' %}
+                                    {% endif %}
+                                    {% if icon is not empty %}<img src="{{ staticRoot }}/web/public/images/icons/award_star_{{ icon }}_1.png" class="icon" alt="{{ places[w.getPlace] }} {{ langs.PLACE|lower }}"/>{% endif %} {{ places[w.getPlace] }} {{ langs.PLACE|lower }}
+                                </td>
+                                <td>
+                                    <a href="/game/profile/{{ w.getUsername }}"><strong>{{ w.getUsername }}</strong></a>
+                                </td>
+                                <td>
+                                    {{ w.getPrize|moneyFormat }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% if lastWinners is empty %}
+                            <tr><td><img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_WINNERS_PREVIOUS_DRAW }}</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

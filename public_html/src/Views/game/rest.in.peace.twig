@@ -1,0 +1,42 @@
+{% extends "/app/Resources/Views/blank.gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    .rip-overlay {display:flex;position:fixed;justify-content: center;align-items: center;top:0;left:0;z-index:99;width:100%;height:100%;background:rgba(0, 0, 0, .5);-webkit-backdrop-filter: blur(3px);backdrop-filter: blur(3px);}
+    .rip-container {display:inline-block;vertical-align:middle;max-width:520px;min-width:320px;}
+    .rip-container > form > div {background:#464646;border: 1px solid #1b1b1b;color: #000;}
+    .rip-container h3 {display:block;width:100%;height:100%;background:#1b1b1b;padding:15px 5px;margin:0;color:#fff;box-sizing: border-box;}
+    input[name=username], select[name=profession] {display:inline-block;max-width: 120px;margin-bottom: .7em;margin-right:.5em;clear:right;}
+    select[name=profession] {max-width:280px;}
+    span.rsaquo {font-size:48px;position: relative;top: -.2em;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="rip-overlay">
+    <div class="rip-container middle">
+        <form id="rip-reset" action="{{ routing.getRouteByRouteName('rest_in_peace') }}" method="POST">
+            <div class="cf">
+                <h3>{{ langs.YOUR_DEAD }}</h3>
+                <img id="rip" src="{{ docRoot }}/web/public/images/rest-in-peace.jpg" class="middle" alt="Rest In Peace"/><br class="clear"/>
+                &nbsp;<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.USERNAME }}" />&nbsp;<input type="text" name="username" value="{{ username }}"/><br class="clear"/>
+                &nbsp;<img src="{{ staticRoot }}/foto/web/public/images/icons/star.png" class="icon" alt="{{ langs.PROFESSION }}"/>&nbsp;<select name="profession">
+                    <option value="0">{{ langs.SELECT_TAG_CHOOSE }}</option>
+                    <option value="1"{% if profession == 1 %} selected="selected"{% endif %}>{{ langs.CARJACKER }}</option>
+                    <option value="2"{% if profession == 2 %}selected="selected"{% endif %}>{{ langs.PRISON_BREAKER }}</option>
+                    <option value="3"{% if profession == 3 %}selected="selected"{% endif %}>{{ langs.THIEF }}</option>
+                    <option value="4"{% if profession == 4 %}selected="selected"{% endif %}>{{ langs.PIMP }}</option>
+                    <option value="5"{% if profession == 5 %}selected="selected"{% endif %}>{{ langs.BANKER }}</option>
+                    <option value="6"{% if profession == 6 %}selected="selected"{% endif %}>{{ langs.SMUGGLER }}</option>
+                </select>
+            </div>
+            <br class="clear"/>
+            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+            <input type="submit" name="submit-rip" class="execbutton right" value="{{ langs.RETRY }}"/>
+        </form>
+        <br class="clear"/>
+        {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+        <div id="ajaxLoader"></div>
+    </div>
+</div>
+{% endblock content %}

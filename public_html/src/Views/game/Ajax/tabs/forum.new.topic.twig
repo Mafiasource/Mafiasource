@@ -1,0 +1,47 @@
+<style>
+::-webkit-input-placeholder {color:#ccc;}
+:-moz-placeholder {color:#ccc;opacity:  1;}
+::-moz-placeholder {color:#ccc;opacity:  1;}
+:-ms-input-placeholder {color:#ccc;}
+</style>
+<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ langs.NEW_TOPIC }} in {{ category|lower }}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div id="ajaxLoader"></div>
+        <div id="forumNewTopicResponse"></div>
+        <form id="forum-new-topic" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('forum-new-topic') }}" method="POST" data-response="#forumNewTopicResponse">
+            <input type="hidden" name="category" value="{{ category }}"/><br />
+            <input type="text" name="topic-title" placeholder="Topic {{ langs.TITLE|lower }}" value="" maxlength="100"/><br /><br />
+            <textarea id="articleField" name="topic-message" rows="10" cols="80"></textarea>
+            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+            <br class="clear"/>
+            <input type="submit" name="submit-reply" class="execbutton small" value="{{ langs.POST_TOPIC }}"/>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+$(document).ready(function(){
+    if($('#modal').hasClass('in') == false) {
+        $("#triggerModal").click();
+        $("#triggerModal").remove();
+        CKEDITOR.replace('articleField', {
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+    }
+    $('#modal').on('hidden.bs.modal', function () {
+        $("#openTab").empty();
+    });
+});
+</script>

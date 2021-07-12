@@ -1,0 +1,146 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
+<style type="text/css">
+.spoiler-content {display:none;}
+h2 {margin:0;}
+h3 {margin:0;}
+p{margin:0;}
+.forum-cat-row {height:5.25em;}
+.forum-cat-row > .c-15, .forum-cat-row > .c-25, .forum-cat-row > .c-60 {height:100%;}
+.forum-topic-row > .c-80, .forum-topic-row > .c-20 {height:auto;min-height:34px;}
+.forum-topic-row h3, .forum-topic-row p {margin-top:0.3em;width:100%;}
+.forum-topic-row:first-child {border-top: 1px solid #000;}
+.forum-topic-row p {display:block;width:100%;}
+.forum-topic-row img {display:inline-block;margin-bottom: -0.4em;margin-right: 0.3em;}
+section#ccontainer section#content div.content-container.border-top {border-top:1px solid #000;}
+.button {margin:0.5em 0;margin-bottom:1em !important;position: relative;top: 1.2em;}
+.button.topic {top: 0.2em;}
+blockquote {padding-left:10px;border-left:5px solid #808080;box-sizing:border-box;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ forumTitle|raw }}
+</div>
+<div class="content-container">
+    {% if routing.getRouteName == 'game-forum' %}
+        <div class="row">
+            <a href="{{ routing.getRouteByRouteName('forum') }}" target="_blank">{{ langs.VIEW_FORUM_OUTGAME|raw }}</a>
+        </div>
+    {% endif %}
+    {% if navigation is not empty and (catData is not empty or topicData is not empty) %}
+        <div class="row">
+            {{ navigation|raw }}
+        </div>
+    {% endif %}
+    {% if catID is empty %}
+        {% for cat in categories %}
+            <div class="row cols cf forum-cat-row {{ cycle(['odd', 'even'], loop.index0) }}">
+                <div class="c-15 column">
+                    <a href="{{ routing.getRouteByRouteName('game-forum') }}/{{ cat.getUrl }}"><img src="{{ staticRoot }}/foto/web/public/images/forum_category/{{ cat.getPicture }}" class="middle" alt="{{ cat.getCategory }}"/></a>
+                </div>
+                <div class="c-60 column">
+                    <h3><a href="{{ routing.getRouteByRouteName('game-forum') }}/{{ cat.getUrl }}">{{ cat.getCategory }}</a></h3>
+                    <p><a href="{{ routing.getRouteByRouteName('game-forum') }}/{{ cat.getUrl }}">{{ cat.getDescription }}</a></p>
+                </div>
+                <div class="c-25 column center">
+                    <p><a href="{{ routing.getRouteByRouteName('game-forum') }}/{{ cat.getUrl }}">{{ cat.getTopics }} Topics &amp; {{ cat.getReactions }} {{ langs.REACTION }}s</a></p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        {% if topicID is empty %}
+            </div>
+            <a id="newTopic" href="javascript:void(0);" class="button topic right ajaxTab" data-tab="forum.new.topic" data-category="{{ catData.getCategory }}">{{ langs.NEW_TOPIC }}</a>
+            <div class="content-container{% if topics is empty %} border-top{% endif %}">
+            {% for topic in topics %}
+                <div class="row cols forum-topic-row cf {{ cycle(['odd', 'even'], loop.index0) }}">
+                    <div class="c-80 column">
+                        <h3><a href="{{ routing.getRouteByRouteName('game-forum') }}/{{ catData.getUrl }}/{{ topic.getCleanUrl }}"><img src="{{ staticRoot }}/foto/web/public/images/forum_status/{{ topic.statusPicture }}" class="icon" alt="Pinned"/>&nbsp;{{ topic.getTitle|raw }}</a><small class="right" style="font-size:10px;line-height:17px;">|&nbsp;<span class="hideMobile">{{ langs.BY }} </span>{{ topic.getStarter }}<span class="hideMobile"> {{ langs.ON|lower }} {{ topic.getDate }}</span></small></h3>
+                    </div>
+                    <div class="c-20 column">
+                        <p class="center"><a href="{{ routing.getRouteByRouteName('game-forum') }}/{{ catData.getUrl }}/{{ topic.getCleanUrl }}">{{ topic.getReactions }} {{ langs.REACTION }}s</a></p>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if topics is empty %}<div class="row"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="Cross"/> {{ langs.NO_TOPICS_YET }}</div>{% endif %}
+            </div>
+            {% if topics is not empty %}<a id="newTopic2" href="javascript:void(0);" class="button topic right ajaxTab" data-tab="forum.new.topic" data-category="{{ catData.getCategory }}">{{ langs.NEW_TOPIC }}</a>{% endif %}
+        {% else %}
+            <div class="row cols cf">
+                <div class="c-20 column">
+                    {{ userTagManager.write('topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
+                    <br />
+                    <img src="{{ staticRoot }}/foto/web/public/images/users/{% if topicData.getStarterAvatar %}{{ topicData.getStarterUID }}/uploads/{{ topicData.getStarterAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ topicData.getStarter|strip }}" /><br />
+                    <small>Posts: {{ topicData.getStarterPostsCnt }}</small>
+                </div>
+                <div class="c-80 column">
+                    <small class="right darkgray" style="position: relative;margin-bottom: 0em;margin-left: 1em;">{{ topicData.getDate }}<br />
+                        {% if topicData.getStarter == userData.getUsername %}
+                            <a href="javascript:void(0);" class="ajaxTab" data-tab="forum.edit.topic" data-topic-id="{{ topicData.getId }}" data-topic-title="{{ topicData.getTitle|pureHtml }}" data-topic-content="{{ topicData.getContent|pureHtml }}">{{ langs.EDIT }}</a>
+                        {% endif %}
+                    </small>
+                    {{ topicData.getContent|raw}}
+                </div>
+            </div>
+            
+        </div>
+        <a href="javascript:void(0);" class="button ajaxTab" data-tab="forum.new.reaction" data-topic-id="{{ topicData.getId }}">{{ langs.NEW_REACTION }}</a>
+        {% if pagination.pagination is empty %}<br class="clear"/><br /><br />{% else %}{% include "src/Views/.Paginate.twig" %} {% endif %}
+        <div class="content-container border-top">
+            {% for reaction in topicData.getReactions %}
+                <div class="row cols cf {{ cycle(['odd', 'even'], loop.index) }}">
+                    <div class="c-20 column">
+                        {{ userTagManager.write('topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
+                        <br />
+                        <img src="{{ staticRoot }}/foto/web/public/images/users/{% if reaction.getReactorAvatar %}{{ reaction.getReactorUID }}/uploads/{{ reaction.getReactorAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ reaction.getReactor|strip }}" /><br />
+                        <small>Posts: {{ reaction.getReactorPostsCnt }}</small>
+                    </div>
+                    <div class="c-80 column">
+                        <small class="right darkgray" style="position: relative;margin-bottom: 0em;margin-left: 1em;">
+                            {{ reaction.getDate }}<br />
+                            {% if reaction.getReactor != userData.getUsername %}
+                                <a href="javascript:void(0);" class="ajaxTab" data-tab="forum.new.quoted.reaction" data-topic-id="{{ topicData.getId }}" data-quote-content="{{ reaction.getQuoteContent|pureHtml }}">Quote</a>
+                            {% endif %}
+                            {% if reaction.getReactor == userData.getUsername %}
+                                <a href="javascript:void(0);" class="ajaxTab" data-tab="forum.edit.reaction" data-topic-id="{{ topicData.getId }}" data-reaction-id="{{ reaction.getId }}" data-reaction-content="{{ reaction.getContent|pureHtml }}">{{ langs.EDIT }}</a>
+                            {% endif %}
+                        </small>
+                        {{ reaction.getContent|raw }}
+                    </div>
+                </div>
+            {% endfor %}
+            {% if topicData.getReactions is empty %}<div class="row"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="Cross"/> {{ langs.NO_REACTIONS_YET }}</div>{% endif %}
+        </div>
+        {% if topicData.getReactions is not empty %}
+            <a href="javascript:void(0);" class="button ajaxTab" data-tab="forum.new.reaction" data-topic-id="{{ topicData.getId }}">{{ langs.NEW_REACTION }}</a>
+            {% if pagination.pagination is empty %}<br class="clear"/><br />{% else %}{% include "src/Views/.Paginate.twig" %} {% endif %}
+        {% endif %}
+        <br class="clear"/>
+        <div id="forumReplyResponse"></div>
+        <div class="subtop">
+            {{ langs.REACT_FAST }}
+        </div>
+        <form id="forum-quick-reply" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('forum-reply') }}" method="POST" data-response="#forumReplyResponse">
+            <input type="hidden" name="topicID" value="{{ topicData.getId }}"/>
+            <textarea id="quickReply" name="reply-message" rows="10" cols="80"></textarea>
+            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+            <input type="submit" name="reply" class="button" value="{{ langs.PLACE_REACTION }}"/>
+        </form>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+    <script src="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
+    {% if topicID is not empty or catID is not empty %}
+        <script src="{{ staticRoot }}/web/lib/ckeditorgame/ckeditor.js"></script>
+    {% endif %}
+{% endblock javascripts %}

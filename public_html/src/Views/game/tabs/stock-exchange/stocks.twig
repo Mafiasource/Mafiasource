@@ -1,0 +1,265 @@
+{% if stocks %}
+    {% if open %}
+        <br />
+    {% else %}
+        <p class="center gray">{{ langs.EXCHANGE_DORMANT }}</p>
+    {% endif %}
+    <div class="table-responsive">
+        <table class="table table-sm table-dark table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col" class="center">
+                        <strong>#</strong>
+                    </th>
+                    <th scope="col" class="center">
+                        <strong>{{ langs.BUSINESS }}</strong>
+                    </th>
+                    <th scope="col" class="center">
+                        <strong>{{ langs.LAST }}</strong>
+                    </th>
+                    <th scope="col" class="center">
+                        <strong>{{ langs.DIFFERENCE }}</strong>
+                    </th>
+                    <th scope="col" class="center">
+                        <strong>{{ langs.DIFF }}. %</strong>
+                    </th>
+                    <th scope="col" class="center">
+                        <strong>{{ langs.HIGH }}</strong>
+                    </th>
+                    <th scope="col" class="center">
+                        <strong>{{ langs.LOW }}</strong>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in stocks %}
+                    {% if s.getDifference > 0.00 %}
+                        {% set diff = '<span class="lightgreen">' ~ s.getDifference ~ '</span>' %}
+                        {% set diffPercent = '<img src="' ~ staticRoot ~ '/foto/web/public/images/icons/arrow_up.png" alt="Up" /> <span class="lightgreen">' ~ s.getDiffPercent ~ '%</span>' %}
+                    {% else %}
+                        {% set diff = '<span class="red">' ~ s.getDifference ~ '</span>' %}
+                        {% set diffPercent = '<img src="' ~ staticRoot ~ '/foto/web/public/images/icons/arrow_down.png" alt="Up" /> <span class="red">' ~ s.getDiffPercent ~ '%</span>' %}
+                    {% endif %}
+                    <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                        <td scope="row" class="center">{{ loop.index }}</td>
+                        <td><a href="/game/stock-exchange/business/{{ s.getName }}">{{ s.getName }}</a></td>
+                        <td>{{ s.getLastPrice }}</td>
+                        <td>{{ diff|raw }}</td>
+                        <td>{{ diffPercent|raw  }}</td>
+                        <td>{{ s.getHighPrice }}</td>
+                        <td>{{ s.getLowPrice }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% elseif stock %}
+    {% if stock.getDifference > 0.00 %}
+        {% set diff = '<span class="lightgreen">' ~ stock.getDifference ~ '</span>' %}
+        {% set diffPercent = '<img src="' ~ staticRoot ~ '/foto/web/public/images/icons/arrow_up.png" alt="Up" /> <span class="lightgreen">' ~ stock.getDiffPercent ~ '%</span>' %}
+    {% else %}
+        {% set diff = '<span class="red">' ~ stock.getDifference ~ '</span>' %}
+        {% set diffPercent = '<img src="' ~ staticRoot ~ '/foto/web/public/images/icons/arrow_down.png" alt="Up" /> <span class="red">' ~ stock.getDiffPercent ~ '%</span>' %}
+    {% endif %}
+    <div class="content-container cf">
+        <div class="c-row cf">
+            <form class="c-row-50 col ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-stock') }}" method="POST" data-response="#interactStockResponse">
+                <div class="inner-c-container">
+                    <div class="subtop">
+                     {{ langs.BUY }} / {{ langs.SELL }}
+                    </div>
+                    <div class="content-container cf">
+                        <div id="interactStockResponse" class="rowMsg"></div>
+                        <div class="row">
+                            {% set stocksReplaces = [
+                                {part: inPossession|valueFormat, message: langs.BUSINESS_STOCKS_INFO, pattern: '/{stocks}/'},
+                                {part: stock.getName, message: 'False', pattern: '/{business}/'}
+                            ] %}
+                            {% set stocksInfo = routing.replaceMessageParts(stocksReplaces) %}
+                            <img src="{{ staticRoot }}/web/public/images/icons/basket.png" class="icon" alt="Stocks {{ langs.IN_POSSESSION }}"/> {{ stocksInfo|raw }}
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-50 column">
+                                <img src="{{ staticRoot }}/web/public/images/icons/coins.png" class="icon" alt="{{ langs.PRICE }}"/> {{ langs.PRICE }} {{ langs.EACH|lower }} 100 stocks:
+                            </div>
+                            <div class="c-50 column">
+                                {% set priceHundred = stock.getLastPrice * 100 %}
+                                {{ priceHundred|moneyFormat }}
+                            </div>
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-50 column">
+                                <img src="{{ staticRoot }}/web/public/images/icons/basket_put.png" class="icon" alt="Stocks"/> {{ langs.AMNT }}:
+                            </div>
+                            <div class="c-50 column">
+                                <input type="number" name="stocks" value="100"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <input type="hidden" name="business" value="{{ stock.getName }}"/>
+                            <input type="submit" name="buy" class="button" value="{{ langs.BUY }}"/>&nbsp;
+                            <input type="submit" name="sell" class="button" value="{{ langs.SELL }}"/>
+                        </div>
+                        {% if userData.getDonatorID == 0 or userData.getDonatorID == 1 %}
+                            <div class="row">
+                                <img src="{{ staticRoot }}/web/public/images/icons/help.png" class="icon" alt="Help"/> {% if userData.getDonatorID == 0 %}{{ langs.BUSINESS_DONATOR_INFO|raw }}{% else %}{{ langs.BUSINESS_VIP_INFO|raw }}{% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="c-row-50 col">
+                <div class="inner-c-container" style="max-width: 440px;">
+                    <table class="table table-sm table-dark table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="center" colspan="2">
+                                    <strong>Statistieken voor {{ stock.getName }}</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {{ langs.PRICE }} reset:
+                                </td>
+                                <td>
+                                    {{ stock.getOpeningPrice }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ langs.CURRENT }} {{ langs.PRICE|lower }}:
+                                </td>
+                                <td>
+                                    <span id='stockPrice'>{{ stock.getLastPrice }}</span><span id='stockPriceChange'></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ langs.CLOSING }} {{ langs.PRICE|lower }}:
+                                </td>
+                                <td>
+                                    {{ stock.getClosePrice }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ langs.DIFFERENCE }}:
+                                </td>
+                                <td>
+                                    {{ diff|raw }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ langs.DIFFERENCE }} %:
+                                </td>
+                                <td>
+                                    {{ diffPercent|raw }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ langs.HIGHEST_DAY }}:
+                                </td>
+                                <td>
+                                    {{ stock.getHighPrice }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ langs.LOWEST_DAY }}:
+                                </td>
+                                <td>
+                                    {{ stock.getLowPrice }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="chart_div"></div>
+    </div>
+{% endif %}
+
+{% block javascripts %}
+    {% if stock %}
+        {% set daysPriceVar = "['{{ langs.DAY }}', '{{ langs.PRICE }}']," %}
+        {% set days, prices = [], [] %}
+        {% for h in stockHistory %}
+            {% set days = days|merge([h.getDate]) %}
+            {% set prices = prices|merge([h.getAverageDay]) %}
+        {% endfor %}
+        {% for k, v in prices %}
+            {% set daysPriceVar = daysPriceVar ~ "[dag[" ~ k ~ "], stock[" ~ k ~ "]]," %}
+        {% endfor %}
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+          google.charts.load('current', {'packages':['corechart']});
+          google.charts.setOnLoadCallback(drawChart);
+          var dag = {{ days|json_encode()|raw }};
+          var stock = {{ prices|json_encode()|raw }};
+          {# var phpLoop = {{ daysPriceVar|raw }}; #}
+          function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+              ['{{ langs.DAY }}', '{{ langs.PRICE }}'],
+              [dag[0],  parseFloat(stock[0])],
+              [dag[1],  parseFloat(stock[1])],
+              [dag[2],  parseFloat(stock[2])],
+              [dag[3],  parseFloat(stock[3])],
+              [dag[4],  parseFloat(stock[4])],
+              [dag[5],  parseFloat(stock[5])],
+              [dag[6],  parseFloat(stock[6])],
+              [dag[7],  parseFloat(stock[7])],
+              [dag[8],  parseFloat(stock[8])],
+              [dag[9],  parseFloat(stock[9])],
+              [dag[10],  parseFloat(stock[10])],
+              [dag[11],  parseFloat(stock[11])],
+              [dag[12],  parseFloat(stock[12])],
+              [dag[13],  parseFloat(stock[13])],
+              [dag[14],  parseFloat(stock[14])],
+              [dag[15],  parseFloat(stock[15])]
+            ]);
+    
+            var options = {
+              height: 350,
+              backgroundColor: '#4a4a4a',
+              title: '{{ langs.AVERAGE_DAY_PRICE_15_DAYS }}',
+              titleTextStyle: {
+                color: '#fff'
+              },
+              vAxis: {
+                textStyle: {
+                  color: '#eee'
+                }
+              },
+              hAxis: {
+                textStyle: {
+                  color: '#eee'
+                }
+              },
+              legend: {
+                textStyle: {
+                  color: '#eee'
+                }
+              },
+              colors: ['#58bbec']
+            };
+    
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+            
+            function resize() {
+                var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            }
+            window.onload = resize();
+            window.onresize = resize;
+          }
+        </script>
+    {% endif %}
+{% endblock javascripts %}

@@ -1,0 +1,58 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+.space{display:block;position:relative;top:-6em;}form.buyGarage{display:inline-block;width: 200px;height: 200px;overflow:hidden;} form.buyGarage .execbutton{position:relative;top:-3.75em;}
+select[name='crusher'], select[name='converter'] {display: inline;width: 100%;max-width: 220px;margin:3px 0;}
+section#ccontainer section#content tr.rowMsg div{border:none;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY }} Garage
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'vehicles' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('family-garage') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt=""/> {{ langs.VEHICLES }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'crusher-converter' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('family-garage-crusher-converter') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt=""/> Crusher &amp; Converter
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/family-garage/"~tab~".twig" %}
+    {% if not hasGarage %}
+        <div class="c-row">
+            <div class="inner-c-container">
+                <div id="ajaxLoader"></div>
+                <div id="buyGarageResponse"></div>
+            </div>
+        </div>
+        <div class="center">
+            {% for k, o in garageOptions %}
+                <form id="buyGarage_{{ k }}" class="ajaxForm buyGarage" action="{{ routing.getAjaxRouteByRouteName('buy-family-garage') }}" method="POST" data-response="#buyGarageResponse">
+                    <input type="hidden" name="type" value="{{ k }}"/>
+                    <img src="{{ staticRoot }}/foto/web/public/images/garage/{{ k }}.png" alt="Garage option"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <small class="space">{{ langs.SPACE }}: {{ o.space }} {{ langs.VEHICLES|lower }}</small>
+                    {% if hasRights %}
+                        <input type="submit" name="buy-garage" class="execbutton green small" value="{{ langs.BUY }}"/>
+                    {% endif %}
+                </form>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+<script type="text/javascript">
+    {% include "/src/Views/game/js/toogle.twig" %}
+</script>
+{% endblock javascripts %}

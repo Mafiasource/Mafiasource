@@ -1,0 +1,209 @@
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
+{% extends "/app/Resources/Views/base.twig" %}
+ 
+{% block content %}
+    <section id="content">
+        <div class="container">
+            {% include "/src/Views/.cookies.twig" %}
+            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <section id="register">
+                        <h1 class="right">{{ langs.PRE_TITLE_TXT }} <span class="black">Mafia</span>source</h1>
+                        <form name="register" action="{{ routing.getRouteByRouteName('register') }}" method="POST">
+                        <table cellspacing="3" class="register-table" width="100%">
+                            {% if referral is not empty %}
+                            <tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/user_add.png" alt="Referral" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;Referral link:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<input type="text" name="referral" maxlength="25" value="{{ referral }}" disabled="disabled"/><br />
+                        		</td>
+                        	</tr>
+                            {% endif %}
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.USERNAME }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.USERNAME }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<input type="text" name="username" autofocus maxlength="25" value="{{ regUsername }}"/>
+                                    <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="{{ langs.USERNAME_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" alt="{{ langs.EMAIL }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.EMAIL }}:<br />
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<input type="text" name="email" maxlength="75" value="{{ regEmail }}"/>
+                                    <small>({{ langs.ENCRYPTED }})</small> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="{{ langs.EMAIL_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="{{ langs.PASSWORD }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.PASSWORD }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<input type="password" pattern="\S{6,}" name="password" /><br />
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="{{ langs.PASSWORD }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.PASSWORD }} check:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<input type="password" pattern="\S{6,}" name="password_check" maxlength="75" /><br />
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/star.png" alt="{{ langs.PROFESSION }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.PROFESSION }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;  <select name="type">
+                                                <option value="1"{% if regType == 1 %} selected="selected"{% endif %}>{{ langs.CARJACKER }}</option>
+                                                <option value="2"{% if regType == 2 %}selected="selected"{% endif %}>{{ langs.PRISON_BREAKER }}</option>
+                                                <option value="3"{% if regType == 3 %}selected="selected"{% endif %}>{{ langs.THIEF }}</option>
+                                                <option value="4"{% if regType == 4 %}selected="selected"{% endif %}>{{ langs.PIMP }}</option>
+                                                <option value="5"{% if regType == 5 %}selected="selected"{% endif %}>{{ langs.BANKER }}</option>
+                                                <option value="6"{% if regType == 6 %}selected="selected"{% endif %}>{{ langs.SMUGGLER }}</option>
+                                            </select>
+                                    <br />
+                        		</td>
+                        	</tr>
+                        		<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/database_gear.png" alt="Code" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;Code:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                                    {# Captchas nooit vanuit staticRoot ophalen! #}
+                        			<img id="captcha" src="{{ docRoot }}/web/public/images/captcha/captcha.php" alt="Captcha" />&nbsp;<a id="captcha-refresh" href="javascript:void(0);">{{ langs.REFRESH }}</a><br /><br /> <input type="text" name="captcha_code" size="5" class="code" maxlength="10" />		</td>
+                        	</tr>
+                        	<tr>
+                        		<td colspan="2">
+                        			<br />
+                                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        			<input type="submit" class="input-submit" name="submit_register" value="{{ langs.REGISTER_BTN_PAGE }}" />
+                                </td>
+                        	</tr>
+                        </table>
+                        </form>
+                    </section>
+                    <br /><br />
+                </div>
+                <div class="col-lg-6">
+                    <section id="slider">
+                        <ul>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER1|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER2|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER3|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    {{ langs.SLIDER4|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    <h2>Team up</h2>
+                                    <p>Maak deel uit van een familie en neem deel aan oorlogen en familie overvallen!</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    <h2>Investeer</h2>
+                                    <p>Waag je kans op de Beurs en maak tot 100 den miljoenen met tactiek en inzicht!</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="slider-container">
+                                    <h2>Presteer</h2>
+                                    <p>Zorg voor eeuwige roem door in de hall van onze helden te staan!</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </section><br /><br />
+                </div>
+            </div>
+            {{ alert.build('Info', 'alert-info', 'help', langs.TERMS_CONDITIONS_INFO) }}
+        </div>
+    </section>
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).on("click", "a#captcha-refresh", function(e){
+        $("img#captcha").attr('src', '{{ docRoot }}/web/public/images/captcha/captcha.php?_t='+new Date().getTime());
+        e.preventDefault();
+    });
+</script>
+{% endblock javascripts %}

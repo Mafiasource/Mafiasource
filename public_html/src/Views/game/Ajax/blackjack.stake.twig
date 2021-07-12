@@ -1,0 +1,4 @@
+<form class="ajaxForm center" method="POST" action="{{ actionUri }}" data-response="#playBlackjackResponse">
+    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+    {{ langs.STAKE }}:&nbsp;<input type="number" class="blackjack-field" name="stake" placeholder="{{ langs.STAKE }}" value="{{ stake }}"/>&nbsp;<input type='submit' name='play-blackjack' value='{{ langs.PLAY }}' /><br /><br />
+</form>

@@ -1,0 +1,32 @@
+{% extends "/app/Resources/Views/gamebase.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+div.donate, div.transfer {display:block;width:360px;max-width:100%;margin:0 auto;}
+div.transfer {width:410px;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="top">
+    {{ langs.FAMILY }} Bank
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'bank' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('family-bank') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" class="icon" alt=""/> {{ langs.DONATE }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'manage' %}tab_on{% endif %}  t-50">
+        <a href="{{ routing.getRouteByRouteName('family-bank-manage') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt=""/> Bank
+        </a>
+    </div>
+</div>
+<div class="content-container">
+    {% include "/src/Views/game/tabs/family-bank/"~tab~".twig" %}
+</div>
+{% endblock content %}
+{% block javascripts %}
+<script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+{% endblock javascripts %}

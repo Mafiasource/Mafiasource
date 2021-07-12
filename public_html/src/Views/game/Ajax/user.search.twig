@@ -1,0 +1,20 @@
+{% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+{% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
+
+<div class="members-container cf">
+    {% for member in members %}
+        <div class="memberRecord {{ cycle(['odd', 'even'], loop.index0) }}">
+            {{ userTagManager.write('searchedMember', member.getId, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True') }} <span class="position">#{{ member.getScorePosition }}</span>
+            <hr class="split" />
+            <span class="gray">Rank:</span> <span class="right">{{ member.getRankname }}</span>
+            <hr class="lineSplit" />
+            <span class="gray">{{ langs.MONEY }} Rank:</span> <span class="right">{{ member.getMoneyRank }}</span>
+            <hr class="lineSplit" />
+            <span class="gray">{{ langs.FAMILY }}:</span> <span class="right">{% if member.getFamilyID != 0 %}<a href="/game/family-page/{{ member.getFamily }}">{% endif %}{{ member.getFamily }}{% if member.getFamilyID != 0 %}</a>{% endif %}</span>
+            <hr class="lineSplit" />
+            <span class="gray">{{ langs.HEALTH }}:</span> <span class="right health">{{ percentBar.create(member.getHealthBar.health, member.getHealthBar.class) }}</span>
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,31 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{# Standaard pagina opmaak voor ophalen records tabel #}
+ 
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+        <div class="content-box-header">
+			<div class="panel-title">Woningen beheren</div>
+			
+			<div class="panel-options">
+				<a href="#" data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+            {% set tableRows = residence %}
+            {% set dataTable = 'residence' %}
+            {% set startvar = pagination.from %}
+            {# {% set skipFields = ['article_nl','article_en'] %} #}
+            {% set onlyFields = ['id','stateID','name_nl','name_en','price','defence','rankpoints'] %}
+            {% include "/app/Resources/Views/recordstable.twig" %}
+            
+            {#<a href="#" class="btn btn-default editOrNew">Nieuw woning-record invoegen</a>#}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% include "src/Views/admin/.recordstable.js.twig" %}
+{% endblock javascripts %}

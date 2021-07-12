@@ -1,0 +1,17 @@
+{% import "app/Resources/Views/macros/admin/alert.macro.twig" as alert %}
+
+{% if check == TRUE %}
+    {{ alert.build('alert-success', '<p><i class="fas fa-check"></i> Record successvol ingesteld op <strong>'~action~'</strong>.</p>') }}
+    {% block javascripts %}
+        <script type="text/javascript">
+        $(document).ready(function(){
+            //Change button
+            $("tbody > tr#{{ rowid }} > td.txt-center > a.{{ click.done }}").replaceWith(
+                '<a href="javascript:void(0);" data-id="{{ rowid }}" class="{{ click.todo }} glyph-icon {{ click.color }}"><i class="fas {{ click.glyphtodo }}"></i></a>'
+            );
+        });
+        </script>
+    {% endblock javascripts %}
+{% else %}
+    {% include "/src/Views/admin/Ajax/general.fail.msg.twig" %}
+{% endif %}

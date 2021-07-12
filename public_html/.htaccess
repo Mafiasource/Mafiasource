@@ -1,0 +1,231 @@
+## Mafiasource online mafia RPG, this software is inspired by Crimeclub.
+## Copyright © 2016 Michael Carrein, 2006 Crimeclub.nl
+##
+## Permission is hereby granted, free of charge, to any person obtaining a
+## copy of this software and associated documentation files (the “Software”),
+## to deal in the Software without restriction, including without limitation
+## the rights to use, copy, modify, merge, publish, distribute, sublicense,
+## and/or sell copies of the Software, and to permit persons to whom the
+## Software is furnished to do so, subject to the following conditions:
+##
+## The above copyright notice and this permission notice shall be included
+## in all copies or substantial portions of the Software.
+##
+## THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+## OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+## MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+## NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+## DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+## OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+## THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Replace all instances of mafiasource.nl with the desired primary domainname.
+## Commented out code lines (#..) could be usefull. comment, comment (## ..)
+
+## Secure some critical file extensions from being viewed
+<FilesMatch "\.(htpasswd|htaccess|ftpquota|ini|phps|fla|psd|log|sh|txt|twig)$">
+	Order Allow,Deny
+	Deny from all
+</FilesMatch>
+## Only robots with a .txt extension should be viewable
+<FilesMatch "robots.txt">
+	Order Allow,Deny
+	Allow from all
+</FilesMatch>
+
+## Disable server signature
+ServerSignature Off
+
+## Default charset
+AddDefaultCharset UTF-8
+
+## php_values
+<ifModule mod_php4.c>
+    php_value zlib.output_compression 16386
+</ifModule>
+php_value upload_max_filesize 6M
+php_value post_max_size 10M
+php_value max_execution_time 200
+php_value max_input_time 200
+php_value allow_url_fopen Off
+php_value enable_dl Off
+#php_value SMTP mail.mafiasource.nl
+php_value smtp_port 587
+#php_value sendmail_from no-reply@mafiasource.nl
+#php_value auth_username no-reply@mafiasource.nl
+#php_value auth_password noreplypwd
+#php_value mail.add_x_header On
+#php_value disable_functions system, exec, shell_exec, passthru, phpinfo, show_source, highlight_file, popen, proc_open, fopen_with_path, dbmopen, dbase_open, putenv, move_uploaded_file, filepro, filepro_rowcount, filepro_retrieve, posix_mkfifo
+
+## Set the server administrator email
+SetEnv SERVER_ADMIN info@mafiasource.nl
+
+## Set the default language
+DefaultLanguage en-US
+
+## Limit file size upload
+LimitRequestBody 10240000
+
+## Dir index and -indexes
+DirectoryIndex /web/index.php
+Options All -Indexes
+IndexIgnore *
+
+## Mod rewrites
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    ## Block unwanted requests not originating from self
+    RewriteCond %{REQUEST_METHOD} (POST|CONNECT|DEBUG|DELETE|MOVE|PUT|TRACE|TRACK)
+    RewriteCond %{HTTP_REFERER} !^http://(www\.)?mafiasource.nl/.*$ [NC]
+    RewriteRule .* - [F]
+    
+    ## Block unwanted requests
+    RewriteCond %{REQUEST_METHOD} (CONNECT|DEBUG|DELETE|MOVE|PUT|TRACE|TRACK)
+    RewriteRule .* - [F]
+    
+    ## Now www to www redirect and vice versa for subdomains
+    RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$ [NC]
+    RewriteCond %{HTTPS}s ^on(s)|off [NC]
+    RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    RewriteCond %{HTTP_HOST} ^www\. [NC]
+    RewriteCond %{HTTPS}s ^on(s)|off [NC]
+    RewriteCond http%1://%{HTTP_HOST} ^(https?://)(www\.)(.+\.)(.+\.)(.+)$ [NC]
+    RewriteRule ^ %1%3%4%5%{REQUEST_URI} [R=301,L]
+    
+    ## Rewrite foto.php without query str
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    ## With sizes (currently only steal_vehicles/ and crime/
+    RewriteRule ^foto/([0-9]+)x([0-9]+)/([1-3])/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?w=$1&h=$2&zc=$3&src=$4/$5/$6/$7/$8 [L,B,NC,QSA]
+    RewriteRule ^foto/([0-9]+)x([0-9]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?w=$1&h=$2&src=$3/$4/$5/$6/$7 [L,B,NC,QSA]
+    ## Without sizes
+    RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4/$5/$6/$7 [L,B,NC,QSA]
+    RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4/$5 [L,B,NC,QSA]
+    RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4 [L,B,NC,QSA]
+    
+    ## Rewrite default favicon
+    RewriteCond %{HTTPS}s ^on(s)|off [NC]
+    RewriteCond %{REQUEST_URI} /favicon.ico [NC]
+    RewriteRule (.*) http%1://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]
+    
+    ## Redirect all requests to front-controller (/web/index.php) but ignore following URIs:
+    RewriteCond %{REQUEST_URI} /google29f33f42f4b5ccd8.html [or]
+    RewriteCond %{REQUEST_URI} /sitemap.xml [or]
+    RewriteCond %{REQUEST_URI} /robots.txt [or]
+    RewriteCond %{REQUEST_URI} /favicon.ico
+    ## Add more or's if needed
+    
+    ## Finally, ignore front-controller redirect for above rewrite conditions  | SOME CPANEL GENERATED LINES COULD BE AUTOMATICLY ADDED ABOVE THIS COMMENT.
+    RewriteRule .* - [S=1]
+    RewriteRule .? %{ENV:BASE}/web/index.php [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    <IfModule mod_alias.c>
+        RedirectMatch 302 ^/$ /web/index.php/
+    </IfModule>
+</IfModule>
+
+## Mod headers
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+    Header always edit Set-Cookie (.*) "$1; SameSite=Strict"
+    Header always set x-xss-protection "1; mode=block"
+    Header always set Content-Security-Policy "script-src 'self' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com http://static.mafiasource.nl 'unsafe-inline' 'unsafe-eval'"
+    Header always set X-Frame-Options "deny"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set X-Content-Type-Options "nosniff"
+    ## Accept encoding on common reqources
+    <FilesMatch ".(js|css|xml|gz|html)$">
+        Header append Vary: Accept-Encoding
+    </FilesMatch>
+    ## Allow cross-domain access control for font files.
+    <FilesMatch ".(ttf|ttc|otf|eot|woff|woff2|font.css|css|js)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+    ## Remove cookies @ static files
+    <FilesMatch ".(js|css|jpg|png|jpeg|gif|xml|json|txt|pdf|mov|avi|otf|woff|ico|swf)$">
+        RequestHeader unset Cookie
+        Header unset Cookie
+        Header unset Set-Cookie
+    </FilesMatch>
+    
+    ## Rumored to also remove cookies, not tested
+    #Header unset Pragma
+    #FileETag None 
+    #Header unset ETag
+</IfModule>
+
+## GZIP compression
+<IfModule mod_deflate.c>
+    ## Standaard deflation for multiple files
+    <filesmatch ".(js|css|ico|txt|htm|html|php)$"> 
+        SetOutputFilter DEFLATE 
+    </filesmatch>
+    ## Specific: Compress HTML, CSS, JavaScript, Text, XML and fonts
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE application/x-font
+    AddOutputFilterByType DEFLATE application/x-font-opentype
+    AddOutputFilterByType DEFLATE application/x-font-otf
+    AddOutputFilterByType DEFLATE application/x-font-truetype
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE font/opentype
+    AddOutputFilterByType DEFLATE font/otf
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE image/x-icon
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    
+    ## Remove browser bugs (only needed for really old browsers)
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    Header append Vary User-Agent
+</IfModule>
+
+## Caching static resources
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access 1 year"
+    ExpiresByType image/jpeg "access 1 year"
+    ExpiresByType image/gif "access 1 year"
+    ExpiresByType image/png "access 1 year"
+    ExpiresByType text/css "access 1 month"
+    ExpiresByType text/html "access 1 month"
+    ExpiresByType application/pdf "access 1 month"
+    ExpiresByType text/x-javascript "access 1 month"  
+    ExpiresByType application/javascript "access 1 month"  
+    ExpiresByType application/x-javascript "access 1 month"
+    ExpiresByType application/x-shockwave-flash "access 1 month"
+    ExpiresByType image/x-icon "access 1 year"
+    ExpiresDefault "access 1 month"
+</IfModule>
+<filesMatch "\.( jpg|jpeg|gif|png|woff|woff2|ico)$">
+    Header set Cache-Control "max-age=2419200, public, must-revalidate"
+</filesMatch>
+<FilesMatch "\.(xml|txt|pdf|html|css|js)$">
+    Header set Cache-Control "max-age=604800, public, must-revalidate"
+</FilesMatch>
+
+## Enhance caching
+FileETag MTime Size
+
+## Allow 404.shtml (somehow not working with routing alone)
+<Files 403.shtml>
+    order allow,deny
+    allow from all
+</Files>
+
+## Redirect 404 & 403 forbidden to /404 not found app route
+ErrorDocument 404 /404
+ErrorDocument 403 /404
