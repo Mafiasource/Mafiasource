@@ -1,3 +1,5 @@
+Better reads raw.
+
 #Getting started, a few notes
 This install directory should be deleted after a successful installation.
 In this document '/../' refers to one directory above the rooted public_html directory on the web server.
@@ -105,7 +107,6 @@ A) Standard configurations should be replaced everywhere, permissions and or res
 P) Getting message 'An error occured while connecting..'
 A) Will pop-up after a successful manual server installation but without a proper database connection.
 Four main or in some cases more possible reasons could have caused this message.
-But first make sure you've finished 'MySQL hosted on a different (web) server' when your database is hosted remotely.
   1) MySQL is not running on the configured web server. (Server side)
   2) The MySQL server database name and or database user and or password are incorrectly configured. (Server side)
   2) Make sure your IP address is whitelisted if remote MySQL connections are configured to be restricted. (Server side)
