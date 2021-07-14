@@ -109,7 +109,7 @@ A) Will pop-up after a successful manual server installation but without a prope
 Four main or in some cases more possible reasons could have caused this message.
   1) MySQL is not running on the configured web server. (Server side)
   2) The MySQL server database name and or database user and or password are incorrectly configured. (Server side)
-  2) OPTIONAL Remote MySQL? Make sure your web server IP address is whitelisted if remote connections are restricted. (Server side)
+  2) OPTIONAL Remote MySQL? Make sure your web server IP address is whitelisted if remote connections are restricted. (MySQL Server side)
   4) The provided database credentials in /../security.php are invalid. (Application side)
 Check both application (security.php) and server its database host (MySQL server), database name, database user and password.
 Double check any connection restrictions that might have been set.
