@@ -5,7 +5,7 @@
 require_once __DIR__ . '/../../../security.php'; // Require hidden security essentials
 
 // Game, app and web settings
-define('BASE_DOMAIN',      "mafiasource.nm");       // The primary domain
+define('BASE_DOMAIN',      "mafiasource.nl");       // The primary domain
 define('STATIC_SUBDOMAIN', "static");               // Static subdomain prefix | Has to be a valid subdomain rooted to the same dir of the application's root folder
 define('APP_GAMENAME',     "Mafiasource");          // Gamename, obviously
 define('APP_DOMAIN',       "www.".BASE_DOMAIN);     // Application runs on www. variant
