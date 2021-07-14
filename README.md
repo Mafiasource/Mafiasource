@@ -1,4 +1,7 @@
 #About
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c04f46d9b89e4f68a68950c614e1eede)](https://app.codacy.com/gh/Mafiasource/Mafiasource?utm_source=github.com&utm_medium=referral&utm_content=Mafiasource/Mafiasource&utm_campaign=Badge_Grade_Settings)
+
 Mafiasource is a free text based online Mafia RPG evolved from crimeclub.
 Conquer states and cities in the U.S.
 Build an empire with your friends and family and pave your way to the wealthiest Mafia families.
