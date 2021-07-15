@@ -14,7 +14,7 @@ class Pagination
     public $uri = '';
     public $tpages = 0;
     
-    public function __construct($script, $table, $rpp = false, $to = false)
+    public function __construct($table, $rpp = false, $to = false)
     {
         if(isset($rpp) && $rpp != FALSE) $this->recordsPerPage = $rpp;
         if(isset($to) && $to != FALSE) $this->to = $to;

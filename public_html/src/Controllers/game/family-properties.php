@@ -28,7 +28,7 @@ switch($route->getRouteName())
         $tab = "bullet-factory";
         $userService = new UserService();
         $family = new FamilyService();
-        $pagination = new Pagination("sendLogs", $famProperty, 15, 15);
+        $pagination = new Pagination($famProperty, 15, 15);
         $pageInfo = $famProperty->getFamilyBulletFactoryPageInfo($pagination->from, $pagination->to, $hasRights);
         $capacity = $famProperty->bfCapacities[$pageInfo['bf']->getBulletFactory()];
         $productions = $famProperty->getBulletFactoryProductionsByLevel($pageInfo['bf']->getBulletFactory());

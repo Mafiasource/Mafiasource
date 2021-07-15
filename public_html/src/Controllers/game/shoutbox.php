@@ -18,7 +18,7 @@ switch($route->getRouteName())
 
 $shoutbox = new ShoutboxService();
 $shoutbox->setFamilyID($famID);
-$pagination = new Pagination("shoutbox", $shoutbox);
+$pagination = new Pagination($shoutbox);
 $messages = $shoutbox->getMessageRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

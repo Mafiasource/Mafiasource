@@ -6,7 +6,7 @@ use src\Business\Logic\admin\Pagination;
 require_once __DIR__ . '/.inc.head.php';
 
 $table = new AdminService("steal_vehicle");
-$pagination = new Pagination("steal_vehicle", $table);
+$pagination = new Pagination($table);
 $stealVehicles = $table->getTableRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

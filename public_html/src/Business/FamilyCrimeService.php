@@ -123,7 +123,6 @@ class FamilyCrimeService
         global $security;
         global $language;
         $l = $language->familyCrimeLangs();
-        $garageService = new GarageService();
         
         $vReplaces = array(
             array('part' => $randCar->getName(), 'message' => $l['FAMILY_CRIME_MULTIPLE_ADD'], 'pattern' => '/{carName}/'),
@@ -139,7 +138,6 @@ class FamilyCrimeService
         global $security;
         global $language;
         $l = $language->familyCrimeLangs();
-        $garageService = new GarageService();
         
         $vReplaces = array(
             array('part' => $randCar->getName(), 'message' => $l['FAMILY_CRIME_MULTIPLE_GARAGE_FULL_ADD'], 'pattern' => '/{carName}/'),
@@ -152,9 +150,7 @@ class FamilyCrimeService
     
     public function getFamilyCrimes()
     {
-        global $userData;
-        
-        return $this->data->getFamilyCrimes($userData->getStateID());
+        return $this->data->getFamilyCrimes();
     }
     
     public function organizeFamilyCrime($post)

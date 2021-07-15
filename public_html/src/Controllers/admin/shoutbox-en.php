@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("shoutbox_en");
-$pagination = new Pagination("shoutbox_en", $table);
+$pagination = new Pagination($table);
 $shoutbox = $table->getTableRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

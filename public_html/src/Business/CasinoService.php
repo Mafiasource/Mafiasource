@@ -232,7 +232,7 @@ class CasinoService
         return false;
     }
     
-    public function playDobbling($post, $pData)
+    public function playDobbling($post)
     {
         global $security;
         global $userData;
@@ -328,7 +328,7 @@ class CasinoService
         }
     }
     
-    public function playRacetrack($post, $pData)
+    public function playRacetrack($post)
     {
         global $security;
         global $userData;
@@ -574,7 +574,7 @@ class CasinoService
         }
     }
     
-    public function playSlotMachine($post, $pData)
+    public function playSlotMachine($post)
     {
         global $security;
         global $userData;
@@ -675,7 +675,7 @@ class CasinoService
         }
     }
     
-    public function playBlackjack($post, $pData)
+    public function playBlackjack($post)
     { // Session based game multiple requests processed though here (play, pick-a-card & stop)
         global $security;
         global $userData;

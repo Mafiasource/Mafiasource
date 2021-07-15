@@ -20,7 +20,7 @@ if($type == 'in-prison' && $par3 == "unable-to" && $unableTo !== FALSE) $unableT
 $famPrison = false;
 $famID = 0;
 if($type == "family-prison") $famPrison = $userData->getFamilyID();
-$pagination = new Pagination("prison", $prison, 25, 25);
+$pagination = new Pagination($prison, 25, 25);
 $inPrison = $prison->fetchPrisoners($pagination->from, $pagination->to, $famPrison);
 if($famPrison != false) $famID = $famPrison;
 

@@ -45,9 +45,9 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            $list['positionlessPossessions'] = $poslessPossess = $this->getPositionlessPossessions();
-            $list['statePossessions'] = $statePossess = $this->getStatePossessionsByState($stateID);
-            $list['cityPossessions'] = $cityPossess = $this->getCityPossessionsByCity($stateID, $cityID);
+            $list['positionlessPossessions'] = $this->getPositionlessPossessions();
+            $list['statePossessions'] = $this->getStatePossessionsByState($stateID);
+            $list['cityPossessions'] = $this->getCityPossessionsByCity($stateID, $cityID);
             return $list;
         }
     }
@@ -56,7 +56,6 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            global $language;
             global $langs;
             
             $state = new StateService();
@@ -105,7 +104,6 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            global $language;
             global $langs;
             
             $state = new StateService();
@@ -154,7 +152,6 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            global $language;
             global $langs;
             
             $state = new StateService();
@@ -203,7 +200,6 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            global $language;
             global $langs;
             
             $state = new StateService();

@@ -22,7 +22,7 @@ if(isset($_POST['from']) && isset($_POST['to']) && isset($_POST['famID']))
     $reqUri = $_SERVER['REQUEST_URI'];
     $_SERVER['REQUEST_URI'] = '/game/prison/page/'.$page; // Set fake Req URI pagination purposes
     $prison = new PrisonService();
-    $pagination = new Pagination("prison", $prison, 25, 25);
+    $pagination = new Pagination($prison, 25, 25);
     $inPrison = $prison->fetchPrisoners($pagination->from, $pagination->to, $famID);
     $_SERVER['REQUEST_URI'] = $reqUri;// Reset fake Req URI pagination purposes
     $reqUri = null;

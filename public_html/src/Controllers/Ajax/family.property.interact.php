@@ -55,7 +55,7 @@ if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
         {
             default:
             case 'bullet-factory':
-                $pagination = new Pagination("sendLogs", $famProperty, 15, 15);
+                $pagination = new Pagination($famProperty, 15, 15);
                 $pageInfo = $famProperty->getFamilyBulletFactoryPageInfo($pagination->from, $pagination->to);
                 $capacity = $famProperty->bfCapacities[$pageInfo['bf']->getBulletFactory()];
                 $productions = $famProperty->getBulletFactoryProductionsByLevel($pageInfo['bf']->getBulletFactory());

@@ -21,7 +21,7 @@ if(isset($_POST['security-token']) && ((isset($_POST['stake']) && isset($_POST['
     $userDataBefore = $userData;
     $cashMoneyBefore = $userDataBefore->getCash();
     
-    $response = $casinoService->playBlackjack($_POST, $pData);
+    $response = $casinoService->playBlackjack($_POST);
     
     $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();

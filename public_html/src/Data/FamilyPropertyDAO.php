@@ -144,7 +144,6 @@ class FamilyPropertyDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            global $userData;
             $row = $this->con->getDataSR("
                 SELECT `id` FROM `family_brothel_whore` WHERE `userID`= :uid AND `familyID`= :fid LIMIT 1
             ", array(':uid' => $_SESSION['UID'], ':fid' => $this->familyID));

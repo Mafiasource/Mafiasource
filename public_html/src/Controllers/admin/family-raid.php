@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("family_raid");
-$pagination = new Pagination("family_raid", $table);
+$pagination = new Pagination($table);
 
 $onlyFields = array('id', 'stateID', 'familyID', 'leaderID', 'driverID', 'bombExpertID', 'weaponExpertID');
 $familyRaid = $table->getTableRows($pagination->from, $pagination->to, $onlyFields);

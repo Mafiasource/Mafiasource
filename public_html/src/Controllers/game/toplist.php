@@ -7,7 +7,7 @@ require_once __DIR__ . '/.inc.head.php';
 
 $userService = new UserService();
 $tab = "toplist";
-$pagination = new Pagination("toplist", $userService, 25, 25);
+$pagination = new Pagination($userService, 25, 25);
 $toplist = $userService->getToplist($pagination->from, $pagination->to);
 
 $view = "block";
