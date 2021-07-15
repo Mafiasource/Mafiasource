@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("family_garage");
-$pagination = new Pagination("family_garage", $table);
+$pagination = new Pagination($table);
 $familyGarage = $table->getTableRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

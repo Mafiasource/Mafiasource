@@ -6,7 +6,7 @@ use src\Business\Logic\admin\Pagination;
 require_once __DIR__ . '/.inc.head.php';
 
 $table = new AdminService("forum_reaction");
-$pagination = new Pagination("forum_reaction", $table);
+$pagination = new Pagination($table);
 $forumReactions = $table->getTableRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("gym_competition");
-$pagination = new Pagination("gym_competition", $table);
+$pagination = new Pagination($table);
 $gymCompetition = $table->getTableRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

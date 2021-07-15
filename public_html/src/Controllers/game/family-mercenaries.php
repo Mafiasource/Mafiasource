@@ -16,7 +16,7 @@ if($userData->getFamilyID() == 0 || $hasRights === FALSE)
 
 $famMercService = new FamilyMercenaryService();
 
-$pagination = new Pagination("mercenaryLogs", $famMercService, 15, 15);
+$pagination = new Pagination($famMercService, 15, 15);
 $pageInfo = $famMercService->getPageInfo($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

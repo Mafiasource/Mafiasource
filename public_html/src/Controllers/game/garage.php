@@ -22,7 +22,7 @@ switch($route->getRouteName())
         $tab = "vehicles";
         $hasGarage = $garage->hasGarageInState($stateID);
         $garageOptions = $garage->getGarageOptions();
-        $pagination = new Pagination("vehicles", $garage, 5, 5);
+        $pagination = new Pagination($garage, 5, 5);
         $vehicles = $garage->getVehiclesInGarageByState($stateID,$pagination->from, $pagination->to);
         if($hasGarage != FALSE)
         {
@@ -36,7 +36,7 @@ switch($route->getRouteName())
         $possessionId = 9; //Voertuig Handelszaak | Possession logic
         $possessId = $possession->getPossessIdByPossessionId($possessionId, $stateID, $userData->getCityID()); // Possess table record id |City
         $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
-        $pagination = new Pagination("vehicles-shop", $garage, 6, 6);
+        $pagination = new Pagination($garage, 6, 6);
         $vehicles = $garage->getVehiclesInShop($pagination->from, $pagination->to);
         break;
     case 'garage-shop-vehicle':

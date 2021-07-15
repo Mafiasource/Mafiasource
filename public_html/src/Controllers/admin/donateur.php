@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("donator");
-$pagination = new Pagination("donator", $table);
+$pagination = new Pagination($table);
 $donateur = $table->getTableRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

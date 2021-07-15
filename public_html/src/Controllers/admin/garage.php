@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("garage");
-$pagination = new Pagination("garage", $table);
+$pagination = new Pagination($table);
 
 $onlyFields = array('id', 'userGarageID', 'famGarageID', 'vehicleID',
     /* Fields to always include!! -> */'position', 'active', 'deleted');

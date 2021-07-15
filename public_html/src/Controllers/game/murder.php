@@ -44,7 +44,7 @@ switch($route->getRouteName())
     case 'murder-logs':
     case 'murder-logs-page':
         $tab = "logs";
-        $pagination = new Pagination("murder-log", $murder, 15, 15);
+        $pagination = new Pagination($murder, 15, 15);
         $logs = $murder->getMurderLog($pagination->from, $pagination->to);
         break;
 }

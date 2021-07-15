@@ -17,7 +17,6 @@ class BulletFactory
     
     public function __construct()
     {
-        $pc = array();
         foreach($this->productionCosts AS $p => $c)
             $this->productionPrices[$p] = $c;
     }

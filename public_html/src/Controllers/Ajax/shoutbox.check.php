@@ -21,7 +21,6 @@ if(isset($_POST['from']) && isset($_POST['to']) && isset($_POST['famID']))
     
     $shoutbox = new ShoutboxService();
     $shoutbox->setFamilyID($famID);
-    $pagination = new Pagination("shoutbox", $shoutbox);
     $messages = $shoutbox->getMessageRowsIds($from, $to);
     $lastMessage = current($messages);
     

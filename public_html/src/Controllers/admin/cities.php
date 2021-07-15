@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("city");
-$pagination = new Pagination("city", $table);
+$pagination = new Pagination($table);
 $cities = $table->getTableRows($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

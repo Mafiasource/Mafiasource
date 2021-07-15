@@ -6,7 +6,7 @@ use src\Business\Logic\Pagination;
 require_once __DIR__ . '/.inc.head.php';
 
 $hitlist = new HitlistService();
-$pagination = new Pagination("hitlist", $hitlist);
+$pagination = new Pagination($hitlist);
 $records = $hitlist->getHitlist($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

@@ -8,7 +8,7 @@ require_once __DIR__ . '/.inc.head.php';
 if($member->getStatus() > 2) $route->headTo('admin');
 
 $table = new AdminService("family");
-$pagination = new Pagination("family", $table);
+$pagination = new Pagination($table);
 
 $onlyFields = array('id', 'name', 'bossUID', 'vip', 'money');
 $families = $table->getTableRows($pagination->from, $pagination->to, $onlyFields);

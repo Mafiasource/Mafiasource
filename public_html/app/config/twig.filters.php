@@ -141,7 +141,7 @@ function deXSS_img($m){
     $m[1] = $security->xssEscape($m[1]);
     $m[1] = strtok($m[1],'?');
     $accept = array("png", "gif", "jpg");
-    if (!preg_match('/\.('.implode('|', $accept).')$/', $m[1], $matches))
+    if (!preg_match('/\.('.implode('|', $accept).')$/', $m[1]))
         $r = "<img src=\"/web/public/images/users/nopic.jpg\" alt=\"\">";
     else
     	$r = "<img src=\"".noXSS($m[1])."\" alt=\"\">";

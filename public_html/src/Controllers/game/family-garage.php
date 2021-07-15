@@ -24,7 +24,7 @@ switch($route->getRouteName())
     case 'family-garage-page':
         $tab = "vehicles";
         $garageOptions = $garage->getGarageOptions(TRUE);
-        $pagination = new Pagination("vehicles", $garage, 15, 15);
+        $pagination = new Pagination($garage, 15, 15);
         $vehicles = $garage->getVehiclesInFamilyGarage($pagination->from, $pagination->to);
         if($hasGarage != FALSE)
         {

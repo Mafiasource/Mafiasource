@@ -14,7 +14,7 @@ class Pagination
     public $uri = '';
     public $tpages = 0;
     
-    public function __construct($script, $table)
+    public function __construct($table)
     {
         $tpages = (int)ceil($table->getRecordsCount() / $this->recordsPerPage);
         $this->tpages = $tpages;

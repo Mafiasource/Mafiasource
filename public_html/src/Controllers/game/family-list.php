@@ -6,7 +6,7 @@ use src\Business\Logic\Pagination;
 require_once __DIR__ . '/.inc.head.php';
 
 $family = new FamilyService();
-$pagination = new Pagination("family-list", $family, 15, 15);
+$pagination = new Pagination($family, 15, 15);
 $famlist = $family->getFamlist($pagination->from, $pagination->to);
 
 require_once __DIR__ . '/.inc.foot.php';

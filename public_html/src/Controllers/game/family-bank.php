@@ -28,7 +28,7 @@ switch($route->getRouteName())
     case 'family-bank-manage':
     case 'family-bank-manage-page':
         $tab = "manage";
-        $pagination = new Pagination("bankLogs", $family, 15, 15);
+        $pagination = new Pagination($family, 15, 15);
         $bankManageRights = FALSE;
         $familyBankLogs = $family->getFamilyBankLogsByFamilyId($userData->getFamilyID(), $pagination->from, $pagination->to);
         if($hasRights === TRUE)

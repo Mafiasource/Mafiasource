@@ -52,7 +52,7 @@ switch($route->getRouteName())
                 if(!empty($topicData))
                 {
                     $forumTitle = $topicData->getTitle();
-                    $pagination = new Pagination("forum_reactions", $forum, 10, 10);
+                    $pagination = new Pagination($forum, 10, 10);
                     if($pagination->tpages > 1 &&
                         ($pagination->page == 1  && $route->getPrevRouteName() != "game-forum-cat-topic") &&
                         $pagination->page != $pagination->tpages && $route->getPrevRouteName() != "game-forum-cat-topic-page"
