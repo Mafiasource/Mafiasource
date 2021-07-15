@@ -263,8 +263,8 @@ class InstallService
             $findProtocol = PROTOCOL == "https://" ? "http://" : "https://";
             $replaceProtocol = PROTOCOL == "https://" ? "https://" : "http://";
             self::findAndReplaceInFile(DOC_ROOT . '/sitemap.xml', $findProtocol, $replaceProtocol);
-            self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/game.min.css', $findProtocol, $replaceProtocol);
-            self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/homepage.min.css', $findProtocol, $replaceProtocol);
+            self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/game.min.css', $findProtocol . "static.", $replaceProtocol . "static.");
+            self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/homepage.min.css', $findProtocol . "static.", $replaceProtocol . "static.");
             self::findAndReplaceInFile(DOC_ROOT . '/web/public/images/favicon/manifest.json', $findProtocol, $replaceProtocol);
             self::findAndReplaceInFile(DOC_ROOT . '/web/public/images/favicon/browserconfig.xml', $findProtocol, $replaceProtocol);
             if($route->settings['domainBase'] !== $replacedDomain)
