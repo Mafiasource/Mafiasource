@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>http://www.mafiasource.nl/</loc>
+        <loc>https://www.mafiasource.nl/</loc>
         <changefreq>hourly</changefreq>
         <priority>1.00</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/register</loc>
+        <loc>https://www.mafiasource.nl/register</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/login</loc>
+        <loc>https://www.mafiasource.nl/login</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/forum</loc>
+        <loc>https://www.mafiasource.nl/forum</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/screenshots</loc>
+        <loc>https://www.mafiasource.nl/screenshots</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/get-the-app</loc>
+        <loc>https://www.mafiasource.nl/get-the-app</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/link-partners</loc>
+        <loc>https://www.mafiasource.nl/link-partners</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/terms-and-conditions</loc>
+        <loc>https://www.mafiasource.nl/terms-and-conditions</loc>
         <changefreq>hourly</changefreq>
         <priority>1.00</priority>
     </url>
     <url>
-        <loc>http://www.mafiasource.nl/privacy-policy</loc>
+        <loc>https://www.mafiasource.nl/privacy-policy</loc>
         <changefreq>hourly</changefreq>
         <priority>1.00</priority>
     </url>

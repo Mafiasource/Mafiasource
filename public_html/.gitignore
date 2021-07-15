@@ -10,6 +10,8 @@
 
 /web/public/images/*
 !web/public/images/captcha/
+!web/public/images/favicon/browserconfig.xml
+!web/public/images/favicon/manifest.json
 
 # Root files
 /.ftpquota
