@@ -331,7 +331,7 @@ class MurderDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            $this->con->setData("UPDATE `user` SET `bank`=`bank`+ :money WHERE `id`= :aid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':money' => $money, ':aid' => $vid));
+            $this->con->setData("UPDATE `user` SET `bank`=`bank`+ :money WHERE `id`= :aid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':money' => $money, ':aid' => $aid));
         }
     }
     

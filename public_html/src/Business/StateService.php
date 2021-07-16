@@ -357,7 +357,6 @@ class StateService
     public function calculatePrice($from, $to, $type = false, $raw = false)
     {
         global $language;
-        global $langs;
         $l        = $language->travelLangs();
         if($type == false) $type = "airplane";
         if(isset($_SESSION['UID']))

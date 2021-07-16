@@ -148,7 +148,6 @@ class Security
     {
         $str = (string)$str;
         $ciphering = "AES-128-CTR";
-        $ivLength = openssl_cipher_iv_length($ciphering);
         $options = 0;
         $encryption = openssl_encrypt($str, $ciphering, $this->masterKey, $options, $this->masterIv);
         

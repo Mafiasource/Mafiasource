@@ -115,7 +115,6 @@ class GarageService
         else
         {
             global $route;
-            global $lang;
             global $userData;
             $this->data->addVehicleToGarage($svData, $stateID);
             $replacedMessage = $route->replaceMessagePart($userData->getState(), $l['VEHICLE_STORED_IN_GARAGE'], '/{state}/');
@@ -372,7 +371,7 @@ class GarageService
                         array('part' => $vehicleData->getId(), 'message' => FALSE, 'pattern' => '/{vehicleID}/'),
                         array('part' => $security->getToken(), 'message' => FALSE, 'pattern' => '/{securityToken}/')
                     );
-                    $successMessage = $replacedMessage = $route->replaceMessageParts($replaces);
+                    $successMessage = $route->replaceMessageParts($replaces);
                     break;
                 case 'bought':
                     $possession = new PossessionService();
@@ -385,7 +384,7 @@ class GarageService
                         array('part' => $vehicleData->getName(), 'message' => $l['BOUGHT_VEHICLE_SUCCESS'], 'pattern' => '/{vehicle}/'),
                         array('part' => number_format($vehicleData->getPrice(), 0, '', ','), 'message' => FALSE, 'pattern' => '/{price}/')
                     );
-                    $successMessage = $replacedMessage = $route->replaceMessageParts($replaces);
+                    $successMessage = $route->replaceMessageParts($replaces);
                     break;
                 default:
                     $successMessage = "How did you end up here?";

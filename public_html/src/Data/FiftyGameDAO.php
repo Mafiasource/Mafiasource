@@ -24,7 +24,6 @@ class FiftyGameDAO extends DBConfig
         $this->lang = $route->getLang();
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
         
-        global $language;
         global $langs;
         $this->types[0] = $langs['CASH'];
         $this->types[1] = $langs['WHORES'];

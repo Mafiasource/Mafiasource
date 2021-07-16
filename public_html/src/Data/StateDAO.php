@@ -191,11 +191,11 @@ class StateDAO extends DBConfig
         }
     }
     
+    /** OLD 
     public function getRandCityIdByStateId($stateID)
     {
         if(isset($_SESSION['UID']))
         {
-            /** OLD 
             global $security;
             $statement = $this->dbh->prepare("SELECT `id` FROM `city` WHERE `stateID` = :stateID AND `active`='1' AND `deleted` = '0'");
             $statement->execute(array(':stateID' => $stateID));
@@ -213,7 +213,7 @@ class StateDAO extends DBConfig
                 if($rand == $i) return $city;
                 $i++;
             }
-            **/
         }
     }
+    **/
 }

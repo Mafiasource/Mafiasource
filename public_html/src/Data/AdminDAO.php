@@ -12,8 +12,6 @@ class AdminDAO extends DBConfig
     protected $database = "";
     private $dbh = "";
     private $table = "";
-    private $entity = "";
-    private $object;
     public $validTables = array(
         "categories", "cms", "member", "status", "user", "donator", "profession", "state", "city", "news", "ground", "ground_building", "rld_whore", "weapon", "protection",
         "airplane", "helpsystem", "vehicle", "residence", "crime", "crime_org", "steal_vehicle", "possess", "possession", "forum_category", "forum_status", "forum_topic",
@@ -22,18 +20,13 @@ class AdminDAO extends DBConfig
         "poll_question", "poll_vote", "seo", "shoutbox_nl", "shoutbox_en", "user_captcha", "user_friend_block"
     );
     
-    public function __construct($table = "", $entity = "")
+    public function __construct($table = "")
     {
         global $connection;
         $this->con = $connection;
         $this->dbh = $connection->con;
         $this->table = $table;
         $this->database = $connection->database;
-        if($entity != '')
-        {
-            $this->entity = $entity;
-            $this->object = ucfirst($this->entity);
-        }
     }
     
     public function __destruct()
@@ -77,7 +70,7 @@ class AdminDAO extends DBConfig
                 if(!in_array('active', $onlyFields)) $onlyFields[] = "active";
                 if(!in_array('deleted', $onlyFields)) $onlyFields[] = "deleted";
                 $fields = "";
-                foreach($onlyFields AS $key => $field)
+                foreach($onlyFields AS $field)
                     $fields .= "`".$field."`, ";
                 
                 $fields = substr($fields, 0, -2);
@@ -88,7 +81,6 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT $fields FROM `$this->table` WHERE `deleted` = '0' ORDER BY `position` ASC, `id` ASC LIMIT $from,$to");
             $statement->execute();
             $list = array();
-            if($this->object != '') require_once DOC_ROOT."/src/Entities/".$this->object.".php";
             $list = $this->checkCommentsForFieldsInRows($list, $statement);
             return $list;
         }
@@ -98,11 +90,9 @@ class AdminDAO extends DBConfig
     {
         if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
         {
-            $member = new MemberDAO();
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `id`=:id");
             $statement->execute(array(':id' => $id));
             $list = array();
-            if($this->object != '') require_once DOC_ROOT."/src/Entities/".$this->object.".php";
             $list = $this->checkCommentsForFieldsInRows($list, $statement);
             return $list;
         }
@@ -112,11 +102,9 @@ class AdminDAO extends DBConfig
     {
         if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
         {
-            $member = new MemberDAO();
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `memberID`=:id");
             $statement->execute(array(':id' => $id));
             $list = array();
-            if($this->object != '') require_once DOC_ROOT."/src/Entities/".$this->object.".php";
             $list = $this->checkCommentsForFieldsInRows($list, $statement);
             return $list;
         }
@@ -204,7 +192,6 @@ class AdminDAO extends DBConfig
             $arr = array();
             foreach($val AS $fieldKey => $value)
             {
-                $valType = gettype($value);
                 $statement = $this->dbh->prepare("SELECT c.`COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` AS c WHERE c.`TABLE_SCHEMA` ='$this->database' AND c.`TABLE_NAME` = '$this->table' AND c.`COLUMN_NAME` = :key ");
                 $statement->execute(array(':key' => $fieldKey));
                 $row = $statement->fetch();
@@ -288,7 +275,7 @@ class AdminDAO extends DBConfig
                         
                         if($cPar == 'select' && isset($select))
                         {
-                            foreach($select AS $key => $slct) if($key+1 == $value) $select[$key] = array($select[$key] => "checked");
+                            foreach(array_keys($select) AS $key) if($key+1 == $value) $select[$key] = array($select[$key] => "checked");
                             $val[$fieldKey] = array('select' => $select);
                         }
                         elseif($cPar == 'type' && $cVal == 'disabled')
@@ -376,13 +363,12 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `id`=:id");
             $statement->execute(array(':id' => $id));
             $list = array();
-            if($this->object != '') require_once DOC_ROOT."/src/Entities/".$this->object.".php";
             $list = $this->checkCommentsForFieldsInEdit($list,$statement);
             return $list;
         }
     }
     
-    public function saveEditedRow($post, $table, $id, $files = false)
+    public function saveEditedRow($post, $id, $files = false)
     {
         if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
         {
@@ -420,7 +406,7 @@ class AdminDAO extends DBConfig
                         case 'image/pjpeg':
                         break;
                         default:
-                       	$error = $l['UPLOAD_AVATAR_WRONG_FILE'];
+                       	$error = "Invalid file type discovered.";
                 	}
                     if(!isset($error))
                     {
@@ -546,7 +532,6 @@ class AdminDAO extends DBConfig
                                 $split = explode('=', $comment);
                                 $cPar = $split[0];
                                 $cVal = $split[1];
-                                if(strpos($cVal, ',')) $multipleVals = explode(',', $cVal);
                                 
                                 if($cPar == 'couple') $koppel = $cVal;
                                 if(isset($koppel) && $koppel != '' && $cPar == 'factor') $factor = $cVal;
@@ -608,7 +593,6 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare($searchQuery);
             $statement->execute(array(':search' => "%".$search."%"));
             $list = array();
-            if($this->object != '') require_once DOC_ROOT."/src/Entities/".$this->object.".php";
             $list = $this->checkCommentsForFieldsInRows($list, $statement);
             return $list;
         }
@@ -621,7 +605,6 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `memberID`=:id");
             $statement->execute(array(':id' => $id));
             $list = array();
-            if($this->object != '') require_once DOC_ROOT."/src/Entities/".$this->object.".php";
             $list = $this->checkCommentsForFieldsInRows($list, $statement);
             return $list;
         }

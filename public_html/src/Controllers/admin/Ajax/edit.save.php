@@ -15,7 +15,7 @@ if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validT
     $postNot = array("id", "table", "securityToken");
     foreach($_POST AS $key => $value) if(!in_array($key, $postNot)) $post[$key] = stripslashes($value);
     $table = new AdminService($table);
-    $check = $table->saveEditedRow($post, $table, $id, $_FILES);
+    $check = $table->saveEditedRow($post, $id, $_FILES);
     
     $twigVars = array(
         'routing' => $route,

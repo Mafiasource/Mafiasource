@@ -41,7 +41,7 @@ class InstallService
     static function replaceLinesByLineNumbers($file, array $replacesMap): void
     {
         $lines = file($file);
-        foreach($lines as $lineNumber => $lineContent)
+        foreach(array_keys($lines) as $lineNumber)
             if(isset($replacesMap[$lineNumber]))
                 $lines[$lineNumber] = $replacesMap[$lineNumber] . "\n";
         

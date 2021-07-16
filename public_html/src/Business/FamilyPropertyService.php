@@ -356,7 +356,6 @@ class FamilyPropertyService extends FamilyPropertyStatics
         $username = $security->xssEscape($post['user']);
         $receiver = $userService->getIdByUsername($username);
         $bf = $this->getFamilyBulletFactoryPageInfo()['bf'];
-        $capacity = $this->bfCapacities[$bf->getBulletFactory()];
         
         if(isset($username) && is_numeric($receiver) && $receiver != 0) $receiverProfile = $userService->getUserProfile($username);
         $family = new FamilyService();
@@ -430,7 +429,6 @@ class FamilyPropertyService extends FamilyPropertyStatics
         
         $rld = new RedLightDistrictService();
         $family = new FamilyService();
-        $familyData = $family->getFamilyDataByName($userData->getFamily());
         $brothel = $this->getFamilyBrothelPageInfo();
         $capacity = $this->brothelCapacities[$brothel['brothel']->getBrothel()];
         

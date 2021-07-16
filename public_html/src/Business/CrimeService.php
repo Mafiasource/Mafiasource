@@ -498,7 +498,7 @@ class CrimeService extends CrimeStatics
                             );
                             
                             $replacedMessage = $route->replaceMessageParts($replaces);
-                            foreach($hurtPercent AS $k => $v) $hurtPercent[$k] = false; // Only bullets fired not hurt whatever got set, reset
+                            foreach(array_keys($hurtPercent) AS $k) $hurtPercent[$k] = false; // Only bullets fired not hurt whatever got set, reset
                         }
                         else
                         {

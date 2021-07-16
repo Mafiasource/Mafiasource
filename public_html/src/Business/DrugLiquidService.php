@@ -162,7 +162,6 @@ class DrugLiquidService
                 $typeID = 2;
                 break;
         }
-        $dlUnits = $this->data->getDrugLiquidUnits($typeID);
         
         if($security->checkToken($post['security-token']) == FALSE)
         {

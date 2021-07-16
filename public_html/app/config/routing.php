@@ -301,19 +301,6 @@ class Routing
         return $replaced;
     }
     
-    public function replaceMessagePartsNew_QuantionMark($message)
-    {
-        $replacedMsg = "";
-        foreach($message AS $part)
-        {
-            if(!isset($replaced))
-                $replaced = preg_replace($part['pattern'], $part['part'], $part['message']);
-            else
-                $replaced = preg_replace($part['pattern'], $part['part'], $replaced);
-        }
-        return $replacedMsg = $replaced;
-    }
-    
     public static function errorMessage($msg)
     {
         return array('alert' => array('danger' => true, 'message' => $msg));

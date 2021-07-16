@@ -54,7 +54,7 @@ class FamilyCrimeService
             array('part' => $randDmg, 'message' => FALSE, 'pattern' => '/{damage}/'),
             array('part' => PROTOCOL.STATIC_SUBDOMAIN.'.'.$route->settings['domainBase'].'/foto/web/public/images/vehicle/'.$randCar->getPicture(), 'message' => FALSE, 'pattern' => '/{imageSrc}/')
         );
-        return $replacedMessage = $route->replaceMessageParts($replaces);
+        return $route->replaceMessageParts($replaces);
     }
     
     private static function singleStolenVehicleSold($randCar, $familyID)
@@ -74,7 +74,7 @@ class FamilyCrimeService
             array('part' => number_format($stolenValue, 0, '', ','), 'message' => FALSE, 'pattern' => '/{price}/'),
             array('part' => PROTOCOL.STATIC_SUBDOMAIN.'.'.$route->settings['domainBase'].'/foto/web/public/images/vehicle/'.$randCar->getPicture(), 'message' => FALSE, 'pattern' => '/{imageSrc}/')
         );
-        return $replacedMessage = $route->replaceMessageParts($replaces);
+        return $route->replaceMessageParts($replaces);
     }
     
     private static function multipleStolenVehicles($randCars, $spaceLeft, $familyID)
@@ -120,7 +120,6 @@ class FamilyCrimeService
     private static function stolenVehicleMessage($randCar, $randDmg)
     {
         global $route;
-        global $security;
         global $language;
         $l = $language->familyCrimeLangs();
         
@@ -129,13 +128,12 @@ class FamilyCrimeService
             array('part' => $randDmg, 'message' => FALSE, 'pattern' => '/{damage}/'),
             array('part' => PROTOCOL.STATIC_SUBDOMAIN.'.'.$route->settings['domainBase'].'/foto/web/public/images/vehicle/'.$randCar->getPicture(), 'message' => FALSE, 'pattern' => '/{imageSrc}/')
         );
-        return $v = $route->replaceMessageParts($vReplaces);
+        return $route->replaceMessageParts($vReplaces);
     }
     
     private static function stolenVehicleSoldMessage($randCar, $randDmg, $stolenValue)
     {
         global $route;
-        global $security;
         global $language;
         $l = $language->familyCrimeLangs();
         
@@ -145,7 +143,7 @@ class FamilyCrimeService
             array('part' => number_format($stolenValue, 0, '', ','), 'message' => FALSE, 'pattern' => '/{price}/'),
             array('part' => PROTOCOL.STATIC_SUBDOMAIN.'.'.$route->settings['domainBase'].'/foto/web/public/images/vehicle/'.$randCar->getPicture(), 'message' => FALSE, 'pattern' => '/{imageSrc}/')
         );
-        return $v = $route->replaceMessageParts($vReplaces);
+        return $route->replaceMessageParts($vReplaces);
     }
     
     public function getFamilyCrimes()
@@ -189,7 +187,7 @@ class FamilyCrimeService
         }
         if(!$garageService->hasFamilyGarage())
         {
-            $errpr = $l['NO_FAMILY_GARAGE'];
+            $error = $l['NO_FAMILY_GARAGE'];
         }
         if(!is_numeric($participants) || ($participants < 3 || $participants > 23) )
         {
@@ -273,7 +271,7 @@ class FamilyCrimeService
         }
         if(!$garageService->hasFamilyGarage())
         {
-            $errpr = $l['NO_FAMILY_GARAGE'];
+            $error = $l['NO_FAMILY_GARAGE'];
         }
         /* JOIN ERRORS */
         if($join)
@@ -388,7 +386,6 @@ class FamilyCrimeService
                 $chance = $security->randInt(0, 100);
                 if($chance <= 70/** 50 **/)
                 {
-                    global $lang;
                     $vehicleService = new VehicleService();
                     switch($famCrimeData->getCrimeID())
                     {

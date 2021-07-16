@@ -87,7 +87,6 @@ class ForumService
     public function navigate()
     {
         global $route;
-        $famID = 0;
         $base = $route->requestGetParam(1);
         $category = $route->requestGetParam(3);
         $topic = $route->requestGetParam(4);
@@ -104,8 +103,7 @@ class ForumService
         elseif($category !== FALSE && $topic !== FALSE && $base == "game" && $this->getCategoryIdByCategory($category) > 0 && $this->getTopicIdByCategoryAndTopicUrl($category, $topic)) //Ingame route
         {
             $categoryID = $this->getCategoryIdByCategory($category);
-            $topicID = $this->getTopicIdByCategoryAndTopicUrl($category, $topic);
-            return "<p><a href='/game/forum'>&raquo; Forum</a>&nbsp;<a href='/game/forum/".$category."'>&raquo; ".$this->data->getCategoryNameByCategoryID($categoryID)."</a>&nbsp;<a href='/game/forum/".$category."/".$topic."'>&raquo; ".self::convertEmoticons($this->data->getTopicTitleByCategoryIdAndTopicUrl($categoryID,$topic))."</a></p>";
+            return "<p><a href='/game/forum'>&raquo; Forum</a>&nbsp;<a href='/game/forum/".$category."'>&raquo; ".$this->data->getCategoryNameByCategoryID($categoryID)."</a>&nbsp;<a href='/game/forum/".$category."/".$topic."'>&raquo; ".self::convertEmoticons($this->data->getTopicTitleByCategoryIdAndTopicUrl($categoryID, $topic))."</a></p>";
         }
         elseif($category !== FALSE && $topic === FALSE && $base == "forum" && $this->getCategoryIdByCategory($category) > 0) //Outgame route
         {
@@ -115,8 +113,7 @@ class ForumService
         elseif($category !== FALSE && $topic !== FALSE && $base == "forum" && $this->getCategoryIdByCategory($category) > 0 && $this->getTopicIdByCategoryAndTopicUrl($category, $topic)) //Outgame route
         {
             $categoryID = $this->getCategoryIdByCategory($category);
-            $topicID = $this->getTopicIdByCategoryAndTopicUrl($category, $topic);
-            return "<p><a href='/forum'>&raquo; Forum</a>&nbsp;<a href='/forum/".$category."'>&raquo; ".$this->data->getCategoryNameByCategoryID($categoryID)."</a>&nbsp;<a href='/forum/".$category."/".$topic."'>&raquo; ".self::convertEmoticons($this->data->getTopicTitleByCategoryIdAndTopicUrl($categoryID,$topic))."</a></p>";
+            return "<p><a href='/forum'>&raquo; Forum</a>&nbsp;<a href='/forum/".$category."'>&raquo; ".$this->data->getCategoryNameByCategoryID($categoryID)."</a>&nbsp;<a href='/forum/".$category."/".$topic."'>&raquo; ".self::convertEmoticons($this->data->getTopicTitleByCategoryIdAndTopicUrl($categoryID, $topic))."</a></p>";
         }
         else return '';
     }
@@ -230,7 +227,6 @@ class ForumService
             global $security;
             $title    = $security->xssEscape($post['topic-title']);
             $message  = $security->xssEscapeAndHtml($post['edited-message']);
-            $cleanUri = SeoService::seoUrl($post['topic-title']);
             
             $topicData = $this->data->getTopicDataByTopicId($post['topicID']);
             

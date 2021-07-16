@@ -82,7 +82,7 @@ class CasinoService
     
     private static function getBlackjackCards()
     {
-        return $blackjackCards = array(
+        return array(
             1 => 11, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 10, 12 => 10, 13 => 10,
             14 => 11, 15 => 2, 16 => 3, 17 => 4, 18 => 5, 19 => 6, 20 => 7, 21 => 8, 22 => 9, 23 => 10, 24 => 10, 25 => 10, 26 => 10,
             27 => 11, 28 => 2, 29 => 3, 30 => 4, 31 => 5, 32 => 6, 33 => 7, 34 => 8, 35 => 9, 36 => 10, 37 => 10, 38 => 10, 39 => 10,
@@ -92,7 +92,7 @@ class CasinoService
     
     private static function getBlackjackAces()
     {
-        return $aces = array(1, 14, 27, 40);
+        return array(1, 14, 27, 40);
     }
     
     private static function calculateBlackjackScoreByCards($cards)

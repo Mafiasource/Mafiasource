@@ -130,14 +130,18 @@ class SmuggleDAO extends DBConfig
                         if(isset($row2['level'])) $s->setLevel($row2['level']);
                         if(isset($row2['description'])) $s->setDescription($row2['description']);
                         if(isset($row2['picture']))
+                        {
                             if(file_exists(DOC_ROOT.'/web/public/images/smuggle/'.$row2['picture']))
-                                $sv->setPicture($row2['picture']);
+                                $s->setPicture($row2['picture']);
+                        }
                         $s->setActive(false);
                         if($i == $cnt) $s->setActive(true);
                         $inPossess = 0;
                         foreach($carrying AS $key => $val)
+                        {
                             if($key == $smuggleService->unitNumbers[$s->getId()])
                                 $inPossess += $val;
+                        }
                         $unitInfo = new SmuggleUnit();
                         $unitInfo->setInPossession($inPossess);
                         $s->setUnitInfo($unitInfo);

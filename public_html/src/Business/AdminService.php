@@ -71,9 +71,9 @@ class AdminService
         return $this->data->editRow($id);
     }
     
-    public function saveEditedRow($post,$table,$id, $files = false)
+    public function saveEditedRow($post, $id, $files = false)
     {
-        return $this->data->saveEditedRow($post,$table,$id, $files);
+        return $this->data->saveEditedRow($post, $id, $files);
     }
     
     public function createToEditRow()

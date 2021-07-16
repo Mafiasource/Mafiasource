@@ -75,10 +75,8 @@ class CaptchaService
     public function validateCaptcha($post)
     {
         global $security;
-        global $userData;
         global $language;
         global $langs;
-        $l = $language->captchaTestLangs();
         $code = (int)$post['captcha_code'];
         
         if(!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code)

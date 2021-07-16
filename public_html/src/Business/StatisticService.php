@@ -7,8 +7,6 @@ use src\Data\StatisticDAO;
 class StatisticService
 {
     private $data;
-    private $rates;
-    public $competitionNames;
     
     public function __construct()
     {

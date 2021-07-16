@@ -44,7 +44,6 @@ class FamilyMercenaryDAO extends DBConfig
     {
         if(isset($_SESSION['UID']) && $this->familyID !== 0)
         {
-            global $userData;
             $row = $this->con->getDataSR("
                 SELECT COUNT(*) AS `total` FROM `family_mercenary_log` WHERE `familyID`= :fid AND `active`='1' AND `deleted`='0' LIMIT 1
             ", array(':fid' => $this->familyID));
