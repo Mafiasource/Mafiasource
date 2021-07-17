@@ -11,9 +11,9 @@ error_log located above public_html should capture all cronjob logged errors.
 This application runs stable on web servers with the following (min) requirements:
   - Web server 128MB+ RAM - 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
   - Apache 2
-  - PHP 5.6 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS
-    PHP 7.2 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS (Preferred)
-    PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS
+  - PHP 5.6 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS, GD
+    PHP 7.2 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS, GD (Preferred)
+    PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD
   - MySQL 13 or higher or MariaDB 10 or higher
 
 
