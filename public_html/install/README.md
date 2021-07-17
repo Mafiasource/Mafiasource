@@ -1,23 +1,22 @@
-Reads best raw.
-
-#Getting started, a few notes
+## Getting started with a few notes
 This install directory should be deleted after a successful installation.
 In this document '/../' refers to one directory above the rooted public_html directory on the web server.
-Placing security and all its sensitive information outside the web root can restrict non-authorized access.
-error_log located above public_html should capture all cronjob logged errors.
+Don't forget to add the [missing resources (download)](https://www.mafiasource.nl/web/downloads/public_html.zip) to your public_html directory.
+/admin access equals superpowers, beware to whom you grant access.
+Admin fields that seem locked can be overwritten.
 
 
-#Requirements
+## Requirements
 This application runs stable on web servers with the following (min) requirements:
   - Web server 128MB+ RAM - 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
   - Apache 2
   - PHP 5.6 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS, GD
-    PHP 7.2 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS, GD (Preferred)
-    PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD
+  - PHP 7.2 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS, GD (Preferred)
+  - PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD
   - MySQL 13 or higher or MariaDB 10 or higher
 
 
-#Dependencies, managed manually
+## Dependencies, managed manually
 All come bundled within the source in /vendor/ updating any library can result in new errors.
 Except for these first few packages updates are likely to remain unnecessary for various library packages.
 Execute the following composer commands in the vendor directory to update used libraries:
@@ -36,7 +35,7 @@ Available with composer package manager but hosted in a different location:
 Customize ckeditor(game) at: https://ckeditor.com/ckeditor-4/download/
 
 
-#Built in simplified installation process
+## Built in simplified installation process
 Requires a web server, domainname, mysql credentials and a correct configured SSL/HTTPS certificate.
 No SSL support? Skip to 'App wont work on a localhost environment without SSL support.' first.
   1) Create a new subdomain 'static' for your domainname and link it to your public_html directory.
@@ -61,14 +60,14 @@ Overwrite these custom backup files after every merge and rebase to stay up-to-d
 This tactic won't update .css style changes, unless these files are changed manually.
 
 
-#Troubleshooting some of the most common problems and answers
+## Troubleshooting most common problems and answers
 P) Application installer takes forever to load, than redirects me to a not found page.
 A) You are trying to connect to a mysql host that is unreachable by the application.
 Or might even simply choose not to reply, both cases are quite hard to troubleshoot but you can start here:
   1) Verify if you can ping the mysql host, retrieve an IP address when successful.
   2) OPTIONAL Some mysql servers can operate on a different port than default 3306. Add your custom port in:
-    - /app/config/config.php Line 22 add into PDO_CONSTRING: ;port=PORTNO
-    - /install/config/DBConfig.php Line 21 add into _PDO_CONSTRING_INSTALL: ;port=PORTNO
+    2.1) /app/config/config.php Line 22 add into PDO_CONSTRING: ;port=PORTNO
+    2.2) /install/config/DBConfig.php Line 21 add into _PDO_CONSTRING_INSTALL: ;port=PORTNO
   3) Instead of trying to connect through DNS you can try to insert the server's IP address as mysql host.
 If all else failed, please contact your server administrator for guidance.
 
@@ -77,6 +76,7 @@ A) Application can throw a server error due to 2 miss configurations set while b
 Before anything, make sure you have a fresh unaltered Mafiasource copy. (Successful install modifies source code)
   1) In /app/config/config.php edit SSL_ENABLED from true to false. (Not localhost, no SSL? Steps 2 and 4 not required)
   2) Add the following lines to your C:/Windows/system32/drivers/etc/hosts (Windows) or /etc/hosts (Linux) file:
+```
     127.0.0.1 localhost
     127.0.0.1 static.localhost
     ## Optional! Test your own ficticious domain locally: (http://www.domainname.ex)
@@ -84,6 +84,7 @@ Before anything, make sure you have a fresh unaltered Mafiasource copy. (Success
     #127.0.0.1 static.domainname.ex
     #127.0.0.1 www.domainname.ex
     #127.0.0.1 www.static.domainname.ex
+```
   3) Ready to install on a local non-secure environment at http://localhost/install or http://www.domainname.ex/install
   4) Optional: Server error persists? Edit /.htaccess and comment out all lines from 88 to 94 including, after installation.
 Tested on xampp for Windows with php8.0.3
@@ -97,12 +98,14 @@ A) Standard configurations should be replaced everywhere, permissions and or res
   3) Import /install/config/clean-database.sql manually into your database.
   4) Configure /app/cronjob/ jobs on the web server to finalize installation.
     Cronjobs: Replace brackets [..] with php binary locaction and the user directory (/[userDir]/public_html) name.
-      0	  *   *	  *	  *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/hour.php	    
-      */5 *	  *	  *	  *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/five_minutes.php	    
-      *	  *   *	  *	  *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/one_minute.php	    
-      0	  0   *	  *	  *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/day.php	    
-      0	  19  *   *	  0   [/path/to/php] /home/[userDir]/public_html/app/cronjob/week.php	    
-      0	  4   *   *	  *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/dbbackup.php
+```
+      0	  *   *	  *   *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/hour.php	    
+      */5 *   *	  *   *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/five_minutes.php	    
+      *	  *   *	  *   *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/one_minute.php	    
+      0	  0   *	  *   *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/day.php	    
+      0	  19  *   *   0   [/path/to/php] /home/[userDir]/public_html/app/cronjob/week.php	    
+      0	  4   *   *   *   [/path/to/php] /home/[userDir]/public_html/app/cronjob/dbbackup.php
+```
 
 P) Getting message 'An error occured while connecting..'
 A) Will pop-up after a successful manual server installation but without a proper database connection.
@@ -115,7 +118,7 @@ Check both application (security.php) and server its database host (MySQL server
 Double check any connection restrictions that might have been set.
 
 
-#LICENSE DISCLAIMER
+## LICENSE DISCLAIMER
 The license included by this software does NOT apply to the following resources used by this project:
   /vendor/ + All files and subdirectories and files (Licenses included)
   /web/lib/ + All files and subdirectories and files (Licenses included)
@@ -127,7 +130,7 @@ The license included by this software does NOT apply to the following resources 
 Unknown holders own licenses to most 'by user inputted' resources.
 
 
-#Donate
+## Donate
 Any spare crypto sent my way is greatly appreciated!
 ETH: 0x6508a7d92fF6eE978E82481C98E991D808283FE5
 BTC: bc1qcj2fr8t6feaedzmy5fxmtnyyn2qe52n2re59nc

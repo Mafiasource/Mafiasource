@@ -31,6 +31,6 @@ Deny from all
     Deny from all
 </FilesMatch>
 ## Only the following file extensions are allowed from here on..
-<FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]|[Gg][Zz]|[Pp][Dd][Ff]|[Xx][Mm][Ll]|[Jj][Ss][Oo][Nn])$">
+<FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]|[Gg][Zz]|[Pp][Dd][Ff]|[Ii][Cc][Oo]|[Xx][Mm][Ll]|[Jj][Ss][Oo][Nn])$">
     Allow from all
 </FilesMatch>
