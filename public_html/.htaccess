@@ -132,7 +132,7 @@ IndexIgnore *
     Header set Connection keep-alive
     Header always edit Set-Cookie (.*) "$1; SameSite=Strict"
     Header always set x-xss-protection "1; mode=block"
-    Header always set Content-Security-Policy "script-src 'self' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com http://static.mafiasource.nl 'unsafe-inline' 'unsafe-eval'"
+    Header always set Content-Security-Policy "script-src 'self' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://static.mafiasource.nl 'unsafe-inline' 'unsafe-eval'"
     Header always set X-Frame-Options "deny"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
     Header always set X-Content-Type-Options "nosniff"
