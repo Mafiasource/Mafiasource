@@ -128,7 +128,7 @@ class MurderService
             }
             if($bullets > $murderData->getBullets())
             {
-                $êrror = $l['DONT_OWN_THAT_MANY_BULLETS'];
+                $error = $l['DONT_OWN_THAT_MANY_BULLETS'];
             }
             if(strlen($bullets) > 10)
             {
@@ -319,10 +319,8 @@ class MurderService
             }
             
             $possessionService = new PossessionService();
-            $possessions = $possessionService->getProfilePossessionsByUserID($userData->getId());
             $victimPossessions = $possessionService->getProfilePossessionsByUserID($victimID);
             
-            $attackerDied = $victimDied = false;
             $died = array();
             
             $headshotRand = 0;
@@ -357,7 +355,6 @@ class MurderService
                 $params = "attacker=".$userData->getUsername();
                 $notification->sendNotification($victimID, 'MURDERED_BY_ATTACKER_HEADSHOT', $params);
                 
-                $victimDied = true;
                 $died[] = $victimProfile;
             }
             else
@@ -410,7 +407,6 @@ class MurderService
                         $params = "attacker=".$userData->getUsername()."&stolenMoney=".number_format($stolenMoney, 0, '', ',');
                         $notification->sendNotification($victimID, 'SURVIVED_ATTACK_KILLED_ATTACKER', $params);
                     }
-                    $attackerDied= true;
                     $died[] = $userData;
                 }
                 elseif($healthLeft < 1 && $victimHealthLeft < 1)
@@ -423,7 +419,6 @@ class MurderService
                     $params = "attacker=".$userData->getUsername();
                     $notification->sendNotification($victimID, 'DIED_IN_ATTACK_KILLED_ATTACKER', $params);
                     
-                    $attackerDied = $victimDied = true;
                     $died[] = $userData;
                     $died[] = $victimProfile;
                 }
@@ -462,7 +457,6 @@ class MurderService
                     $params = "attacker=".$userData->getUsername();
                     $notification->sendNotification($victimID, 'MURDERED_BY_ATTACKER', $params);
                     
-                    $victimDied = true;
                     $died[] = $victimProfile;
                 }
                 elseif($healthLeft > 0 && $victimHealthLeft > 0)

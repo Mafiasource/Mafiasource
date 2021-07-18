@@ -17,7 +17,6 @@ class DonatorService extends DonatorStatics
     {
         $this->data = new DonatorDAO();
         
-        global $route;
         global $lang;
         $dName = "donator";
         if($lang == 'nl') $dName = "donateur";
