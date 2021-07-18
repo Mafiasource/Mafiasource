@@ -13,7 +13,7 @@ define('APP_FB_PAGE',      "Mafiasource");          // Facebook page UNUSED
 define('APP_TW_PAGE',      "Mafiasource");          // Twitter page UNUSED
 define('APP_GP_PAGE',      "+MafiasourceBe-Nl-En"); // Google plus page UNUSED
 define('SSL_ENABLED',      true);                   // HTTPS? true :-) / false :-( ?
-define('DEVELOPMENT',      false);                  // Development mode true = on | false = off
+define('DEVELOPMENT',      true);                   // Development mode true = on | false = off
 define('OFFLINE',          false);                  // Website online / offline for userlogin / game access
 define('DEVELOPER_IPS',    json_decode(DEV_IPS));   // Array containing developer IP addresses
 
