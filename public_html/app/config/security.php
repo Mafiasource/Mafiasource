@@ -46,7 +46,7 @@ class Security
     
     private function createToken()
     {
-        return $this->token = $this->randStr($length = 64);
+        return $this->token = $this->randStr(64);
     }
     
     public function generateNewToken()
@@ -83,7 +83,7 @@ class Security
     
     public function createSalt()
     {
-        return substr($this->randStr($length = 32), 0, $this->randInt(12,32));
+        return substr($this->randStr(32), 0, $this->randInt(12,32));
     }
     
     public function xssEscape($input)
@@ -134,9 +134,11 @@ class Security
     public function checkSSL()
     {
         global $route;
-        if($route->settings['ssl'] === true) {
-        	if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== "off") || $_SERVER['SERVER_PORT'] == 443)
-        		return true; 
+        if($route->settings['ssl'] === true)
+        {
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== "off") || $_SERVER['SERVER_PORT'] == 443)
+                return true;
+            
         	return false;
         }
         else
