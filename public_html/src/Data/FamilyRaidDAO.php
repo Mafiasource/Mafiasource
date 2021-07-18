@@ -34,7 +34,6 @@ class FamilyRaidDAO extends DBConfig
     {
         if(isset($_SESSION['UID']) && $this->familyID != 0)
         {
-            global $userData;
             $statement = $this->dbh->prepare("SELECT COUNT(*) AS `total` FROM `family_raid` WHERE `familyID`= :fid AND `active` = '1' AND `deleted` = '0'");
             $statement->execute(array(':fid' => $this->familyID));
             $row = $statement->fetch();

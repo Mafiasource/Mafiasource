@@ -630,7 +630,6 @@ class PossessionService
         }
         else
         {
-            global $route;
             $this->data->buyWindows($psData->getId());
             
             return Routing::successMessage($l['BUY_WINDOWS_SUCCESS']);

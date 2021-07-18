@@ -259,7 +259,7 @@ class UserService
         }
     }
 
-    public function validateRecoverPassword($post, $captcha = false)
+    public function validateRecoverPassword($post)
     {
         global $security;
         global $language;

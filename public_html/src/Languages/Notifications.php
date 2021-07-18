@@ -206,7 +206,6 @@ class Notifications
     
     public function __construct($note = false)
     {
-        global $route;
         global $lang;
         $this->lang = $lang;
         if($note != false && array_key_exists($note,$this->notes['EN'])) $this->note = $note;

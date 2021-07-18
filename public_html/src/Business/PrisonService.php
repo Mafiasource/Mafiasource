@@ -111,7 +111,7 @@ class PrisonService
                     }
                     else
                     {
-                        $this->data->failedBreakOutPlayerByPID($pid, $prisonerInfo);
+                        $this->data->failedBreakOutPlayerByPrisonerObject($prisonerInfo);
                         $replacedMessage = $route->replaceMessagePart($username, $l['USER_BREAK_OUT_OF_PRISON_FAIL'], '/{playerName}/');
                         $replacedMessage = Routing::errorMessage($replacedMessage);
                     }

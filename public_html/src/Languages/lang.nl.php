@@ -219,7 +219,6 @@ class GetLanguageContent
     
     public function loginLangs()
     {
-        global $route;
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "Je hebt een ongeldige gebruikersnaam of wachtwoord ingevoerd!",
             'PRE_TITLE_TXT' => "Inloggen op",

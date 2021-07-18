@@ -183,9 +183,9 @@ class PrisonDAO extends DBConfig
         }
     }
     
-    public function failedBreakOutPlayerByPID($pID, $prisonerInfo)
+    public function failedBreakOutPlayerByPrisonerObject($prisoner)
     {
-        $this->putUserInPrison($prisonerInfo->getUserID(), ($prisonerInfo->getTime()+120));
+        $this->putUserInPrison($prisoner->getUserID(), ($prisoner->getTime()+120));
         $this->putUserInPrison($_SESSION['UID'], (time()+180));
     }
     

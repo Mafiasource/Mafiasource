@@ -34,7 +34,6 @@ class PollDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            global $route;
             $row = $this->con->getDataSR("SELECT COUNT(*) AS `total` FROM `poll_question` WHERE `deleted` = '0' AND `active` = '1'");
             return $row['total'];
         }

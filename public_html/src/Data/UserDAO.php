@@ -284,7 +284,9 @@ class UserDAO extends DBConfig
     
     public static function email($sendFrom, $sendFromName, $message, $css, $sendTo, $subject)
     { // All app email to user through here:
+        global $twig;
         require_once DOC_ROOT . '/vendor/PHPMailer/autoload.php';
+        $message = $twig->render('/app/Resources/Views/email.twig', array('css' => $css, 'message' => $message));
         $mail = new PHPMailer();
         try {
             //Server settings
@@ -349,7 +351,7 @@ class UserDAO extends DBConfig
                 {
                     $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$row['id']."/user/email/";
                     $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
-                    $sendTo = $decryptedEmail = $security->decrypt($sendTo, $cryptKeys['iv'], $cryptKeys['key']);
+                    $sendTo = $security->decrypt($sendTo, $cryptKeys['iv'], $cryptKeys['key']);
                 }
                 
                 global $language;
@@ -523,7 +525,7 @@ class UserDAO extends DBConfig
     // This passchange function is related to the recovery option and also used for the ingame pass change option
         if($id == FALSE) $id = $this->getIdByUsername($username); //Avoid another query
         // Remove old salt..
-        $file = unlink(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt");
+        unlink(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt");
         
         $hash = hash('sha256', $pass);
         
@@ -552,7 +554,7 @@ class UserDAO extends DBConfig
         global $security;
         // Insert new recover_password record with unique key linked to account id
         $key = $security->randStr();
-        $statement = $this->con->setData("INSERT INTO `recover_password` (`userID`, `key`, `date`) VALUES (:uid, :key, NOW())", array(':uid' => $id, ':key' => $key));
+        $this->con->setData("INSERT INTO `recover_password` (`userID`, `key`, `date`) VALUES (:uid, :key, NOW())", array(':uid' => $id, ':key' => $key));
         // Send email in the user preferred language en/nl
         $sendFrom = 'no-reply@'.strtolower($route->settings['domainBase']);
         $sendFromName = $route->settings['gamename'];
@@ -1158,7 +1160,6 @@ class UserDAO extends DBConfig
         if(isset($_SESSION['UID']))
         {
             global $language;
-            $langs = $language->settingsLangs();
             $hpLogs = array();
             $statement2 = $this->dbh->prepare("
                 SELECT hl.*, DATE_FORMAT( hl.`date`, '".$this->dateFormat."' ) AS `date`, u.`username`

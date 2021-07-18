@@ -114,7 +114,7 @@ class FamilyCrimeService
             array('part' => $v2, 'message' => FALSE, 'pattern' => '/{add2}/'),
             array('part' => $v3, 'message' => FALSE, 'pattern' => '/{add3}/')
         );
-        return $replacedMessage = $route->replaceMessageParts($replaces);
+        return $route->replaceMessageParts($replaces);
     }
     
     private static function stolenVehicleMessage($randCar, $randDmg)

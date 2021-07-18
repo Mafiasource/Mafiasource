@@ -219,7 +219,6 @@ class GetLanguageContent
     
     public function loginLangs()
     {
-        global $route;
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "You've entered the wrong username or password!",
             'PRE_TITLE_TXT' => "Login to",

@@ -75,7 +75,6 @@ class CaptchaService
     public function validateCaptcha($post)
     {
         global $security;
-        global $language;
         global $langs;
         $code = (int)$post['captcha_code'];
         

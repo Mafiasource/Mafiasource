@@ -57,9 +57,9 @@ class UploadService
         $badWords = array(
             "html", "php", "form", "iframe", "link", "script", "java", "submit", "body", "head", "var", "function", "href"
         );
-        foreach($badWords AS $key => $badWord)
+        foreach($badWords AS $badWord)
             if(strpos($content, $badWord))
-                $error = "Untrusted file, please upload another. Or try to make this one safe using an image <strong>editor</strong>."; // error 4
+                $error = "Untrusted file detected, please upload another. Or try to make this one safe using an image editor."; // error 4
         
         if(!isset($error))
         {

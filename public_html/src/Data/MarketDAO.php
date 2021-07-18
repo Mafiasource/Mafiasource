@@ -24,7 +24,6 @@ class MarketDAO extends DBConfig
         $this->lang = $route->getLang();
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
         
-        global $language;
         global $langs;
         $this->types[0] = "Credits";
         $this->types[1] = $langs['WHORES'];

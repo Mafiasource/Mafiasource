@@ -7,7 +7,7 @@ namespace src\Entities;
 class StealVehicle
 {
     private $id;
-    private $names;
+    private $name;
     private $description;
     private $picture;
     private $level;

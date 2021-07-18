@@ -428,7 +428,6 @@ class FamilyPropertyService extends FamilyPropertyStatics
         $whores = (int)$post['whores'];
         
         $rld = new RedLightDistrictService();
-        $family = new FamilyService();
         $brothel = $this->getFamilyBrothelPageInfo();
         $capacity = $this->brothelCapacities[$brothel['brothel']->getBrothel()];
         

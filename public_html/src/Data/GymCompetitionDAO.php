@@ -114,7 +114,6 @@ class GymCompetitionDAO extends DBConfig
             
             if(isset($row['id']) && $row['id'] > 0)
             {
-                $gymCompetitionService = new GymCompetitionService();
                 $comp = new GymCompetition(); //return obj
                 $comp->setId($row['id']);
                 $comp->setCityID($row['cityID']);
