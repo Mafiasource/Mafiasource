@@ -16,18 +16,15 @@ Especially true for almost all security practices found inside this project.
 Refer to [/install/README.md](https://github.com/Mafiasource/Mafiasource/blob/main/public_html/install/README.md) for more information regarding the installation process.
 Made possible by © 2016 Michael Carrein inspired by © 2006 crimeclub.nl
 
-
 ## Directory above web root
 Contents of the web server home directory (one directory above public_html) where sensitive statics are defined.
 - security.php = sensitive statics that can restrict non authorized developers access. (Authorize devs to public_html/)
 - error_log should log all cronjob thrown errors. Not necessarily localhost.
 - public_html/ the actual web app root directory.
 
-
 ## Missing resources
 Can be downloaded from: https://www.mafiasource.nl/web/downloads/public_html.zip
 These include all images and 2 ckeditor packages excluded in gitignore.
-
 
 ## Donate
 Any spare crypto sent my way is greatly appreciated!

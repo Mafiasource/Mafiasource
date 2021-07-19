@@ -1,7 +1,6 @@
 ## Root
 Document root folder a.k.a. public_html/ or www/ contents.
 
-
 ## LICENSE DISCLAIMER
 The license included by this software does NOT apply to the following resources used by this project:
   /vendor/ + All files and subdirectories and files (Licenses included)

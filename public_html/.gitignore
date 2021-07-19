@@ -1,5 +1,4 @@
 # App cache & backups
-/app/cache/sessions/*
 /app/cache/TwigCompilation/*
 /app/cronjob/backup/*
 
