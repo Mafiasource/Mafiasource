@@ -51,7 +51,7 @@ if(!empty($_POST['security-token']) && isset($_POST['familyRaidID']) && $famID >
     elseif($weaponExpertCheck)
         $response = $famRaid->weaponExpertInteractFamilyRaid($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cFamilyRaidAfter = $userDataAfter->getCFamilyRaid();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();

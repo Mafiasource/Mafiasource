@@ -19,7 +19,7 @@ if(isset($_POST['amount']) && isset($_POST['state']) && isset($_POST['security-t
     
     $response = $rld->takeAwayWhoresBehindWindow($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $pimpDataAfter = $rld->getRedLightDistrictPageInfo();
     $cashMoneyAfter = $userDataAfter->getCash();
     $whoresStreetAfter = $pimpDataAfter->getWhoresStreet();

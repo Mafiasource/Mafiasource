@@ -13,7 +13,7 @@ if(isset($_POST['security-token']))
         
     $response = $userService->openLuckybox($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $bankMoneyAfter = $userDataAfter->getBank();
 
     require_once __DIR__ . '/.moneyAnimation.php';

@@ -1528,9 +1528,8 @@ class FamilyService
             }
             else
             {
-                global $route;
                 $this->data->sendFamilyMassMessage($fid, $message, $pData);
-                $respopnse = $l['SEND_FAMILY_MASS_MESSAGE_SUCCESS'] .= '<script type="text/javascript">$("textarea[name=mass-message]").val("");</script>';
+                $l['SEND_FAMILY_MASS_MESSAGE_SUCCESS'] .= '<script type="text/javascript">$("textarea[name=mass-message]").val("");</script>';
                 return Routing::successMessage($l['SEND_FAMILY_MASS_MESSAGE_SUCCESS']);
             }
         }

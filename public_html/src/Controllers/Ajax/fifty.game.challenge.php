@@ -31,7 +31,7 @@ if(isset($_POST['security-token']) && isset($_POST['gameID']))
         
         $response = $fiftyGame->interactGame($_POST);
         
-        $userDataAfter = $user->getUserData($lang);
+        $userDataAfter = $user->getUserData();
         switch($gameData->getType())
         {
             default:

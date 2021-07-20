@@ -19,7 +19,7 @@ if(isset($_POST['action']) && in_array($_POST['action'], $allowedActions))
     else
     {
         //Success en nodige succes functies triggeren..
-        $userDataAfter = $user->getUserData($lang);
+        $userDataAfter = $user->getUserData();
         $cashMoneyAfter = $userDataAfter->getCash();
         require_once __DIR__ . '/.moneyAnimation.php';
         

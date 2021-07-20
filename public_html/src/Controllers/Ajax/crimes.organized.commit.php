@@ -30,7 +30,7 @@ if(isset($_POST['id']) && isset($_POST['security-token']))
     
     $response = $crime->commitOrganizedCrime($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $crimesDataAfter = $crime->getCrimesPageInfo(true)['user'];
     $cashMoneyAfter = $userDataAfter->getCash();
     $profitsAfter = $crimesDataAfter->getCrimesProfit();

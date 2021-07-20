@@ -22,7 +22,7 @@ if(isset($_POST['security-token']) && (isset($_POST['buy']) || isset($_POST['sel
     else if(isset($_POST['equip']))
         $response = $residence->equipResidence($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $uRankpointsAfter = $userDataAfter->getRankpoints();
     $uRankIDAfter = $userDataAfter->getRankID();

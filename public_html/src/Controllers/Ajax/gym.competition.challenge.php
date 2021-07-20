@@ -15,7 +15,7 @@ if(isset($_POST['competitionID']) && isset($_POST['security-token']))
     
     $response = $gymCompetition->challengeCompetition($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     
     require_once __DIR__ . '/.moneyAnimation.php';

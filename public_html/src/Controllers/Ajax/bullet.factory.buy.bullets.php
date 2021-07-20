@@ -22,7 +22,7 @@ if(isset($_POST['security-token']) && isset($_POST['bullets']))
         
     $response = $bf->buyBullets($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $bfInfoAfter = $possession->getBulletFactoryInfoByPossessID($possessId);
     $cashMoneyAfter = $userDataAfter->getCash();
     $factoryBulletsAfter = $bfInfoAfter->getBullets();

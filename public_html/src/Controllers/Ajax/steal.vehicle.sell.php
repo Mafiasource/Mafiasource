@@ -14,7 +14,7 @@ if(isset($_POST['securityToken']) && isset($_SESSION['steal-vehicles']))
     
     $response = $garage->sellVehicleImmediately($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     

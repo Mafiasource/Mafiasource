@@ -15,7 +15,7 @@ if(isset($_POST['exchange-amount']) && isset($_POST['security-token']))
     
     $response = $userService->exchangeHonorPoints($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     $valueAfter = $userDataAfter->getHonorPoints();

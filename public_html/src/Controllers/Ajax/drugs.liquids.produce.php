@@ -25,7 +25,7 @@ if(isset($_POST['security-token']) && isset($_POST['type']) && in_array($_POST['
         
     $response = $dl->buyUnits($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     
     switch($_POST['type'])

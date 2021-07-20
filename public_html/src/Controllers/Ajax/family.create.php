@@ -16,7 +16,7 @@ if(!empty($_POST['security-token']) && isset($_POST['familyname']) && isset($_PO
     
     $response = $family->createFamily($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     

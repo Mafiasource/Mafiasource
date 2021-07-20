@@ -17,7 +17,7 @@ if(!empty($_POST['security-token']) && isset($_POST['crime']) && (isset($_POST['
     
     $response = $famCrime->interactFamilyCrime($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cFamilyCrimesAfter = $userDataAfter->getCFamilyCrimes();
     $cPrisonTimeAfter = $userDataAfter->getCPrisonTime();
     

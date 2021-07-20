@@ -1323,12 +1323,12 @@ class UserService
         $l = $language->friendsBlockLangs();
         if(isset($post['friend']))
         {
-            $username = $friend = $security->xssEscape($post['friend']);
+            $username = $security->xssEscape($post['friend']);
             $friendID = $this->data->getIdByUsername($username);
         }
         else
         {
-            $username = $user = $security->xssEscape($post['user']);
+            $username = $security->xssEscape($post['user']);
             $userID = $this->data->getIdByUsername($username);
         }
 

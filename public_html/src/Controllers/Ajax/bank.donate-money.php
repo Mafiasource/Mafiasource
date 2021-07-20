@@ -14,7 +14,7 @@ if(isset($_POST['amount']) && isset($_POST['receiver']) && isset($_POST['securit
     
     $response = $userService->donateMoneyToUser($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     

@@ -163,9 +163,9 @@ class UserCoreService
         }
     }
     
-    public function getUserData($lang = false)
+    public function getUserData()
     {
-        return $this->data->getUserData($lang);
+        return $this->data->getUserData();
     }
     
     public function getPrisonersCount()

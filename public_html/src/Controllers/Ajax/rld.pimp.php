@@ -29,7 +29,7 @@ if(isset($_POST['security-token']) || (isset($_POST['security-token']) && isset(
         
         $response = $rld->pimpWhores($_POST, false);
         
-        $userDataAfter = $user->getUserData($lang);
+        $userDataAfter = $user->getUserData();
         $pimpDataAfter = $rld->getRedLightDistrictPageInfo();
         $attemptsAfter = $pimpDataAfter->getPimpAttempts();
         $amountAfter = $pimpDataAfter->getPimpAmount();

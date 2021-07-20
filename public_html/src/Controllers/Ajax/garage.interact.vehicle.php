@@ -16,7 +16,7 @@ if(!empty($_POST['securityToken']) && isset($_POST['action']) && isset($_POST['i
     
     $response = $garage->interactWithVehicle($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     

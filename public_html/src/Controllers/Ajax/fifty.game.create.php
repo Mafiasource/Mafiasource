@@ -29,7 +29,7 @@ if(isset($_POST['security-token']) && isset($_POST['type']) && isset($_POST['amo
     
     $response = $fiftyGame->createGame($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     switch($type)
     {
         default:

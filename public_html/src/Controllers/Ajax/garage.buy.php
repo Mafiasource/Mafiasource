@@ -14,7 +14,7 @@ if(!empty($_POST['security-token']) && isset($_POST['type']))
     
     $response = $garage->buyGarageOption($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     

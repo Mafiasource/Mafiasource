@@ -27,7 +27,7 @@ if(isset($_POST['id']) && isset($_POST['security-token']))
     
     $response = $sv->stealVehicle($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $svDataAfter = $sv->getStealVehiclesPageInfo()['user'];
     $cashMoneyAfter = $userDataAfter->getCash();
     $profitsAfter = $svDataAfter->getVehiclesProfit();

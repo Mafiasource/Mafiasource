@@ -17,7 +17,7 @@ if(isset($_POST['security-token']) && isset($_POST['stocks']) && isset($_POST['b
     
     $response = $stockExchange->interactStock($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $businessDataAfter = $stockExchange->getBusinessStockByName($_POST['business']);
     $bankMoneyAfter = $userDataAfter->getBank();
     $stocksAfter = $stockExchange->getStocksInPossessionByBusinessID($businessID);

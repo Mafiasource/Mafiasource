@@ -13,7 +13,7 @@ if(isset($_POST['competitionType']) && isset($_POST['stake']) && isset($_POST['s
     
     $response = $gymCompetition->createGymCompetition($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     
     require_once __DIR__ . '/.moneyAnimation.php';

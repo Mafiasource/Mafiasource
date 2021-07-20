@@ -12,7 +12,7 @@ if(isset($_POST['amount']) && isset($_POST['security-token']))
     
     $response = $userService->sendHonorPoints($_POST);
     
-    $valueAfter = $user->getUserData($lang)->getHonorPoints();
+    $valueAfter = $user->getUserData()->getHonorPoints();
     $element = "#userHonorPoints";
     
     include_once __DIR__ . '/.valueAnimation.php';

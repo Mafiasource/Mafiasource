@@ -27,7 +27,7 @@ if(isset($_POST['security-token']) && isset($_POST['type']))
             break;
     }
     
-    $cashMoneyAfter = $user->getUserData($lang)->getCash();
+    $cashMoneyAfter = $user->getUserData()->getCash();
         
     require_once __DIR__ . '/.moneyAnimation.php';
     

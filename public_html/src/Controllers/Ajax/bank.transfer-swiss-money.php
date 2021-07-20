@@ -14,7 +14,7 @@ if(isset($_POST['amount']) && isset($_POST['security-token']) && isset($_POST['a
     
     $response = $userService->transferSwissMoney($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     

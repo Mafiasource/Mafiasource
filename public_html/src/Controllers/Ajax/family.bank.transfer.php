@@ -17,7 +17,7 @@ if(!empty($_POST['security-token']) && isset($_POST['amount']) && isset($_POST['
     
     $response = $family->bankTransferToUser($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $cashMoneyAfter = $userDataAfter->getCash();
     $bankMoneyAfter = $userDataAfter->getBank();
     

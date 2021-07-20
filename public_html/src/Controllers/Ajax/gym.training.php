@@ -18,7 +18,7 @@ if(isset($_POST['security-token']) && (isset($_POST['push-up']) || isset($_POST[
     
     $response = $userService->gymTraining($_POST);
     
-    $userDataAfter = $user->getUserData($lang);
+    $userDataAfter = $user->getUserData();
     $gymDataAfter = $userService->getGymPageInfo();
     $powerAfter = $gymDataAfter->getPower();
     $cardioAfter = $gymDataAfter->getCardio();

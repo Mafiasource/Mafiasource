@@ -21,7 +21,7 @@ if(isset($_POST['security-token']) && isset($_POST['table']) && in_array($_POST[
     else if(isset($_POST['equip']))
         $response = $equipment->equipEquipment($_POST);
     
-    $cashMoneyAfter = $user->getUserData($lang)->getCash();
+    $cashMoneyAfter = $user->getUserData()->getCash();
     
     require_once __DIR__ . '/.moneyAnimation.php';
     

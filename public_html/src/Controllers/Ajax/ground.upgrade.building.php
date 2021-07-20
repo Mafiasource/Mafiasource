@@ -22,7 +22,7 @@ if(isset($_POST['state']) && in_array($_POST['state'], $state->allowedStates) &&
         
         $response = $ground->upgradeGroundBuilding($_POST, $groundArea);
         
-        $cashMoneyAfter = $user->getUserData($lang)->getCash();
+        $cashMoneyAfter = $user->getUserData()->getCash();
         
         require_once __DIR__ . '/.moneyAnimation.php';
     

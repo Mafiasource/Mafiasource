@@ -12,7 +12,7 @@ if(isset($_POST['security-token']) && isset($_POST['member']))
     
     $response = $userService->healMember($_POST);
     
-    $cashMoneyAfter = $user->getUserData($lang)->getCash();
+    $cashMoneyAfter = $user->getUserData()->getCash();
 
     require_once __DIR__ . '/.moneyAnimation.php';
     

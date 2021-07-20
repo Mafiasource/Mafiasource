@@ -85,7 +85,7 @@ class UserCoreDAO extends DBConfig
         return FALSE;
     }
     
-    public function getUserData($lang = false)
+    public function getUserData()
     {
         if(isset($_SESSION['UID']))
         {
