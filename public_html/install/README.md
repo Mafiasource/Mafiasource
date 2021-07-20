@@ -67,8 +67,8 @@ Please keep the following in mind throughout some P) and A) topics defined below
 Or might even simply choose not to reply, both cases are quite hard to troubleshoot but you can start here:
 1) Verify if you can ping the mysql host, retrieve an IP address when successful.
 2) OPTIONAL Some mysql servers can operate on a different port than default 3306. Add your custom port in:
-  1) /app/config/config.php Line 22 add into PDO_CONSTRING: ;port=PORTNO
-  2) /install/config/DBConfig.php Line 21 add into _PDO_CONSTRING_INSTALL: ;port=PORTNO
+    1) /app/config/config.php Line 22 add into PDO_CONSTRING: ;port=PORTNO
+    2) /install/config/DBConfig.php Line 21 add into _PDO_CONSTRING_INSTALL: ;port=PORTNO
 3) Instead of trying to connect through DNS you can try to insert the server's IP address as mysql host.
 
 ###### P) App wont work on a localhost environment without SSL support.
