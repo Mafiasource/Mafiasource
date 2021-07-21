@@ -17,25 +17,25 @@ This application runs stable on web servers with the following (min) requirement
 ## Dependencies
 Only 1 comes bundled within the source its missing resources, customized /web/vendor/ckeditorgame/
 1) All missing dependencies can be installed through [composer](https://getcomposer.org/)
-2) Make sure composer installed and php is recognized as a command, add it yo your system variables if needed.
+2) Make sure composer is installed and php recognized as a command, add it to your system variables if needed.
 3) From your CLI browse to public_html and public_html/web, execute the following command in __both directories__:
 ```
 composer install
 ```
 
-Execute the following command in __both directories__ to update used dependencies with time.
+Execute the following command in __both directories__ to update used dependencies in the future.
 ```
 composer update
 ```
 
 Installing with composer.phar file instead, execute the following commands in both directories.
-Make sure php is recognized as a command, add it yo your system variables if needed.
+Make sure php is recognized as a command, add it to your system variables if needed.
 ```
 curl -sS https://getcomposer.org/installer | php
 php composer.phar install
 ```
 
-And to update with time in __both directtories__.
+To update in the future, execute the following in __both directtories__.
 ```
 php composer.phar update
 ```
