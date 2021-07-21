@@ -1,0 +1,21 @@
+{
+    "name": "mafiasource/mafiasource",
+    "type": "project",
+    "description": "Mafiasource is a free text based online Mafia RPG evolved from crimeclub. Conquer states and cities in the U.S. Build an empire with your friends and family and pave your way to the wealthiest Mafia families. Will you become the best gangster?",
+    "keywords": [
+        "php",
+        "mysql",
+        "twig"
+    ],
+    "homepage": "https://www.mafiasource.nl",
+    "license": "MIT",
+    "authors": [
+        {"name": "Michael Carrein", "email": "michael.carrein@hotmail.com"}
+    ],
+    "require": {
+        "doctrine/common": "^3.1",
+        "twig/twig": "^3.0",
+        "voku/anti-xss": "^4.1",
+        "phpmailer/phpmailer": "^6.5"
+    }
+}

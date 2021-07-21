@@ -2,7 +2,7 @@
  
 namespace src\Business\Logic;
 
-use vendor\Images\SimpleImage;
+use vendo\SimpleImage;
  
 class UploadService
 {
@@ -79,7 +79,7 @@ class UploadService
                 unlink($UploadDirectory.$NewFileName);
             }
             
-            include(DOC_ROOT . '/vendor/Images/SimpleImage.php');
+            include(DOC_ROOT . '/vendor/SimpleImage.php');
             $image = new SimpleImage();
             $image->load($files[$fieldName]['tmp_name']);
             if($height !== false && is_numeric($height))

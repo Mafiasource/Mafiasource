@@ -25,7 +25,7 @@ use app\config\Routing;
 use src\Business\Logic\SeoURL;
 
 require_once __DIR__.'/../../../../app/config/routing.php';
-require_once __DIR__.'/../../../../vendor/sessionManager.php';
+require_once __DIR__.'/../../../../vendor/SessionManager.php';
 require_once __DIR__.'/../../../../src/Business/Logic/SeoURL.php';
 $route = new Routing();
 $session = new SessionManager();

@@ -4,7 +4,7 @@ namespace src\Data;
 
 use src\Data\MemberDAO;
 use src\Data\config\DBConfig;
-use vendor\Images\SimpleImage;
+use vendor\SimpleImage;
 
 class AdminDAO extends DBConfig
 {
@@ -382,7 +382,7 @@ class AdminDAO extends DBConfig
                 $uploadDir = "uploads";
             if(isset($post['imageWidth'])) $imageWidth = $post['imageWidth'];
             if(isset($post['imageHeight'])) $imageHeight = $post['imageHeight'];
-            include(DOC_ROOT . '/vendor/Images/SimpleImage.php');
+            include(DOC_ROOT . '/vendor/SimpleImage.php');
             foreach($post AS $key => $value)
             {
                 if(isset($files[$key]) && $files[$key]['error'] == UPLOAD_ERR_OK)

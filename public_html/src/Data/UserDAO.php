@@ -285,19 +285,25 @@ class UserDAO extends DBConfig
     public static function email($sendFrom, $sendFromName, $message, $css, $sendTo, $subject)
     { // All app email to user through here:
         global $twig;
-        require_once DOC_ROOT . '/vendor/PHPMailer/autoload.php';
         $message = $twig->render('/app/Resources/Views/email.twig', array('css' => $css, 'message' => $message));
         $mail = new PHPMailer();
         try {
+            if($sendFrom !== EMAIL_ADDR)
+                $sendFrom = EMAIL_ADDR;
+            
+            $emailPort = 587;
+            if(is_int(EMAIL_PORT))
+                $emailPort = EMAIL_PORT;
+            
             //Server settings
             $mail->SMTPDebug = FALSE;
             $mail->isSMTP();
-            $mail->Host       = 'mail.domainname.ex';
+            $mail->Host       = EMAIL_HOST;
             $mail->SMTPAuth   = true;
             $mail->Username   = $sendFrom;
-            $mail->Password   = 'noreplypwd';
+            $mail->Password   = EMAIL_PWD;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+            $mail->Port       = $emailPort;
         
             //Recipients
             $mail->setFrom($sendFrom, $sendFromName);

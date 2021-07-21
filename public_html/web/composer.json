@@ -1,0 +1,5 @@
+{
+    "require": {
+        "ckeditor/ckeditor": "dev-full/4.13.x"
+    }
+}

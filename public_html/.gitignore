@@ -2,9 +2,15 @@
 /app/cache/TwigCompilation/*
 /app/cronjob/backup/*
 
+# Vendor files
+/vendor/*
+!vendor/.htaccess
+!vendor/SimpleImage.php
+!vendor/SessionManager.php
+
 # Web assets (Can de downloaded from mafiasource.nl)
 /web/downloads/*
-/web/lib/*
+/web/vendor/*
 /web/public/cache/*
 
 /web/public/images/*
@@ -17,3 +23,4 @@
 
 # Root files
 /.ftpquota
+/.composer.phar

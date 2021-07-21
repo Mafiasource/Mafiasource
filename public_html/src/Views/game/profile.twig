@@ -4,7 +4,7 @@
 {% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
+    <link rel="stylesheet" href="{{ staticRoot }}/web/vendor/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
     <style type="text/css">
         .spoiler-content {display:none;}
         .left {display:inline-block;width:auto;float:left;box-sizing:border-box;margin:5px;}
@@ -277,7 +277,7 @@
 {% endblock content %}
 
 {% block javascripts %}
-    <script type="text/javascript" src="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
+    <script type="text/javascript" src="{{ staticRoot }}/web/vendor/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
     {% if commitPimp == true %}
         <script type="text/javascript">

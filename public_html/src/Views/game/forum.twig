@@ -3,7 +3,7 @@
 {% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
+<link rel="stylesheet" href="{{ staticRoot }}/web/vendor/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
 <style type="text/css">
 .spoiler-content {display:none;}
 h2 {margin:0;}
@@ -139,8 +139,8 @@ blockquote {padding-left:10px;border-left:5px solid #808080;box-sizing:border-bo
 
 {% block javascripts %}
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
-    <script src="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
+    <script src="{{ staticRoot }}/web/vendor/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
     {% if topicID is not empty or catID is not empty %}
-        <script src="{{ staticRoot }}/web/lib/ckeditorgame/ckeditor.js"></script>
+        <script src="{{ staticRoot }}/web/vendor/ckeditorgame/ckeditor.js"></script>
     {% endif %}
 {% endblock javascripts %}

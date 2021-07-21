@@ -26,3 +26,9 @@ define('PDO_DBPASS',    DBPWD);                                       // Db pass
 // Others
 define('DOC_ROOT',      $_SERVER['DOCUMENT_ROOT']);
 define('GAME_DOC_ROOT', realpath(__DIR__ . "/../../") . "/"); // DOC_ROOT identical but with absolute path for cronjobs
+
+// Mail server settings
+define('EMAIL_HOST', "mail.mafiasource.nl");
+define('EMAIL_ADDR', "no-reply@mafiasource.nl");
+define('EMAIL_PWD',  "noreplypwd");
+define('EMAIL_PORT', false);

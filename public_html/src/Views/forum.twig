@@ -3,7 +3,7 @@
 {% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
+<link rel="stylesheet" href="{{ staticRoot }}/web/vendor/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
 <style>
 .spoiler-content {display:none;}
 h2 {margin:0;}
@@ -198,8 +198,8 @@ section#content section#forum .dateActions {position: relative;top:.25em;margin-
 {% block javascripts %}
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/popup-open-tab.js"></script>
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
-    <script src="{{ staticRoot }}/web/lib/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
+    <script src="{{ staticRoot }}/web/vendor/ckeditorgame/plugins/spoiler/js/spoiler.js"></script>
     {% if topicID is not empty or catID is not empty %}
-        <script src="{{ staticRoot }}/web/lib/ckeditorgame/ckeditor.js"></script>
+        <script src="{{ staticRoot }}/web/vendor/ckeditorgame/ckeditor.js"></script>
     {% endif %}
 {% endblock javascripts %}

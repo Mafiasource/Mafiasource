@@ -95,7 +95,6 @@ class Security
     public function xssEscapeAndHtml($input)
     {
         // https://github.com/voku/anti-xss
-        require_once DOC_ROOT . '/vendor/AntiXSS/autoload.php';
         $antiXss = new AntiXSS();
         $harmless_html = $antiXss->xss_clean($input);
         return $harmless_html;

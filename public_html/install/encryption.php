@@ -50,14 +50,14 @@ $errRepInt = null;
 $stream = @stream_socket_server('tcp://0.0.0.0:7600', $errno, $errmg, STREAM_SERVER_BIND);
 if($stream)
 {
+    require __DIR__.'/../vendor/autoload.php';
     // Enable Autoloading with doctrine
-    require_once DOC_ROOT . '/vendor/Doctrine/Common/ClassLoader.php';
     $classLoader = new ClassLoader('install'   ,   DOC_ROOT);
     $classLoader->register();
     $classLoader = null;
     
     // Start a (non-secure) installation session (Allow 'temp' sessions in install env)
-    require_once __DIR__.'/../vendor/sessionManager.php';
+    require_once __DIR__.'/../vendor/SessionManager.php';
     $session = new SessionManager();
     ini_set('session.save_handler', 'files');
     session_set_save_handler($session, true);
@@ -73,7 +73,6 @@ if($stream)
     if($route->settings['ssl'] === true) define("PROTOCOL", "https://"); else define("PROTOCOL", "http://");
     
     // Enable Twig engine & set some custom filters used throughout the application
-    require_once __DIR__.'/../vendor/Twig/autoload.php';
     $loader = new \Twig\Loader\FilesystemLoader(DOC_ROOT); // Root templates folder to DOC root (Because we have tmpls in app/ and src/ )
     $twig = new \Twig\Environment($loader, [
         'cache' => $route->settings['twigCache'] // Caching? depends on dev mode see: app/config/config.php
