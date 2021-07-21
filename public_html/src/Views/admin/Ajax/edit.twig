@@ -2,7 +2,7 @@
 
 {% if check == TRUE %}
 <a href="#" id="editModal" data-toggle="modal" data-target="#edModal"></a>
-<div class="modal fade" id="edModal" tabindex="-1" role="dialog" aria-labelledby="edModalLabel">
+<div class="modal fade" id="edModal" role="dialog" aria-labelledby="edModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content danger">
       <div class="modal-header">
@@ -155,33 +155,38 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-    if($('#edModal').hasClass('in') == false) $("#editModal").click();
-    
-    $('.cms-bewerken').each(function(){
-        if($("#"+this.id+"").length)
-        {
-            var eID = this.id;
-            $.fn.modal.Constructor.prototype.enforceFocus = function () {
-                var $modalElement = this.$element;
-                $(document).on('focusin.modal', function (e) {
-                    var $parent = $(e.target.parentNode);
-                    if ($modalElement[0] !== e.target && !$modalElement.has(e.target).length
-                        // add whatever conditions you need here:
-                        &&
-                        !$parent.hasClass('cke_dialog_ui_input_select') && !$parent.hasClass('cke_dialog_ui_input_text')) {
-                        $modalElement.focus()
-                    }
-                })
-            };
-            var editor = CKEDITOR.replace(this.id, {
-                enterMode: CKEDITOR.ENTER_BR,
-                shiftEnterMode: CKEDITOR.ENTER_P
-            });
-            
-            editor.on( 'change', function( evt ) {
-                $("#"+eID+"").html(evt.editor.getData());
-            });
-        }
+    if($('#edModal').hasClass('in') == false) {
+        $("#editModal").click();
+        $("#editModal").remove();
+        $('.cms-bewerken').each(function(){
+            if($("#"+this.id+"").length)
+            {
+                var eID = this.id;
+                $.fn.modal.Constructor.prototype.enforceFocus = function () {
+                    var $modalElement = this.$element;
+                    $(document).on('focusin.modal', function (e) {
+                        var $parent = $(e.target.parentNode);
+                        if ($modalElement[0] !== e.target && !$modalElement.has(e.target).length
+                            // add whatever conditions you need here:
+                            &&
+                            !$parent.hasClass('cke_dialog_ui_input_select') && !$parent.hasClass('cke_dialog_ui_input_text')) {
+                            $modalElement.focus()
+                        }
+                    })
+                };
+                var editor = CKEDITOR.replace(this.id, {
+                    enterMode: CKEDITOR.ENTER_BR,
+                    shiftEnterMode: CKEDITOR.ENTER_P,
+                });
+                
+                editor.on( 'change', function( evt ) {
+                    $("#"+eID+"").html(evt.editor.getData());
+                });
+            }
+        });
+    }
+    $('#edModal').on('hidden.bs.modal', function () {
+        $("#editOrNewConfirm").empty();
     });
 });
 </script>

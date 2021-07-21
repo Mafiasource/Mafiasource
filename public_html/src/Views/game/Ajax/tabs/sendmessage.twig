@@ -10,7 +10,7 @@
 .c-100 {width:100%;display: inline-block;height: auto;float: left;box-sizing: border-box;}
 </style>
 <a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -47,7 +47,6 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-{% block javascripts %}
 <script type="text/javascript">
 if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
     var x = document.createElement('script');
@@ -55,11 +54,13 @@ if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
     document.getElementsByTagName("body")[0].appendChild(x);
 }
 $(document).ready(function(){
-    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    if($('#modal').hasClass('in') == false){
+        $("#triggerModal").click();
+        $("#triggerModal").remove();
+    }
     $('#modal').on('hidden.bs.modal', function () {
         $("#openTab").empty();
     });
     reloadMessages("{{ receiver }}");
 });
 </script>
-{% endblock javascripts %}

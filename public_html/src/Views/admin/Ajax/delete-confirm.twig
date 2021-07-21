@@ -1,6 +1,6 @@
 {% if check == TRUE %}
 <a href="#" id="deleteModal" data-toggle="modal" data-target="#delModal"></a>
-<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+<div class="modal fade" id="delModal" role="dialog" aria-labelledby="delModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content danger">
       <div class="modal-header">
@@ -52,7 +52,13 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-    if($('#delModal').hasClass('in') == false) $("#deleteModal").click();
+    if($('#delModal').hasClass('in') == false){
+        $("#deleteModal").click();
+        $("#deleteModal").remove();
+    }
+    $('#delModal').on('hidden.bs.modal', function () {
+        $("#deleteConfirm").empty();
+    });
 });
 </script>
 {% else %}

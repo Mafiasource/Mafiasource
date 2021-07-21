@@ -23,7 +23,7 @@
     #vehicles-container select[name=friend] {max-width:75px;}
 </style>
 <a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -184,7 +184,10 @@
 </div><!-- /.modal -->
 <script type="text/javascript">
 $(document).ready(function(){
-    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    if($('#modal').hasClass('in') == false){
+        $("#triggerModal").click();
+        $("#triggerModal").remove();
+    }
     $('#modal').on('hidden.bs.modal', function () {
         $("#openTab").empty();
     });

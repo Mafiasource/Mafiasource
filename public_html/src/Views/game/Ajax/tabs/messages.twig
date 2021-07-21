@@ -22,7 +22,7 @@ small.hideMobile.msg {cursor:pointer;}
 strong.msg {cursor:pointer;}
 </style>
 <a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -139,7 +139,6 @@ strong.msg {cursor:pointer;}
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-{% block javascripts %}
 <script type="text/javascript">
 if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
     var x = document.createElement('script');
@@ -182,7 +181,10 @@ $(document).on('click', '.open', function (e) {
     {% endif %}
 });
 $(document).ready(function(){
-    if($('#modal').hasClass('in') == false){ $("#triggerModal").click(); $("#triggerModal").remove();}
+    if($('#modal').hasClass('in') == false){
+        $("#triggerModal").click();
+        $("#triggerModal").remove();
+    }
     $('#modal').on('hidden.bs.modal', function () {
         {% if receiver != '' %}
             clearInterval(interval);
@@ -194,4 +196,3 @@ $(document).ready(function(){
     {% endif %}
 });
 </script>
-{% endblock javascripts %}
