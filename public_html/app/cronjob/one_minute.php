@@ -41,7 +41,7 @@ ini_set('date.timezone', 'Europe/Amsterdam');
 require_once __DIR__ . '/../config/config.php';
 
 /* Enable Autoloading with doctrine */
-require_once GAME_DOC_ROOT . '/vendor/Doctrine/Common/ClassLoader.php';
+require_once GAME_DOC_ROOT . '/vendor/autoload.php';
 $srcLoader = new ClassLoader('src'   ,  GAME_DOC_ROOT);
 $srcLoader->register();
 
