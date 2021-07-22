@@ -116,7 +116,7 @@ if($stream)
         
         $route->createActionMessage(Routing::successMessage("New master encryption keys were generated and written to the security file."));
         header("HTTP/2 301 Moved Permanently");
-        header('Location: /install/index.php?encryption=encrypted', TRUE, 302);
+        header('Location: /install/index.php?encryption=encrypted', TRUE, 301);
         exit(0);
     }
     

@@ -32,10 +32,6 @@ IndexIgnore */*
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule . index.php
-    
-    RewriteCond %{REQUEST_URI} /install/encryption.php [or]
-    RewriteRule .* - [S=1]
-    RewriteRule .? %{ENV:BASE}/install/index.php [L]
 </IfModule>
 
 <IfModule !mod_rewrite.c>
