@@ -1,329 +1,256 @@
 {% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
 
-{% apply spaceless %}
-<!DOCTYPE html>
-<html lang="{{ lang }}">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <base href="{{ docRoot }}"/>
-        <title>{{ PAGE_TITLE }}</title>
-        <link rel="publisher" href="{{ AUTHOR }}"/>
-        <meta name="description" content="{{ PAGE_DESCRIPTION }}" />
-        <meta name="keywords" content="{{ PAGE_KEYWORDS }}" />
-        <meta name="author" content="{{ AUTHOR }}" />
-        <meta name="copyright" content="2020 {{ routing.settings.domainBase }}" />
-        <meta name="application-name" content="{{ routing.settings.gamename }}" />
-        <link rel="apple-touch-icon" sizes="57x57" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png"/>
-        <link rel="apple-touch-icon" sizes="60x60" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png"/>
-        <link rel="apple-touch-icon" sizes="72x72" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png"/>
-        <link rel="apple-touch-icon" sizes="76x76" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png"/>
-        <link rel="apple-touch-icon" sizes="114x114" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png"/>
-        <link rel="apple-touch-icon" sizes="120x120" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png"/>
-        <link rel="apple-touch-icon" sizes="144x144" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png"/>
-        <link rel="apple-touch-icon" sizes="152x152" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png"/>
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ docRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png"/>
-        <link rel="icon" type="image/png" sizes="192x192"  href="{{ docRoot }}/foto/web/public/images/favicon/android-icon-192x192.png"/>
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ docRoot }}/foto/web/public/images/favicon/favicon-32x32.png"/>
-        <link rel="icon" type="image/png" sizes="96x96" href="{{ docRoot }}/foto/web/public/images/favicon/favicon-96x96.png"/>
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ docRoot }}/foto/web/public/images/favicon/favicon-16x16.png"/>
-        <link rel="manifest" href="{{ docRoot }}/web/public/images/favicon/manifest.json"/>
-        <meta name="theme-color" content="#333" />
-        <meta name="msapplication-TileColor" content="#333"/>
-        <meta name="msapplication-TileImage" content="{{ docRoot }}/foto/web/public/images/favicon/ms-icon-144x144.png"/>
-        <link href="{{ docRoot }}/web/public/bootstrap/css/bootstrap.min.css" rel="preload" as="style" />
-        <link href="{{ docRoot }}/web/public/css/homepage.min.css" rel="preload" as="style" />
-        <link href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand&display=swap" rel="preload" as="style" />
-        <link rel="preload" href="{{ docRoot }}/web/public/js/default/jquery.bootstrap.min.js" as="script" />
-        <link rel="stylesheet" href="{{ docRoot }}/web/public/bootstrap/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="{{ docRoot }}/web/public/css/homepage.min.css" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand&display=swap" />
-        <style type="text/css">
-            header#top .container h2 {display:inline-block;position:relative;top:1.35rem;line-height:1.25rem;}
-            #ajaxLoader {display:none;width:80px;height:12px;background:url({{ docRoot }}/web/public/images/ajax-loader.gif);position:absolute;}
-        </style>
-        {# Twig stylesheets #}
-        {% block stylesheets %} {% endblock stylesheets %}
-    </head>
-    <body>
-        {% block header %}
-        <header id="top" class="header">
-            <div class="container cf">
-                <div class="logo"></div>
-                <h2>| Installation</h2>
-            </div>
-        </header>
-        {% endblock header %}
-        
-        {% block content %}
-        <form name="install" action="/install/index.php" method="POST">
-            <section id="content">
-                <div class="container">
-                    {% if message.alert is iterable %}
-                        {% set alertMessage = message.alert.message %}
-                        {% if message.alert.success %}
-                            {% set type, alertClass, alertIcon = 'Success', 'alert-success', 'tick' %}
-                        {% else %}
-                            {% set type, alertClass, alertIcon = 'Error', 'alert-danger', 'cross' %}
-                        {% endif %}
-                        {{ alert.build(alertType, alertClass, alertIcon, alertMessage) }}
-                    {% else %}
-                        {% if message %}
-                            {{ message|raw }}
-                        {% endif %}
-                    {% endif %}
-                    {% if message == False or message.alert.danger %}
-                        <div class="row justify-content-center">
-                            <div class="col col-lg-6" style="margin-bottom: 1em;">
-                                <section id="login-full">
-                                    <h1>General</h1>
-                                    <table cellspacing="3" class="login-table" width="100%">
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/joystick.png" alt="Game name" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Game name:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="text" name="game_name" placeholder="{{ settings.gamename }}" value="{{ previousFields.game_name }}" autofocus="autofocus" /><br />
-                                    		</td>
-                                    	</tr>
-                                    	<tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/house.png" alt="Domain name" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Domain name:
-                                    		</td>
-                                    	</tr>
-                                    </table><small style="position: relative;top: -.25rem;margin-top: -1rem;" class="float-right">{{ protocol }}</small>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="text" name="domain" value="{% if previousFields.domain %}{{ previousFields.domain }}{% else %}{{ domain }}{% endif %}" />
-                                                <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="The game its base domain name with or without www. in front. (with preferred)"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
-                                    		</td>
-                                    	</tr>
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" alt="Database host*" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Database host*:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="text" name="db_host" placeholder="localhost" value="{{ previousFields.db_host }}" />
-                                                <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="Optional: Change to your MySQL server address that's hosted remotely"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
-                                    		</td>
-                                    	</tr>
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/database_gear.png" alt="Database name" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Database name:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="text" name="db_name" placeholder="ms" value="{{ previousFields.db_name }}" /><br />
-                                    		</td>
-                                    	</tr>
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="Database user" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Database user:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="text" name="db_user" placeholder="user" value="{{ previousFields.db_user }}" /><br />
-                                    		</td>
-                                    	</tr>
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="Database password" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Database password:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="password" name="db_pwd" /><br />
-                                    		</td>
-                                    	</tr>
-                                    </table>
-                                </section>
-                            </div>
-                            <div class="col col-lg-6">
-                                <section id="stats">
-                                    <h1>Administrator&nbsp;<a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" style="position: absolute;" class="float-right" title="Two accounts get created one for the game and another to access the AdminCP."><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a></h1>
-                                    <table cellspacing="3" class="login-table" width="100%">
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/user_suit.png" alt="Username" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Username:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="text" name="username" placeholder="MDev" value="{{ previousFields.username }}" /><br />
-                                    		</td>
-                                    	</tr>
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="Password" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Password:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="password" name="password" /><br />
-                                    		</td>
-                                    	</tr>
-                                        <tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="Password check" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Password check:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="password" name="password_check" /><br />
-                                    		</td>
-                                    	</tr>
-                                    	<tr>
-                                    		<td class="va-top">
-                                    			<table border="0" cellspacing="0" class="zeroMargin">
-                                    	<tr>
-                                    		<td>
-                                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" alt="Website address" border="0" />
-                                    		</td>
-                                    		<td>
-                                    			&nbsp;Email address:
-                                    		</td>
-                                    	</tr>
-                                    </table>		</td>
-                                    		<td>
-                                    			&nbsp;<input type="email" name="email" placeholder="info@mafiasource.nl" value="{{ previousFields.email }}" />
-                                                <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="Required to access the AdminCP."><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
-                                    		</td>
-                                    	</tr>
-                                    </table>
-                                </section>
-                            </div>
-                        </div>
-                        <br class="clear" />
-                        <div class="row">
-                            <div class="col">
-                                <div style="top: -1rem;" id="ajaxLoader"></div>
-                                <input type="hidden" name="security-token" value="{{ securityToken }}" />
-                     			<input type="submit" class="input-submit" name="submit_install" value="Install game" />
-                            </div>
-                        </div>
-                    {% else %}
-                        {% if message.alert is iterable %}
-                            {% if message.alert.success %}
-                                <div class="row">
-                                    <div class="col">
-                                        <h2>Whats next?</h2>
-                                        <p>Check to see if the state of your base domain has changed from a white empty page to a working copy of Mafiasource. If that's the case you can sefely remove this entire /install/ directory.</p>
-                                        <h2>Troubleshooting</h2>
-                                        <p>You should be able to retry this installation a number of times untill a working copy is running. Everytime a successful installation still fails, all changes can be overwritten on your next successful attempt. Every successful attempt also removes any previously created administrator accounts and only when valid database credentials were provided.</p>
-                                        <p>If this simplified game installer is not making any noticable changes you can always make these changes manually. Please refer to the README.md file provided in this /install/ directory for more information.</p>
-                                        <h2>Donate</h2>
-                                        <p>If you like what you get out of Mafiasource 3's open-source release and got any spare crypto to spend than please consider making a donation to one of the following addresses:</p>
-                                        <small class="float-right">ETH:&nbsp;<a href="https://etherscan.io/address/0x6508a7d92fF6eE978E82481C98E991D808283FE5" target="_blank" rel="noreferrer">0x6508a7d92fF6eE978E82481C98E991D808283FE5</a>&nbsp;- BTC:&nbsp;<a href="https://blockchain.com/btc/address/bc1qcj2fr8t6feaedzmy5fxmtnyyn2qe52n2re59nc" target="_blank" rel="noreferrer">bc1qcj2fr8t6feaedzmy5fxmtnyyn2qe52n2re59nc</a></small>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    {% endif %}
-                </div>
-            </section>
-        </form>
-        {% endblock content %}
-        
-        {% block footer %}
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <em><span class="hideMobile">Copyright </span>{{ "now"|date("Y") }} &copy; {{ settings.domainBase|lower }}<span class="hideTablet"> - All rights reserved.</span></em>
-                        {% if message == False %}
-                            <span class="float-right"><a href="{{ docRoot }}/install/encryption.php">&raquo; Generate new crypto keys</a></span>
-                        {% endif %}
+{% extends "install/Views/base.twig" %}
+
+{% block content %}
+<form name="install" action="/install/index.php" method="POST">
+    <section id="content">
+        <div class="container">
+            {% if message.alert is iterable %}
+                {% set alertMessage = message.alert.message %}
+                {% if message.alert.success %}
+                    {% set type, alertClass, alertIcon = 'Success', 'alert-success', 'tick' %}
+                {% else %}
+                    {% set type, alertClass, alertIcon = 'Error', 'alert-danger', 'cross' %}
+                {% endif %}
+                {{ alert.build(alertType, alertClass, alertIcon, alertMessage) }}
+            {% else %}
+                {% if message %}
+                    {{ message|raw }}
+                {% endif %}
+            {% endif %}
+            {% if message == False or message.alert.danger %}
+                <div class="row justify-content-center">
+                    <div class="col col-lg-6" style="margin-bottom: 1em;">
+                        <section id="login-full">
+                            <h1>General</h1>
+                            <table cellspacing="3" class="login-table" width="100%">
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/joystick.png" alt="Game name" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Game name:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="text" name="game_name" placeholder="{{ settings.gamename }}" value="{{ previousFields.game_name }}" autofocus="autofocus" /><br />
+                            		</td>
+                            	</tr>
+                            	<tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/house.png" alt="Domain name" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Domain name:
+                            		</td>
+                            	</tr>
+                            </table><small style="position: relative;top: -.25rem;margin-top: -1rem;" class="float-right">{{ protocol }}</small>		</td>
+                            		<td>
+                            			&nbsp;<input type="text" name="domain" value="{% if previousFields.domain %}{{ previousFields.domain }}{% else %}{{ domain }}{% endif %}" />
+                                        <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="The game its base domain name with or without www. in front. (with preferred)"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
+                            		</td>
+                            	</tr>
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" alt="Database host*" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Database host*:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="text" name="db_host" placeholder="localhost" value="{{ previousFields.db_host }}" />
+                                        <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="Optional: Change to your MySQL server address that's hosted remotely"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
+                            		</td>
+                            	</tr>
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/database_gear.png" alt="Database name" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Database name:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="text" name="db_name" placeholder="ms" value="{{ previousFields.db_name }}" /><br />
+                            		</td>
+                            	</tr>
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="Database user" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Database user:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="text" name="db_user" placeholder="user" value="{{ previousFields.db_user }}" /><br />
+                            		</td>
+                            	</tr>
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="Database password" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Database password:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="password" name="db_pwd" /><br />
+                            		</td>
+                            	</tr>
+                            </table>
+                        </section>
+                    </div>
+                    <div class="col col-lg-6">
+                        <section id="stats">
+                            <h1>Administrator&nbsp;<a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" style="position: absolute;" class="float-right" title="Two accounts get created one for the game and another to access the AdminCP."><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a></h1>
+                            <table cellspacing="3" class="login-table" width="100%">
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/user_suit.png" alt="Username" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Username:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="text" name="username" placeholder="MDev" value="{{ previousFields.username }}" /><br />
+                            		</td>
+                            	</tr>
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="Password" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Password:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="password" name="password" /><br />
+                            		</td>
+                            	</tr>
+                                <tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="Password check" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Password check:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="password" name="password_check" /><br />
+                            		</td>
+                            	</tr>
+                            	<tr>
+                            		<td class="va-top">
+                            			<table border="0" cellspacing="0" class="zeroMargin">
+                            	<tr>
+                            		<td>
+                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" alt="Website address" border="0" />
+                            		</td>
+                            		<td>
+                            			&nbsp;Email address:
+                            		</td>
+                            	</tr>
+                            </table>		</td>
+                            		<td>
+                            			&nbsp;<input type="email" name="email" placeholder="info@mafiasource.nl" value="{{ previousFields.email }}" />
+                                        <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="Required to access the AdminCP."><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
+                            		</td>
+                            	</tr>
+                            </table>
+                        </section>
                     </div>
                 </div>
-            </div>
-        </footer>
-        {% endblock footer %}
+                <br class="clear" />
+                <div class="row">
+                    <div class="col">
+                        <div style="top: -1rem;" id="ajaxLoader"></div>
+                        <input type="hidden" name="security-token" value="{{ securityToken }}" />
+             			<input type="submit" class="input-submit" name="submit_install" value="Install game" />
+                    </div>
+                </div>
+            {% else %}
+                {% if message.alert is iterable %}
+                    {% if message.alert.success %}
+                        <div class="row">
+                            <div class="col">
+                                <h2>Whats next?</h2>
+                                <p>Check to see if the state of your base domain has changed from a white empty page to a working copy of Mafiasource. If that's the case you can sefely remove this entire /install/ directory.</p>
+                                <h2>Troubleshooting</h2>
+                                <p>You should be able to retry this installation a number of times untill a working copy is running. Everytime a successful installation still fails, all changes can be overwritten on your next successful attempt. Every successful attempt also removes any previously created administrator accounts and only when valid database credentials were provided.</p>
+                                <p>If this simplified game installer is not making any noticable changes you can always make these changes manually. Please refer to the README.md file provided in this /install/ directory for more information.</p>
+                                <h2>Donate</h2>
+                                <p>If you like what you get out of Mafiasource 3's open-source release and got any spare crypto to spend than please consider making a donation to one of the following addresses:</p>
+                                <small class="float-right">ETH:&nbsp;<a href="https://etherscan.io/address/0x6508a7d92fF6eE978E82481C98E991D808283FE5" target="_blank" rel="noreferrer">0x6508a7d92fF6eE978E82481C98E991D808283FE5</a>&nbsp;- BTC:&nbsp;<a href="https://blockchain.com/btc/address/bc1qcj2fr8t6feaedzmy5fxmtnyyn2qe52n2re59nc" target="_blank" rel="noreferrer">bc1qcj2fr8t6feaedzmy5fxmtnyyn2qe52n2re59nc</a></small>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </section>
+</form>
+{% endblock content %}
+
+
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+        $('html').height($(document).height());
         
-        {# Bootstrap core JavaScript #}
-        <script type="text/javascript" src="{{ docRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $('[data-toggle="tooltip"]').tooltip();
-                $('html').height($(document).height());
-                
-                let clicked = false;
-                
-                $('input[name=submit_install]').on('click', function() {
-                  console.log(clicked);
-                  $('#ajaxLoader').show();
-                  $('input[name=submit_install]').hide();
-                  if(clicked) {
-                    event.preventDefault();
-                    setTimeout(function() {
-                      clicked = true;
-                    }, 5000);
-                  }
-                  clicked = false;
-                });
-            });
-        </script>
-        {# Twig javascripts #}
-        {% block javascripts %} {% endblock %}
-    </body>
-</html>
-{% endapply %}
+        let clicked = false;
+        
+        $('input[name=submit_install]').on('click', function() {
+          console.log(clicked);
+          $('#ajaxLoader').show();
+          $('input[name=submit_install]').hide();
+          if(clicked) {
+            event.preventDefault();
+            setTimeout(function() {
+              clicked = true;
+            }, 5000);
+          }
+          clicked = false;
+        });
+    });
+</script>
+{% endblock javascripts %}

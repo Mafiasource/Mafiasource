@@ -37,7 +37,7 @@ $route = new Routing();
 
 // Set error reporting according to DEVELOPMENT global (/app/config/config.php)
 $errRepInt = DEVELOPMENT === true ? 1 : 0;
-ini_set('log_errors', $errRepInt);
+ini_set('log_errors', 1);
 ini_set('display_errors', $errRepInt);
 ini_set('display_startup_errors', $errRepInt);
 if($errRepInt === 0)
@@ -102,26 +102,25 @@ if($stream)
         header('Location: /install/index.php', TRUE, 301);
         exit(0);
     }
-    else
+    elseif(!isset($_SESSION['install']['masterEncryption']) || (isset($_GET['encryption']) && $_GET['encryption'] === "true"))
     {
-        if(!isset($_SESSION['install']['masterEncryption']))
-        {// Copy paste of /install/encryption.php  but execute only on every first session visit:
-            $installService = new InstallService("localhost", "ms", "root", "");
-            
-            $securityFile = DOC_ROOT . '/../security.php';
-            $securityReplacesMap = array();
-            $masterEncryption = InstallService::generateMasterEncryptionIvAndKey();
-            $securityReplacesMap[8] = "define('MASTERIV', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['iv'])) . "'));";
-            $securityReplacesMap[9] = "define('MASTERKEY', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['key'])) . "'));";
-            InstallService::replaceLinesByLineNumbers($securityFile, $securityReplacesMap);
-            $_SESSION['install']['masterEncryption'] = true;
-            $route->createActionMessage(Routing::successMessage("New master encryption keys were generated and written to the security file."));
-            header("HTTP/2 302 Found");
-            header('Location: /install/encryption.php', TRUE, 302);
-            exit(0);
-        }
+        $installService = new InstallService("localhost", "ms", "root", "");
+        
+        $securityFile = DOC_ROOT . '/../security.php';
+        $securityReplacesMap = array();
+        $masterEncryption = InstallService::generateMasterEncryptionIvAndKey();
+        $securityReplacesMap[8] = "define('MASTERIV', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['iv'])) . "'));";
+        $securityReplacesMap[9] = "define('MASTERKEY', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['key'])) . "'));";
+        InstallService::replaceLinesByLineNumbers($securityFile, $securityReplacesMap);
+        $_SESSION['install']['masterEncryption'] = true;
+        
+        $route->createActionMessage(Routing::successMessage("New master encryption keys were generated and written to the security file."));
+        header("HTTP/2 301 Moved Permanently");
+        header('Location: /install/index.php?encryption=encrypted', TRUE, 302);
+        exit(0);
     }
     
+    $encrypted = isset($_GET['encryption']) && $_GET['encryption'] === "encrypted" ? true : false;
     $message = $route->setActionMessage();
     $twigVars = array(
         'routing' => $route,
@@ -130,11 +129,15 @@ if($stream)
         'message' => $message,
         'domain' => $_SERVER['HTTP_HOST'],
         'previousFields' => $_SESSION['install']['fields'],
+        'encrypted' => $encrypted,
         'protocol' => PROTOCOL,
         'offline' => OFFLINE
     );
     
-    echo $twig->render('/install/Views/index.twig', $twigVars);
+    if($encrypted)
+        echo $twig->render('/install/Views/encryption.twig', $twigVars);
+    else
+        echo $twig->render('/install/Views/index.twig', $twigVars);
     
     // Session lockdown after controller did its job
     SessionManager::sessionWriteClose();

@@ -47,7 +47,7 @@ $route = new Routing();
 
 // Set error reporting according to DEVELOPMENT global (/app/config/config.php)
 $errRepInt = DEVELOPMENT === true ? 1 : 0;
-ini_set('log_errors', $errRepInt);
+ini_set('log_errors', 1);
 ini_set('display_errors', $errRepInt);
 ini_set('display_startup_errors', $errRepInt);
 if($errRepInt === 0)

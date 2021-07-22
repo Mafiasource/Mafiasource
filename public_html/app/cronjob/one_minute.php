@@ -130,35 +130,6 @@ foreach($crimes AS $oc)
     
     if($success === true || $hurt === true || $heat === true)
     {
-        $mission = 2;
-        $missionStatics = new MissionStatics($fromCron = true);
-        $maxRp = 3;
-        $minRp = 2;
-        $stolenMoney = $security->randInt($oc['minProfit'], $oc['maxProfit']);
-        $stolenMoney = $stolenMoney / 4;
-        $rpCollected = array(1 => $security->randInt($minRp, $maxRp), $security->randInt($minRp, $maxRp), $security->randInt($minRp, $maxRp), $security->randInt($minRp, $maxRp));
-        $newLvlData = array();
-        foreach($members AS $m)
-        {
-            $newLvlData[$m['id']] = CrimesStatics::levelCalculations($m['crimesLv'], $m['crimesXp']);
-            if($m['crimesLv'] < $newLvlData[$m['id']]['levelAfter'])
-            {
-                $mTierProgress = $missionStatics->getMissionTierAndProgressByMission($mission, $m['id']);
-                
-                $missionTier = $missionStatics->missionTiers[$mission];
-                $todo = $missionTier['todo'][$mTierProgress['t']];
-                $bank = $missionTier['prizeMoney'][$mTierProgress['t']];
-                $hp = $missionTier['prizeHp'][$mTierProgress['t']];
-                if($mTierProgress['p'] + 1 >= $todo && $todo > $mTierProgress['p'])
-                {
-                    $missionStatics->payoutMissionPrize($bank, $hp, $m['id']);
-                    
-                    $params = "mission=".$missionStatics->missions[$mission]."&bank=".number_format($bank, 0, '', ',')."&hp=".number_format($hp, 0, '', ',');
-                    $crimesStatics->sendNotification($m['id'], 'USER_ACHIEVED_MISSION', $params);
-                }
-            }
-        }
-        
         $hurtPercent = $bulletsSpend = array(1 => false, false, false, false);
         if($hurt === true || $heat === true)
         {
@@ -195,10 +166,15 @@ foreach($crimes AS $oc)
                 $bulletsTo = 50;
                 $failChance = $security->randInt(1, 30);
             }
-            $hurtPercent = array(1 => $security->randInt($hurtFrom, $hurtTo), $security->randInt($hurtFrom, $hurtTo), $security->randInt($hurtFrom, $hurtTo),
-                $security->randInt($hurtFrom, $hurtTo));
-            $bulletsSpend = array(1 => $security->randInt($bulletsFrom, $bulletsTo), $security->randInt($bulletsFrom, $bulletsTo), $security->randInt($bulletsFrom, $bulletsTo),
-                $security->randInt($bulletsFrom, $bulletsTo));
+            $hurtPercent = array(
+                1 => $security->randInt($hurtFrom, $hurtTo), $security->randInt($hurtFrom, $hurtTo), $security->randInt($hurtFrom, $hurtTo),
+                $security->randInt($hurtFrom, $hurtTo)
+            );
+            $bulletsSpend = array(
+                1 => $security->randInt($bulletsFrom, $bulletsTo), $security->randInt($bulletsFrom, $bulletsTo), $security->randInt($bulletsFrom, $bulletsTo),
+                $security->randInt($bulletsFrom, $bulletsTo)
+            );
+            
             $failedChance = $security->randInt(1, 100);
             if($failedChance > $failChance)
                 $failed = true;
@@ -218,6 +194,12 @@ foreach($crimes AS $oc)
         }
         else
         {
+            $maxRp = 3;
+            $minRp = 2;
+            $stolenMoney = $security->randInt($oc['minProfit'], $oc['maxProfit']);
+            $stolenMoney = $stolenMoney / 4;
+            $rpCollected = array(1 => $security->randInt($minRp, $maxRp), $security->randInt($minRp, $maxRp), $security->randInt($minRp, $maxRp), $security->randInt($minRp, $maxRp));
+            $newLvlData = array();
             if($hurt === true)
             {
                 $i = 1;
@@ -255,9 +237,29 @@ foreach($crimes AS $oc)
                     $i++;
                 }
             }
+            $mission = 2;
+            $missionStatics = new MissionStatics($fromCron = true);
             $i = 1;
             foreach($members AS $m)
             {
+                // Mission check each user only on any success (xp gain) and before its data apply (commitCrimeSuccess)
+                $newLvlData[$m['id']] = CrimesStatics::levelCalculations($m['crimesLv'], $m['crimesXp']);
+                if($m['crimesLv'] < $newLvlData[$m['id']]['levelAfter'])
+                {
+                    $mTierProgress = $missionStatics->getMissionTierAndProgressByMission($mission, $m['id']);
+                    
+                    $missionTier = $missionStatics->missionTiers[$mission];
+                    $todo = $missionTier['todo'][$mTierProgress['t']];
+                    $bank = $missionTier['prizeMoney'][$mTierProgress['t']];
+                    $hp = $missionTier['prizeHp'][$mTierProgress['t']];
+                    if($mTierProgress['p'] + 1 >= $todo && $todo > $mTierProgress['p'])
+                    {
+                        $missionStatics->payoutMissionPrize($bank, $hp, $m['id']);
+                        
+                        $params = "mission=".$missionStatics->missions[$mission]."&bank=".number_format($bank, 0, '', ',')."&hp=".number_format($hp, 0, '', ',');
+                        $crimesStatics->sendNotification($m['id'], 'USER_ACHIEVED_MISSION', $params);
+                    }
+                }
                 $crimesStatics->commitCrimeSuccess(
                     $m['id'], $stolenMoney, $rpCollected[$i], $newLvlData[$m['id']]['levelAfter'], $newLvlData[$m['id']]['xpAfter'], $oc['waitingTimeCompletion'], $hurtPercent[$i],
                     $bulletsSpend[$i]
