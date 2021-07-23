@@ -13,6 +13,7 @@
 /web/vendor/*
 /web/public/cache/*
 
+/web/composer.lock
 /web/public/images/*
 !web/public/images/.htaccess
 !web/public/images/captcha/
@@ -23,4 +24,5 @@
 
 # Root files
 /.ftpquota
-/.composer.phar
+/composer.phar
+/composer.lock
