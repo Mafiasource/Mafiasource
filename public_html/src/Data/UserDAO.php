@@ -571,7 +571,7 @@ class UserDAO extends DBConfig
         {
             $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$id."/user/email/";
             $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
-            $sendTo = $decryptedEmail = $security->decrypt($sendTo, $cryptKeys['iv'], $cryptKeys['key']);
+            $sendTo = $security->decrypt($sendTo, $cryptKeys['iv'], $cryptKeys['key']);
         }
 
         global $language;
@@ -1165,7 +1165,6 @@ class UserDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            global $language;
             $hpLogs = array();
             $statement2 = $this->dbh->prepare("
                 SELECT hl.*, DATE_FORMAT( hl.`date`, '".$this->dateFormat."' ) AS `date`, u.`username`

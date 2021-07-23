@@ -402,7 +402,6 @@ class GetLanguageContent
     
     public function honorPointsLangs()
     {
-        global $route;
         $langs = array(
             'EXCHANGE' => "Wisselen",
             'EXCHANGE_SINGLE' => "Wissel",
@@ -665,7 +664,6 @@ class GetLanguageContent
     
     public function murderLogLangs()
     {
-        global $route;
         $langs = array(
             'ATTACK' => "Aanval",
             'ATTACKED_BY' => "Aangevallen door",
