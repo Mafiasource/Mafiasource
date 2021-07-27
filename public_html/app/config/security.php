@@ -4,14 +4,6 @@
  * This security class may sometimes be not as secure as you think.
  * Please always advise the latest reference manuals on security & best-practices.
  * 
- * IMPORTANT NOTICE regarding AntiXSS class:
- * The style element attribute was commented in the antixss class for styling purposes with ckeditor.
- * XSS attack are still blocked due to their various keyword still being santizized.
- * HOWEVER, this class won't protect us against a clickjacking attack for example (pure style based)
- * What does this mean? Team must always remove any of those types of attacks from the website.
- * Can be fixed another way? Sure write another set of rules to only allow needed ckeditor stylings.
- * Now that i think about it malicious js inside css also possible beware..
- * 
  * DISCLAIMER
  * Mafiasource 3 custom encryption is not done by cryptographic professionals.
  **/
