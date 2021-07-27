@@ -170,56 +170,75 @@ class Security
         if (!file_exists($saveDir))
             mkdir($saveDir, 0755, true);
         
-        $ourIvFileName = $saveDir . "iv.txt";
-        if(file_exists($ourIvFileName)) unlink($ourIvFileName);
-        $ourIvFileHandle = fopen($ourIvFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
-        fwrite($ourIvFileHandle, $iv);
-        fclose($ourIvFileHandle);
-        chmod($ourIvFileName, 0600);
-        $ourKeyFileName = $saveDir . "key.txt";
-        if(file_exists($ourKeyFileName)) unlink($ourKeyFileName);
-        $ourKeyFileHandle = fopen($ourKeyFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
-        fwrite($ourKeyFileHandle, $key);
-        fclose($ourKeyFileHandle);
-        chmod($ourKeyFileName, 0600);
+        $ivFileName = $saveDir . "iv.txt";
+        if(file_exists($ivFileName)) unlink($ivFileName);
+        $ivFileHandle = fopen($ivFileName, 'w') or null;
+        if($ivFileHandle)
+        {
+            fwrite($ivFileHandle, $iv);
+            fclose($ivFileHandle);
+            chmod($ivFileName, 0600);
+        }
+        $keyFileName = $saveDir . "key.txt";
+        if(file_exists($keyFileName)) unlink($keyFileName);
+        $keyFileHandle = fopen($keyFileName, 'w') or null;
+        if($keyFileHandle)
+        {
+            fwrite($keyFileHandle, $key);
+            fclose($keyFileHandle);
+            chmod($keyFileName, 0600);
+        }
     }
     
     public function encrypt($str)
     {
         $str = (string)$str;
         $ciphering = "AES-128-CTR";
-        $ivLength = openssl_cipher_iv_length($ciphering);
-        $options = 0;
-        $iv = openssl_random_pseudo_bytes($ivLength);
+        $ivlen = openssl_cipher_iv_length($ciphering);
+        $iv = openssl_random_pseudo_bytes($ivlen);
         $key = openssl_digest($this->randStr(), 'MD5', TRUE);
-        $encryption = openssl_encrypt($str, $ciphering, $key, $options, $iv);
-        
+        $encryption = openssl_encrypt($str, $ciphering, $key, OPENSSL_RAW_DATA, $iv);
         return array('encryption' => $encryption, 'iv' => $iv, 'key' => $key);
     }
     
     /* Decrypt sensitive user data */
     public function grabEncryptionIvAndKey($saveDir)
     {
-        $ourIvFileName = $saveDir . "iv.txt";
-        $ivFile = fopen($ourIvFileName, 'r');
-        $iv = fgets($ivFile);
-        $iv = file_get_contents($ourIvFileName);
-        fclose($ivFile);
-        $ourKeyFileName = $saveDir . "key.txt";
-        $keyFile = fopen($ourKeyFileName, 'r');
-        $key = fgets($keyFile);
-        $key = file_get_contents($ourKeyFileName);
-        fclose($keyFile);
-        
+        $iv = $key = "";
+        $ivFileName = $saveDir . "iv.txt";
+        $ivFile = fopen($ivFileName, 'r') or null;
+        if($ivFile)
+        {
+            $iv = fgets($ivFile);
+            $iv = file_get_contents($ivFileName);
+            fclose($ivFile);
+        }
+        $keyFileName = $saveDir . "key.txt";
+        $keyFile = fopen($keyFileName, 'r') or null;
+        if($keyFile)
+        {
+            $key = fgets($keyFile);
+            $key = file_get_contents($keyFileName);
+            fclose($keyFile);
+        }
         return array('iv' => $iv, 'key' => $key);
     }
     
     public function decrypt($encryption, $iv, $key)
     {
-        $ciphering = "AES-128-CTR"; 
-        $options = 0;
-        $decryption = openssl_decrypt($encryption, $ciphering, $key, $options, $iv);
-        
-        return trim($decryption);
+        $ciphering = "AES-128-CTR";
+        $hmac = hash_hmac('sha256', $encryption, $key, true);
+        $ciphertext = base64_encode($iv. $hmac . $encryption);
+        $check = base64_decode($ciphertext);
+        $ivlen = openssl_cipher_iv_length($ciphering);
+        $iv = substr($check, 0, $ivlen);
+        $hmac = substr($check, $ivlen, $sha2len = 32);
+        $ciphertext_raw = substr($check, $ivlen + $sha2len);
+        $decryption = openssl_decrypt($ciphertext_raw, $ciphering, $key, OPENSSL_RAW_DATA, $iv);
+        $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, true);
+        if(hash_equals($hmac, $calcmac))
+        {
+            return $decryption;
+        }
     }
 }
