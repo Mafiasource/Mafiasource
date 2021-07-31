@@ -2776,7 +2776,7 @@ CREATE TABLE `user`  (
   `pimpAmount` int NOT NULL DEFAULT 0,
   `smugglingLv` smallint NOT NULL DEFAULT 1,
   `smugglingXp` float(5, 2) NOT NULL DEFAULT 0.00,
-  `smugglingProfit` bigint NOT NULL,
+  `smugglingProfit` bigint NOT NULL DEFAULT 0,
   `smugglingTrips` int NOT NULL DEFAULT 0,
   `smugglingUnits` int NOT NULL DEFAULT 0,
   `smugglingBusts` int NOT NULL DEFAULT 0,
