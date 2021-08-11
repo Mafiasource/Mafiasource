@@ -25,11 +25,6 @@ class HitlistService
         return $this->data->getRecordsCount();
     }
     
-    public function getHitlist($from, $to)
-    {
-        return $this->data->getHitlist($from, $to);
-    }
-    
     public function orderHitlistRecord($post)
     {
         global $security;
@@ -177,6 +172,11 @@ class HitlistService
             
             return Routing::successMessage($replacedMessage);
         }
+    }
+    
+    public function getHitlist($from, $to)
+    {
+        return $this->data->getHitlist($from, $to);
     }
     
     public function isUserOnHitlist($userID)

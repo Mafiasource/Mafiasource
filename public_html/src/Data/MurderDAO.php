@@ -285,6 +285,7 @@ class MurderDAO extends DBConfig
                 DELETE FROM `fifty_game` WHERE `userID`= :uid AND `type`!='2';
                 UPDATE `ground` SET `userID`='0' WHERE `userID`= :uid;
                 DELETE FROM `gym_competition` WHERE `userID`= :uid;
+                DELETE FROM `hitlist` WHERE `userID`= :uid;
                 DELETE FROM `market` WHERE `userID`= :uid AND (`type`!='0' AND `type`!='2') OR ((`type`='0' OR `type`='2') AND `requested`='1');
                 UPDATE `possess` SET `userID`='0', `profit`='0', `profit_hour`='0', `stake`='50000' WHERE `userID`= :uid;
                 DELETE FROM `possess_transfer` WHERE `senderID`= :uid OR `receiverID`= :uid;
@@ -327,11 +328,11 @@ class MurderDAO extends DBConfig
         }
     }
     
-    public function payOutAttackerByVictimOnHitlist($aid, $money)
+    public function payOutKillerHitlist($kid, $money)
     {
         if(isset($_SESSION['UID']))
         {
-            $this->con->setData("UPDATE `user` SET `bank`=`bank`+ :money WHERE `id`= :aid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':money' => $money, ':aid' => $aid));
+            $this->con->setData("UPDATE `user` SET `bank`=`bank`+ :money WHERE `id`= :kid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':money' => $money, ':kid' => $kid));
         }
     }
     

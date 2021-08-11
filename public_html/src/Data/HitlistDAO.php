@@ -145,5 +145,5 @@ class HitlistDAO extends DBConfig
                 DELETE FROM `hitlist` WHERE `userID`= :huid
             ", array(':price' => $price, ':uid' => $_SESSION['UID'], ':huid' => $userID));
         }
-    } 
+    }
 }

@@ -336,7 +336,7 @@ class MurderService
                 $hitlistData = $hitlistService->getHitlistDataByUserID($victimID);
                 if(is_object($hitlistData))
                 {
-                    $this->data->payOutAttackerByVictimOnHitlist($userData->getId(), $hitlistData->getPrize());
+                    $this->data->payOutKillerHitlist($userData->getId(), $hitlistData->getPrize());
                     
                     $replaces = array(
                         array('part' => $victimProfile->getUsername(), 'message' => $l['MURDER_PLAYER_ON_HITLIST_SUCCESS'], 'pattern' => '/{victim}/'),
@@ -394,7 +394,8 @@ class MurderService
                     $hitlistData = $hitlistService->getHitlistDataByUserID($userData->getId());
                     if(is_object($hitlistData))
                     {
-                        $this->data->payOutAttackerByVictimOnHitlist($userData->getId(), $hitlistData->getPrize());
+                        $this->data->payOutKillerHitlist($victimID, $hitlistData->getPrize());
+                        
                         // Send notification
                         $notification = new NotificationService();
                         $params = "attacker=".$userData->getUsername()."&stolenMoney=".number_format($stolenMoney, 0, '', ',')."&prize=".number_format($hitlistData->getPrize(), 2, '', ',');
@@ -423,7 +424,7 @@ class MurderService
                     $died[] = $victimProfile;
                 }
     			elseif($healthLeft > 0 && $victimHealthLeft < 1)
-                { //  Victim died, attacked survived
+                { //  Victim died, attacker survived
                     $result = "10";
                     $stolenMoney = round($victimProfile->getCash() * ($security->randInt(20, 25) / 100), 0);
                     
@@ -438,7 +439,7 @@ class MurderService
                     $hitlistData = $hitlistService->getHitlistDataByUserID($victimID);
                     if(is_object($hitlistData))
                     {
-                        $this->data->payOutAttackerByVictimOnHitlist($userData->getId(), $hitlistData->getPrize());
+                        $this->data->payOutKillerHitlist($userData->getId(), $hitlistData->getPrize());
                         
                         $replaces = array(
                             array('part' => $victimProfile->getUsername(), 'message' => $l['MURDER_PLAYER_ON_HITLIST_SUCCESS'], 'pattern' => '/{victim}/'),
