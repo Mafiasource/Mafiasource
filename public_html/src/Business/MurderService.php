@@ -334,7 +334,7 @@ class MurderService
                 
                 $hitlistService = new HitlistService();
                 $hitlistData = $hitlistService->getHitlistDataByUserID($victimID);
-                if(is_object($hitlistData))
+                if(is_object($hitlistData) && $hitlistData->getOrdererID() != $userData->getId())
                 {
                     $this->data->payOutKillerHitlist($userData->getId(), $hitlistData->getPrize());
                     
@@ -437,7 +437,7 @@ class MurderService
                     
                     $hitlistService = new HitlistService();
                     $hitlistData = $hitlistService->getHitlistDataByUserID($victimID);
-                    if(is_object($hitlistData))
+                    if(is_object($hitlistData) && $hitlistData->getOrdererID() != $userData->getId())
                     {
                         $this->data->payOutKillerHitlist($userData->getId(), $hitlistData->getPrize());
                         
