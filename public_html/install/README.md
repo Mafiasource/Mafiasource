@@ -1,7 +1,7 @@
 ## Getting started with a few notes
 This install directory should be deleted after a successful installation.
 In this document '/../' refers to one directory above the rooted public_html directory on the web server.
-Don't forget to add the [missing resources (download)](https://www.mafiasource.nl/web/downloads/public_html.zip) to your public_html directory.
+Don't forget to add the [missing resources (download)](https://download.mafiasource.nl/web/downloads/public_html.zip) to your public_html directory.
 /admin access equals superpowers, beware to whom you grant access.
 Admin fields that seem locked can be overwritten.
 
@@ -9,9 +9,8 @@ Admin fields that seem locked can be overwritten.
 This application runs stable on web servers with the following (min) requirements
 - Web server 128MB+ RAM - 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
 - Apache 2
-- PHP 5.6 or higher not supported anymore due to used dependencies
 - PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD
-- MySQL 13 or higher or MariaDB 10 or higher
+- MySQL 8 or higher or MariaDB 10 or higher
 
 ## Dependencies
 Only 1 comes bundled within the source its missing resources, customized /web/vendor/ckeditorgame/

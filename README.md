@@ -23,7 +23,7 @@ Contents of the web server home directory (one directory above public_html) wher
 - public_html/ the actual web app root directory.
 
 ## Missing resources
-Can be downloaded from: https://www.mafiasource.nl/web/downloads/public_html.zip
+Can be downloaded from: https://download.mafiasource.nl/web/downloads/public_html.zip
 These include all images excluded in gitignore and 1 custom ckeditor(game) package.
 
 ## Donate
