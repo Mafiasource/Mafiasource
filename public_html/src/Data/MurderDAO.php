@@ -663,10 +663,10 @@ class MurderDAO extends DBConfig
                 ON (ml.`attackerID`=a.`id`)
                 LEFT JOIN `user` AS v
                 ON (ml.`victimID`=v.`id`)
-                WHERE ml.`attackerID` IN (".$ids.") AND ml.`active`='1' AND ml.`deleted`='0'
+                WHERE ml.`attackerID` IN(".$ids.") AND ml.`active`='1' AND ml.`deleted`='0'
                 ORDER BY `time` DESC
                 LIMIT $from, $to
-            ", array(':uid' => $_SESSION['UID']));
+            ");
             
             $attackList = array();
             foreach($attacks AS $row)
@@ -692,10 +692,10 @@ class MurderDAO extends DBConfig
                 ON (ml.`attackerID`=a.`id`)
                 LEFT JOIN `user` AS v
                 ON (ml.`victimID`=v.`id`)
-                WHERE ml.`victimID` IN (".$ids.") AND ml.`active`='1' AND ml.`deleted`='0'
+                WHERE ml.`victimID` IN(".$ids.") AND ml.`active`='1' AND ml.`deleted`='0'
                 ORDER BY `time` DESC
                 LIMIT $from, $to
-            ", array(':uid' => $_SESSION['UID']));
+            ");
             
             $hitList = array();
             foreach($hits AS $row)

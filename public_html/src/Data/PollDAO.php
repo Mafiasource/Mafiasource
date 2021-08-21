@@ -63,7 +63,7 @@ class PollDAO extends DBConfig
                     DATE_FORMAT(pq.`startDate`, '".$this->dateFormat."') AS `startDate`,
                     (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pq.`id` AND `active`='1' AND `deleted`='0') AS `votes`
                 FROM `poll_question` AS pq
-                WHERE pq.`active`='1' AND pq.`deleted`='0' AND pq.`endDate` IS NULL
+                WHERE pq.`active`='1' AND pq.`deleted`='0' AND (pq.`endDate` IS NULL OR pq.`endDate`='0000-00-00 00:00:00')
             ");
             
             $list = array();
@@ -150,7 +150,7 @@ class PollDAO extends DBConfig
                     DATE_FORMAT(pq.`endDate`, '".$this->dateFormat."') AS `endDateFormat`,
                     (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pq.`id` AND `active`='1' AND `deleted`='0') AS `votes`
                 FROM `poll_question` AS pq
-                WHERE pq.`active`='1' AND pq.`deleted`='0' AND pq.`endDate` IS NOT NULL
+                WHERE pq.`active`='1' AND pq.`deleted`='0' AND pq.`endDate` IS NOT NULL AND pq.`endDate`!='0000-00-00 00:00:00'
                 ORDER BY `endDate` DESC
             ");
             
@@ -202,7 +202,7 @@ class PollDAO extends DBConfig
                 SELECT pq.`id`, pq.`question_".$this->lang."` AS `question`, pq.`description_".$this->lang."` AS `description`, pq.`startDate`,
                     (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pq.`id` AND `active`='1' AND `deleted`='0') AS `votes`
                 FROM `poll_question` AS pq
-                WHERE pq.`id`= :pqid AND pq.`active`='1' AND pq.`deleted`='0' AND pq.`endDate` IS NULL
+                WHERE pq.`id`= :pqid AND pq.`active`='1' AND pq.`deleted`='0' AND (pq.`endDate` IS NULL OR pq.`endDate`='0000-00-00 00:00:00')
             ", array(':pqid' => $id));
             
             if(isset($row['id']) && $row['id'] > 0)
