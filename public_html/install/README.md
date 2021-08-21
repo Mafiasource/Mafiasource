@@ -9,8 +9,7 @@ Admin fields that seem locked can be overwritten.
 This application runs stable on web servers with the following (min) requirements
 - Web server 128MB+ RAM - 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
 - Apache 2
-- PHP 5.6 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS, GD
-- PHP 7.2 or higher with extensions PDO, PDO_MYSQL, DOM, IMAP, SOCKETS, GD (Preferred)
+- PHP 5.6 or higher not supported anymore due to used dependencies
 - PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD
 - MySQL 13 or higher or MariaDB 10 or higher
 
@@ -135,7 +134,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 - Missing resources can cause internal server error on strict configured web servers
 - Install any missing dependencies
 - Enable any missing extensions
-- Make sure PHP5.6 or above is installed
+- Make sure PHP 8.0 or above is installed
 - Check if Apache2 is functioning correctly, any hints within apache error logs?
 - Remove /.htaccess to see if server error disappears if so test piece by piece to find error causing lines
 - DEVELOPMENT global set to true can enable live errors
