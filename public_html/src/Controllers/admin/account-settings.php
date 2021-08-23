@@ -14,7 +14,7 @@ if(isset($_POST) && !empty($_POST))
         
         $mmbr = new AdminService("member");
         $memberSettings = $mmbr->getTableRowById($_SESSION['cp-logon']['UID']);
-        if(!MemberService::is_email($data['email']) || ($member->emailExists($data['email']) && $data['email'] != $memberSettings[0][0]['email']))
+        if(isset($data['email']) && (!MemberService::is_email($data['email']) || ($member->emailExists($data['email']) && $data['email'] != $memberSettings[0][0]['email'])))
             $response = $route->errorMessage("Je hebt een ongeldig email adres opgegeven!");
         else
             $response = $member->saveNewAccountSettings($data);
