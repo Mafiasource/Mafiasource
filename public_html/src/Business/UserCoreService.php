@@ -15,7 +15,8 @@ class UserCoreService
     public function __construct()
     {
         $this->data = new UserCoreDAO();
-        global $lang;
+        global $route;
+        $lang = $route->getLang();
         if($lang == 'en') $this->dateFormat = "M j, g:i:s A"; // PHP format
     }
 
