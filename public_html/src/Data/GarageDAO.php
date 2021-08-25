@@ -169,7 +169,7 @@ class GarageDAO extends DBConfig
         }
     }
     
-    public function hasSpaceLeftInGarage($stateID)
+    public function hasSpaceLeftInGarage($stateID, $returnNum = false)
     {
         if(isset($_SESSION['UID']))
         {
@@ -186,10 +186,16 @@ class GarageDAO extends DBConfig
                 
                 $statement = $this->dbh->prepare($this->garageQry);
                 $statement->execute(array(':gid' => $gid));
-                if($statement->rowCount() >= $sVal)
+                $num = $statement->rowCount();
+                if($num >= $sVal)
                     return FALSE;
                 else
-                    return TRUE;
+                {
+                    if($returnNum)
+                        return (int)$num;
+                    else
+                        return TRUE;
+                }
             }
         }
         return FALSE;
@@ -222,7 +228,7 @@ class GarageDAO extends DBConfig
         }
     }
     
-    public function hasSpaceLeftInFamilyGarage($famID)
+    public function hasSpaceLeftInFamilyGarage($famID, $returnNum = false)
     {
         if(isset($_SESSION['UID']))
         {
@@ -239,10 +245,16 @@ class GarageDAO extends DBConfig
                 
                 $statement = $this->dbh->prepare($this->familyGarageQry);
                 $statement->execute(array(':gid' => $gid));
-                if($statement->rowCount() >= $sVal)
+                $num = $statement->rowCount();
+                if($num >= $sVal)
                     return FALSE;
                 else
-                    return TRUE;
+                {
+                    if($returnNum)
+                        return (int)$num;
+                    else
+                        return TRUE;
+                }
             }
         }
         return FALSE;
@@ -250,53 +262,17 @@ class GarageDAO extends DBConfig
     
     public function spaceLeftInGarage($stateID, $maxSpace)
     {
-        if(isset($_SESSION['UID']))
-        {
-            $statement = $this->dbh->prepare($this->garageSizeByStateQry);
-            $statement->execute(array(':uid' => $_SESSION['UID'], ':stateID' => $stateID));
-            $row = $statement->fetch();
-            
-            $gid = isset($row['id']) ? $row['id'] : null;
-            $size = isset($row['size']) ? $row['size'] : null;
-            
-            if($gid && $size)
-            {
-                $sVal = $this->getSpaceByGarageOption($size);
-                
-                $statement = $this->dbh->prepare($this->garageQry);
-                $statement->execute(array(':gid' => $gid));
-                if($statement->rowCount() >= $sVal)
-                    return FALSE;
-                else
-                    return $maxSpace - $statement->rowCount();
-            }
-        }
+        if($num = $this->hasSpaceLeftInGarage($stateID, true))
+            return $maxSpace - $num;
+        
         return FALSE;
     }
     
     public function spaceLeftInFamilyGarage($famID, $maxSpace)
     {
-        if(isset($_SESSION['UID']))
-        {
-            $statement = $this->dbh->prepare($this->familyGarageSizeQry);
-            $statement->execute(array(':fid' => $famID));
-            $row = $statement->fetch();
-            
-            $gid = isset($row['id']) ? $row['id'] : null;
-            $size = isset($row['size']) ? $row['size'] : null;
-            
-            if($gid && $size)
-            {
-                $sVal = $this->getFamilySpaceByGarageOption($size);
-                
-                $statement = $this->dbh->prepare($this->familyGarageQry);
-                $statement->execute(array(':gid' => $gid));
-                if($statement->rowCount() >= $sVal)
-                    return FALSE;
-                else
-                    return $maxSpace - $statement->rowCount();
-            }
-        }
+        if($num = $this->hasSpaceLeftInFamilyGarage($famID, true))
+            return $maxSpace - $num;
+        
         return FALSE;
     }
     
