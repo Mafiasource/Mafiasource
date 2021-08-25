@@ -6,6 +6,7 @@ use src\Business\MurderService;
 use src\Business\DonatorService;
 use src\Business\PossessionService;
 use src\Data\config\DBConfig;
+use src\Data\PossessionDAO;
 use src\Entities\Detective;
 use src\Entities\MurderLog;
 use src\Entities\User;
@@ -144,10 +145,8 @@ class MurderDAO extends DBConfig
                 else
                     $uid = $_SESSION['UID'];
                 
-                $this->con->setData("
-                    UPDATE `possess` SET `userID`= :uid, `profit`='0', `profit_hour`='0' WHERE `id`= :pid AND `userID`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1;
-                    UPDATE `user` SET `bank`='0' WHERE `id`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1
-                ", array(':uid' => $uid, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $possessionOwner));
+                $possessionData = new PossessionDAO();
+                $possessionData->takeOverOwner($pData, $uid, $possessionOwner);
                 
                 if($uid === 0)
                     return array('took-over' => false, 'reason' => $reason);
@@ -537,10 +536,8 @@ class MurderDAO extends DBConfig
             if(is_object($pData)) $deskOwner = $pData->getPossessDetails()->getUserID();
             if(is_object($pData) && $deskOwner > 0 && $deskOwner != $_SESSION['UID'])
             {
-                $this->con->setData("
-                    UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                    UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1
-                ", array(':profit' => $profitOwner, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $deskOwner));
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, $profitOwner, $deskOwner);
             }
         }
     }

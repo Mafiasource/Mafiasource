@@ -3,7 +3,10 @@
 namespace src\Data;
 
 use src\Data\config\DBConfig;
+use src\Data\PossessionDAO;
 use src\Entities\BulletFactory;
+use src\Entities\Possession;
+use src\Entities\Possess;
 
 class BulletFactoryDAO extends DBConfig
 {
@@ -82,10 +85,12 @@ class BulletFactoryDAO extends DBConfig
             $owner = $this->con->getDataSR("SELECT `userID` FROM `possess` WHERE `id`= :pid AND `active`='1' AND `deleted`='0'", array(':pid' => $bfInfo->getPossessID()));
             if($owner['userID'] > 0 && $owner['userID'] != $_SESSION['UID'])
             {
-                $this->con->setData("
-                    UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                    UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                ", array(':profit' => $profitOwner, ':pid' => $bfInfo->getPossessID(), ':oid' => $owner['userID']));
+                $pData = new Possession();
+                $possess = new Possess();
+                $possess->setId($bfInfo->getPossessID());
+                $pData->setPossessDetails($possess);
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, abs($profitOwner), $owner['userID']);
             }
         }
     }

@@ -3,6 +3,7 @@
 namespace src\Data;
 
 use src\Data\config\DBConfig;
+use src\Data\PossessionDAO;
 use src\Entities\Airplane;
 use src\Entities\Protection;
 use src\Entities\Weapon;
@@ -148,10 +149,8 @@ class EquipmentDAO extends DBConfig
                 if(is_object($pData)) $storesOwner = $pData->getPossessDetails()->getUserID();
                 if(is_object($pData) && $storesOwner > 0 && $storesOwner != $_SESSION['UID'])
                 {
-                    $this->con->setData("
-                        UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                        UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                    ", array(':profit' => $profitOwner, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $storesOwner));
+                    $possessionData = new PossessionDAO();
+                    $possessionData->applyProfitForOwner($pData, $profitOwner, $storesOwner);
                 }
             }
         }

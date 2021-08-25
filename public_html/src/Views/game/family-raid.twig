@@ -176,7 +176,7 @@ input[name=bullets] {max-width:60px;}
                                                 <select name="vehicleID" class="supplySelect">
                                                     <option value="0">{{ langs.MAKE_A_CHOICE }}</option>
                                                     {% for v in vehicles %}
-                                                        <option value="{{ v.getId }}">{{ v.getVehicleName }}</option>
+                                                        <option value="{{ v.getId }}">{{ v.vehicle.getName }}</option>
                                                     {% endfor %}
                                                     {% if vehicles is empty %}
                                                         <option value="-1">{{ langs.HIRE_VEHICLE }}</option>

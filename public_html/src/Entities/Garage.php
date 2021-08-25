@@ -9,12 +9,10 @@ class Garage
     private $id;
     private $userGarageID;
     private $famGarageID;
-    private $vehicleID;
-    private $vehicleName;
-    private $vehicleValue;
-    private $vehiclePicture;
+    private $value;
     private $damage;
     private $repairCosts;
+    private $vehicle;
     
     public function getId(){
 		return $this->id;
@@ -40,38 +38,14 @@ class Garage
 		$this->famGarageID = $famGarageID;
 	}
     
-	public function getVehicleID(){
-		return $this->vehicleID;
+    public function getValue(){
+		return $this->value;
 	}
 
-	public function setVehicleID($vehicleID){
-		$this->vehicleID = $vehicleID;
-	}
-
-	public function getVehicleName(){
-		return $this->vehicleName;
-	}
-
-	public function setVehicleName($vehicleName){
-		$this->vehicleName = $vehicleName;
+	public function setValue($value){
+		$this->value = $value;
 	}
     
-    public function getVehicleValue(){
-		return $this->vehicleValue;
-	}
-
-	public function setVehicleValue($vehicleValue){
-		$this->vehicleValue = $vehicleValue;
-	}
-
-	public function getVehiclePicture(){
-		return $this->vehiclePicture;
-	}
-
-	public function setVehiclePicture($vehiclePicture){
-		$this->vehiclePicture = $vehiclePicture;
-	}
-
 	public function getDamage(){
 		return $this->damage;
 	}
@@ -86,5 +60,13 @@ class Garage
 
 	public function setRepairCosts($repairCosts){
 		$this->repairCosts = $repairCosts;
+	}
+    
+    public function getVehicle(){
+		return $this->vehicle;
+	}
+
+	public function setVehicle($vehicle){
+		$this->vehicle = $vehicle;
 	}
 }

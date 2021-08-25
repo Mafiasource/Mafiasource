@@ -3,6 +3,7 @@
 namespace src\Data;
 
 use src\Data\config\DBConfig;
+use src\Data\PossessionDAO;
 use src\Entities\Lottery;
 use src\Entities\LotteryWinner;
 
@@ -70,10 +71,8 @@ class LotteryDAO extends DBConfig
             if(is_object($pData)) $lotteryOwner = $pData->getPossessDetails()->getUserID();
             if(is_object($pData) && $lotteryOwner > 0 && $lotteryOwner != $_SESSION['UID'])
             {
-                $this->con->setData("
-                    UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                    UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                ", array(':profit' => $profitOwner, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $lotteryOwner));
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, $profitOwner, $lotteryOwner);
             }
         }
     }

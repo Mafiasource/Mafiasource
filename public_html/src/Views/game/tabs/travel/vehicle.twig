@@ -47,7 +47,7 @@
                             <select name="vehicle">
                                 {% if vehicles is not empty %}
                                     {% for v in vehicles %}
-                                        <option value="{{ v.getId }}" {% if selectedVehicle == v.getId %}selected="selected"{% endif %}>{{ v.getVehicleName }}</option>
+                                        <option value="{{ v.getId }}" {% if selectedVehicle == v.getId %}selected="selected"{% endif %}>{{ v.vehicle.getName }}</option>
                                     {% endfor %}
                                 {% else %}
                                     <option value="0">{% if lang == 'nl'%}{{ langs.NONE }}{% else %}No{% endif %} {{ langs.VEHICLE|lower }}</option>

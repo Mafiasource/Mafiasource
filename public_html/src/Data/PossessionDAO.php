@@ -18,11 +18,11 @@ class PossessionDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
     }
     
     public function __destruct()
@@ -45,110 +45,14 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            $list['positionlessPossessions'] = $this->getPositionlessPossessions();
-            $list['statePossessions'] = $this->getStatePossessionsByState($stateID);
-            $list['cityPossessions'] = $this->getCityPossessionsByCity($stateID, $cityID);
+            $list['positionlessPossessions'] = $this->getPossessions();
+            $list['statePossessions'] = $this->getPossessions($stateID);
+            $list['cityPossessions'] = $this->getPossessions($stateID, $cityID);
             return $list;
         }
     }
     
-    public function getPositionlessPossessions()
-    {
-        if(isset($_SESSION['UID']))
-        {
-            global $langs;
-            
-            $state = new StateService();
-            $statement = $this->dbh->prepare("
-                SELECT p2.`id` AS `id`, p.`id` AS `pid`, p2.`name_".$this->lang."` AS `name`, p2.`picture`, p2.`price`, p.`stateID`, p.`cityID`, p.`userID`, u.`username`, p.`profit`
-                FROM `possess` AS p
-                LEFT JOIN `possession` AS p2
-                ON (p.`pID`=p2.`id`)
-                LEFT JOIN `user` AS u
-                ON (p.`userID`=u.`id`)
-                WHERE p.`stateID`= '0' AND p.`cityID` = '0'
-                AND p.`active`='1' AND p.`deleted`='0'
-                AND p2.`active`='1' AND p2.`deleted`='0'
-                ORDER BY p.`id` ASC
-            ");
-            $statement->execute();
-            $list = array();
-            foreach($statement AS $row)
-            {
-                $possession = new Possession();
-                $possession->setId($row['id']);
-                $possession->setName($row['name']);
-                $possession->setPicture($row['picture']);
-                $possession->setPrice($row['price']);
-                
-                $possess = new Possess();
-                $possess->setId($row['pid']); // possess record id
-                $possess->setPID($row['id']); // possession record id
-                $possess->setStateID($row['stateID']);
-                $possess->setState($state->getStateNameById($row['stateID']));
-                $possess->setCityID($row['cityID']);
-                $possess->setCity($state->getCityNameById($row['cityID']));
-                $possess->setUserID($row['userID']);
-                $possess->setUsername($row['username']);
-                if(empty($row['username'])) $possess->setUsername($langs['NONE']);
-                $possess->setProfit($row['profit']);
-                $possession->setPossessDetails($possess);
-                
-                array_push($list, $possession);
-            }
-            return $list;
-        }
-    }
-    
-    public function getStatePossessionsByState($stateID)
-    {
-        if(isset($_SESSION['UID']))
-        {
-            global $langs;
-            
-            $state = new StateService();
-            $statement = $this->dbh->prepare("
-                SELECT p2.`id` AS `id`, p.`id` AS `pid`, p2.`name_".$this->lang."` AS `name`, p2.`picture`, p2.`price`, p.`stateID`, p.`cityID`, p.`userID`, u.`username`, p.`profit`
-                FROM `possess` AS p
-                LEFT JOIN `possession` AS p2
-                ON (p.`pID`=p2.`id`)
-                LEFT JOIN `user` AS u
-                ON (p.`userID`=u.`id`)
-                WHERE p.`stateID`= :sid AND p.`cityID` = '0'
-                AND p.`active`='1' AND p.`deleted`='0'
-                AND p2.`active`='1' AND p2.`deleted`='0'
-                ORDER BY p.`id` ASC
-            ");
-            $statement->execute(array(':sid' => $stateID));
-            $list = array();
-            foreach($statement AS $row)
-            {
-                $possession = new Possession();
-                $possession->setId($row['id']);
-                $possession->setName($row['name']);
-                $possession->setPicture($row['picture']);
-                $possession->setPrice($row['price']);
-                
-                $possess = new Possess();
-                $possess->setId($row['pid']); // possess record id
-                $possess->setPID($row['id']); // possession record id
-                $possess->setStateID($row['stateID']);
-                $possess->setState($state->getStateNameById($row['stateID']));
-                $possess->setCityID($row['cityID']);
-                $possess->setCity($state->getCityNameById($row['cityID']));
-                $possess->setUserID($row['userID']);
-                $possess->setUsername($row['username']);
-                if(empty($row['username'])) $possess->setUsername($langs['NONE']);
-                $possess->setProfit($row['profit']);
-                $possession->setPossessDetails($possess);
-                
-                array_push($list, $possession);
-            }
-            return $list;
-        }
-    }
-    
-    public function getCityPossessionsByCity($stateID, $cityID)
+    private function getPossessions($stateID = 0, $cityID = 0)
     {
         if(isset($_SESSION['UID']))
         {
@@ -756,5 +660,38 @@ class PossessionDAO extends DBConfig
             }
             return $list;
         }
+    }
+    
+    public function applyProfitForOwner($pData, $profit, $oid)
+    {
+        if(isset($_SESSION['UID']))
+        {
+            $this->con->setData("
+                UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `userID`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1;
+                UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1
+            ", array(':profit' => $profit, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $oid));
+        }
+    }
+    
+    public function applyLossForOwner($pData, $loss, $oid)
+    {
+        if(isset($_SESSION['UID']))
+        {
+            $this->con->setData("
+                UPDATE `possess` SET `profit`=`profit`- :loss, `profit_hour`=`profit_hour`- :loss WHERE `id`= :pid AND `userID`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1;
+                UPDATE `user` SET `bank`=`bank`- :loss WHERE `id`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1
+            ", array(':loss' => $loss, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $oid));
+        }
+    }
+    
+    public function takeOverOwner($pData, $uid, $oid)
+    {
+        if(isset($_SESSION['UID']))
+        {
+            $this->con->setData("
+                UPDATE `possess` SET `userID`= :uid, `profit`='0', `profit_hour`='0' WHERE `id`= :pid AND `userID`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1;
+                UPDATE `user` SET `bank`='0' WHERE `id`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1
+            ", array(':uid' => $uid, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $oid));
+        }        
     }
 }

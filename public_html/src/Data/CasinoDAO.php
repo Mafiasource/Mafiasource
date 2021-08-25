@@ -5,6 +5,7 @@ namespace src\Data;
 use src\Business\CasinoService;
 use src\Business\PossessionService;
 use src\Data\config\DBConfig;
+use src\Data\PossessionDAO;
 
 class CasinoDAO extends DBConfig
 {
@@ -44,14 +45,10 @@ class CasinoDAO extends DBConfig
             if(is_object($pData)) $casinoOwner = $pData->getPossessDetails()->getUserID();
             if(is_object($pData) && $casinoOwner > 0 && $casinoOwner != $_SESSION['UID'])
             {
+                $possessionData = new PossessionDAO();
                 $ownerBank = $this->con->getDataSR("SELECT `bank` FROM `user` WHERE `id`= :oid AND `active`='1' AND `deleted`='0'", array(':oid' => $casinoOwner))['bank'];
                 if(($ownerBank - $lossOwner) >= 0)
-                {
-                    $this->con->setData("
-                        UPDATE `possess` SET `profit`=`profit`- :profit, `profit_hour`=`profit_hour`- :profit WHERE `id`= :pid AND `userID`= :oid AND `active`='1' AND `deleted`='0';
-                        UPDATE `user` SET `bank`=`bank`- :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                    ", array(':profit' => abs($lossOwner), ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $casinoOwner));
-                }
+                    $possessionData->applyLossForOwner($pData, abs($lossOwner), $casinoOwner);
                 else
                 {
                     // Gone broke
@@ -67,10 +64,7 @@ class CasinoDAO extends DBConfig
                     else
                         $uid = $_SESSION['UID'];
                     
-                    $this->con->setData("
-                        UPDATE `possess` SET `userID`= :uid, `profit`='0', `profit_hour`='0' WHERE `id`= :pid AND `userID`= :oid AND `active`='1' AND `deleted`='0';
-                        UPDATE `user` SET `bank`='0' WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                    ", array(':uid' => $uid, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $casinoOwner));
+                    $possessionData->takeOverOwner($pData, $uid, $casinoOwner);
                     
                     if($uid === 0)
                         return array('took-over' => false, 'reason' => $reason);
@@ -89,10 +83,8 @@ class CasinoDAO extends DBConfig
             if(is_object($pData)) $casinoOwner = $pData->getPossessDetails()->getUserID();
             if(is_object($pData) && $casinoOwner > 0 && $casinoOwner != $_SESSION['UID'])
             {
-                $this->con->setData("
-                    UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `userID`= :oid AND `active`='1' AND `deleted`='0';
-                    UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                ", array(':profit' => abs($profitOwner), ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $casinoOwner));
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, abs($profitOwner), $casinoOwner);
             }
         }
     }

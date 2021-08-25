@@ -10,6 +10,7 @@ use src\Business\SeoService;
 use src\Business\DonatorService;
 use src\Data\config\DBConfig;
 use src\Data\CrimeDAO;
+use src\Data\PossessionDAO;
 use src\Entities\User;
 use src\Entities\UserFriendBlock;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -26,13 +27,16 @@ class UserDAO extends DBConfig
 
     public function __construct()
     {
+        global $lang;
         global $connection;
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
-        if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r"; // SQL Format
-        if($this->lang == "en") $this->phpDateFormat = "m-d-Y g:i:s A";
+        $this->lang = $lang;
+        if($this->lang == 'en')
+        {
+            $this->dateFormat = "%m-%d-%Y %r"; // SQL Format
+            $this->phpDateFormat = "m-d-Y g:i:s A";
+        }
     }
 
     public function __destruct()
@@ -977,10 +981,8 @@ class UserDAO extends DBConfig
                 if(is_object($pData)) $bankOwner = $pData->getPossessDetails()->getUserID();
                 if(is_object($pData) && $bankOwner > 0 && $bankOwner != $_SESSION['UID'])
                 {
-                    $this->con->setData("
-                        UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                        UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                    ", array(':profit' => $profitOwner, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $bankOwner));
+                    $possessionData = new PossessionDAO();
+                    $possessionData->applyProfitForOwner($pData, $profitOwner, $bankOwner);
                 }
             }
         }
@@ -1023,10 +1025,8 @@ class UserDAO extends DBConfig
                 if(is_object($pData)) $bankOwner = $pData->getPossessDetails()->getUserID();
                 if(is_object($pData) && $bankOwner > 0 && $bankOwner != $_SESSION['UID'])
                 {
-                    $this->con->setData("
-                        UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                        UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                    ", array(':profit' => $profitOwner, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $bankOwner));
+                    $possessionData = new PossessionDAO();
+                    $possessionData->applyProfitForOwner($pData, $profitOwner, $bankOwner);
                 }
             }
         }
@@ -1222,10 +1222,8 @@ class UserDAO extends DBConfig
             if(is_object($pData)) $hospitalOwner = $pData->getPossessDetails()->getUserID();
             if(is_object($pData) && $hospitalOwner > 0 && $hospitalOwner != $_SESSION['UID'])
             {
-                $this->con->setData("
-                    UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                    UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                ", array(':profit' => $profitOwner, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $hospitalOwner));
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, $profitOwner, $hospitalOwner);
             }
         }
     }

@@ -212,7 +212,7 @@ class GetLanguageContent
     {
         $langs = array(
             'DOWNLOAD_APP' => "De Beta-app uitproberen",
-            'ANDROID_BETA_INFO' => "Momenteel missen we enkele bronnen om de app-ontwikkeling voor zowel Google Play Store als Apple App Store te voltooien, maar Android-gebruikers hebben de mogelijkheid om onze Beta-app te downloaden als een (niet-vertrouwde) .apk.<br />Als je onze app wilt uitproberen, zorg er dan voor dat je de Android-instelling 'Apps van derden toestaan' inschakelt en je zou in staat moeten zijn om te downloaden, installeren en te spelen!<br /><br /><a href='https://www.mafiasource.nl/web/downloads/msapp.apk' rel='noreferrer'><strong>Beta-app downloaden</strong></a> (enkel Android)",
+            'ANDROID_BETA_INFO' => "Momenteel missen we enkele bronnen om de app-ontwikkeling voor zowel Google Play Store als Apple App Store te voltooien, maar Android-gebruikers hebben de mogelijkheid om onze Beta-app te downloaden als een (niet-vertrouwde) .apk.<br />Als je onze app wilt uitproberen, zorg er dan voor dat je de Android-instelling 'Apps van derden toestaan' inschakelt en je zou in staat moeten zijn om te downloaden, installeren en te spelen!<br /><br /><a href='https://download.mafiasource.nl/web/downloads/msapp.apk' rel='noreferrer'><strong>Beta-app downloaden</strong></a> (enkel Android)",
         );
         return $langs;
     }
@@ -1072,7 +1072,7 @@ class GetLanguageContent
             'POINTS' => "Punten",
             'HIS' => "Zijn",
             'PICK_A_CARD' => "Trek een kaart",
-            'QUIT' => "Stoppen",
+            'QUIT' => $this->familyRaidLangs()['QUIT'],
             'CARD' => "Kaart",
             'CARDS' => "Kaarten",
             'PLAY_BLACKJACK_SUCCESS_BROKE_EVEN' => "Je hebt je inzet terug verdient!",
@@ -1319,9 +1319,9 @@ class GetLanguageContent
             'NO_VEHICLES_IN_FAMILY_GARAGE' => "Er staan geen voertuigen in jullie familiegarage.",
             'SELECT_ONE_OR_MORE_VEHICLES' => "Selecteer één of meerdere voertuigen!",
             'SELL_FAMILY_VEHICLES_SUCCESS' => "Je hebt alle geselecteerde voertuigen verkocht voor $&#8203;{money}.",
-            'NOT_ENOUGH_CRUSH_CONVERT_CAPACITY' => "Jullie hebben niet genoeg crush of convert capaciteit over. Koop er meer bij de <a href='".$route->getRouteByRouteName('family-garage-crush-convert')."'><strong>crusher & converter</strong></a>.",
+            'NOT_ENOUGH_CRUSH_CONVERT_CAPACITY' => "Jullie hebben niet genoeg crush of convert capaciteit over. Koop er meer bij de <a href='".$route->getRouteByRouteName('family-garage-crusher-converter')."'><strong>crusher & converter</strong></a>.",
             'CRUSH_CONVERT_FAMILY_VEHICLES_SUCCESS' => "Je hebt alle geselecteerde voertuigen gecrushed en geconvert! {bullets} kogels werden toegevoegd aan de familie opslagplaats.",
-            'CRUSH_CONVERT_FAMILY_VEHICLES_CAP_SUCCESS' => "Je hebt enkele geselecteerde voertuigen gecrushed en geconvert! {bullets} kogels werden toegevoegd aan de familie opslagplaats. {unhandled} voertuigen werden niet behandeld koop nieuwe <a href='".$route->getRouteByRouteName('family-garage-crush-convert')."'><strong>crusher & converter</strong></a> cpaciteit.",
+            'CRUSH_CONVERT_FAMILY_VEHICLES_CAP_SUCCESS' => "Je hebt enkele geselecteerde voertuigen gecrushed en geconvert! {bullets} kogels werden toegevoegd aan de familie opslagplaats. {unhandled} voertuigen werden niet behandeld koop nieuwe <a href='".$route->getRouteByRouteName('family-garage-crusher-converter')."'><strong>crusher & converter</strong></a> cpaciteit.",
             'SMALL' => "Klein",
             'MEDIUM' => "Middel",
             'LARGE' => "Groot",
@@ -1333,6 +1333,39 @@ class GetLanguageContent
             'FAMILY_HAS_NO_CONVERTER' => "De familie heeft nog geen converter.<br />De baas of bankbeheerder kan er één kopen.",
             'FAMILY_CAN_CRUSH_X_VEHICLES' => "De familie kan nog <strong>{capacity}</strong> voertuigen crushen.",
             'FAMILY_CAN_CONVERT_X_VEHICLES' => "De familie kan nog <strong>{capacity}</strong> voertuigen converten."
+        );
+        return $langs;
+    }
+    
+    public function streetraceLangs()
+    {
+        $str = "Streetrace";
+        $famCrimeLangs = $this->familyCrimeLangs();
+        $langs = array(
+            'TITLE' => ucfirst($str),
+            'DESCRIPTION' => "Er zijn 4 soorten ".strtolower($str)."s: Highway, Route66, Drift Race en City Race.<br />Voor elk soort race moet je auto goed zijn op andere punten.<br /><br />De winnaar van de ".strtolower($str)." krijgt 3 keer de inzet, en de nummer 2 krijgt zijn inzet terug.<br />De nummer 3 en 4 verliezen hun geld.",
+            'ORGANIZE' => $famCrimeLangs['ORGANIZE'],
+            'PARTICIPANTS' => $famCrimeLangs['PARTICIPANTS'],
+            'JOIN' => $famCrimeLangs['JOIN'],
+            'LEAVE' => $this->familyLangs()['LEAVE'],
+            'QUIT' => $this->familyRaidLangs()['QUIT'],
+            'RESULTS' => "Uitslag",
+            'NO_VEHICLE_TO_RACE' => "Je hebt geen voertuig beschikbaar in jouw garages.",
+            'ALREADY_PART_OF_RACE' => "Je doet al mee aan een ".strtolower($str)."!",
+            'NO_PART_OF_RACE' => "Je doet nog niet mee aan een ".strtolower($str)."!",
+            'INVALID_RACE' => "Je hebt een ongeldige ".strtolower($str)." opgegeven!",
+            'INVALID_RACE_TYPE' => "Je hebt een ongeldig race type opgegeven!",
+            'INVALID_STAKE' => "Je hebt een ongeldige inzet gekozen!",
+            'INVALID_VEHICLE' => "Je hebt een onbekend voertuig gekozen!",
+            'RACE_ALREADY_FULL' => "Deze ".strtolower($str)." zit al vol!",
+            'RACE_NOT_READY_YET' => "Deze ".strtolower($str)." is nog niet klaar om te starten!",
+            'ORGANIZE_RACE_SUCCESS' => "Je hebt een ".strtolower($str)." gestart!",
+            'JOIN_RACE_SUCCESS' => "Je doet nu mee aan deze ".strtolower($str)."!",
+            'QUIT_RACE_SUCCESS' => "Je hebt deze ".strtolower($str)." gestopt!",
+            'LEAVE_RACE_SUCCESS' => "Je bent uit de ".strtolower($str)." gestapt!",
+            'RACE_SUCCESS_LOST_NTH' => "Je bent {nth} geworden in de ".strtolower($str)." en je hebt je inzet verloren!",
+            'RACE_SUCCESS_EVEN_SECOND' => "Je bent tweede geworden in de ".strtolower($str)." en je hebt je inzet teruggekregen!",
+            'RACE_SUCCESS_WON_FIRST' => "Je bent eerste geworden in de ".strtolower($str)." en je hebt $&#8203;{price} gewonnen!"
         );
         return $langs;
     }

@@ -6,6 +6,7 @@ use src\Business\UserCoreService;
 use src\Business\MessageService;
 use src\Business\SeoService;
 use src\Data\config\DBConfig;
+use src\Data\PossessionDAO;
 use src\Entities\Family;
 use src\Entities\User;
 use src\Entities\FamilyDonationLog;
@@ -1099,10 +1100,8 @@ class FamilyDAO extends DBConfig
             if(is_object($pData)) $telecomOwner = $pData->getPossessDetails()->getUserID();
             if(is_object($pData) && $telecomOwner > 0 && $telecomOwner != $_SESSION['UID'])
             {
-                $this->con->setData("
-                    UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0' LIMIT 1;
-                    UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0' LIMIT 1
-                ", array(':profit' => $profitOwner, ':pid' => $pData->getPossessDetails()->getId(), ':oid' => $telecomOwner));
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, $profitOwner, $telecomOwner);
             }
         }
     }

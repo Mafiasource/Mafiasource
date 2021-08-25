@@ -13,6 +13,7 @@ use src\Data\GarageDAO;
 class GarageService
 {
     private $data;
+    private $familyID;
     
     public $allowedOptions = array('small', 'medium', 'large', 'extra-large');
     public $garageOptions = array(
@@ -56,6 +57,7 @@ class GarageService
     {
         $this->data = new GarageDAO();
         
+        global $userData;
         global $language;
         $l = $language->garageLangs();
         $this->familyCrushers = $this->familyConverters = array(
@@ -63,6 +65,7 @@ class GarageService
             2 => array('size' => $l['MEDIUM'], 'capacity' => 2500, 'price' => 16500000),
             3 => array('size' => $l['LARGE'], 'capacity' => 5000, 'price' => 32500000)
         );
+        $this->familyID = $userData->getFamilyID();
     }
     
     public function __destruct()
@@ -274,7 +277,7 @@ class GarageService
             {
                 $error = $l['VEHICLE_NOT_OWNED_BY_USER'];
             }
-            if(is_object($vehicleData)) $exist = $this->data->getShopVehicleById($vehicleData->getVehicleID());
+            if(is_object($vehicleData)) $exist = $this->data->getShopVehicleById($vehicleData->vehicle->getId());
             if(isset($exist) && !is_object($exist))
             {
                 $error = $l['VEHICLE_DOESNT_EXIST'];
@@ -354,7 +357,7 @@ class GarageService
                     break;
                 case 'sell':
                     $this->data->sellVehicle($vehicleData);
-                    $successMessage = $route->replaceMessagePart(number_format($vehicleData->getVehicleValue(), 0, '', ','), $l['SELL_VEHICLE_SUCCESS'], '/{price}/');
+                    $successMessage = $route->replaceMessagePart(number_format($vehicleData->getValue(), 0, '', ','), $l['SELL_VEHICLE_SUCCESS'], '/{price}/');
                     break;
                 /* SHOP ... */
                 case 'buy':
@@ -558,7 +561,7 @@ class GarageService
                     foreach($vehicles AS $id)
                     {
                         $vehicleData = $this->data->getFamilyVehicleById($id, $famID);
-                        $money += round($vehicleData->getVehicleValue(), 0);
+                        $money += round($vehicleData->getValue(), 0);
                     }
                     $this->data->sellFamilyVehicles($implodeStr, $money, $famID);
                     
@@ -583,7 +586,7 @@ class GarageService
                         if(!$capReached)
                         {
                             $vehicleData = $this->data->getFamilyVehicleById($id, $famID);
-                            $bullets += round($vehicleData->getVehicleValue() / 2500, 0);
+                            $bullets += round($vehicleData->getValue() / 2500, 0);
                         }
                         else
                         {
@@ -624,8 +627,7 @@ class GarageService
     
     public function hasFamilyGarage()
     {
-        global $userData;
-        $famID = $userData->getFamilyID();
+        $famID = $this->familyID;
         if($famID > 0)
             return $this->data->hasFamilyGarage($famID);
     }
@@ -652,8 +654,7 @@ class GarageService
     
     public function hasSpaceLeftInFamilyGarage()
     {
-        global $userData;
-        $famID = $userData->getFamilyID();
+        $famID = $this->familyID;
         if($famID > 0)
             return $this->data->hasSpaceLeftInFamilyGarage($famID);
     }
@@ -665,8 +666,7 @@ class GarageService
     
     public function spaceLeftInFamilyGarage($maxSpace)
     {
-        global $userData;
-        $famID = $userData->getFamilyID();
+        $famID = $this->familyID;
         if($famID > 0)
             return $this->data->spaceLeftInFamilyGarage($famID, $maxSpace);
     }
@@ -678,8 +678,7 @@ class GarageService
     
     public function getFamilyGarageSize()
     {
-        global $userData;
-        $famID = $userData->getFamilyID();
+        $famID = $this->familyID;
         if($famID > 0)
             return $this->data->getFamilyGarageSize($famID);
     }
@@ -706,8 +705,7 @@ class GarageService
     
     public function getVehiclesInFamilyGarage($from, $to)
     {
-        global $userData;
-        $famID = $userData->getFamilyID();
+        $famID = $this->familyID;
         if($famID > 0)
             return $this->data->getVehiclesInFamilyGarage($famID, $from, $to);
     }
@@ -724,14 +722,8 @@ class GarageService
     
     public function getFamilyCrusherConverter()
     {
-        global $userData;
-        $famID = $userData->getFamilyID();
+        $famID = $this->familyID;
         if($famID > 0)
             return $this->data->getFamilyCrusherConverter($famID);
-    }
-    
-    public function getTunedVehiclesInGarageByState($stateID)
-    {
-        return $this->data->getTunedVehiclesInGarageByState($stateID);
     }
 }

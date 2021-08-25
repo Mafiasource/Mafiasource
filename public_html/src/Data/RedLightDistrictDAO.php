@@ -4,7 +4,10 @@ namespace src\Data;
 
 use src\Business\DonatorService;
 use src\Data\config\DBConfig;
+use src\Data\PossessionDAO;
 use src\Entities\User;
+use src\Entities\Possession;
+use src\Entities\Possess;
 
 class RedLightDistrictDAO extends DBConfig
 {
@@ -145,7 +148,7 @@ class RedLightDistrictDAO extends DBConfig
                 $insert->execute(array(':stateID' => $userData->getStateID(), ':uid' => $_SESSION['UID'], ':amount' => $amount));
             }
             
-            $price = $profitOwner = $amount * $rldInfo->getPriceEachWindow();
+            $price = $amount * $rldInfo->getPriceEachWindow();
             
             $statement = $this->dbh->prepare("UPDATE `user` SET `cash`=`cash`- :price, `whoresStreet`=`whoresStreet`- :amount WHERE `id`= :uid");
             $statement->execute(array(':price' => $price, ':amount' => $amount, ':uid' => $_SESSION['UID']));
@@ -155,10 +158,12 @@ class RedLightDistrictDAO extends DBConfig
             $owner = $this->con->getDataSR("SELECT `userID` FROM `possess` WHERE `id`= :pid AND `active`='1' AND `deleted`='0'", array(':pid' => $rldInfo->getPossessID()));
             if(isset($owner['userID']) && $owner['userID'] > 0 && $owner['userID'] != $_SESSION['UID'])
             {
-                $this->con->setData("
-                    UPDATE `possess` SET `profit`=`profit`+ :profit, `profit_hour`=`profit_hour`+ :profit WHERE `id`= :pid AND `active`='1' AND `deleted`='0';
-                    UPDATE `user` SET `bank`=`bank`+ :profit WHERE `id`= :oid AND `active`='1' AND `deleted`='0'
-                ", array(':profit' => $profitOwner, ':pid' => $rldInfo->getPossessID(), ':oid' => $owner['userID']));
+                $pData = new Possession();
+                $possess = new Possess();
+                $possess->setId($rldInfo->getPossessID());
+                $pData->setPossessDetails($possess);
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, $price, $owner['userID']);
             }
         }
     }

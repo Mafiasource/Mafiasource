@@ -212,7 +212,7 @@ class GetLanguageContent
     {
         $langs = array(
             'DOWNLOAD_APP' => "Try out the Beta app",
-            'ANDROID_BETA_INFO' => "Currently we miss some resources to finish app development for both Google Play Store and Apple App Store, however Android users have a possibility to download our Beta app as an (untrusted) .apk.<br />If you wish to try out our app please make sure to enable the Android setting 'Allow third party apps' and you should be able to download, install and play!<br /><br /><a href='https://www.mafiasource.nl/web/downloads/msapp.apk' rel='noreferrer'><strong>Download Beta app</strong></a> (Android only)",
+            'ANDROID_BETA_INFO' => "Currently we miss some resources to finish app development for both Google Play Store and Apple App Store, however Android users have a possibility to download our Beta app as an (untrusted) .apk.<br />If you wish to try out our app please make sure to enable the Android setting 'Allow third party apps' and you should be able to download, install and play!<br /><br /><a href='https://download.mafiasource.nl/web/downloads/msapp.apk' rel='noreferrer'><strong>Download Beta app</strong></a> (Android only)",
         );
         return $langs;
     }
@@ -1319,9 +1319,9 @@ class GetLanguageContent
             'NO_VEHICLES_IN_FAMILY_GARAGE' => "There are no vehicles in your family garage.",
             'SELECT_ONE_OR_MORE_VEHICLES' => "Select one or more vehicles!",
             'SELL_FAMILY_VEHICLES_SUCCESS' => "You've sold all selected vehicles for $&#8203;{money}.",
-            'NOT_ENOUGH_CRUSH_CONVERT_CAPACITY' => "You don't have enough crush or convert capacity left. Buy more at the <a href='".$route->getRouteByRouteName('family-garage-crush-convert')."'><strong>crusher & converter</strong></a>.",
+            'NOT_ENOUGH_CRUSH_CONVERT_CAPACITY' => "You don't have enough crush or convert capacity left. Buy more at the <a href='".$route->getRouteByRouteName('family-garage-crusher-converter')."'><strong>crusher & converter</strong></a>.",
             'CRUSH_CONVERT_FAMILY_VEHICLES_SUCCESS' => "You've crushed and converted all selected vehicles! {bullets} bullets were added to the family warehouse.",
-            'CRUSH_CONVERT_FAMILY_VEHICLES_CAP_SUCCESS' => "You've crushed and converted some selected vehicles! {bullets} bullets were added to the family warehouse. {unhandled} vehicles weren't handled buy new <a href='".$route->getRouteByRouteName('family-garage-crush-convert')."'><strong>crusher & converter</strong></a> capacity.",
+            'CRUSH_CONVERT_FAMILY_VEHICLES_CAP_SUCCESS' => "You've crushed and converted some selected vehicles! {bullets} bullets were added to the family warehouse. {unhandled} vehicles weren't handled buy new <a href='".$route->getRouteByRouteName('family-garage-crusher-converter')."'><strong>crusher & converter</strong></a> capacity.",
             'SMALL' => "Small",
             'MEDIUM' => "Medium",
             'LARGE' => "Large",
@@ -1333,6 +1333,39 @@ class GetLanguageContent
             'FAMILY_HAS_NO_CONVERTER' => "The family has no converter yet.<br />The boss or bank manager can buy one.",
             'FAMILY_CAN_CRUSH_X_VEHICLES' => "The family can crush <strong>{capacity}</strong> more vehicles.",
             'FAMILY_CAN_CONVERT_X_VEHICLES' => "The family can convert <strong>{capacity}</strong> more vehicles."
+        );
+        return $langs;
+    }
+    
+    public function streetraceLangs()
+    {
+        $str = "Streetrace";
+        $famCrimeLangs = $this->familyCrimeLangs();
+        $langs = array(
+            'TITLE' => ucfirst($str),
+            'DESCRIPTION' => "Er zijn 4 soorten ".strtolower($str)."s: Highway, Route66, Drift Race en City Race.<br />Voor elk soort race moet je auto goed zijn op andere punten.<br /><br />De winnaar van de ".strtolower($str)." krijgt 3 keer de inzet, en de nummer 2 krijgt zijn inzet terug.<br />De nummer 3 en 4 verliezen hun geld.",
+            'ORGANIZE' => $famCrimeLangs['ORGANIZE'],
+            'PARTICIPANTS' => $famCrimeLangs['PARTICIPANTS'],
+            'JOIN' => $famCrimeLangs['JOIN'],
+            'LEAVE' => $this->familyLangs()['LEAVE'],
+            'QUIT' => $this->familyRaidLangs()['QUIT'],
+            'RESULTS' => "Results",
+            'NO_VEHICLE_TO_RACE' => "You don't have a vehicle available in your garages.",
+            'ALREADY_PART_OF_RACE' => "You're already part of a ".strtolower($str)."!",
+            'NO_PART_OF_RACE' => "You're not part yet of a ".strtolower($str)."!",
+            'INVALID_RACE' => "You've choosen an invalid ".strtolower($str)."!",
+            'INVALID_RACE_TYPE' => "You've choosen an invalid race type!",
+            'INVALID_STAKE' => "You've choosen an invalid stake!",
+            'INVALID_VEHICLE' => "You've choosen an unknown vehicle!",
+            'RACE_ALREADY_FULL' => "This ".strtolower($str)." is already full!",
+            'RACE_NOT_READY_YET' => "This ".strtolower($str)." is not ready yet to be started!",
+            'ORGANIZE_RACE_SUCCESS' => "You started a ".strtolower($str)."!",
+            'JOIN_RACE_SUCCESS' => "You are now participating in this ".strtolower($str)."!",
+            'QUIT_RACE_SUCCESS' => "You've quit this ".strtolower($str)."!",
+            'LEAVE_RACE_SUCCESS' => "You left the ".strtolower($str)."!",
+            'RACE_SUCCESS_LOST_NTH' => "You finished {nth} in the ".strtolower($str)." and lost your stake!",
+            'RACE_SUCCESS_EVEN_SECOND' => "You finished second in the ".strtolower($str)." and won back your stake!",
+            'RACE_SUCCESS_WON_FIRST' => "You finished first place in the ".strtolower($str)." and won $&#8203;{price} cash!"
         );
         return $langs;
     }

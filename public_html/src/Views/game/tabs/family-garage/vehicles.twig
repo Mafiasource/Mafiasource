@@ -35,11 +35,11 @@
                     {% for v in vehicles %}
                         <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
                           <td scope="row" class="center">{% if hasRights %}<input type="checkbox" name="vehicles[{{ v.getId }}]" value="{{ v.getId }}" />{% else %}{{ loop.index }}{% endif %}</td>
-                          <td>{{ v.getVehicleName }}</td>
+                          <td>{{ v.vehicle.getName }}</td>
                           <td>{{ v.getDamage }}%</td>
                           <td>
-                            {% set bullets = v.getVehicleValue / 2500 %}
-                            {{ v.getVehicleValue|moneyFormat }} / {{ bullets|round }} {{ langs.BULLETS|lower }}
+                            {% set bullets = v.getValue / 2500 %}
+                            {{ v.getValue|moneyFormat }} / {{ bullets|round }} {{ langs.BULLETS|lower }}
                           </td>
                         </tr>
                     {% endfor %}
