@@ -339,7 +339,7 @@ class GarageService
                     
                     if(!is_array($selectedTune) || $selectedTune == false)
                     {
-                        $error = $langs['ITEM_DOESNT_EXIST'];
+                        $error = $l['ITEM_DOESNT_EXIST'];
                     }
                     else
                     {
