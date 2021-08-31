@@ -52,23 +52,16 @@ class GarageDAO extends DBConfig
             if($famID > 0)
                 $fgRow = $this->con->getDataSR($this->familyGarageIdQry, array(':fid' => $famID));
             
-            if(isset($ugRow['id']) && $ugRow['id'] > 0)
-            {
-                if($rn == 'garage' || $rn == 'garage-page')
-                    $row = $this->con->getDataSR("
-                        SELECT COUNT(`id`) AS `total` FROM `garage` WHERE `userGarageID`= :gid AND `active`='1' AND `deleted`='0'
-                    ", array(':gid' => $ugRow['id']));
-            }
-            if(isset($fgRow['id']) && $fgRow['id'] > 0)
-            {                            
-                if(($rn == 'family-garage' || $rn == 'family-garage-page' || $rn == 'family-crimes') && $famID > 0)
-                {
-                    if(isset($fgRow['id']) && $fgRow['id'] > 0)
-                        $row = $this->con->getDataSR("
-                            SELECT COUNT(`id`) AS `total` FROM `garage` WHERE `famGarageID`= :gid AND `active`='1' AND `deleted`='0'
-                        ", array(':gid' => $fgRow['id']));
-                }
-            }
+            if(isset($ugRow['id']) && $ugRow['id'] > 0 && ($rn == 'garage' || $rn == 'garage-page'))
+                $row = $this->con->getDataSR("
+                    SELECT COUNT(`id`) AS `total` FROM `garage` WHERE `userGarageID`= :gid AND `active`='1' AND `deleted`='0'
+                ", array(':gid' => $ugRow['id']));
+            
+            if(isset($fgRow['id']) && $fgRow['id'] > 0 && (($rn == 'family-garage' || $rn == 'family-garage-page' || $rn == 'family-crimes') && $famID > 0))
+                $row = $this->con->getDataSR("
+                    SELECT COUNT(`id`) AS `total` FROM `garage` WHERE `famGarageID`= :gid AND `active`='1' AND `deleted`='0'
+                ", array(':gid' => $fgRow['id']));
+            
             if($rn == 'garage-shop' || $rn == 'garage-shop-page')
                 $row = $this->con->getDataSR("SELECT COUNT(`id`) AS `total` FROM `vehicle` WHERE `stealLv` <= '100' AND `active`='1' AND `deleted`='0'");
             
@@ -358,12 +351,15 @@ class GarageDAO extends DBConfig
     
     private function applyPossessionProfits($pData, $profit)
     {
-        /** Possession logic for buying garage | pay owner if exists and not self **/
-        if(is_object($pData)) $possOwner = $pData->getPossessDetails()->getUserID();
-        if(is_object($pData) && $possOwner > 0 && $possOwner != $_SESSION['UID'])
+        if(isset($_SESSION['UID']))
         {
-            $possessionData = new PossessionDAO();
-            $possessionData->applyProfitForOwner($pData, $profit, $possOwner);
+            /** Possession logic for buying garage | pay owner if exists and not self **/
+            if(is_object($pData)) $possOwner = $pData->getPossessDetails()->getUserID();
+            if(is_object($pData) && $possOwner > 0 && $possOwner != $_SESSION['UID'])
+            {
+                $possessionData = new PossessionDAO();
+                $possessionData->applyProfitForOwner($pData, $profit, $possOwner);
+            }
         }
     }
     
@@ -496,6 +492,43 @@ class GarageDAO extends DBConfig
         }
     }
     
+    private function setGarageTuneInfo($garage, $g)
+    {
+        $garage->setTires($g['tires']);
+        $garage->setEngine($g['engine']);
+        $garage->setExhaust($g['exhaust']);
+        $garage->setShockAbsorbers($g['shockAbsorbers']);
+        
+        return $garage;
+    }
+    
+    private function setVehicleTuneInfo($vehicle, $g)
+    {
+        $garageService = new GarageService();
+        $hp = $g['horsepower'];
+        $ts = $g['topspeed'];
+        $ac = $g['acceleration'];
+        $ct = $g['control'];
+        $br = $g['breaking'];
+        
+        foreach(array_keys($garageService->tuneShop) AS $tune)
+        {
+            $tuneDb = GarageService::getTuneDbField($tune);
+            $hp += $garageService->tuneShop[$tune][$g[$tuneDb]]['pk'];
+            $ts += $garageService->tuneShop[$tune][$g[$tuneDb]]['ts'];
+            $ac += $garageService->tuneShop[$tune][$g[$tuneDb]]['ac'];
+            $ct += $garageService->tuneShop[$tune][$g[$tuneDb]]['ct'];
+            $br += $garageService->tuneShop[$tune][$g[$tuneDb]]['br'];
+        }
+        $vehicle->setHorsepower($hp);
+        $vehicle->setTopspeed($ts);
+        $vehicle->setAcceleration($ac);
+        $vehicle->setControl($ct);
+        $vehicle->setBreaking($br);
+        
+        return $vehicle;
+    }
+    
     public function getAllVehiclesInGarageByState($stateID)
     {
         if(isset($_SESSION['UID']))
@@ -506,7 +539,8 @@ class GarageDAO extends DBConfig
             if(isset($row['id']))
             {
                 $statement = $this->dbh->prepare("
-                    SELECT g.`id`, g.`userGarageID`, g.`vehicleID`, v.`name` AS `vehicleName`, v.`horsepower`, v.`topspeed`, v.`acceleration`, v.`control`, v.`breaking`
+                    SELECT g.`id`, g.`userGarageID`, g.`vehicleID`, v.`name` AS `vehicleName`, v.`horsepower`, v.`topspeed`, v.`acceleration`, v.`control`, v.`breaking`,
+                        g.`tires`, g.`engine`, g.`exhaust`, g.`shockAbsorbers`
                     FROM `garage` AS g
                     LEFT JOIN `vehicle` AS v
                     ON (g.`vehicleID`=v.`id`)
@@ -522,15 +556,12 @@ class GarageDAO extends DBConfig
                     $garage->setId($g['id']);
                     $garage->setUserGarageID($g['userGarageID']);
                     $garage->setFamGarageID(0);
+                    $garage = $this->setGarageTuneInfo($garage, $g);
                     
                     $vehicle = new Vehicle();
                     $vehicle->setId($g['vehicleID']);
                     $vehicle->setName($g['vehicleName']);
-                    $vehicle->setHorsepower($g['horsepower']);
-                    $vehicle->setTopspeed($g['topspeed']);
-                    $vehicle->setAcceleration($g['acceleration']);
-                    $vehicle->setControl($g['control']);
-                    $vehicle->setBreaking($g['breaking']);
+                    $vehicle = $this->setVehicleTuneInfo($vehicle, $g);
                     
                     $garage->setVehicle($vehicle);
                     
@@ -642,7 +673,7 @@ class GarageDAO extends DBConfig
             {
                 $statement = $this->dbh->prepare("
                     SELECT g.`id`, g.`userGarageID`, g.`vehicleID`, g.`damage`, v.`name` AS `vehicleName`, v.`picture` AS `vehiclePicture`, v.`price` AS `vehiclePrice`,
-                        v.`horsepower`, v.`topspeed`, v.`acceleration`, v.`control`, v.`breaking`
+                        v.`horsepower`, v.`topspeed`, v.`acceleration`, v.`control`, v.`breaking`, g.`tires`, g.`engine`, g.`exhaust`, g.`shockAbsorbers`
                     FROM `garage` AS g
                     LEFT JOIN `vehicle` AS v
                     ON (g.`vehicleID`=v.`id`)
@@ -662,17 +693,14 @@ class GarageDAO extends DBConfig
                     $garage->setFamGarageID(0);
                     $garage->setValue((($g['vehiclePrice']/100) * (100-$g['damage'])));
                     $garage->setDamage($g['damage']);
+                    $garage = $this->setGarageTuneInfo($garage, $g);
                     
                     $vehicle = new Vehicle();
                     $vehicle->setId($g['vehicleID']);
                     $vehicle->setName($g['vehicleName']);
                     $vehicle->setPrice($g['vehiclePrice']);
                     $vehicle->setPicture($g['vehiclePicture']);
-                    $vehicle->setHorsepower($g['horsepower']);
-                    $vehicle->setTopspeed($g['topspeed']);
-                    $vehicle->setAcceleration($g['acceleration']);
-                    $vehicle->setControl($g['control']);
-                    $vehicle->setBreaking($g['breaking']);
+                    $vehicle = $this->setVehicleTuneInfo($vehicle, $g);
                     
                     $garage->setVehicle($vehicle);
                     
@@ -755,7 +783,7 @@ class GarageDAO extends DBConfig
             {
                 $this->con->setData("DELETE FROM `garage` WHERE `id` = :vid;" . $this->userPlusCashQry, array(
                     ':vid' => $vData->getId(),
-                    ':val' => $vData->getVehicleValue(), ':uid' => $_SESSION['UID']
+                    ':val' => $vData->getValue(), ':uid' => $_SESSION['UID']
                 ));
             }
         }
@@ -927,6 +955,34 @@ class GarageDAO extends DBConfig
             $this->con->setData("
                 UPDATE `family` SET `bullets`=`bullets`+ :bullets, `crusher`=`crusher`- :num, `converter`=`converter`- :num WHERE `id`= :fid AND `active`='1' AND `deleted`='0'
             ", array(':bullets' => $bullets, ':num' => $num, ':fid' => $famID));
+        }
+    }
+    
+    public function buyVehicleTuneUpgrade($vehicleData, $tuneData, $pData)
+    {
+        if(isset($_SESSION['UID']))
+        {
+            $this->con->setData("UPDATE `garage` SET `".$tuneData['tuneDb']."`= :item WHERE `id`= :gid AND `".$tuneData['tuneDb']."`='0' AND `active`='1' AND `deleted`='0';" .
+                $this->userMinusCashQry, array(
+                ':item' => $tuneData['item'], ':gid' => $vehicleData->getId(),
+                ':price' => $tuneData['price'], ':uid' => $_SESSION['UID']
+            ));
+            
+            $this->applyPossessionProfits($pData, $tuneData['price']);
+        }
+    }
+    
+    public function sellVehicleTuneUpgrade($vehicleData, $tuneData, $pData)
+    {
+        if(isset($_SESSION['UID']))
+        {
+            $this->con->setData("UPDATE `garage` SET `".$tuneData['tuneDb']."`='0' WHERE `id`= :gid AND `".$tuneData['tuneDb']."`= :item AND `active`='1' AND `deleted`='0';" .
+                $this->userPlusCashQry, array(
+                ':gid' => $vehicleData->getId(), ':item' => $tuneData['item'],
+                ':val' => $tuneData['price'], ':uid' => $_SESSION['UID']
+            ));
+            
+            $this->applyPossessionProfits($pData, $tuneData['price']);
         }
     }
 }

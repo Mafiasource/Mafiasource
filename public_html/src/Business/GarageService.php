@@ -66,6 +66,8 @@ class GarageService
             3 => array('size' => $l['LARGE'], 'capacity' => 5000, 'price' => 32500000)
         );
         $this->familyID = $userData->getFamilyID();
+        foreach(array_keys($this->tuneShop) AS $tune)
+            $this->tuneShop[$tune][0] = array('name' => "Standard", 'price' => 0, 'pk' => 0, 'ts' => 0, 'ac' => 0, 'ct' => 0, 'br' => 0);
     }
     
     public function __destruct()
@@ -84,6 +86,31 @@ class GarageService
             return $this->garageOptions;
         else
             return $this->familyGarageOptions;
+    }
+    
+    public static function getTuneDbField($tune)
+    {
+        $tuneDb = $tune;
+        if($tune == "shock_absorbers")
+            $tuneDb = "shockAbsorbers";
+        
+        return $tuneDb;
+    }
+    
+    public function getSelectedTune($post)
+    {
+        $selectedTune = false;
+        $allowedTunes = array();
+        foreach(array_keys($this->tuneShop) AS $tune)
+            $allowedTunes[] = $tune;
+        
+        foreach($post AS $key => $val)
+        {
+            foreach($allowedTunes AS $tune)
+                if(preg_match("{^(buy|sell)-" . $tune . "-[1-3]$}", $key, $matches))
+                    $selectedTune = array($tune => substr($matches[0], -1), 'action' => $matches[1]);
+        }
+        return $selectedTune;
     }
     
     public function addVehicleToGarage($post, $stateID)
@@ -253,7 +280,7 @@ class GarageService
         $action   = $security->xssEscape($post['action']);
         $vehicleData = $this->data->getVehicleInGarageById($garageID);
         
-        $allowedActions = array("repair", "sell", /*"tune",*/ "buy", "bought");
+        $allowedActions = array("repair", "sell", "tune", "buy", "bought");
         
         if($security->checkToken($post['securityToken']) == FALSE)
         {
@@ -263,7 +290,7 @@ class GarageService
         {
             $error = $langs['INVALID_ACTION'];
         }
-        if($action == 'repair' || $action == 'sell' /*|| $action == 'tune'*/)
+        if($action == 'repair' || $action == 'sell' || $action == 'tune')
         {
             if($this->hasGarageInState($stateID) == FALSE)
             {
@@ -277,7 +304,7 @@ class GarageService
             {
                 $error = $l['VEHICLE_NOT_OWNED_BY_USER'];
             }
-            if(is_object($vehicleData)) $exist = $this->data->getShopVehicleById($vehicleData->vehicle->getId());
+            if(is_object($vehicleData)) $exist = $this->data->getShopVehicleById($vehicleData->getVehicle()->getId());
             if(isset($exist) && !is_object($exist))
             {
                 $error = $l['VEHICLE_DOESNT_EXIST'];
@@ -307,7 +334,59 @@ class GarageService
                         $error = $l['NO_REPAIR_NEEDED_FOR_VEHICLE'];
                     }
                     break;
-                /* //EIND GARAGE - VOOR SELL ZIJN GEEN EXTRA BEPERKINGEN */
+                case 'tune':
+                    $selectedTune = $this->getSelectedTune($post);
+                    
+                    if(!is_array($selectedTune) || $selectedTune == false)
+                    {
+                        $error = $langs['ITEM_DOESNT_EXIST'];
+                    }
+                    else
+                    {
+                        $tune = array_keys($selectedTune)[0];
+                        $tuneAction = $selectedTune['action'];
+                        $tuneItem = $selectedTune[$tune];
+                        $tuneShopPrice = $this->tuneShop[$tune][$tuneItem]['price'];
+                        $tunePrice = isset($tuneAction) && $tuneAction == "buy" ? $tuneShopPrice : round($tuneShopPrice * 0.7);
+                        switch($tune)
+                        {
+                            default: case "tires":
+                                $inPossession = $vehicleData->getTires() > 0 ? $vehicleData->getTires() : false;
+                                break;
+                            case "engine":
+                                $inPossession = $vehicleData->getEngine() > 0 ? $vehicleData->getEngine() : false;
+                                break;
+                            case "exhaust":
+                                $inPossession = $vehicleData->getExhaust() > 0 ? $vehicleData->getExhaust() : false;
+                                break;
+                            case "shock_absorbers":
+                                $inPossession = $vehicleData->getShockAbsorbers() > 0 ? $vehicleData->getShockAbsorbers() : false;
+                                break;
+                        }
+                        if($tuneAction == "buy")
+                        {
+                            if($tunePrice > $userData->getCash() && $inPossession == false)
+                            {
+                                $error = $langs['NOT_ENOUGH_MONEY_CASH'];
+                            }
+                            if($inPossession >= 1)
+                            {
+                                $error = $l['TUNE_ITEM_IN_POSSESSION'];
+                            }
+                        }
+                        if($tuneAction == "sell" && $inPossession !== $tuneItem)
+                        {
+                            $error = $l['TUNE_ITEM_NOT_IN_POSSESSION'];
+                        }
+                    }
+                    break;
+                case 'sell':
+                    if($vehicleData->getTires() > 0 || $vehicleData->getEngine() > 0 || $vehicleData->getExhaust() > 0 || $vehicleData->getShockAbsorbers() > 0)
+                    {
+                        $error = $l['CANNOT_SELL_TUNED_VEHICLE'];
+                    }
+                    break;
+                /* //EIND GARAGE */
                 
                 /* BEGIN SHOP */
                 case 'buy':
@@ -333,6 +412,8 @@ class GarageService
                     }
                     break;
                 /* //EINDE SHOP */
+                default:
+                    break;
             }
         }
         
@@ -343,21 +424,42 @@ class GarageService
         else
         {
             global $route;
+            $possession = new PossessionService();
+            $possessionId = 8; //Garage | Possession logic
+            $possessId = $possession->getPossessIdByPossessionId($possessionId, $stateID); // Possess table record id |Staat bezitting
+            $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
             switch($action)
             {
                 /* GARAGE ... */
                 case 'repair':
-                    $possession = new PossessionService();
-                    $possessionId = 8; //Garage | Possession logic
-                    $possessId = $possession->getPossessIdByPossessionId($possessionId, $stateID); // Possess table record id |Staat bezitting
-                    $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
-                    
                     $this->data->repairVehicle($vehicleData, $pData);
                     $successMessage = $route->replaceMessagePart(number_format($vehicleData->getRepairCosts(), 0, '', ','), $l['REPAIR_VEHICLE_SUCCESS'], '/{costs}/');
                     break;
                 case 'sell':
                     $this->data->sellVehicle($vehicleData);
                     $successMessage = $route->replaceMessagePart(number_format($vehicleData->getValue(), 0, '', ','), $l['SELL_VEHICLE_SUCCESS'], '/{price}/');
+                    break;
+                case 'tune':
+                    $tuneData = array('tuneDb' => self::getTuneDbField($tune), 'item' => $tuneItem, 'price' => $tunePrice);
+                    switch($tuneAction)
+                    {
+                        default: case 'buy':
+                            $tuneMessage = $l['BUY_VEHICLE_TUNE_ITEM_SUCCESS'];
+                            $priceTag = "costs";
+                            $this->data->buyVehicleTuneUpgrade($vehicleData, $tuneData, $pData);
+                            break;
+                        case 'sell':
+                            $tuneMessage = $l['SELL_VEHICLE_TUNE_ITEM_SUCCESS'];
+                            $priceTag = "price";
+                            $this->data->sellVehicleTuneUpgrade($vehicleData, $tuneData, $pData);
+                            break;
+                    }
+                    $replaces = array(
+                        array('part' => $this->tuneShop[$tune][$tuneItem]['name'], 'message' => $tuneMessage, 'pattern' => '/{itemName}/'),
+                        array('part' => strtolower($l[strtoupper($tune)]), 'message' => FALSE, 'pattern' => '/{type}/'),
+                        array('part' => number_format($tunePrice, 0, '', ','), 'message' => FALSE, 'pattern' => '/{' . $priceTag . '}/'),
+                    );
+                    $successMessage = $route->replaceMessageParts($replaces);
                     break;
                 /* SHOP ... */
                 case 'buy':
@@ -390,7 +492,6 @@ class GarageService
                     $successMessage = $route->replaceMessageParts($replaces);
                     break;
                 default:
-                    $successMessage = "How did you end up here?";
                     break;
             }
             return Routing::successMessage($successMessage);
@@ -725,5 +826,10 @@ class GarageService
         $famID = $this->familyID;
         if($famID > 0)
             return $this->data->getFamilyCrusherConverter($famID);
+    }
+    
+    public function getVehicleInGarageById($id)
+    {
+        return $this->data->getVehicleInGarageById($id);
     }
 }

@@ -32,7 +32,7 @@
                 <div class="content-container">
                     <div class="row cf {{ cycle(['odd', 'even'], loop.index0) }}">
                         <h3>{{ v.vehicle.getName }} {{ langs.WITH|lower }} {{ v.getDamage }}% {{ langs.DAMAGE|lower }}.</h3>
-                        <h4><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.VALUE }}" /> {{ langs.VALUE }}: {{ v.getValue|moneyFormat }}&nbsp;{% if v.getRepairCosts != 0 %}<img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.COSTS }}" />{% if lang == 'nl' %} Repareer{% else %} {{ langs.REPAIR }}{% endif %} {{ langs.COSTS|lower }}: {{ v.getRepairCosts|moneyFormat }}</h4>{% endif %}
+                        <h4><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.VALUE }}" /> {{ langs.VALUE }}: {{ v.getValue|moneyFormat }}&nbsp;{% if v.getRepairCosts != 0 %}<img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.COSTS }}" />{% if lang == 'nl' %} Repareer{% else %} {{ langs.REPAIR }}{% endif %} {{ langs.COSTS|lower }}: {{ v.getRepairCosts|moneyFormat }}{% endif %}</h4>
                         <img src="{{ staticRoot }}/foto/420x240/1/web/public/images/vehicle/{{ v.vehicle.getPicture }}{#&zc=1#}" class="middle" alt="{{ v.vehicle.getName }}"/><br class="clear"/>
                         <div id="vehicleActionResponse_{{ v.getId }}"></div>
                         <div class="right" style="margin: 5px 0; clear:both;">
@@ -40,7 +40,7 @@
                                 <a href="javascript:void(0);" class="button action repair" data-id="{{ v.getId }}" data-action="repair">{{ langs.REPAIR }}</a>&nbsp;
                             {% endif %}
                             <a href="javascript:void(0);" class="button action sell" data-id="{{ v.getId }}" data-action="sell">{{ langs.SELL }} {{ v.getValue|moneyFormat }}</a>&nbsp;
-                            {% if userData.getId == 1 %} <a href="javascript:void(0);" class="ajaxTab button tune" data-tab="vehicle.tune" data-id="{{ v.getId }}">{{ langs.TUNE }}</a>&nbsp; {% endif %}
+                            <a href="javascript:void(0);" class="ajaxTab button tune" data-tab="vehicle.tune" data-id="{{ v.getId }}">{{ langs.TUNE }}</a>&nbsp;
                             <a href="{{ routing.getRouteByRouteName('travel-vehicle') }}/{{ v.getId }}" class="button">{{ langs.TRAVEL }}</a>
                         </div>
                     </div>
