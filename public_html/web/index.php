@@ -23,6 +23,8 @@
 
 /** Front-controller - Main entry point for entire web application **/
 
+declare (strict_types=1);
+
 use Doctrine\Common\ClassLoader;
 use app\config\Routing;
 use app\config\Security;
@@ -47,9 +49,9 @@ $route = new Routing();
 
 // Set error reporting according to DEVELOPMENT global (/app/config/config.php)
 $errRepInt = DEVELOPMENT === true ? 1 : 0;
-ini_set('log_errors', 1);
-ini_set('display_errors', $errRepInt);
-ini_set('display_startup_errors', $errRepInt);
+ini_set('log_errors', "1");
+ini_set('display_errors', (string)$errRepInt);
+ini_set('display_startup_errors', (string)$errRepInt);
 if($errRepInt === 0)
     error_reporting($errRepInt);
 else
@@ -105,7 +107,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         if(is_object($userData) && $userData->getLang() != $lang && in_array($userData->getLang(), $route->allowedLangs) && !isset($_SESSION['lang']['setAfterLogin']))
         {
             $lang = $userData->getLang();
-            setcookie('lang', $userData->getLang(), time()+9999999, '/', $route->settings['domain'], SSL_ENABLED, 1);
+            setcookie('lang', $userData->getLang(), time()+9999999, '/', $route->settings['domain'], SSL_ENABLED, true);
             $_SESSION['lang']['setAfterLogin'] = true;
         }
         elseif(is_object($userData) && $userData->getLang() == $lang && in_array($lang, $route->allowedLangs) &&  !isset($_SESSION['lang']['setAfterLogin']))

@@ -24,7 +24,7 @@ $(document).ready(function(){
 		url : formURL,
 		type: ""+method+"",
 		data : postData,
-		success:function(data, textStatus, jqXHR) 
+		success:function(data) 
 		{
 		  $(responseField).html(data);
 		}

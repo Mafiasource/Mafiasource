@@ -1,4 +1,4 @@
-$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+$.ajaxPrefilter(function(options) {
     options.async = true;
 });
 

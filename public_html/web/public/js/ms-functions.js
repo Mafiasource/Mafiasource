@@ -1,4 +1,4 @@
-$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+$.ajaxPrefilter(function(options) {
     options.async = true;
 });
 
@@ -36,20 +36,20 @@ function number_format(number, decimals, dec_point, thousands_sep) {
   return s.join(dec);
 }
 
-function moneyDownFlash(e,t){
+function moneyDownFlash(e, t){
     $(e).html("-$"+number_format(t, 0, '', ',')).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
-function moneyUpFlash(e,t){
+function moneyUpFlash(e, t){
     $(e).html("+$"+number_format(t, 0, '', ',')).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
-function valueDownFlash(e,t){
+function valueDownFlash(e, t){
     $(e).html("-"+number_format(t, 0, '', ',')).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
-function valueUpFlash(e,t){
-    $(e).html("+"+number_format(t ,0 ,'', ',')).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+function valueUpFlash(e, t){
+    $(e).html("+"+number_format(t, 0, '', ',')).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
 function checkMessages(receiver)
@@ -64,7 +64,7 @@ function checkMessages(receiver)
         	url : formURL,
         	type: method,
         	data : postData,
-        	success:function(data, textStatus, jqXHR) 
+        	success:function(data) 
         	{
      	      try 
               {
@@ -96,7 +96,7 @@ function reloadMessages(receiver)
     	url : formURL,
     	type: method,
     	data : postData,
-    	success:function(data, textStatus, jqXHR) 
+    	success:function(data) 
     	{
  	      $('#ajaxLoaderMessages').hide();
     	  $(responseField).html(data);
@@ -116,9 +116,11 @@ $(document).on('focusin', function(e) {
 });
 
 function updateTime(){
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    const monthNames = monthNamesNL = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
+    monthNamesNL[4] = "Mei";
+    monthNamesNL[9] = "Okt";
     var currentTime = new Date();
     var day = currentTime.getDate();
     var month = monthNames[currentTime.getMonth()];
@@ -138,6 +140,7 @@ function updateTime(){
     }
     else
     {
+        var month = monthNamesNL[currentTime.getMonth()];
         hoursShow = hoursShow < 10 ? "0" + hoursShow : hoursShow;
         var t_str = day + " " + month + ", " + hoursShow + ":" + minutes + ":" + seconds;
     }

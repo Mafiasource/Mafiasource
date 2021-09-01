@@ -2,11 +2,11 @@ $.fn.hasAttr = function(name) {
    return this.attr(name) !== undefined;
 };
 
-$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+$.ajaxPrefilter(function(options) {
     options.async = true;
 });
 
-function tableOptionsAjaxSubmission(id,table,actionUri,responseNode,securityToken,hideString,showString)
+function tableOptionsAjaxSubmission(id, table, actionUri, responseNode, securityToken, hideString, showString)
 {
     $(".sortable > tbody").sortable('destroy');
     hideString = typeof hideString !== 'undefined' ? hideString : '';
@@ -14,8 +14,8 @@ function tableOptionsAjaxSubmission(id,table,actionUri,responseNode,securityToke
     $.ajax({
         type: "POST",
         url: location.protocol+'//' + location.hostname + actionUri,
-        data: {id,table,securityToken,hideString,showString},
-        success:function(data, textStatus, jqXHR) 
+        data: {id,table,securityToken, hideString, showString},
+        success:function(data) 
   		{
   		    $(responseNode).html(data);
             sortTableRecordsRows();
@@ -56,14 +56,14 @@ function sortTableRecordsRows()
             var stringDiv = "";
             $(".sortable > tbody").children().each(function(i) {
                 var li = $(this);
-                stringDiv += " "+li.attr("id") + '=' + (i+startFrom) + '&';
+                stringDiv += " "+li.attr("id") + '=' + (i + startFrom) + '&';
             });
             stringDiv += "table="+table+"&securityToken="+securityToken;
             $.ajax({
                 type: "POST",
                 url: location.protocol+'//'+ location.hostname + "/admin/sort",
                 data: stringDiv,
-                success:function(data, textStatus, jqXHR) 
+                success:function(data) 
           		{
           		    $("#orderChangeConfirm").html(data);
           		}
@@ -100,7 +100,7 @@ $(document).on('click', 'button.saveRecord', function (e) {
 		url : formURL,
 		type: "POST", 
 		data : postData, 
-		success:function(data, textStatus, jqXHR) 
+		success:function(data) 
 		{
 		  $("#editSaveConfirm").html(data); 
 		}
@@ -152,7 +152,7 @@ $("#search-form-records").submit(function (e) {
 		url : formURL,
 		type: method,
 		data : postData,
-		success:function(data, textStatus, jqXHR) 
+		success:function(data) 
 		{
 		  $("#searchFormResponse").html(data);
           $('#ajaxLoader').hide();

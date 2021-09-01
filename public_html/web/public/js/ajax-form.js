@@ -18,7 +18,7 @@ $( document ).on( "submit", "form.ajaxForm", function(e) {
         	type: method,
         	data : postData,
             async: false,
-        	success:function(data, textStatus, jqXHR) 
+        	success:function(data) 
         	{
      	      if($("#ajaxLoader" ).length)
               {
@@ -60,7 +60,7 @@ $( document ).on( "submit", "form.ajaxFormUpload", function(e) {
             cache: false,
         	data : postData,
             enctype: 'multipart/form-data',
-        	success:function(data, textStatus, jqXHR)
+        	success:function(data)
         	{
      	      if($("#ajaxLoader" ).length)
               {

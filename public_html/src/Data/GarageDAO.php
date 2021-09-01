@@ -162,7 +162,7 @@ class GarageDAO extends DBConfig
         }
     }
     
-    public function hasSpaceLeftInGarage($stateID, $returnNum = false)
+    public function hasSpaceLeftInGarage($stateID, $returnOccupied = false)
     {
         if(isset($_SESSION['UID']))
         {
@@ -184,7 +184,7 @@ class GarageDAO extends DBConfig
                     return FALSE;
                 else
                 {
-                    if($returnNum)
+                    if($returnOccupied)
                         return (int)$num;
                     else
                         return TRUE;

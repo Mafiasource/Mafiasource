@@ -20,14 +20,22 @@ $(document).on('click', '.ajaxTab', function (e) {
         postData[key] = value;
     });
     if( $('#openTab').is(':empty') ) {
+        if($("#ajaxLoader").length)
+        {
+            $('#ajaxLoader').show();
+        }
         $('#openTab').html('<span></span>');
         $.ajax(
         {
         	url : "/game/open-tab/"+$(this).attr('data-tab'),
         	type: "POST",
         	data : postData,
-        	success:function(data, textStatus, jqXHR) 
+        	success:function(data) 
         	{
+     	      if($("#ajaxLoader" ).length)
+              {
+                $('#ajaxLoader').hide();
+              }        	   
         	  $("#openTab").html(data);
               if(ajaxTab.hasClass('active')) ajaxTab.removeClass('active');
               if(ajaxTab.attr('data-tab') == "messages") $("span[data-tab='messages']").remove();

@@ -42,20 +42,20 @@ class MemberDAO extends DBConfig
         {
             $_SESSION['cp-logon']['naam'] = $row['naam'];
             $_SESSION['cp-logon']['voornaam'] = $row['voornaam'];
-            $_SESSION['cp-logon']['UID'] = $row['id'];
+            $_SESSION['cp-logon']['MID'] = $row['id'];
             $_SESSION['cp-logon']['status'] = $row['status_nl'];
             $hash2 = hash('sha256',$salt.$row['email'].$row['password'].$salt);
             if($remember == 'remember-me')
             {
                 global $route;
-                setcookie('rememberme', $hash2, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, 1);
-                setcookie('MID', $row['id'], time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, 1);
+                setcookie('rememberme', $hash2, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
+                setcookie('MID', $row['id'], time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
             }
             $_SESSION['cp-logon']['cookiehash'] = $hash2;
             if(!isset($_COOKIE['email']))
             {
                 global $route;
-                setcookie('email', $email, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, 1);
+                setcookie('email', $email, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
             }
             return TRUE;
             exit(0);
@@ -155,7 +155,7 @@ class MemberDAO extends DBConfig
                 {
                     $_SESSION['cp-logon']['naam'] = $row['naam'];
                     $_SESSION['cp-logon']['voornaam'] = $row['voornaam'];
-                    $_SESSION['cp-logon']['UID'] = $row['id'];
+                    $_SESSION['cp-logon']['MID'] = $row['id'];
                     $_SESSION['cp-logon']['status'] = $row['status_nl'];
                 }
                 $_SESSION['cp-logon']['cookiehash'] = $hash;
@@ -172,9 +172,9 @@ class MemberDAO extends DBConfig
     
     public function getStatus($id = "")
     {
-        if(isset($_SESSION['cp-logon']))
+        if(isset($_SESSION['cp-logon']['MID']))
         {
-            if($id == '') $id = $_SESSION['cp-logon']['UID'];
+            if($id == '') $id = $_SESSION['cp-logon']['MID'];
             $statement = $this->dbh->prepare("SELECT `status` FROM `member` WHERE `id`= :id");
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
@@ -187,7 +187,7 @@ class MemberDAO extends DBConfig
     
     public function saveNewAccountSettings($data)
     {
-        if(isset($_SESSION['cp-logon']))
+        if(isset($_SESSION['cp-logon']['MID']))
         {
             $paramsArr = array();
             $editStr = "";
@@ -197,7 +197,7 @@ class MemberDAO extends DBConfig
                 $paramsArr[":".$key.""] = $value;
             }
             $editStr = rtrim($editStr,', ');
-            $paramsArr[':id'] = (int)$_SESSION['cp-logon']['UID'];
+            $paramsArr[':id'] = (int)$_SESSION['cp-logon']['MID'];
             global $route;
             $statement = $this->dbh->prepare("UPDATE `member` SET ".$editStr." WHERE `id`= :id");
             if($statement->execute($paramsArr))
@@ -213,9 +213,9 @@ class MemberDAO extends DBConfig
     
     public function checkPassword($password)
     {
-        if(isset($_SESSION['cp-logon']['UID']))
+        if(isset($_SESSION['cp-logon']['MID']))
         {
-            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . $_SESSION['cp-logon']['UID'] . '.txt', 'r');
+            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . $_SESSION['cp-logon']['MID'] . '.txt', 'r');
             $salt = fgets($file);
             fclose($file);
             
@@ -237,7 +237,7 @@ class MemberDAO extends DBConfig
     
     public function changePassword($password)
     {
-        if(isset($_SESSION['cp-logon']['UID']))
+        if(isset($_SESSION['cp-logon']['MID']))
         {
             $hash = hash('sha256', $password);
             
@@ -247,9 +247,9 @@ class MemberDAO extends DBConfig
             $hash = hash('sha256', $salt . $hash);
             
             $statement = $this->dbh->prepare("UPDATE `member` SET `password` = :password WHERE `id` = :id ");
-            $statement->execute(array(':password' => $hash, ':id' => $_SESSION['cp-logon']['UID']));
+            $statement->execute(array(':password' => $hash, ':id' => $_SESSION['cp-logon']['MID']));
             
-            $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/' . $_SESSION['cp-logon']['UID'] . '.txt';
+            $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/' . $_SESSION['cp-logon']['MID'] . '.txt';
             $ourFileHandle = fopen($ourFileName, 'w') or die("Kan bestand niet opnenen, meld dit aan de administrator.");
             $stringData = $salt;
             fwrite($ourFileHandle, $stringData);

@@ -117,7 +117,7 @@ class UserDAO extends DBConfig
         if(isset($_SESSION['login-tries'])) $tries = $_SESSION['login-tries'];
         $_SESSION['UID'] = $id;
         global $route;
-        if(!isset($_COOKIE['username'])) setcookie('username', $username, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, 1);
+        if(!isset($_COOKIE['username'])) setcookie('username', $username, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
         $statement = $this->dbh->prepare("INSERT INTO `login` (`userID`,`ip`,`date`,`time`,`tries`) VALUES (:id, :ip, :date, :time, :tries)");
         $statement->execute(array(':id' => $_SESSION['UID'], ':ip' => $_SERVER['REMOTE_ADDR'], ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => $tries));
         return TRUE;
