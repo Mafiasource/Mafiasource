@@ -1,0 +1,20 @@
+<script type="text/javascript">
+    {% if acc == "bank" %}
+        {% set element = "#userBank" %}
+        {% set elementChange = "#bankChange" %}
+        {% set before = bankBefore %}
+        {% set after = bankAfter %}
+    {% elseif acc == "cash" %}
+        {% set element = "#userCash" %}
+        {% set elementChange = "#cashChange" %}
+        {% set before = cashBefore %}
+        {% set after = cashAfter %}
+    {% endif %}
+    $("{{ element }}").fadeOut("fast").hide().delay(4200).fadeIn("fast").show();
+    {% if type == "up" %}
+        moneyUpFlash("{{ elementChange }}", {{ after - before }});
+    {% elseif type == "down" %}
+        moneyDownFlash("{{ elementChange }}", {{ before - after }});
+    {% endif %}
+    $("{{ element }}").html("$"+number_format("{{ after }}", 0, "", ","));
+</script>

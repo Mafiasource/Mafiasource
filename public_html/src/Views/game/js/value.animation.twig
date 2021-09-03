@@ -1,0 +1,13 @@
+<script type="text/javascript">
+    $("{{ element }}").fadeOut("fast").hide().delay(4200).fadeIn("fast").show();
+    {% if type == "up" %}
+        valueUpFlash("{{ element }}Change", {{ valueAfter - valueBefore }});
+    {% elseif type == "down" %}
+        valueDownFlash("{{ element }}Change", {{ valueBefore - valueAfter }});
+    {% endif %}
+    {% if replaceContent %}
+        $("{{ element }}").html("{{ replaceContent }}");
+    {% else %}
+        $("{{ element }}").html(number_format("{{ valueAfter }}", 0, "", ","));
+    {% endif %}
+</script>
