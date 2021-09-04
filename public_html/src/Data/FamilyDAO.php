@@ -1163,4 +1163,20 @@ class FamilyDAO extends DBConfig
             }
         }
     }
+    
+    public function getImplodedFamilyMemberIds($fid)
+    {
+        $members = $this->con->getData("
+            SELECT `id` FROM `user` WHERE `familyID`= :fid AND `active`='1' AND `deleted`='0'
+        ", array(':fid' => $fid));
+        
+        $membs = array();
+        foreach($members AS $m)
+            $membs[] = (int)$m['id'];
+        
+        if(!empty($membs))
+            return implode(',', $membs);
+        
+        return false;
+    }
 }

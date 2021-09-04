@@ -1650,4 +1650,9 @@ class FamilyService
     {
         return $this->data->getFamilyPageAlliancesById($familyID);
     }
+    
+    public function getImplodedFamilyMemberIds($familyID)
+    {
+        return $this->data->getImplodedFamilyMemberIds($familyID);
+    }
 }

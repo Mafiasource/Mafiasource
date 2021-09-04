@@ -7,6 +7,7 @@ use src\Business\DonatorService;
 use src\Business\PossessionService;
 use src\Data\config\DBConfig;
 use src\Data\PossessionDAO;
+use src\Data\FamilyDAO;
 use src\Entities\Detective;
 use src\Entities\MurderLog;
 use src\Entities\User;
@@ -51,15 +52,8 @@ class MurderDAO extends DBConfig
                 case 'family-history-page':
                     global $userData;
                     $fid = $userData->getFamilyID();
-                    $members = $this->con->getData("
-                        SELECT `id` FROM `user` WHERE `familyID`= :fid AND `active`='1' AND `deleted`='0'
-                    ", array(':fid' => $fid));
-                    
-                    $membs = array();
-                    foreach($members AS $m)
-                        $membs[] = (int)$m['id'];
-                    
-                    $ids = implode(',', $membs);
+                    $familyData = new FamilyDAO();
+                    $ids = $familyData->getImplodedFamilyMemberIds($fid);
                     
                     $row = $this->con->getDataSR("
                         SELECT COUNT(`id`) AS `total` FROM `murder_log` WHERE (`attackerID` IN (".$ids.") OR `victimID` IN (".$ids.")) AND `active`='1' AND `deleted`='0' LIMIT 1
@@ -641,16 +635,8 @@ class MurderDAO extends DBConfig
             $to = (int)round($to);
             global $userData;
             $fid = $userData->getFamilyID();
-            
-            $members = $this->con->getData("
-                SELECT `id` FROM `user` WHERE `familyID`= :fid AND `active`='1' AND `deleted`='0'
-            ", array(':fid' => $fid));
-            
-            $membs = array();
-            foreach($members AS $m)
-                $membs[] = (int)$m['id'];
-            
-            $ids = implode(',', $membs);
+            $familyData = new FamilyDAO();
+            $ids = $familyData->getImplodedFamilyMemberIds($fid);
             
             $attacks = $this->con->getData("
                 SELECT ml.`id`, ml.`attackerID`, a.`username` AS `attacker`, ml.`victimID`, v.`username` AS `victim`, ml.`time`, ml.`result`,

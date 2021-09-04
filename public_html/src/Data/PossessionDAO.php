@@ -4,6 +4,7 @@ namespace src\Data;
 
 use src\Business\StateService;
 use src\Data\config\DBConfig;
+use src\Data\FamilyDAO;
 use src\Entities\Possession;
 use src\Entities\Possess;
 use src\Entities\PossessTransfer;
@@ -208,13 +209,8 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            $members = $this->con->getData("SELECT `id` FROM `user` WHERE `familyID`= :fid AND `active`='1' AND `deleted`='0'", array(':fid' => $familyID));
-            
-            $membs = array();
-            foreach($members AS $m)
-                $membs[] = (int)$m['id'];
-            
-            $ids = implode(',', $membs);
+            $familyData = new FamilyDAO();
+            $ids = $familyData->getImplodedFamilyMemberIds($familyID);
             
             $rows = $this->con->getData("SELECT `id` FROM `possess` WHERE `pID`= :id AND `userID` IN(".$ids.") AND `active`='1' AND `deleted`='0'", array(':id' => $id));
             
@@ -228,13 +224,8 @@ class PossessionDAO extends DBConfig
     {
         if(isset($_SESSION['UID']))
         {
-            $members = $this->con->getData("SELECT `id` FROM `user` WHERE `familyID`= :fid AND `active`='1' AND `deleted`='0'", array(':fid' => $familyID));
-            
-            $membs = array();
-            foreach($members AS $m)
-                $membs[] = (int)$m['id'];
-            
-            $ids = implode(',', $membs);
+            $familyData = new FamilyDAO();
+            $ids = $familyData->getImplodedFamilyMemberIds($familyID);
             
             $rows = $this->con->getData("
                 SELECT `id` FROM `possess` WHERE `userID` IN(".$ids.") AND `stateID`='0' AND `cityID`='0' AND `pID` IN (10, 12, 18) AND `active`='1' AND `deleted`='0'

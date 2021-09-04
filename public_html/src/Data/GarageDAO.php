@@ -221,7 +221,7 @@ class GarageDAO extends DBConfig
         }
     }
     
-    public function hasSpaceLeftInFamilyGarage($famID, $returnNum = false)
+    public function hasSpaceLeftInFamilyGarage($famID, $returnOccupied = false)
     {
         if(isset($_SESSION['UID']))
         {
@@ -243,7 +243,7 @@ class GarageDAO extends DBConfig
                     return FALSE;
                 else
                 {
-                    if($returnNum)
+                    if($returnOccupied)
                         return (int)$num;
                     else
                         return TRUE;
