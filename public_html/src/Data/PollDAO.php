@@ -13,6 +13,9 @@ class PollDAO extends DBConfig
     private $dbh = "";
     private $lang = "en";
     private $dateFormat = "%d-%m-%Y %H:%i:%s"; // SQL Format
+    private $questionSelects = ""; // Init
+    private $votesSubQry = "(SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pa.`questionID` AND `answerID`=pa.`id` AND `active`='1' AND `deleted`='0') AS `votes`";
+    private $totalVotesSubQry = "(SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pq.`id` AND `active`='1' AND `deleted`='0') AS `votes`";
     
     public function __construct()
     {
@@ -22,6 +25,7 @@ class PollDAO extends DBConfig
         global $route;
         $this->lang = $route->getLang();
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r"; // SQL Format
+        $this->questionSelects = "pq.`id`, pq.`question_".$this->lang."` AS `question`, pq.`description_".$this->lang."` AS `description`";
     }
     
     public function __destruct()
@@ -53,15 +57,26 @@ class PollDAO extends DBConfig
         return false;
     }
     
+    public function getAllQuestionAnswers($pollQuestion)
+    {
+        if(is_object($pollQuestion))
+        {
+            $answers = $this->con->getData("
+                SELECT pa.`id`, pa.`answer_".$this->lang."` AS `answer`, " . $this->votesSubQry . "
+                FROM `poll_answer` AS pa
+                WHERE pa.`questionID`= :qid AND pa.`active`='1' AND pa.`deleted`='0'
+            ", array(':qid' => $pollQuestion->getId()));
+        }
+        return isset($answers) ? $answers : false;
+    }
+    
     public function getActiveQuestions()
     {
         if(isset($_SESSION['UID']))
         {
             // Select active poll questions (active='1' != current votable poll! / it is determinded by dateEnd field insteadi)
             $rows = $this->con->getData("
-                SELECT pq.`id`, pq.`question_".$this->lang."` AS `question`, pq.`description_".$this->lang."` AS `description`,
-                    DATE_FORMAT(pq.`startDate`, '".$this->dateFormat."') AS `startDate`,
-                    (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pq.`id` AND `active`='1' AND `deleted`='0') AS `votes`
+                SELECT " . $this->questionSelects . ", DATE_FORMAT(pq.`startDate`, '".$this->dateFormat."') AS `startDate`, " . $this->totalVotesSubQry . "
                 FROM `poll_question` AS pq
                 WHERE pq.`active`='1' AND pq.`deleted`='0' AND (pq.`endDate` IS NULL OR pq.`endDate`='0000-00-00 00:00:00')
             ");
@@ -93,12 +108,7 @@ class PollDAO extends DBConfig
                 }
                 
                 // Select all possible answers to question.
-                $answers = $this->con->getData("
-                    SELECT pa.`id`, pa.`answer_".$this->lang."` AS `answer`,
-                        (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pa.`questionID` AND `answerID`=pa.`id` AND `active`='1' AND `deleted`='0') AS `votes`
-                    FROM `poll_answer` AS pa
-                    WHERE pa.`questionID`= :qid AND pa.`active`='1' AND pa.`deleted`='0'
-                ", array(':qid' => $pollQuestion->getId()));
+                $answers = $this->getAllQuestionAnswers($pollQuestion);
                 
                 $answerList = array();
                 foreach($answers AS $answer)
@@ -146,9 +156,7 @@ class PollDAO extends DBConfig
         {
             // Select finished poll questions (history)
             $rows = $this->con->getData("
-                SELECT pq.`id`, pq.`question_".$this->lang."` AS `question`, pq.`description_".$this->lang."` AS `description`, `startDate`,
-                    DATE_FORMAT(pq.`endDate`, '".$this->dateFormat."') AS `endDateFormat`,
-                    (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pq.`id` AND `active`='1' AND `deleted`='0') AS `votes`
+                SELECT " . $this->questionSelects . ", `startDate`, DATE_FORMAT(pq.`endDate`, '".$this->dateFormat."') AS `endDateFormat`, " . $this->totalVotesSubQry . "
                 FROM `poll_question` AS pq
                 WHERE pq.`active`='1' AND pq.`deleted`='0' AND pq.`endDate` IS NOT NULL AND pq.`endDate`!='0000-00-00 00:00:00'
                 ORDER BY `endDate` DESC
@@ -166,12 +174,7 @@ class PollDAO extends DBConfig
                 $pollQuestion->setVotes($row['votes']);
                 
                 // Select all possible answers to question.
-                $answers = $this->con->getData("
-                    SELECT pa.`id`, pa.`answer_".$this->lang."` AS `answer`,
-                        (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pa.`questionID` AND `answerID`=pa.`id` AND `active`='1' AND `deleted`='0') AS `votes`
-                    FROM `poll_answer` AS pa
-                    WHERE pa.`questionID`= :qid AND pa.`active`='1' AND pa.`deleted`='0'
-                ", array(':qid' => $pollQuestion->getId()));
+                $answers = $this->getAllQuestionAnswers($pollQuestion);
                 
                 $answerList = array();
                 foreach($answers AS $answer)
@@ -199,8 +202,7 @@ class PollDAO extends DBConfig
         {
             // Select poll question
             $row = $this->con->getDataSR("
-                SELECT pq.`id`, pq.`question_".$this->lang."` AS `question`, pq.`description_".$this->lang."` AS `description`, pq.`startDate`,
-                    (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pq.`id` AND `active`='1' AND `deleted`='0') AS `votes`
+                SELECT " . $this->questionSelects . ", pq.`startDate`, " . $this->totalVotesSubQry . "
                 FROM `poll_question` AS pq
                 WHERE pq.`id`= :pqid AND pq.`active`='1' AND pq.`deleted`='0' AND (pq.`endDate` IS NULL OR pq.`endDate`='0000-00-00 00:00:00')
             ", array(':pqid' => $id));
@@ -233,8 +235,7 @@ class PollDAO extends DBConfig
         {
             // Select answer
             $row = $this->con->getDataSR("
-                SELECT pa.`id`, pa.`questionID`, pa.`answer_".$this->lang."` AS `answer`,
-                    (SELECT COUNT(`id`) FROM `poll_vote` WHERE `questionID`=pa.`questionID` AND `answerID`=pa.`id` AND `active`='1' AND `deleted`='0') AS `votes`
+                SELECT pa.`id`, pa.`questionID`, pa.`answer_".$this->lang."` AS `answer`, " . $this->votesSubQry . "
                 FROM `poll_answer` AS pa
                 WHERE pa.`id`= :paid AND pa.`active`='1' AND pa.`deleted`='0'
             ", array(':paid' => $id));

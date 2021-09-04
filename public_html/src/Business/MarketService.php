@@ -36,8 +36,8 @@ class MarketService
         global $security;
         global $userData;
         global $route;
-        $post['price'] = (int)round($post['price']);
-        $post['amount'] = (int)round($post['amount']);
+        $post['price'] = (int)round((int)$post['price']);
+        $post['amount'] = (int)round((int)$post['amount']);
         
         switch($post['category'])
         {
