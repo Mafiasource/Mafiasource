@@ -255,7 +255,8 @@ class GarageDAO extends DBConfig
     
     public function spaceLeftInGarage($stateID, $maxSpace)
     {
-        if($num = $this->hasSpaceLeftInGarage($stateID, true))
+        $num = $this->hasSpaceLeftInGarage($stateID, true);
+        if($num >= 0)
             return $maxSpace - $num;
         
         return FALSE;
@@ -263,7 +264,8 @@ class GarageDAO extends DBConfig
     
     public function spaceLeftInFamilyGarage($famID, $maxSpace)
     {
-        if($num = $this->hasSpaceLeftInFamilyGarage($famID, true))
+        $num = $this->hasSpaceLeftInFamilyGarage($famID, true);
+        if($num >= 0)
             return $maxSpace - $num;
         
         return FALSE;
