@@ -2,7 +2,7 @@
  
 namespace src\Business\Logic;
 
-use vendo\SimpleImage;
+use vendor\SimpleImage;
  
 class UploadService
 {
