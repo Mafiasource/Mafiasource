@@ -121,6 +121,9 @@ strong.msg {cursor:pointer;}
                                 #}
                                 <br class="clear"/>
                                 <div class="reply-field">
+                                    {% if receiver is empty %} {# No reply yet in lastMessage fetch first latestMessages getSenderUsername #}
+                                        {% set receiver = latestMessages.0.getSenderUsername %}
+                                    {% endif %}
                                     <input type="hidden" name="receiver" value="{{ receiver }}"/>
                                     <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                                     <textarea id="writeMessage" class="writeAndFlush" name="message" rows="6" cols="80"></textarea><br class="clear"/><br />

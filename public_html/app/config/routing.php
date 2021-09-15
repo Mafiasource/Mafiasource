@@ -315,9 +315,4 @@ class Routing
     {
         return array('alert' => array('warning' => true, 'message' => $msg));
     }
-    
-    public function print($view)
-    {
-        return DEVELOPMENT ? print($view) : print_r($view);
-    }
 }

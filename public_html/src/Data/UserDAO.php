@@ -247,42 +247,49 @@ class UserDAO extends DBConfig
         }
     }
     
+    public function resetUser($userID)
+    {
+        $this->con->data("
+            DELETE FROM `business_stock` WHERE `userID`= :uid;
+            DELETE FROM `crime_org_prep` WHERE `userID`= :uid;
+            UPDATE `crime_org_prep` SET `participantID`='0' WHERE `participantID`= :uid;
+            UPDATE `crime_org_prep` SET `participant2ID`='0' WHERE `participant2ID`= :uid;
+            UPDATE `crime_org_prep` SET `participant3ID`='0' WHERE `participant3ID`= :uid;
+            DELETE FROM `detective` WHERE `userID`= :uid;
+            DELETE FROM `drug_liquid` WHERE `userID`= :uid;
+            DELETE FROM `equipment` WHERE `userID`= :uid;
+            DELETE FROM `fifty_game` WHERE `userID`= :uid AND `type`!='2';
+            UPDATE `ground` SET `userID`='0' WHERE `userID`= :uid;
+            DELETE FROM `gym_competition` WHERE `userID`= :uid;
+            DELETE FROM `market` WHERE `userID`= :uid AND ((`type`!='0' AND `type`!='2') OR ((`type`='0' OR `type`='2') AND `requested`='1'));
+            UPDATE `possess` SET `userID`='0', `profit`='0', `profit_hour`='0', `stake`='50000' WHERE `userID`= :uid;
+            DELETE FROM `possess_transfer` WHERE `senderID`= :uid OR `receiverID`= :uid;
+            DELETE FROM `prison` WHERE `userID`= :uid;
+            DELETE FROM `rld_whore` WHERE `userID`= :uid;
+            DELETE FROM `smuggle_unit` WHERE `userID`= :uid;
+            DELETE FROM `user_residence` WHERE `userID`= :uid
+        ", array(':uid' => $userID));
+        
+        $userGarages = $this->con->getData("SELECT `id` FROM `user_garage` WHERE `userID`= :uid", array(':uid' => $userID));
+        foreach($userGarages AS $g)
+            $this->con->setData("DELETE FROM `garage` WHERE `userGarageID`= :ugid", array(':ugid' => $g['id']));
+        
+        $this->con->setData("DELETE FROM `user_garage` WHERE `userID`= :uid", array(':uid' => $userID));
+    }
+    
     public function resetDeadUser($username, $profession)
     {
         if(isset($_SESSION['UID']))
         {
+            $this->resetUser($_SESSION['UID']);
             $this->con->setData("
-                DELETE FROM `business_stock` WHERE `userID`= :uid;
-                DELETE FROM `crime_org_prep` WHERE `userID`= :uid;
-                UPDATE `crime_org_prep` SET `participantID`='0' WHERE `participantID`= :uid;
-                UPDATE `crime_org_prep` SET `participant2ID`='0' WHERE `participant2ID`= :uid;
-                UPDATE `crime_org_prep` SET `participant3ID`='0' WHERE `participant3ID`= :uid;
-                DELETE FROM `detective` WHERE `userID`= :uid;
-                DELETE FROM `drug_liquid` WHERE `userID`= :uid;
-                DELETE FROM `equipment` WHERE `userID`= :uid;
-                DELETE FROM `fifty_game` WHERE `userID`= :uid AND `type`!='2';
-                UPDATE `ground` SET `userID`='0' WHERE `userID`= :uid;
-                DELETE FROM `gym_competition` WHERE `userID`= :uid;
-                DELETE FROM `market` WHERE `userID`= :uid AND (`type`!='0' AND `type`!='2') OR ((`type`='0' OR `type`='2') AND `requested`='1');
-                UPDATE `possess` SET `userID`='0', `profit`='0', `profit_hour`='0', `stake`='50000' WHERE `userID`= :uid;
-                DELETE FROM `possess_transfer` WHERE `senderID`= :uid OR `receiverID`= :uid;
-                DELETE FROM `prison` WHERE `userID`= :uid;
-                DELETE FROM `rld_whore` WHERE `userID`= :uid;
-                DELETE FROM `smuggle_unit` WHERE `userID`= :uid;
                 UPDATE `user`
                   SET `username`= :u, `restartDate`= NOW(), `isProtected`='1', `charType`= :p, `health`='100', `rankpoints`='0', `cash`='2500', `bank`='10000', `whoresStreet`='0',
                     `bullets`='0', `weapon`='0', `protection`='0', `airplane`='0', `weaponExperience`='0', `weaponTraining`='0', `residence`='0', `residenceHistory`='', `power`='0',
                     `cardio`='0', `luckybox`='0', `cCrimes`='0', `cWeaponTraining`='0', `cGymTraining`='0', `cStealVehicles`='0', `cPimpWhores`='0', `cFamilyRaid`='0',
                     `cFamilyCrimes`='0', `cBombardement`='0', `cTravelTime`='0'
                 WHERE `id`= :uid AND `statusID`<='7' AND `health`<='0' AND `active`='1' AND `deleted`='0';
-                DELETE FROM `user_residence` WHERE `userID`= :uid
             ", array(':u' => $username, ':p' => $profession, ':uid' => $_SESSION['UID']));
-            
-            $userGarages = $this->con->getData("SELECT `id` FROM `user_garage` WHERE `userID`= :uid", array(':uid' => $_SESSION['UID']));
-            foreach($userGarages AS $g)
-                $this->con->setData("DELETE FROM `garage` WHERE `userGarageID`= :ugid", array(':ugid' => $g['id']));
-            
-            $this->con->setData("DELETE FROM `user_garage` WHERE `userID`= :uid", array(':uid' => $_SESSION['UID']));
         }
     }
     

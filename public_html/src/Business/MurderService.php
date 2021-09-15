@@ -169,7 +169,7 @@ class MurderService
             {
                 $error = $l['CANNOT_MURDER_PLAYER_WITH_CASH_OR_BANK_IN_MIN'];
             }
-            if($userData->getFamilyID() == $victimProfile->getFamilyID() && $userData->getFamilyID() !== 0)
+            if($userData->getFamilyID() == $victimProfile->getFamilyID() && $userData->getFamilyID() != 0)
             {
                 $error = $l['CANT_MURDER_PLAYER_INSIDE_FAMILY'];
             }

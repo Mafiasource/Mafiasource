@@ -69,8 +69,8 @@ if(!empty($_POST['securityToken']) && isset($_POST['action']) && isset($_POST['i
         $twigVars['langs'] = array_merge($langs, $language->garageLangs());
         if(is_array($selectedTune) && array_key_exists(0, array_keys($selectedTune))) $twigVars['activeCarousel'] = array_keys($selectedTune)[0];
         
-        $route->print($twig->render('/src/Views/game/Ajax/garage.tune.shop.twig', $twigVars));
+        echo $twig->render('/src/Views/game/Ajax/garage.tune.shop.twig', $twigVars);
     }
     else
-        $route->print($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
+        echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
 }
