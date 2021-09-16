@@ -249,7 +249,7 @@ class UserDAO extends DBConfig
     
     public function resetUser($userID)
     {
-        $this->con->data("
+        $this->con->setData("
             DELETE FROM `business_stock` WHERE `userID`= :uid;
             DELETE FROM `crime_org_prep` WHERE `userID`= :uid;
             UPDATE `crime_org_prep` SET `participantID`='0' WHERE `participantID`= :uid;
