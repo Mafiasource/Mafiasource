@@ -1,0 +1,154 @@
+{% if hasGarage %}
+    <div class="inner-c-container">
+        {% if responseCrimes %}
+            {% set response = responseCrimes %}
+            <div class="rowMsg">
+                {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+            </div>
+            <br class="clear"/>
+        {% endif %}
+        <div class="table-responsive">
+            <table class="table table-sm table-dark table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" class="center">
+                            #
+                        </th>
+                        <th scope="col" class="center">
+                            <strong>{{ langs.PARTICIPANTS }}</strong>
+                        </th>
+                        <th scope="col" class="center">
+                            <strong>Min. {{ langs.NUMBER }}</strong>
+                        </th>
+                        <th scope="col" class="center">
+                            <strong>{{ langs.CRIME }}</strong>
+                        </th>
+                        <th scope="col" class="center">
+                            <strong>{{ langs.STATE }}</strong>
+                        </th>
+                        <th scope="col" class="center" style="min-width:132px;">
+                            <strong>{{ langs.ACTION }}s</strong>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if familyCrimes is not empty %}
+                        {% for fc in familyCrimes %}
+                            <tr>
+                                <td class="center">{{ loop.index }}</td>
+                                {% set participantsArr = fc.getParticipants|split(',') %}
+                                {% set participants = [] %}
+                                {% for k, p in participantsArr %}
+                                    {% set participants = participants|merge(['<a href="/game/profile/' ~ p ~ '">' ~ p ~ '</a>']) %}
+                                {% endfor %}
+                                {% set newParticipants = participants|join(', ') %}
+                                {% set numInCrime = fc.getNumInCrime %}
+                                {% if fc.getWithMercenaries %}
+                                    {% set mercenaries = '<small>(+' ~ fc.getMercenariesReady ~ ' ' ~ langs.MERCENARIES ~ ')</small>' %}
+                                    {% set numInCrime = numInCrime + fc.getMercenariesReady %}
+                                {% endif %}
+                                <td>{{ newParticipants|raw }}&nbsp;{{ mercenaries|raw }}</td>
+                                <td>{{ numInCrime }} / {{ fc.getNumParticipants }}</td>
+                                {% set crime = fc.getCrime %}
+                                <td>{{ fc.getCrime }}</td>
+                                <td>{{ fc.getState }}</td>
+                                <td style="min-width:132px;">
+                                    <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-crimes') }}" method="POST" data-response="#interactFamilyCrimesResponse">
+                                        <input type="hidden" name="crime" value="{{ fc.getId }}"/>
+                                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                        {% if insideFamilyCrime %}
+                                            {% if fc.getUserInCrime %}
+                                                <input type="submit" class="button" name="leave" value="{{ langs.LEAVE }}"/>
+                                                {% if numInCrime == fc.getNumParticipants %}
+                                                    &nbsp;<input type="submit" class="button" name="start" value="Start{% if lang == 'nl' %}en{% endif %}"/>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            <input type="submit" class="button" name="join" value="{{ langs.JOIN }}"/>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6">
+                                <img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="No crimes" /> {{ langs.NO_FAMILY_CRIMES_FOUND }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        {% if responseOrganize %}
+            <br class="clear"/>
+            {% set response = responseOrganize %}
+            <div class="rowMsg">
+                {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+            </div>
+        {% endif %}
+        {% if not insideFamilyCrime %}
+            <div class="inner-c-container" style="max-width: 440px;">
+                <form id="organizeFamilyCrime" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('family-crimes-organize') }}" method="POST" data-response="#interactFamilyCrimesResponse">
+                    <div class="subtop">
+                        {% if lang == "en" %}{{ langs.ORGANIZE }} {{ langs.CRIME }}{% else %}{{ langs.CRIME }} {{ langs.ORGANIZE }}{% endif %}
+                    </div>
+                    <div class="content-container">
+                        <div class="row cols cf">
+                            <div class="c-50 column">
+                                <img src="{{ staticRoot }}/web/public/images/icons/world.png" class="icon" alt="{{ langs.STATE }}" /> {{ langs.STATE }}
+                            </div>
+                            <div class="c-50 column">
+                                {{ userData.getState }}
+                            </div>
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-50 column">
+                                <img src="{{ staticRoot }}/web/public/images/icons/group.png" class="icon" alt="{{ langs.PARTICIPANTS }}" /> {{ langs.PARTICIPANTS }}
+                            </div>
+                            <div class="c-50 column">
+                                <select name="participants">
+                                    {% for i in range(3,23) %}
+                                        <option value="{{ i }}">{{ i }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-50 column">
+                                <img src="{{ staticRoot }}/web/public/images/icons/lorry.png" class="icon" alt="{{ langs.CRIME }}" /> {{ langs.CRIME }}
+                            </div>
+                            <div class="c-50 column">
+                                <select name="crime">
+                                    {% for c in crimes %}
+                                        <option value="{{ loop.index }}">{{ c }}</option>
+                                    {% endfor %}
+                                {# Longer version:
+                                    <option value="1">Garage {{ langs.RAID|lower }}{% if lang == 'nl' %}len{% endif %}</option>
+                                    <option value="2">Showroom {{ langs.RAID|lower }}{% if lang == 'nl' %}len{% endif %}</option>
+                                    <option value="3">{{ langs.CAR_FAIR }} {{ langs.RAID|lower }}{% if lang == 'nl' %}len{% endif %}</option>
+                                #}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-50 column">
+                                <img src="{{ staticRoot }}/web/public/images/icons/group_add.png" class="icon" alt="{{ langs.MERCENARIES }}" /> {{ langs.MERCENARIES }}
+                            </div>
+                            <div class="c-50 column">
+                                <div class="form-check">
+                                    <input type="checkbox" name="mercenaries" class="form-check-input" id="mercenaries" />
+                                    <label class="form-check-label" for="mercenaries">{{ langs.WITH }} {{ langs.MERCENARIES|lower }}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="hidden" name="security-token" value="{{ securityToken }}" />
+                            <input type="submit" name="organize-family-crime" value="{{ langs.ORGANIZE }}" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

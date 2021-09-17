@@ -380,8 +380,9 @@ class FamilyCrimeService
             }
             elseif($start)
             {
+                $mercs = $famCrimeData->getMercenariesReady();
                 if($famCrimeData->getWithMercenaries() === true)
-                    $this->data->useFamilyMercenariesInCrime($famCrimeData->getMercenariesReady());
+                    $this->data->useFamilyMercenariesInCrime($mercs);
                 
                 $chance = $security->randInt(0, 100);
                 if($chance <= 70/** 50 **/)
@@ -420,8 +421,12 @@ class FamilyCrimeService
                     else // Stolen 3 vehicles
                         $msgSuccess = self::multipleStolenVehicles(array($randCar1, $randCar2, $randCar3), $spaceLeftNum, $familyID);
                     
+                    $participantHp = is_array($participants) && !empty($participants) ? count($participants) : 1;
+                    if(isset($mercs) && $mercs >= 2)
+                        $participantHp += $mercs;
+                    
                     foreach($participants AS $p)
-                        $this->data->updateUserFamilyCrimeTime($p, 150, true);
+                        $this->data->updateUserFamilyCrimeTime($p, 150, $participantHp, true);
                     
                     $this->data->deleteFamilyCrimeById($famCrimeData->getId());
                     

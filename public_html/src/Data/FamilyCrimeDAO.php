@@ -248,7 +248,7 @@ class FamilyCrimeDAO extends DBConfig
         return NULL;
     }
     
-    public function updateUserFamilyCrimeTime($uid, $waitingTime, $success = false)
+    public function updateUserFamilyCrimeTime($uid, $waitingTime, $honorPoints = 3, $success = false)
     { // Successful crime? Also add 3 honorpoints.
         if(isset($_SESSION['UID'])  && $this->familyID != 0)
         {
@@ -257,8 +257,8 @@ class FamilyCrimeDAO extends DBConfig
             $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $d['donatorID']);
             if($success === true)
                 $this->con->setData("
-                    UPDATE `user` SET `cFamilyCrimes`= :time, `honorPoints`=`honorPoints`+'3' WHERE `id`= :uid AND `active`='1' AND `deleted`='0'
-                ", array(':time' => (time() + $waitingTime), ':uid' => $uid));
+                    UPDATE `user` SET `cFamilyCrimes`= :time, `honorPoints`=`honorPoints`+ :hp WHERE `id`= :uid AND `active`='1' AND `deleted`='0'
+                ", array(':time' => (time() + $waitingTime), ':hp' => $honorPoints, ':uid' => $uid));
             else
                 $this->con->setData("
                     UPDATE `user` SET `cFamilyCrimes`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0'
