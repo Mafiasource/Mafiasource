@@ -23,8 +23,6 @@
 
 /** Front-controller - Main entry point for entire web application **/
 
-declare (strict_types=1);
-
 use Doctrine\Common\ClassLoader;
 use app\config\Routing;
 use app\config\Security;

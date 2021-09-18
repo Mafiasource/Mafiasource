@@ -1,4 +1,10 @@
 {% extends "/app/Resources/Views/base.twig" %}
+
+{% block stylesheets %}
+<style type="text/css">
+    section#content { padding-bottom:0;}
+</style>
+{% endblock stylesheets %}
  
 {% block content %}
     <h1 style="position: absolute;top: -10em;">{{ langs.MOOD_IMAGES }}</h1>
@@ -13,7 +19,7 @@
             {% for s in screenshots %}
                 <div id="carousel_{{ loop.index }}" class="carousel-item{% if loop.first %} active{% endif %}">
                     <picture>
-                        <source media="(min-width: 766px)" srcset="{{ staticRoot }}/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.png">
+                        <source media="(min-width: 766px)" srcset="{{ staticRoot }}/foto/1802x860/1/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.png">
                         <img class="d-block w-100" src="{{ staticRoot }}/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.mobile.png" alt="{{ s.name }}"/>
                     </picture>
                 </div>

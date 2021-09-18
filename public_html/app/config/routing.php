@@ -235,12 +235,12 @@ class Routing
         $language = $this->getLanguageByIp();
         if($language == "Dutch")
         {
-            setcookie('lang', 'nl', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, 1);
+            setcookie('lang', 'nl', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
             return "nl";
         }
         else
         {
-            setcookie('lang', 'en', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, 1);
+            setcookie('lang', 'en', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
             return "en";
         }
     }

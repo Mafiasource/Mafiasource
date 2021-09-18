@@ -1,6 +1,7 @@
 <?PHP
 
 use src\Business\UserService;
+use src\Business\SeoService;
 
 require_once __DIR__ . '/.inc.head.php';
 
@@ -19,9 +20,19 @@ if($referral != false) $_SESSION['register']['referral'] = $referral;
 
 if($route->getRouteName() == 'register-referral') $route->headTo('register');
 
+// Honeypotted
+$blockPost = false;
+if(isset($_POST['referral-username']))
+{
+    if(isset($_POST['email']) && !empty($_POST['email']))
+        $blockPost = $_POST['email'];
+    
+    $_POST['email'] = $_POST['referral-username'];
+    unset($_POST['referral-username']);
+}
 if(
     isset($_POST) && !empty($_POST) && isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password']) &&
-    isset($_POST['password_check']) && isset($_POST['captcha_code']) && isset($_POST['type'])
+    isset($_POST['password_check']) && isset($_POST['captcha_code']) && isset($_POST['type']) && $blockPost === false
 )
 {
     $response = $userService->validateRegister($_POST);
@@ -30,14 +41,17 @@ if(
         $l = $language->registerLangs();
         $route->createActionMessage($route->successMessage($l['REGISTERED_SUCCESSFUL']));
         $route->headTo('game');
-        exit(0);
     }
     else
     {
         $route->createActionMessage($route->errorMessage($response));
         $route->headTo('register');
-        exit(0);
     }
+}
+elseif($blockPost !== false) //Honeypot
+{
+    $route->createActionMessage($route->errorMessage($langs['INVALID_SECURITY_TOKEN']));
+    $route->headTo('register');
 }
 
 require_once __DIR__ . '/.inc.foot.php';

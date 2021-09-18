@@ -167,8 +167,8 @@ class UserService
     	$nameSet = $this->data->checkUsername($username);
     	$emailSet = $this->data->checkEmail($mailadres);
         
-        $inUse = array("Guest", "guest", "Gast", "gast", "Webmaster", "webmaster", "Admin", "admin", "Moderator", "moderator", "Helpdesk", "helpdesk", "None", "Geen");
-    	if($nameSet->rowCount() == 1 || in_array($username, $inUse))
+        $inUse = array("Guest", "Gast", "Webmaster", "Admin", "Moderator", "Helpdesk", "None", "Geen");
+    	if($nameSet->rowCount() == 1 || in_array(ucfirst(strtolower($username)), $inUse))
         {
     		$error = $l['USERNAME_TAKEN'];
     	}
@@ -177,7 +177,15 @@ class UserService
     		$error = $l['EMAIL_TAKEN'];
     	}
         
-        $isRg      = $this->data->checkIPRegistered(self::getIP());
+        $ipAddr = self::getIP();
+        $ipValid = filter_var($ipAddr, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        
+        if(!$ipValid)
+        {
+            $error = $langs['INVALID_SECURITY_TOKEN']; 
+        }
+        
+        $isRg      = $this->data->checkIPRegistered($ipAddr);
     	$isRegged  = is_object($isRg) ? $isRg->rowCount() : 0;
         
     	if($isRegged >= 1)
@@ -943,6 +951,7 @@ class UserService
         {
             $error = $langs['MESSAGE_UNDER_75_CHARS'];
         }
+        
         if(isset($error))
         {
             return Routing::errorMessage($error);

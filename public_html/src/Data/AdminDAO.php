@@ -316,7 +316,7 @@ class AdminDAO extends DBConfig
         if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
         {
             $id = (int)$id;
-            $statement = $this->dbh->prepare("UPDATE `$this->table` SET `active` = '1' WHERE `id` = :id");
+            $statement = $this->dbh->prepare("UPDATE `$this->table` SET `active` = '1' WHERE `id` = :id AND `active`='0'");
             if($statement->execute(array(':id' => $id)))
                 return TRUE;
             else
@@ -331,7 +331,7 @@ class AdminDAO extends DBConfig
         if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
         {
             $id = (int)$id;
-            $statement = $this->dbh->prepare("UPDATE `$this->table` SET `active` = '0' WHERE `id` = :id");
+            $statement = $this->dbh->prepare("UPDATE `$this->table` SET `active` = '0' WHERE `id` = :id AND `active`='1' AND `deleted`!='-1'");
             if($statement->execute(array(':id' => $id)))
                 return TRUE;
             else
@@ -346,7 +346,7 @@ class AdminDAO extends DBConfig
         if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
         {
             $id = (int)$id;
-            $statement = $this->dbh->prepare("UPDATE `$this->table` SET `deleted` = '1' WHERE `id` = :id");
+            $statement = $this->dbh->prepare("UPDATE `$this->table` SET `deleted` = '1' WHERE `id` = :id AND `deleted`='0'");
             if($statement->execute(array(':id' => $id)))
                 return TRUE;
             else
@@ -360,7 +360,7 @@ class AdminDAO extends DBConfig
     {
         if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
         {
-            $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `id`=:id");
+            $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `id`=:id AND `deleted` = '0'");
             $statement->execute(array(':id' => $id));
             $list = array();
             $list = $this->checkCommentsForFieldsInEdit($list,$statement);

@@ -54,7 +54,7 @@ class Security
     
     public function checkToken($input)
     {
-        if($input == $this->token)
+        if($input === $this->token)
             return TRUE;
         else
             return FALSE;

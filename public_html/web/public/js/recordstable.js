@@ -8,13 +8,13 @@ $.ajaxPrefilter(function(options) {
 
 function tableOptionsAjaxSubmission(id, table, actionUri, responseNode, securityToken, hideString, showString)
 {
-    $(".sortable > tbody").sortable('destroy');
-    hideString = typeof hideString !== 'undefined' ? hideString : '';
-    showString = typeof showString !== 'undefined' ? showString : '';
+    $(".sortable > tbody").sortable("destroy");
+    hideString = typeof hideString !== "undefined" ? hideString : "";
+    showString = typeof showString !== "undefined" ? showString : "";
     $.ajax({
         type: "POST",
-        url: location.protocol+'//' + location.hostname + actionUri,
-        data: {id,table,securityToken, hideString, showString},
+        url: location.protocol + "//" + location.hostname + actionUri,
+        data: {id, table, securityToken, hideString, showString},
         success:function(data) 
   		{
   		    $(responseNode).html(data);
@@ -51,17 +51,17 @@ function sortTableRecordsRows()
         scrollSensitivity: 80,
         scrollSpeed: 3,
         update: function() {
-            var table = $(".table.table-bordered.sortable").attr('data-table');
-            var startFrom = parseInt($(".table.table-bordered.sortable").attr('start'));
+            var table = $(".table.table-bordered.sortable").attr("data-table");
+            var startFrom = parseInt($(".table.table-bordered.sortable").attr("start"));
             var stringDiv = "";
             $(".sortable > tbody").children().each(function(i) {
                 var li = $(this);
-                stringDiv += " "+li.attr("id") + '=' + (i + startFrom) + '&';
+                stringDiv += " " + li.attr("id") + "=" + (i + startFrom) + "&";
             });
-            stringDiv += "table="+table+"&securityToken="+securityToken;
+            stringDiv += "table="+table + "&securityToken=" + securityToken;
             $.ajax({
                 type: "POST",
-                url: location.protocol+'//'+ location.hostname + "/admin/sort",
+                url: location.protocol + "//" + location.hostname + "/admin/sort",
                 data: stringDiv,
                 success:function(data) 
           		{
@@ -71,27 +71,27 @@ function sortTableRecordsRows()
         }
     });
 }
-$(document).on('mousedown', 'a.delete:not(.deleteSure)', function (e) {
-    var id = $(this).attr('data-id');
-    var table = $('table.table.table-bordered.sortable').attr('data-table');
-    var hideString = $(this).attr('data-hide-elements');
-    var showString = $(this).attr('data-show-elements');
-    var actionUri = '/admin/delete-confirm';
-    tableOptionsAjaxSubmission(id,table,actionUri,"#deleteConfirm",securityToken,hideString,showString);
+$(document).on("mousedown", "a.delete:not(.deleteSure)", function (e) {
+    var id = $(this).attr("data-id");
+    var table = $("table.table.table-bordered.sortable").attr("data-table");
+    var hideString = $(this).attr("data-hide-elements");
+    var showString = $(this).attr("data-show-elements");
+    var actionUri = "/admin/delete-confirm";
+    tableOptionsAjaxSubmission(id, table, actionUri, "#deleteConfirm", securityToken, hideString, showString);
     e.preventDefault();
     e.stopPropagation();
 });
-$(document).on('click', 'button.deleteSure:not(.delete)', function (e) {
-    var id = $(this).attr('data-id');
-    var table = $(this).attr('data-table');
-    var actionUri = '/admin/delete';
-    tableOptionsAjaxSubmission(id,table,actionUri,"#deleteSureConfirm",securityToken);
+$(document).on("click", "button.deleteSure:not(.delete)", function (e) {
+    var id = $(this).attr("data-id");
+    var table = $(this).attr("data-table");
+    var actionUri = "/admin/delete";
+    tableOptionsAjaxSubmission(id, table, actionUri, "#deleteSureConfirm", securityToken);
     e.preventDefault();
     e.stopPropagation();
 });
-$(document).on('click', 'button.saveRecord', function (e) {
-    var postData = new FormData($(this).closest('form#editForm')[0]);
-	var formURL = $(this).closest('form#editForm').attr("action");
+$(document).on("click", "button.saveRecord", function (e) {
+    var postData = new FormData($(this).closest("form#editForm")[0]);
+	var formURL = $(this).closest("form#editForm").attr("action");
 	$.ajax(
 	{
         cache: false,
@@ -108,33 +108,33 @@ $(document).on('click', 'button.saveRecord', function (e) {
     e.preventDefault();
     e.stopPropagation(); 
 });
-$(document).on('mousedown', 'a.editOrNew', function (e) {
-    if($(this).hasAttr('data-id')) { var id = $(this).attr('data-id'); } else { var id = ""; }
-    var table = $('table.table.table-bordered.sortable').attr('data-table');
-    if($(this).hasAttr('data-id')) { var actionUri = '/admin/edit/'+id; } else { var actionUri = '/admin/new'; }
-    tableOptionsAjaxSubmission(id,table,actionUri,"#editOrNewConfirm",securityToken);
+$(document).on("mousedown", "a.editOrNew", function (e) {
+    if($(this).hasAttr("data-id")) { var id = $(this).attr("data-id"); } else { var id = ""; }
+    var table = $("table.table.table-bordered.sortable").attr("data-table");
+    if($(this).hasAttr("data-id")) { var actionUri = "/admin/edit/" + id; } else { var actionUri = "/admin/new"; }
+    tableOptionsAjaxSubmission(id, table, actionUri, "#editOrNewConfirm", securityToken);
     e.preventDefault();
     e.stopPropagation();
     
 });
-$(document).on('mousedown', 'a.activate', function (e) {
-    var id = $(this).attr('data-id');
-    var table = $('table.table.table-bordered.sortable').attr('data-table');
-    var actionUri = '/admin/activate';
-    tableOptionsAjaxSubmission(id,table,actionUri,"#activateDeactivateConfirm",securityToken);
+$(document).on("mousedown", "a.activate", function (e) {
+    var id = $(this).attr("data-id");
+    var table = $("table.table.table-bordered.sortable").attr("data-table");
+    var actionUri = "/admin/activate";
+    tableOptionsAjaxSubmission(id, table, actionUri, "#activateDeactivateConfirm", securityToken);
     e.preventDefault();
     e.stopPropagation();
 });
-$(document).on('mousedown', 'a.deactivate', function (e) {
-    var id = $(this).attr('data-id');
-    var table = $('table.table.table-bordered.sortable').attr('data-table');
-    var actionUri = '/admin/deactivate';
-    tableOptionsAjaxSubmission(id,table,actionUri,"#activateDeactivateConfirm",securityToken);
+$(document).on("mousedown", "a.deactivate", function (e) {
+    var id = $(this).attr("data-id");
+    var table = $("table.table.table-bordered.sortable").attr("data-table");
+    var actionUri = "/admin/deactivate";
+    tableOptionsAjaxSubmission(id, table, actionUri, "#activateDeactivateConfirm", securityToken);
     e.preventDefault();
     e.stopPropagation();
 });
-$(document).on('mousedown', 'input.positionchange', function (e) {
-    $("input[name='search']").val('');
+$(document).on("mousedown", "input.positionchange", function (e) {
+    $("input[name='search']").val("");
     $("select[name='search-by']").val(0);
     $("#search-form-records").submit();
     e.preventDefault();
@@ -143,7 +143,7 @@ $(document).on('mousedown', 'input.positionchange', function (e) {
 $("#search-form-records").submit(function (e) {
     $(".sortable > tbody").sortable('destroy');
     $('#ajaxLoader').show();
-    $("#searchFormResponse").html('');
+    $("#searchFormResponse").html("");
     var postData = $(this).serializeArray();
 	var formURL = $(this).attr("action");
 	var method = $(this).attr("method");

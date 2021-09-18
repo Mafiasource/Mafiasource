@@ -1,15 +1,15 @@
-$( document ).on( "submit", "form.ajaxForm", function(e) {
+$(document).on("submit", "form.ajaxForm", function(e){
     if(ajaxBusy == false)
     {
         if($("#ajaxLoader").length)
         {
-            $('#ajaxLoader').show();
+            $("#ajaxLoader").show();
         }
         var postData = $(this).serializeArray();
         var formURL = $(this).attr("action");
         var method = $(this).attr("method");
         var responseField = $(this).attr("data-response");
-        var btn = $("input[type=submit][clicked=true]").attr('name');
+        var btn = $("input[type=submit][clicked=true]").attr("name");
         var btnVal = $("input[type=submit][clicked=true]").val();
         postData.push({name: btn, value: btnVal});
         $.ajax(
@@ -22,11 +22,11 @@ $( document ).on( "submit", "form.ajaxForm", function(e) {
         	{
      	      if($("#ajaxLoader" ).length)
               {
-                $('#ajaxLoader').hide();
+                $("#ajaxLoader").hide();
               }
               if($(".writeAndFlush" ).length)
               {
-                $(".writeAndFlush").val('');
+                $(".writeAndFlush").val("");
               }
         	  $(responseField).html(data);
         	}
@@ -34,18 +34,18 @@ $( document ).on( "submit", "form.ajaxForm", function(e) {
     }
     e.preventDefault();
 });
-$( document ).on( "click", "form.ajaxForm input[type=submit]", function() {
+$(document).on("click", "form.ajaxForm input[type=submit]", function(){
     $("input[type=submit]").each(function(){
         $(this).removeAttr("clicked");
     });
     $(this).attr("clicked", "true");
 });
-$( document ).on( "submit", "form.ajaxFormUpload", function(e) {
+$(document).on("submit", "form.ajaxFormUpload", function(e){
     if(ajaxBusy == false)
     {
         if($("#ajaxLoader").length)
         {
-            $('#ajaxLoader').show();
+            $("#ajaxLoader").show();
         }
         var postData = new FormData($(this)[0]);
         var formURL = $(this).attr("action");
@@ -59,16 +59,16 @@ $( document ).on( "submit", "form.ajaxFormUpload", function(e) {
             contentType: false,
             cache: false,
         	data : postData,
-            enctype: 'multipart/form-data',
+            enctype: "multipart/form-data",
         	success:function(data)
         	{
      	      if($("#ajaxLoader" ).length)
               {
-                $('#ajaxLoader').hide();
+                $("#ajaxLoader").hide();
               }
               if($(".writeAndFlush" ).length)
               {
-                $(".writeAndFlush").val('');
+                $(".writeAndFlush").val("");
               }
         	  $(responseField).html(data);
         	}

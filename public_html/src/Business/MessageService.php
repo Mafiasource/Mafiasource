@@ -101,18 +101,13 @@ class MessageService
     {
         global $language;
         global $langs;
-        $l = $language->messagesLangs();
         global $security;
+        global $userService;
+        global $userData;
+        $l = $language->messagesLangs();
         $receiver = $security->xssEscape($post['receiver']);
         $message = $security->xssEscape($post['message']);
-        global $userService;
         
-        if(!isset($_SESSION['UID']))
-        {
-            global $route;
-            $route->headTo('home');
-            exit(0);
-        }
         if($security->checkToken($post['security-token']) == FALSE)
         {
             $error = $langs['INVALID_SECURITY_TOKEN'];
@@ -127,7 +122,7 @@ class MessageService
         {
             $error = $langs['PLAYER_DOESNT_EXIST'];
         }
-        if($id == $_SESSION['UID'])
+        if($id == $userData->getId())
         {
             $error = $l['NO_MESSAGE_TO_SELF'];
         }

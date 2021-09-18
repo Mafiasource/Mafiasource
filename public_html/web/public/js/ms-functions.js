@@ -10,53 +10,53 @@ $(document).ajaxStart( function() {
 });
 
 function number_format(number, decimals, dec_point, thousands_sep) {
-  number = (number + '')
-    .replace(/[^0-9+\-Ee.]/g, '');
+  number = (number + "")
+    .replace(/[^0-9+\-Ee.]/g, "");
   var n = !isFinite(+number) ? 0 : +number,
     prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-    sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-    dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-    s = '',
+    sep = (typeof thousands_sep === "undefined") ? "," : thousands_sep,
+    dec = (typeof dec_point === "undefined") ? "." : dec_point,
+    s = "",
     toFixedFix = function(n, prec) {
       var k = Math.pow(10, prec);
-      return '' + (Math.round(n * k) / k)
+      return "" + (Math.round(n * k) / k)
         .toFixed(prec);
     };
-  s = (prec ? toFixedFix(n, prec) : '' + Math.round(n))
-    .split('.');
+  s = (prec ? toFixedFix(n, prec) : "" + Math.round(n))
+    .split(".");
   if (s[0].length > 3) {
     s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
   }
-  if ((s[1] || '')
+  if ((s[1] || "")
     .length < prec) {
-    s[1] = s[1] || '';
+    s[1] = s[1] || "";
     s[1] += new Array(prec - s[1].length + 1)
-      .join('0');
+      .join("0");
   }
   return s.join(dec);
 }
 
 function moneyDownFlash(e, t){
-    $(e).html("-$"+number_format(t, 0, '', ',')).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+    $(e).html("-$"+number_format(t, 0, "", ",")).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
 function moneyUpFlash(e, t){
-    $(e).html("+$"+number_format(t, 0, '', ',')).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+    $(e).html("+$"+number_format(t, 0, "", ",")).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
 function valueDownFlash(e, t){
-    $(e).html("-"+number_format(t, 0, '', ',')).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+    $(e).html("-"+number_format(t, 0, "", ",")).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
 function valueUpFlash(e, t){
-    $(e).html("+"+number_format(t, 0, '', ',')).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+    $(e).html("+"+number_format(t, 0, "", ",")).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
 }
 
 function checkMessages(receiver)
 {
     if(ajaxBusy == false)
     {
-        var postData = {receiver: receiver, securityToken: $("#message-container").closest('input[name=security-token]').val()};
+        var postData = {receiver: receiver, securityToken: $("#message-container").closest("input[name=security-token]").val()};
         var formURL = "/game/messages/check";
         var method = "POST";
         $.ajax(
@@ -77,7 +77,7 @@ function checkMessages(receiver)
               }
               catch(e)
               {
-                console.log('Error message: ' + e.message);
+                console.log("Error message: " + e.message);
               }
         	}
         });
@@ -87,8 +87,8 @@ function checkMessages(receiver)
 
 function reloadMessages(receiver)
 {
-    $('#ajaxLoaderMessages').show();
-    var postData = {receiver: receiver, securityToken: $("#message-container").closest('input[name=security-token]').val()};
+    $("#ajaxLoaderMessages").show();
+    var postData = {receiver: receiver, securityToken: $("#message-container").closest("input[name=security-token]").val()};
     var formURL = "/game/messages/reload";
     var method = "POST";
     var responseField = "#message-container";
@@ -98,7 +98,7 @@ function reloadMessages(receiver)
     	data : postData,
     	success:function(data) 
     	{
- 	      $('#ajaxLoaderMessages').hide();
+ 	      $("#ajaxLoaderMessages").hide();
     	  $(responseField).html(data);
           $(responseField).stop().animate({
               scrollTop: $(responseField)[0].scrollHeight
@@ -111,7 +111,7 @@ function reloadMessages(receiver)
     });
 }
 
-$(document).on('focusin', function(e) {
+$(document).on("focusin", function(e) {
     e.stopImmediatePropagation();
 });
 
@@ -131,7 +131,7 @@ function updateTime(){
     
     minutes = minutes < 10 ? "0" + minutes : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
-    if($("html").hasAttr('lang') && $("html").attr('lang') == 'en')
+    if($("html").hasAttr('lang') && $("html").attr('lang') == "en")
     {
         var hoursShow = hoursShow > 12 ? hoursShow - 12 : hoursShow;
         hoursShow = hoursShow < 10 ? "0" + hoursShow : hoursShow;
@@ -150,7 +150,7 @@ function updateTime(){
 function swipeMobileMenus()
 {
     if($(window).width() <= 1074){
-        $('html').on('dragstart', 'a', function () {
+        $("html").on("dragstart", "a", function () {
             return false;
         });
         $("html").swipe({
@@ -163,32 +163,32 @@ function swipeMobileMenus()
                     return false;
                     
                 if (phase=="move" && direction =="right" && distance > 20) {
-                    if($(".right-menu-swipe-area").hasClass('open'))
+                    if($(".right-menu-swipe-area").hasClass("open"))
                     {
                         $(".right-menu-swipe-area").removeClass("open");
-                        $('#right-menu').hide("fast");
+                        $("#right-menu").hide("fast");
                     }
                     else
                     {
                         $(".left-menu-swipe-area").addClass("open");
-                        $('#left-menu').show("fast");
+                        $("#left-menu").show("fast");
                         var body = $("html, body");
-                        body.stop().animate({scrollTop:0}, '100', 'swing');
+                        body.stop().animate({scrollTop:0}, "100", "swing");
                     }
                     return false;
                 }
                 if (phase=="move" && direction =="left" && distance > 20) {
-                    if($(".left-menu-swipe-area").hasClass('open'))
+                    if($(".left-menu-swipe-area").hasClass("open"))
                     {
                         $(".left-menu-swipe-area").removeClass("open");
-                        $('#left-menu').hide("fast");
+                        $("#left-menu").hide("fast");
                     }
                     else
                     {
                         $(".right-menu-swipe-area").addClass("open");
-                        $('#right-menu').show("fast");
+                        $("#right-menu").show("fast");
                         var body = $("html, body");
-                        body.stop().animate({scrollTop:0}, '100', 'swing');
+                        body.stop().animate({scrollTop:0}, "100", "swing");
                     }
                     return false;
                 }
@@ -198,17 +198,17 @@ function swipeMobileMenus()
 }
 
 $(document).ready(function(){
-    $('button[name=left-menu]').click(function (e) {
-        $('#left-menu').toggle("fast");
+    $("button[name=left-menu]").click(function (e) {
+        $("#left-menu").toggle("fast");
         $(".left-menu-swipe-area").toggleClass("open");
         var body = $("html, body");
-        body.stop().animate({scrollTop:0}, '100', 'swing');
+        body.stop().animate({scrollTop:0}, "100", "swing");
     });
-    $('button[name=right-menu]').click(function (e) {
-        $('#right-menu').toggle("fast");
+    $("button[name=right-menu]").click(function (e) {
+        $("#right-menu").toggle("fast");
         $(".right-menu-swipe-area").toggleClass("open");
         var body = $("html, body");
-        body.stop().animate({scrollTop:0}, '100', 'swing');
+        body.stop().animate({scrollTop:0}, "100", "swing");
     });
     swipeMobileMenus();
     setInterval("updateTime()",1000);

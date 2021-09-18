@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  $(".submenu > a").click(function(e) {
+  $(".submenu > a").click(function(e){
     e.preventDefault();
     var $li = $(this).parent("li");
     var $ul = $(this).next("ul");

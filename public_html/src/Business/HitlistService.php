@@ -34,7 +34,7 @@ class HitlistService
         global $langs;
         $l        = $language->hitlistLangs();
         $reason = $security->xssEscape($post['reason']);
-        $prize = (int)round($post['prize']);
+        $prize = (int)round((int)$post['prize']);
         $anonymous = false;
         if(isset($_POST['anonymous'])) $anonymous = true;
         

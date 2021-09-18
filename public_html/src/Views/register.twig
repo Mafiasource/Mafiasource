@@ -1,7 +1,16 @@
 {% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
 
 {% extends "/app/Resources/Views/base.twig" %}
- 
+
+{% block stylesheets %}
+<style type="text/css">
+.ms-l {position:relative;}
+.ms-hp {position:absolute;opacity:0;z-index:0;}
+.input-submit{position:relative;z-index:2;}
+#forum, #login-full, #register, #slider, #stats {position:relative;z-index:1;}
+</style>
+{% endblock stylesheets %}
+
 {% block content %}
     <section id="content">
         <div class="container">
@@ -61,7 +70,7 @@
                         	</tr>
                         </table>		</td>
                         		<td>
-                        			&nbsp;<input type="text" name="email" maxlength="75" value="{{ regEmail }}"/>
+                        			&nbsp;<input type="email" class="ms-hp" name="email" maxlength="75" value=""/><input type="text" class="ms-l" name="referral-username" maxlength="75" value="{{ regEmail }}"/>
                                     <small>({{ langs.ENCRYPTED }})</small> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="{{ langs.EMAIL_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
                         		</td>
                         	</tr>
