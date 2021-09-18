@@ -70,7 +70,7 @@
                         	</tr>
                         </table>		</td>
                         		<td>
-                        			&nbsp;<input type="email" class="ms-hp" name="email" maxlength="75" value=""/><input type="text" class="ms-l" name="referral-username" maxlength="75" value="{{ regEmail }}"/>
+                        			&nbsp;<input type="email" class="ms-hp" name="email" maxlength="75" value="" autocorrect="off" spellcheck="false" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/><input type="text" class="ms-l" name="referral-username" maxlength="75" value="{{ regEmail }}" autocorrect="off" spellcheck="false" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/>
                                     <small>({{ langs.ENCRYPTED }})</small> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="{{ langs.EMAIL_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
                         		</td>
                         	</tr>
@@ -214,5 +214,8 @@
         $("img#captcha").attr('src', '{{ docRoot }}/web/public/images/captcha/captcha.php?_t='+new Date().getTime());
         e.preventDefault();
     });
+    $(document).ready(function(){
+        $('input.ms-l, input.ms-hp').attr('autocomplete', 'off');
+    })
 </script>
 {% endblock javascripts %}
