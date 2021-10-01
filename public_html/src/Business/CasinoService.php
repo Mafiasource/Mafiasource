@@ -97,27 +97,28 @@ class CasinoService
     
     private static function calculateBlackjackScoreByCards($cards)
     {
-     	$a_s = self::getBlackjackAces();
-     	$c_s = self::getBlackjackCards();
-    	$aces = 0;
-    	$score = 0;
-    	foreach($cards AS $c)
-    		if(in_array($c, $a_s))
-    			$aces++;
-    		else
-    			$score += $c_s[$c];
-        
-    	for($i = 1; $i <= 4; $i++)
+        $a_s = self::getBlackjackAces();
+        $c_s = self::getBlackjackCards();
+        $aces = 0;
+        $score = 0;
+        foreach($cards AS $c)
         {
-    		if($aces == $i)
+            if(in_array($c, $a_s))
+                $aces++;
+            else
+                $score += $c_s[$c];
+        }
+        for($i = 1; $i <= 4; $i++)
+        {
+            if($aces == $i)
             {
-    			if($score <= 10)
-    				$score += (10 + $i);
-    			else
-    				$score += $i;
+                if($score <= 10)
+                    $score += (10 + $i);
+                else
+                    $score += $i;
             }
-    	}
-    	return $score;
+        }
+        return $score;
     }
     
     private static function generateBlackjackComputerCards()
@@ -127,9 +128,9 @@ class CasinoService
         $cardsLeft = self::getBlackjackCards();
         while($computerReady === false)
         {
-		 	foreach($_SESSION['blackjack']['computer_cards'] AS $c)
-				unset($cardsLeft[$c]);
-			
+            foreach($_SESSION['blackjack']['computer_cards'] AS $c)
+                unset($cardsLeft[$c]);
+            
             $cardPicked = false;
             while($cardPicked === false)
             {
@@ -137,35 +138,37 @@ class CasinoService
                 $cardComputer = !array_key_exists($randKey, $cardsLeft) ? null : $randKey;
                 if(is_numeric($cardComputer)) $cardPicked = true;
             }
-			unset($cardsLeft[$cardComputer]);
-			$scoreThen = self::calculateBlackjackScoreByCards($_SESSION['blackjack']['computer_cards']);
-			
-			$_SESSION['blackjack']['computer_cards'][] = $cardComputer;
-			$scoreNow = self::calculateBlackjackScoreByCards($_SESSION['blackjack']['computer_cards']);
-			
-			if($scoreNow >= 21)
+            unset($cardsLeft[$cardComputer]);
+            
+            $scoreThen = self::calculateBlackjackScoreByCards($_SESSION['blackjack']['computer_cards']);
+            
+            $_SESSION['blackjack']['computer_cards'][] = $cardComputer;
+            
+            $scoreNow = self::calculateBlackjackScoreByCards($_SESSION['blackjack']['computer_cards']);
+            
+            if($scoreNow >= 21)
             {
-			 	$diffNow = $scoreNow - 21;
-			 	$diffThen = 21 - $scoreThen;
-				if($scoreNow == 21)
+                $diffNow = $scoreNow - 21;
+                $diffThen = 21 - $scoreThen;
+                if($scoreNow == 21)
                 {
-				 	$scoreThen = $scoreNow;
-					$computerReady = true;
-				}
+                    $scoreThen = $scoreNow;
+                    $computerReady = true;
+                }
                 else
                 {
-					if($diffNow > $diffThen)
+                    if($diffNow > $diffThen)
                     {
-					 	$key = array_search($cardComputer, $_SESSION['blackjack']['computer_cards']);
-					 	unset($_SESSION['blackjack']['computer_cards'][$key]);
-					}
+                        $key = array_search($cardComputer, $_SESSION['blackjack']['computer_cards']);
+                        unset($_SESSION['blackjack']['computer_cards'][$key]);
+                    }
                     else
-						$scoreThen = $scoreNow;
-					
+                    $scoreThen = $scoreNow;
+                    
                     $computerReady = true;
-				}
-			}
-		}
+                }
+            }
+        }
         return true;
     }
     
