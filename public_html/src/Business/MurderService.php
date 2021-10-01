@@ -51,23 +51,23 @@ class MurderService
         if(!is_bool($possResponse) && is_object($psData))
         {
             global $language;
-            $pl       = $language->murderLangs();
+            $l       = $language->murderLangs();
             global $route;
             if(is_array($possResponse))
             {
                 switch($possResponse['reason'])
                 {
                     default: case 'status':
-                        $msgAdd = $pl['TAKE_OVER_POSSESSION_STATUS_ERROR'];
+                        $msgAdd = $l['TAKE_OVER_POSSESSION_STATUS_ERROR'];
                         break;
                     case 'self':
-                        $msgAdd = $pl['TAKE_OVER_POSSESSION_SELF_ERROR'];
+                        $msgAdd = $l['TAKE_OVER_POSSESSION_SELF_ERROR'];
                         break;
                     case 'self-country-poss':
                         $msgAdd = $l['TAKE_OVER_POSSESSION_SELF_COUNTRY_ERROR'];
                         break;
                     case 'family':
-                        $msgAdd = $pl['TAKE_OVER_POSSESSION_FAMILY_ERROR'];
+                        $msgAdd = $l['TAKE_OVER_POSSESSION_FAMILY_ERROR'];
                         break;
                     case 'family-country-poss':
                         $msgAdd = $l['TAKE_OVER_POSSESSION_FAMILY_COUNTRY_ERROR'];
@@ -75,7 +75,7 @@ class MurderService
                 }
             }
             elseif($possResponse == 'took-over')
-                $msgAdd = $pl['TAKE_OVER_POSSESSION_TOOK_OVER'];
+                $msgAdd = $l['TAKE_OVER_POSSESSION_TOOK_OVER'];
             
             $replacedMessage = $route->replaceMessagePart(strtolower($psData->getName()), $msgAdd, '/{possessionName}/');
             
