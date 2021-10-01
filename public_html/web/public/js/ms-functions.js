@@ -116,11 +116,12 @@ $(document).on("focusin", function(e) {
 });
 
 function updateTime(){
-    const monthNames = monthNamesNL = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
-    monthNamesNL[4] = "Mei";
-    monthNamesNL[9] = "Okt";
+    const monthNamesNL = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+      "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
+    ];
     var currentTime = new Date();
     var day = currentTime.getDate();
     var month = monthNames[currentTime.getMonth()];
@@ -133,14 +134,14 @@ function updateTime(){
     seconds = seconds < 10 ? "0" + seconds : seconds;
     if($("html").hasAttr('lang') && $("html").attr('lang') == "en")
     {
-        var hoursShow = hoursShow > 12 ? hoursShow - 12 : hoursShow;
+        hoursShow = hoursShow > 12 ? hoursShow - 12 : hoursShow;
         hoursShow = hoursShow < 10 ? "0" + hoursShow : hoursShow;
         var am_pm = hours >= 12 ? " PM" : " AM";
         var t_str = month + " " + day + ", " + hoursShow + ":" + minutes + ":" + seconds + am_pm;
     }
     else
     {
-        var month = monthNamesNL[currentTime.getMonth()];
+        month = monthNamesNL[currentTime.getMonth()];
         hoursShow = hoursShow < 10 ? "0" + hoursShow : hoursShow;
         var t_str = day + " " + month + ", " + hoursShow + ":" + minutes + ":" + seconds;
     }
