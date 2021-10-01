@@ -163,7 +163,7 @@ class CasinoService
                         unset($_SESSION['blackjack']['computer_cards'][$key]);
                     }
                     else
-                    $scoreThen = $scoreNow;
+                        $scoreThen = $scoreNow;
                     
                     $computerReady = true;
                 }
