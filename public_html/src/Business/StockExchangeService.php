@@ -32,7 +32,7 @@ class StockExchangeService
         global $langs;
         $l = $language->stockExchangeLangs();
         
-        $stocks = $post['stocks'];
+        $stocks = (int)$post['stocks'];
         $business = $security->xssEscape($post['business']);
         $businessData = $this->data->getBusinessStockByName($business);
         
