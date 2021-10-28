@@ -44,7 +44,7 @@ if(isset($_POST) && !empty($_POST))
 else
 {
     $table = new AdminService("member");
-    $settings = $table->getTableRowById($_SESSION['cp-logon']['UID']);
+    $settings = $table->getTableRowById($_SESSION['cp-logon']['MID']);
     $gemeentes = $member->getGemeentes();
     
     require_once __DIR__ . '/.inc.foot.php';

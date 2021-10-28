@@ -13,7 +13,7 @@ if(isset($_POST) && !empty($_POST))
         foreach($_POST AS $key => $value) if(in_array($key, $allowedFields) && !empty($value)) $data[$key] = $security->xssEscape($value);
         
         $mmbr = new AdminService("member");
-        $memberSettings = $mmbr->getTableRowById($_SESSION['cp-logon']['UID']);
+        $memberSettings = $mmbr->getTableRowById($_SESSION['cp-logon']['MID']);
         if(isset($data['email']) && (!MemberService::is_email($data['email']) || ($member->emailExists($data['email']) && $data['email'] != $memberSettings[0][0]['email'])))
             $response = $route->errorMessage("Je hebt een ongeldig email adres opgegeven!");
         else
@@ -58,7 +58,7 @@ if(isset($_POST) && !empty($_POST))
 else
 {
     $table = new AdminService("member");
-    $settings = $table->getTableRowById($_SESSION['cp-logon']['UID']);
+    $settings = $table->getTableRowById($_SESSION['cp-logon']['MID']);
     $gemeentes = $member->getGemeentes();
     
     require_once __DIR__ . '/.inc.foot.php';
