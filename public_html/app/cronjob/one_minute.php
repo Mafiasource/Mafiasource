@@ -324,3 +324,17 @@ foreach($crimes AS $oc)
     }
     $crimesStatics->removeOrganizedCrimeById($oc['id']);
 } // /CHECKED & OK
+
+
+//Check if the user is inactive for an week. then throw user into prison to fill up
+$inactiveDeadPlayers = $con->getData("
+     SELECT `id` FROM `user` WHERE `lastclick` < '".(time() - (60*60*24*7))." ORDER BY RAND() LIMIT 0, 15';
+ ");
+ 
+ foreach($inactiveDeadPlayers AS $p)
+ {
+        //Checking if prison is empty
+        $row = $con->getDataSR("SELECT COUNT(*) AS `total` FROM `prison`");   
+        if($row['total'] == 0 )
+         $con->setData('INSERT INTO `prison` (`userID`, `time`) VALUES (:userid, :prisontime)', array(":userid"=> $p['id'], ":prisontime" =>time() + 90 ));
+ }
