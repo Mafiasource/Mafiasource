@@ -17,7 +17,7 @@ class StateService
 {
     private $data;
 
-    //TODO miss json ? of database
+    //TODO OVERSETTEN NAAR EEN JSON OF ENV FILE.
     private $countryArray =  array(
         "Hawaii" => array("Honolulu", "Kahului", "Kailua Kona"),
         "California" => array("Los Angeles", "San Diego", "San Fransisco"),
@@ -28,14 +28,23 @@ class StateService
     );
     private $countryData;
 
+    //TODO VERVANGEN DOOR ZOALS ZIE COUNTRY ARRAY
     public $allowedStates = array("Hawaii", "California", "New York", "Colorado", "Texas", "Florida");
     public $allowedCities = array("Honolulu", "Kahului", "Kailua Kona", "Los Angeles", "San Diego", "San Fransisco", "Buffalo", "NY City", "Kingston",  "Denver", "Colorado Springs", "Grand Junction",  "Dallas", "El Paso", "San Antonio", "Jacksonville", "Miami", "Panama City");
     
     /*
-        Kijken of speler in welke staat wilt bereken staat van afkomst met de staat van bestemming en opetellen van de stad km  ? miss meet een visual vorm geven
-        aan de land met staten 
+        TODO GEBRUIK MAKEN VAN DE X & Y VAN GOOGLE MAPS EN DAAR OP EEN BEREKENING MAKEN (x - x2) - (y - y2)
     */
     public $distances = array(
+
+        /*
+            JSON VOORBEELD  hawaii : {
+                [0] : {
+                    naam : "Honolulu",
+                    gcoord : array("x" => 123, "y" => 321) (google coords)
+                }
+            }
+        */
         1 => array("from" => "Honolulu", "to" => "Kahului", "kms" => "152"),
         array("from" => "Honolulu", "to" => "Kailua Kona", "kms" => "269"),
         array("from" => "Honolulu", "to" => "Los Angeles", "kms" => "4125"),
@@ -361,6 +370,7 @@ class StateService
         array("from" => "Panama City", "to" => "Miami", "kms" => "1857"),
     );
     
+    #region Default Constructor
     public function __construct()
     {
         $this->data = new StateDAO();
@@ -371,7 +381,7 @@ class StateService
     {
         $this->data = null;
     }
-    
+    #endregion
     public function calculatePrice($from, $to, $type = false, $raw = false)
     {
         global $language;
@@ -422,8 +432,6 @@ class StateService
                     return "<img src='".PROTOCOL.STATIC_SUBDOMAIN.".".$route->settings['domainBase']."/web/public/images/icons/cross.png' class='icon' alt='Error'/>&nbsp;".$l['ROUTE_NOT_POSSIBLE']."";
                 elseif($raw == false)
                     return "<img src='".PROTOCOL.STATIC_SUBDOMAIN.".".$route->settings['domainBase']."/web/public/images/icons/help.png' class='icon' alt='Help'/>&nbsp;<strong>".$to."</strong> ".$l['COSTS'].": $".number_format($price,0,'',',')."";
-                
-            
                     
                  return array('price' => $price, 'sec' => $sec);
             
@@ -432,9 +440,6 @@ class StateService
     }
     public function isValidRoute($from, $to)
     {
-        
-      
-
         $data = json_decode($this->countryData);
         foreach( $data as $state )
         {
@@ -453,6 +458,10 @@ class StateService
         $l        = $language->travelLangs();
         global $security;
         global $userData;
+
+        //Able to have multiple errors
+        $error = array();
+
         $cityID = (int)$post['cityID'];
         $cityTo  = $this->data->getCityNameById($cityID);
         $type = $security->xssEscape($post['type']);
@@ -465,33 +474,33 @@ class StateService
         
         if($_POST['security-token'] != $security->getToken())
         {
-            $error = $langs['INVALID_SECURITY_TOKEN'];
+            $error[] = $langs['INVALID_SECURITY_TOKEN'];
         }
         if($userData->getInPrison())
         {
-            $error = $langs['CANT_DO_THAT_IN_PRISON'];
+            $error[] = $langs['CANT_DO_THAT_IN_PRISON'];
         }
         if($userData->getTraveling())
         {
-            $error = $langs['CANT_DO_THAT_TRAVELLING'];
+            $error[] = $langs['CANT_DO_THAT_TRAVELLING'];
         }
         if(!in_array($cityTo, $this->allowedCities))
         {
-            $error = $l['INVALID_DESTINATION'];
+            $error[] = $l['INVALID_DESTINATION'];
         }
         if($cityTo == false)
         {
-            $error =  $l['INVALID_DESTINATION'];
+            $error[] =  $l['INVALID_DESTINATION'];
         }
         if($famCrimeService->userInsideFamilyCrime())
         {
             if($userData->getStateID() !== $stateID)
-                $error = $l['CANNOT_TRAVEL_WHEN_IN_CRIME'];
+                $error[] = $l['CANNOT_TRAVEL_WHEN_IN_CRIME'];
         }
         if($famRaidService->userInsideAcceptedFamilyRaid())
         {
             if($userData->getStateID() !== $stateID)
-                $error = $l['CANNOT_TRAVEL_WHEN_IN_RAID'];
+                $error[] = $l['CANNOT_TRAVEL_WHEN_IN_RAID'];
         }
         
         $arr = $this->calculatePrice($userData->getCity(), $cityTo, $type, true);
@@ -502,22 +511,22 @@ class StateService
             if(!$garage->hasSpaceLeftInGarage($stateID))
             {
                 if($userData->getStateID() !== $stateID)
-                    $error = $l['TRAVEL_VEHICLE_NO_SPACE_GARAGE'];
+                    $error[] = $l['TRAVEL_VEHICLE_NO_SPACE_GARAGE'];
             }
             if(!$garage->hasGarageInState($stateID))
             {
                 if($userData->getStateID() !== $stateID)
-                    $error = $l['TRAVEL_VEHICLE_NO_GARAGE'];
+                    $error[] = $l['TRAVEL_VEHICLE_NO_GARAGE'];
             }
             $inGarage = $garage->isVehicleInGarageInState($userData->getStateID(), $garageVehicleID);
             if($inGarage == FALSE)
             {
-                $error = $l['TRAVEL_VEHICLE_NO_VEHICLE'];
+                $error[] = $l['TRAVEL_VEHICLE_NO_VEHICLE'];
             }
         }
         if($arr == FALSE)
         {
-            $error = $l['ROUTE_NOT_POSSIBLE'];
+            $error[] = $l['ROUTE_NOT_POSSIBLE'];
         }
         else
         {
@@ -525,7 +534,7 @@ class StateService
             $price = $arr['price'];
             if($userData->getCash() < $price)
             {
-                $error = $langs['NOT_ENOUGH_MONEY_CASH'];
+                $error[] = $langs['NOT_ENOUGH_MONEY_CASH'];
             }
             if($userData->getCTravelTime() > time())
             {
@@ -534,7 +543,7 @@ class StateService
                 global $lang;
                 $counter = "enkele";
                 if($lang == "en") $counter = "a few";
-                $error = $route->replaceMessagePart($counter, $langs['TRAVELING'], '/{sec}/');
+                $error[] = $route->replaceMessagePart($counter, $langs['TRAVELING'], '/{sec}/');
             }
         }
         $smuggleService = new SmuggleService($userData->getCityID(), 'drugs', $userData->getDonatorID());
@@ -564,13 +573,15 @@ class StateService
             $prison = new PrisonService();
             $prison->putUserInPrison($userData->getId(), time() + 120);
             $smuggleService->removeAllSmugglingUnits();
-            $error = $l['CAUGHT_BY_BORDER_PATROL'];
+            $error[] = $l['CAUGHT_BY_BORDER_PATROL'];
         }
         
-        if(isset($error))
+        //When our array containts atleast 1 error
+        if(count($error) != 0)
         {
-            return array("error" => Routing::errorMessage($error));
-        }
+            //TODO handle multiple error message
+            return array("error" => Routing::errorMessage($error[0]));
+        }       
         else
         {
             global $route;
@@ -593,7 +604,7 @@ class StateService
             return Routing::successMessage($replacedMessage);
         }
     }
-    
+    #region GETTERS
     public function getRandCityIdByStateId($stateID)
     {
         global $security;
@@ -650,4 +661,5 @@ class StateService
     {
         return $this->data->getStateIdByCityId($id);
     }
+    #endregion
 }
