@@ -326,15 +326,22 @@ foreach($crimes AS $oc)
 } // /CHECKED & OK
 
 
+
+
 //Check if the user is inactive for an week. then throw user into prison to fill up
-$inactiveDeadPlayers = $con->getData("
-     SELECT `id` FROM `user` WHERE `lastclick` < '".(time() - (60*60*24*7))." ORDER BY RAND() LIMIT 0, 15';
- ");
- 
- foreach($inactiveDeadPlayers AS $p)
- {
-        //Checking if prison is empty
-        $row = $con->getDataSR("SELECT COUNT(*) AS `total` FROM `prison`");   
-        if($row['total'] == 0 )
-         $con->setData('INSERT INTO `prison` (`userID`, `time`) VALUES (:userid, :prisontime)', array(":userid"=> $p['id'], ":prisontime" =>time() + 90 ));
- }
+$randPrisoners = $security->randInt(3, 5);
+$inactivePlayers = $con->getData("
+    SELECT `id` FROM `user` WHERE `lastclick` < '".(time() - (60*60*24*7))."' AND `statusID`<='7' AND `health`>'0' ORDER BY RAND() LIMIT 0, ".(int)$randPrisoners
+);
+//Check if there's at least one user online
+$user = $con->getDataSR("SELECT `id` FROM `user` WHERE `lastclick` > '".(time() - 360)."' LIMIT 0, 1");
+if(isset($user['id']) && $user['id'] > 0)
+{
+    //Checking if prison is empty
+    $prison = $con->getDataSR("SELECT COUNT(*) AS `total` FROM `prison` WHERE `time`>= :time", array(':time' => time()));
+    if($prison['total'] == 0)
+    {
+        foreach($inactivePlayers AS $p) // Insert each user
+            $con->setData("INSERT INTO `prison` (`userID`, `time`) VALUES (:uid, :pTime)", array(':uid' => $p['id'], ':pTime' => time() + $security->randInt(60, 120)));
+    }
+} // /CHECKED & OKe
