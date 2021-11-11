@@ -414,19 +414,7 @@ class StateService
             if(isset($price) && isset($kms) && isset($sec))
             {
                 global $route;
-                
-                
-                // $routePossible = (
-                //     (    ($to == "Honolulu" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
-                //       || ($from == "Honolulu" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
-                //       || ($to == "Kahului" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
-                //       || ($from == "Kahului" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
-                //       || ($to == "Kailua Kona" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
-                //       || ($from == "Kailua Kona" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
-                //     )
-                //     && ($type == "bus" || $type == "train" || $type == "vehicle")
-                // ); // True / False
-
+            
                 //Is route contains city in same state and we using an bus car or train
                 $validRoute = ($this->isValidRoute($from, $to)); // TRUE : FALSE     
                 
