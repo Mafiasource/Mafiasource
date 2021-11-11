@@ -16,8 +16,25 @@ use src\Data\StateDAO;
 class StateService
 {
     private $data;
+
+    //TODO miss json ? of database
+    private $countryArray =  array(
+        "Hawaii" => array("Honolulu", "Kahului", "Kailua Kona"),
+        "California" => array("Los Angeles", "San Diego", "San Fransisco"),
+        "New York" => array("Buffalo", "NY City", "Kingston"),
+        "Colorado" => array("Denver", "Colorado Springs", "Grand Junction"),        
+        "Texas" => array( "Dallas", "El Paso", "San Antonio"),
+        "Florida" => array("Jacksonville", "Miami", "Panama City")
+    );
+    private $countryData;
+
     public $allowedStates = array("Hawaii", "California", "New York", "Colorado", "Texas", "Florida");
-    public $allowedCities = array("Honolulu", "Kahului", "Kailua Kona", "Los Angeles", "San Diego", "San Fransisco", "Buffalo", "NY City", "Kingston", "Denver", "Colorado Springs", "Grand Junction", "Dallas", "El Paso", "San Antonio", "Jacksonville", "Miami", "Panama City");
+    public $allowedCities = array("Honolulu", "Kahului", "Kailua Kona", "Los Angeles", "San Diego", "San Fransisco", "Buffalo", "NY City", "Kingston",  "Denver", "Colorado Springs", "Grand Junction",  "Dallas", "El Paso", "San Antonio", "Jacksonville", "Miami", "Panama City");
+    
+    /*
+        Kijken of speler in welke staat wilt bereken staat van afkomst met de staat van bestemming en opetellen van de stad km  ? miss meet een visual vorm geven
+        aan de land met staten 
+    */
     public $distances = array(
         1 => array("from" => "Honolulu", "to" => "Kahului", "kms" => "152"),
         array("from" => "Honolulu", "to" => "Kailua Kona", "kms" => "269"),
@@ -347,6 +364,7 @@ class StateService
     public function __construct()
     {
         $this->data = new StateDAO();
+        $this->countryData = json_encode($this->countryArray);
     }
     
     public function __destruct()
@@ -358,7 +376,9 @@ class StateService
     {
         global $language;
         $l        = $language->travelLangs();
-        if($type == false) $type = "airplane";
+        
+        $type = !isset($type) ? "airplane" : $type;
+
         if(isset($_SESSION['UID']))
         {
             foreach($this->distances AS $row)
@@ -395,31 +415,49 @@ class StateService
             {
                 global $route;
                 
-                $routePossible = (
-                    (    ($to == "Honolulu" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
-                      || ($from == "Honolulu" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
-                      || ($to == "Kahului" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
-                      || ($from == "Kahului" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
-                      || ($to == "Kailua Kona" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
-                      || ($from == "Kailua Kona" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
-                    )
-                    && ($type == "bus" || $type == "train" || $type == "vehicle")
-                ); // True / False
-                if($routePossible == true && $raw == false)
+                
+                // $routePossible = (
+                //     (    ($to == "Honolulu" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
+                //       || ($from == "Honolulu" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
+                //       || ($to == "Kahului" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
+                //       || ($from == "Kahului" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
+                //       || ($to == "Kailua Kona" && $from !== "Honolulu" && $from !== "Kahului" && $from !== "Kailua Kona")
+                //       || ($from == "Kailua Kona" && $to !== "Honolulu" && $to !== "Kahului" && $to !== "Kailua Kona")
+                //     )
+                //     && ($type == "bus" || $type == "train" || $type == "vehicle")
+                // ); // True / False
+
+                //Is route contains city in same state and we using an bus car or train
+                $validRoute = ($this->isValidRoute($from, $to)); // TRUE : FALSE     
+                
+                if(!$validRoute && $type != 'airplane')
                     return "<img src='".PROTOCOL.STATIC_SUBDOMAIN.".".$route->settings['domainBase']."/web/public/images/icons/cross.png' class='icon' alt='Error'/>&nbsp;".$l['ROUTE_NOT_POSSIBLE']."";
                 elseif($raw == false)
                     return "<img src='".PROTOCOL.STATIC_SUBDOMAIN.".".$route->settings['domainBase']."/web/public/images/icons/help.png' class='icon' alt='Help'/>&nbsp;<strong>".$to."</strong> ".$l['COSTS'].": $".number_format($price,0,'',',')."";
-                elseif($routePossible == true)
-                    return FALSE;
-                else
-                {
-                    $arr = array('price' => $price, 'sec' => $sec);
-                    return $arr;
-                }
+                
+            
+                    
+                 return array('price' => $price, 'sec' => $sec);
+            
             }
         }
     }
+    public function isValidRoute($from, $to)
+    {
+        
+      
+
+        $data = json_decode($this->countryData);
+        foreach( $data as $state )
+        {
+            if(in_array($from, $state) && in_array($to, $state) )
+                return true;
+            else
+                continue;
+        }
     
+      return false;
+    }
     public function handleTravel($post)
     {
         global $language;
