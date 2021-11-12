@@ -438,12 +438,12 @@ class StateService
             }
         }
     }
-    public function isValidRoute($from, $to)
+    public function isValidRoute($fromCity, $toCity)
     {
         $data = json_decode($this->countryData);
         foreach( $data as $state )
         {
-            if(in_array($from, $state) && in_array($to, $state) )
+            if(in_array($fromCity, $state) && in_array($toCity, $state) )
                 return true;
             else
                 continue;
@@ -575,16 +575,16 @@ class StateService
             $smuggleService->removeAllSmugglingUnits();
             $error[] = $l['CAUGHT_BY_BORDER_PATROL'];
         }
-        
+        global $route;
         //When our array containts atleast 1 error
         if(count($error) != 0)
         {
             //TODO handle multiple error message
-            return array("error" => Routing::errorMessage($error[0]));
+            return array("error" => $route->errorMessage($error[0]));
         }       
         else
         {
-            global $route;
+            
             
             $possession = new PossessionService();
             $possessionId = 4; //Reisbureau | Possession logic
