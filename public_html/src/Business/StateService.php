@@ -385,12 +385,17 @@ class StateService
     public function calculatePrice($from, $to, $type = false, $raw = false)
     {
         global $language;
+        global $userSession;
+
         $l        = $language->travelLangs();
         
+
+        if(!$userSession)
+        return array();
+
         $type = !isset($type) ? "airplane" : $type;
 
-        if(isset($_SESSION['UID']))
-        {
+        
             foreach($this->distances AS $row)
             {
                 if($row['from'] == $from && $row['to'] == $to) $kms = $row['kms'];
@@ -436,7 +441,7 @@ class StateService
                  return array('price' => $price, 'sec' => $sec);
             
             }
-        }
+        
     }
     public function isValidRoute($fromCity, $toCity)
     {
@@ -473,69 +478,56 @@ class StateService
         $famRaidService = new FamilyRaidService();
         
         if($_POST['security-token'] != $security->getToken())
-        {
             $error[] = $langs['INVALID_SECURITY_TOKEN'];
-        }
-        if($userData->getInPrison())
-        {
+        
+        if($userData->getInPrison())        
             $error[] = $langs['CANT_DO_THAT_IN_PRISON'];
-        }
-        if($userData->getTraveling())
-        {
-            $error[] = $langs['CANT_DO_THAT_TRAVELLING'];
-        }
-        if(!in_array($cityTo, $this->allowedCities))
-        {
+        
+        if($userData->getTraveling())        
+             $error[] = $langs['CANT_DO_THAT_TRAVELLING'];
+        
+        if(!in_array($cityTo, $this->allowedCities))        
             $error[] = $l['INVALID_DESTINATION'];
-        }
-        if($cityTo == false)
-        {
+        
+        if($cityTo == false)        
             $error[] =  $l['INVALID_DESTINATION'];
-        }
-        if($famCrimeService->userInsideFamilyCrime())
-        {
+        
+        if($famCrimeService->userInsideFamilyCrime())        
             if($userData->getStateID() !== $stateID)
                 $error[] = $l['CANNOT_TRAVEL_WHEN_IN_CRIME'];
-        }
-        if($famRaidService->userInsideAcceptedFamilyRaid())
-        {
+        
+        if($famRaidService->userInsideAcceptedFamilyRaid())        
             if($userData->getStateID() !== $stateID)
                 $error[] = $l['CANNOT_TRAVEL_WHEN_IN_RAID'];
-        }
+        
         
         $arr = $this->calculatePrice($userData->getCity(), $cityTo, $type, true);
         
         if($type == "vehicle")
         {
             $garage = new GarageService();
-            if(!$garage->hasSpaceLeftInGarage($stateID))
-            {
+            if(!$garage->hasSpaceLeftInGarage($stateID))            
                 if($userData->getStateID() !== $stateID)
                     $error[] = $l['TRAVEL_VEHICLE_NO_SPACE_GARAGE'];
-            }
-            if(!$garage->hasGarageInState($stateID))
-            {
+            
+            if(!$garage->hasGarageInState($stateID))            
                 if($userData->getStateID() !== $stateID)
                     $error[] = $l['TRAVEL_VEHICLE_NO_GARAGE'];
-            }
+            
             $inGarage = $garage->isVehicleInGarageInState($userData->getStateID(), $garageVehicleID);
-            if($inGarage == FALSE)
-            {
+            if($inGarage == FALSE)            
                 $error[] = $l['TRAVEL_VEHICLE_NO_VEHICLE'];
-            }
+            
         }
-        if($arr == FALSE)
-        {
-            $error[] = $l['ROUTE_NOT_POSSIBLE'];
-        }
+        if($arr == FALSE)        
+            $error[] = $l['ROUTE_NOT_POSSIBLE'];        
         else
         {
             $sec = $arr['sec'];
             $price = $arr['price'];
-            if($userData->getCash() < $price)
-            {
+            if($userData->getCash() < $price)            
                 $error[] = $langs['NOT_ENOUGH_MONEY_CASH'];
-            }
+            
             if($userData->getCTravelTime() > time())
             {
                 global $route;
@@ -577,11 +569,9 @@ class StateService
         }
         global $route;
         //When our array containts atleast 1 error
-        if(count($error) != 0)
-        {
+        if(count($error) != 0)        
             //TODO handle multiple error message
             return array("error" => $route->errorMessage($error[0]));
-        }       
         else
         {
             
@@ -591,11 +581,10 @@ class StateService
             $possessId = $possession->getPossessIdByPossessionId($possessionId, $userData->getStateID(), $userData->getCityID()); // Possess table record id
             $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
 
-            if($type == "vehicle")
-            {
+            if($type == "vehicle")            
                 if($userData->getStateID() !== $stateID)
                     $garage->moveVehicleToGarageInState($garageVehicleID, $stateID);
-            }
+            
             $this->data->travelTo($this->data->getStateIdByCityId($cityID), $cityID, $sec, $price, $pData);
             
             $replacedMessage = $route->replaceMessagePart('<strong>'.$cityTo.'</strong>', $l['TRAVEL_TO_SUCCESS'], '/{state}/');
@@ -608,12 +597,10 @@ class StateService
     public function getRandCityIdByStateId($stateID)
     {
         global $security;
-        $min = 1;
-        if($stateID > 1)
-            $min = (($stateID - 1) * 3) + 1;
+
+        $min = ($stateID > 1) ? (($stateID - 1) * 3) + 1 : 1;
         
-        $max = $min + 2;
-        return $security->randInt($min, $max);
+        return $security->randInt($min, $min+2);
         //return $this->data->getRandCityIdByStateId($stateID);
     }
     
