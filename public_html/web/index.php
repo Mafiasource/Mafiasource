@@ -78,7 +78,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
     // Security class (Anti CSRF, XSS attacks & more)
     require_once __DIR__.'/../app/config/security.php';
     $security = new Security();
-    
+    $userSession = isset($_SESSION['UID']) ? true : false;
     // Routing fetched a valid controller?
     if($route->getController() != FALSE)
     {
@@ -115,7 +115,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         $language = new GetLanguageContent(); // Class mostly used in all service classes (Business layer)
         $langs = $language->langMap; // Base langs available on every page, contents depend on a player in- or out-game
         
-        $userSession = (isset($_POST['UID'])) ? true : false;
+        
 
         // Check if controller actually exists and include it
         if(file_exists(__DIR__.'/../src/Controllers/'.$route->getController()))
