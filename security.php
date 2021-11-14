@@ -3,7 +3,7 @@
 // Database credentials
 define('DBNAME', "ms");
 define('DBUSR', "root");
-define('DBPWD', "ms2016");
+define('DBPWD', "");
 
 // Master crypto keys
 define('MASTERIV', stripslashes('Ğ¤¡vìØüxÂ\05*î„Û'));
