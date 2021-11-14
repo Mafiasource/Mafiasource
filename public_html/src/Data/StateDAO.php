@@ -28,8 +28,13 @@ class StateDAO extends DBConfig
     
     public function getStates()
     {
-        if(isset($_SESSION['UID']))
-        {
+
+
+        global  $userSession;
+
+        if( !$userSession)
+        return array();
+
             $statement = $this->dbh->prepare("SELECT `id`, `name` FROM `state` WHERE `active`='1' AND `deleted`='0' ORDER BY `position` ASC");
             $statement->execute();
             $list = array();
@@ -41,13 +46,16 @@ class StateDAO extends DBConfig
                 array_push($list, $state);
             }
             return $list;
-        }
+       
     }
     
     public function getCitiesButHomeCity($cityID)
     {
-        if(isset($_SESSION['UID']))
-        {
+            global  $userSession;
+           
+            if( !$userSession)
+             return array();
+
             $statement = $this->dbh->prepare("SELECT `id`, `stateID`, `name` FROM `city` WHERE `active`='1' AND `deleted`='0' AND `id`!= :cityID ORDER BY `position` ASC");
             $statement->execute(array(':cityID' => $cityID));
             $list = array();
@@ -60,13 +68,16 @@ class StateDAO extends DBConfig
                 array_push($list, $city);
             }
             return $list;
-        }
+       
     }
     
     public function getCities()
     {
-        if(isset($_SESSION['UID']))
-        {
+            
+        global  $userSession;
+        if( !$userSession)
+        return array();
+
             $statement = $this->dbh->prepare("SELECT `id`, `stateID`, `name` FROM `city` WHERE `active`='1' AND `deleted`='0' ORDER BY `position` ASC");
             $statement->execute();
             $list = array();
@@ -79,97 +90,80 @@ class StateDAO extends DBConfig
                 array_push($list, $city);
             }
             return $list;
-        }
+        
     }
     
     public function getStateNameById($id)
     {
-        if(isset($_SESSION['UID']))
-        {
+        global  $userSession;
+        if( !$userSession)
+            return NULL;
+
             $statement = $this->dbh->prepare("SELECT `name` FROM `state` WHERE `active`='1' AND `deleted`='0' AND `id` = :stateID LIMIT 1");
             $statement->execute(array(':stateID' => $id));
             $row = $statement->fetch();
-            if(isset($row) && !empty($row))
-            {
-                return $row['name'];
-            }
-            else
-            {
-                return FALSE;
-            }
-        }
+            
+            return (isset($row) && !empty($row)) ? $row['name'] : FALSE;
+            
+           
+        
     }
     
     public function getCityNameById($id)
     {
-        if(isset($_SESSION['UID']))
-        {
+        global  $userSession;
+        if( !$userSession)
+            return NULL;
+
+
             $statement = $this->dbh->prepare("SELECT `name` FROM `city` WHERE `active`='1' AND `deleted`='0' AND `id` = :cityID LIMIT 1");
             $statement->execute(array(':cityID' => $id));
             $row = $statement->fetch();
-            if(isset($row) && !empty($row))
-            {
-                return $row['name'];
-            }
-            else
-            {
-                return FALSE;
-            }
-        }
+            return (isset($row) && !empty($row)) ? $row['name'] : FALSE;
+        
     }
     
     public function getStateIdByName($name)
     {
-        if(isset($_SESSION['UID']))
-        {
+        global  $userSession;
+        if( !$userSession)
+            return NULL;
+
             $statement = $this->dbh->prepare("SELECT `id` FROM `state` WHERE `active`='1' AND `deleted`='0' AND `name` = :name LIMIT 1");
             $statement->execute(array(':name' => $name));
             $row = $statement->fetch();
-            if(isset($row) && !empty($row))
-            {
-                return $row['id'];
-            }
-            else
-            {
-                return FALSE;
-            }
-        }
+
+            return (isset($row) && !empty($row)) ? $row['id'] : FALSE;
+            
+        
     }
     
     public function getCityIdByName($name)
     {
-        if(isset($_SESSION['UID']))
-        {
+        global  $userSession;
+        if( !$userSession)
+            return NULL;
+
             $statement = $this->dbh->prepare("SELECT `id` FROM `city` WHERE `active`='1' AND `deleted`='0' AND `name` = :name LIMIT 1");
             $statement->execute(array(':name' => $name));
             $row = $statement->fetch();
-            if(isset($row) && !empty($row))
-            {
-                return $row['id'];
-            }
-            else
-            {
-                return FALSE;
-            }
-        }
+            return (isset($row) && !empty($row)) ? $row['id'] : FALSE;
+        
     }
     
     public function getStateIdByCityId($id)
     {
-        if(isset($_SESSION['UID']))
-        {
+        global  $userSession;
+        if( !$userSession)
+            return NULL;
+
             $statement = $this->dbh->prepare("SELECT `stateID` FROM `city` WHERE `active`='1' AND `deleted`='0' AND `id` = :cityID LIMIT 1");
             $statement->execute(array(':cityID' => $id));
             $row = $statement->fetch();
-            if(isset($row) && !empty($row))
-            {
-                return $row['stateID'];
-            }
-            else
-            {
-                return FALSE;
-            }
-        }
+
+            return (isset($row) && !empty($row)) ? $row['stateID'] : FALSE;
+            
+        
     }
     
     public function travelTo($stateID, $cityID, $sec, $price, $pData)

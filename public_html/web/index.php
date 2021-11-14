@@ -1,10 +1,10 @@
 <?PHP
 
 // Mafiasource online mafia RPG, this software is inspired by Crimeclub.
-// Copyright © 2016 Michael Carrein, 2006 Crimeclub.nl
+// Copyright ï¿½ 2016 Michael Carrein, 2006 Crimeclub.nl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the “Software”),
+// copy of this software and associated documentation files (the ï¿½Softwareï¿½),
 // to deal in the Software without restriction, including without limitation
 // the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the
@@ -13,7 +13,7 @@
 // The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// THE SOFTWARE IS PROVIDED ï¿½AS ISï¿½, WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
 // NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -78,7 +78,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
     // Security class (Anti CSRF, XSS attacks & more)
     require_once __DIR__.'/../app/config/security.php';
     $security = new Security();
-    
+    $userSession = isset($_SESSION['UID']) ? true : false;
     // Routing fetched a valid controller?
     if($route->getController() != FALSE)
     {
@@ -115,6 +115,8 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         $language = new GetLanguageContent(); // Class mostly used in all service classes (Business layer)
         $langs = $language->langMap; // Base langs available on every page, contents depend on a player in- or out-game
         
+        
+
         // Check if controller actually exists and include it
         if(file_exists(__DIR__.'/../src/Controllers/'.$route->getController()))
         {
