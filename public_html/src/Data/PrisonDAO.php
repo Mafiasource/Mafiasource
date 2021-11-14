@@ -83,7 +83,7 @@ class PrisonDAO extends DBConfig
     
     public function fetchPrisoners($from, $to, $fam = false)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to))
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $statement = $this->dbh->prepare("DELETE FROM `prison` WHERE `time` < :time");
             $statement->execute(array(':time' => time()));

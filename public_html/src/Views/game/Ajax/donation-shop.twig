@@ -45,6 +45,19 @@
             {% endif %}
           </figcaption>
         </figure>
+        <figure>
+          <img src="{{ staticRoot }}/foto/web/public/images/donator/luckybox.png" alt="Luckybox" width="249" height="76"/>
+          <figcaption>
+            {% if userData.getId %} {# Korting #}
+                <small><s>15</s> {{ luckyboxAmnt }} {{ langs.BOXES }}</small><br />
+                {{ crIcon|raw }}&nbsp;<s>300</s> {{ luckyboxCr }}
+            {% else %}
+                <small>15 {{ langs.BOXES }}</small><br />
+                {{ crIcon|raw }}&nbsp; 300
+            {% endif %}
+                &nbsp;<input type="submit" name="luckybox" value="{{ langs.BUY }}"/>
+          </figcaption>
+        </figure>
     </div>
     <div class="c-50 column center">
         <figure>

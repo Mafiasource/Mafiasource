@@ -42,8 +42,18 @@ class StatisticService
         return $this->data->getOutgameStatistics();
     }
     
-    public function getStatisticsPage()
+    public function getStatisticsPage($round = "")
     {
-        return $this->data->getStatisticsPage();
+        return $this->data->getStatisticsPage($round);
+    }
+    
+    public function getHallOfFamePage($round = "")
+    {
+        return $this->data->getHallOfFamePage($round);
+    }
+    
+    public function getHallOfFameRounds()
+    {
+        return $this->data->getHallOfFameRounds();
     }
 }

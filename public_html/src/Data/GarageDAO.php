@@ -394,7 +394,7 @@ class GarageDAO extends DBConfig
     
     public function getVehiclesInGarageByState($stateID, $from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to < 50)
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             if($this->hasGarageInState($stateID) == TRUE)
             {
@@ -452,7 +452,7 @@ class GarageDAO extends DBConfig
     
     public function getVehiclesInFamilyGarage($famID, $from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to < 50)
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             if($this->hasFamilyGarage($famID) == TRUE)
             {
@@ -793,7 +793,7 @@ class GarageDAO extends DBConfig
     
     public function getVehiclesInShop($from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to < 50)
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $rows = $this->con->getData("
                 SELECT `id`, `name` AS `vehicleName`, `picture` AS `vehiclePicture`, `price` AS `vehiclePrice`

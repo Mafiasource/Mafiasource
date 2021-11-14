@@ -24,7 +24,8 @@ class UserDAO extends DBConfig
     private $lang = "en";
     private $dateFormat = "%d-%m-%Y %H:%i:%s"; // SQL Format
     private $phpDateFormat = "d-m-Y H:i:s";
-
+    private $roundView = ""; // current round db, TEST TO BE REVERTED
+    
     public function __construct()
     {
         global $lang;
@@ -727,7 +728,7 @@ class UserDAO extends DBConfig
 /* // Cleanup TO DO */
     public function getToplist($from, $to, $keyword = false, $rankAdd = false)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to))
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $cond = "WHERE";
             if($keyword !== false) $cond .= " u.`username` LIKE :keyword AND ";
@@ -736,13 +737,13 @@ class UserDAO extends DBConfig
             $statement = $this->dbh->prepare("
                 SELECT u.`id`, u.`username`, u.`avatar`, u.`rankpoints`, u.`cash`, u.`bank`, u.`familyID`, f.`name` AS `familyName`, u.`health`, u.`kills`,
                     u.`statusID`, u.donatorID, st.`status_".$this->lang."` AS `status`, d.`donator_".$this->lang."` AS `donator`, u.`whoresStreet`, u.`honorPoints`,
-                    (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, u.`restartDate`, u.`isProtected`
-                FROM `user` AS u
-                LEFT JOIN `family` AS f
+                    (SELECT SUM(`whores`) FROM $this->roundView`rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, u.`restartDate`, u.`isProtected`, u.`score`
+                FROM $this->roundView`user` AS u
+                LEFT JOIN $this->roundView`family` AS f
                 ON (u.`familyID`=f.`id`)
-                LEFT JOIN `status` AS st
+                LEFT JOIN $this->roundView`status` AS st
                 ON (u.`statusID`=st.`id`)
-                LEFT JOIN `donator` AS d
+                LEFT JOIN $this->roundView`donator` AS d
                 ON (u.`donatorID`=d.`id`)
                 $cond u.`active`='1' AND u.`deleted`='0'
                 ORDER BY u.`score` DESC, u.`honorPoints` DESC, u.`whoresStreet` DESC, u.`rankpoints` DESC, u.`power` DESC, u.`cardio` DESC, u.`crimesLv` DESC,
@@ -798,6 +799,7 @@ class UserDAO extends DBConfig
                 $userObj->setAvatar(FALSE);
                 if(file_exists(DOC_ROOT . '/web/public/images/users/'.$row['id'].'/uploads/'.$row['avatar'])) $userObj->setAvatar($row['avatar']);
                 $userObj->setScorePosition($i + 1);
+                $userObj->setScore($row['score']);
                 
                 array_push($list, $userObj);
                 $i++;
@@ -1590,85 +1592,8 @@ class UserDAO extends DBConfig
         }
     }
     
-    public function resetMafiasource()
-    { // Not used anywhere but very usefull. Change  `restartDate`='2020-12-28 14:00:00'  before executing
-        if(isset($_SESSION['UID']))
-        {
-            $this->con->setData("
-                TRUNCATE TABLE `bank_log`;
-                UPDATE `bullet_factory` SET `bullets`='10000', `priceEachBullet`='2500', `production`='0';
-                UPDATE `business` SET `last_price`=`opening_price`, `close_price`=`opening_price`, `high_price`=`opening_price`, `low_price`=`opening_price`;
-                -- TRUNCATE TABLE `business_history`;
-                TRUNCATE TABLE `business_stock`;
-                TRUNCATE TABLE `change_email`;
-                TRUNCATE TABLE `crime_org_prep`;
-                TRUNCATE TABLE `detective`;
-                TRUNCATE TABLE `drug_liquid`;
-                TRUNCATE TABLE `equipment`;
-                TRUNCATE TABLE `family`;
-                TRUNCATE TABLE `family_alliance`;
-                TRUNCATE TABLE `family_bank_log`;
-                TRUNCATE TABLE `family_bf_donation_log`;
-                TRUNCATE TABLE `family_bf_send_log`;
-                TRUNCATE TABLE `family_brothel_whore`;
-                TRUNCATE TABLE `family_crime`;
-                TRUNCATE TABLE `family_donation_log`;
-                TRUNCATE TABLE `family_garage`;
-                TRUNCATE TABLE `family_join_invite`;
-                TRUNCATE TABLE `family_mercenary_log`;
-                TRUNCATE TABLE `family_raid`;
-                TRUNCATE TABLE `fifty_game`;
-                TRUNCATE TABLE `forum_reaction`;
-                TRUNCATE TABLE `forum_read`;
-                TRUNCATE TABLE `forum_topic`;
-                TRUNCATE TABLE `garage`;
-                UPDATE `ground` SET `userID`='0', `building1`='0', `building2`='0', `building3`='0', `building4`='0', `building5`='0', `cBuilding1`='0', `cBuilding2`='0',
-                    `cBuilding3`='0', `cBuilding4`='0', `cBuilding5`='0';
-                TRUNCATE TABLE `gym_competition`;
-                TRUNCATE TABLE `hitlist`;
-                TRUNCATE TABLE `honorpoint_log`;
-                TRUNCATE TABLE `login`;
-                TRUNCATE TABLE `lottery`;
-                TRUNCATE TABLE `lottery_winner`;
-                TRUNCATE TABLE `market`;
-                TRUNCATE TABLE `message`;
-                TRUNCATE TABLE `murder_log`;
-                -- TRUNCATE TABLE `news`;
-                TRUNCATE TABLE `notification`;
-                -- TRUNCATE TABLE `poll_answer`;
-                -- TRUNCATE TABLE `poll_question`;
-                -- TRUNCATE TABLE `poll_vote`;
-                UPDATE `possess` SET `userID`='0', `profit`='0', `profit_hour`='0', `stake`='50000';
-                TRUNCATE TABLE `possess_transfer`;
-                TRUNCATE TABLE `prison`;
-                TRUNCATE TABLE `recover_password`;
-                UPDATE `rld` SET `windows`='1', `priceEachWindow`='150';
-                TRUNCATE TABLE `rld_whore`;
-                TRUNCATE TABLE `shoutbox_en`;
-                TRUNCATE TABLE `shoutbox_nl`;
-                TRUNCATE TABLE `smuggle_unit`;
-                -- TRUNCATE TABLE `user`;
-                UPDATE `user`
-                  SET `restartDate`='2020-12-28 14:00:00', `isProtected`='1', `activeTime`='0', `referralProfits`='0', `warns`='0', `forumPosts`='0', `familyID`='0', `rankpoints`='0', `health`='100', `score`='0',
-                    `cash`='2500', `bank`='10000', `swissBank`='0', `swissBankMax`='100000000', `prisonBusts`='0', `honorPoints`='0', `whoresStreet`='0', `kills`='0', `deaths`='0', `headshots`='0',
-                    `bullets`='10', `weapon`='0', `protection`='0', `airplane`='0', `weaponExperience`='0', `weaponTraining`='0', `residence`='0', `residenceHistory`='', `power`='0', `cardio`='0',
-                    `gymCompetitionWin`='0', `gymCompetitionLoss`='0', `gymProfit`='0', `gymScorePointsEarned`='0', `daily1Amount`='0', `daily2Amount`='0', `daily3Amount`='0', `dailyCompletedDays`='1',
-                    `luckybox`='0', `credits`='0', `creditsWon`='0',
-                    `crimesLv`='1', `crimesXp`='0,00', `crimesProfit`='0', `crimesSuccess`='0', `crimesFail`='0', `crimesRankpoints`='0',
-                    `vehiclesLv`='1', `vehiclesXp`='0,00', `vehiclesProfit`='0', `vehiclesSuccess`='0', `vehiclesFail`='0', `vehiclesRankpoints`='0',
-                    `pimpLv`='1', `pimpXp`='0,00', `pimpProfit`='0', `pimpAttempts`='0', `pimpAmount`='0',
-                    `smugglingLv`='1', `smugglingXp`='0,00', `smugglingProfit`='0', `smugglingTrips`='0', `smugglingUnits`='0', `smugglingBusts`='0',
-                    `m5c`='0', `m8c`='0', `lrsID_nl`='0', `lrfsID_nl`='0', `lrsID_en`='0', `lrfsID_en`='0', `cCrimes`='0', `cWeaponTraining`='0', `cGymTraining`='0', `cStealVehicles`='0', `cPimpWhores`='0',
-                    `cFamilyRaid`='0', `cFamilyCrimes`='0', `cBombardement`='0', `cTravelTime`='0', `cPimpWhoresFor`='0';
-                UPDATE `user` SET `donatorID`='0' WHERE `donatorID`='1';
-				UPDATE `user` SET `donatorID`='1' WHERE `donatorID`='5';
-				UPDATE `user` SET `donatorID`='5' WHERE `donatorID`='10';
-                TRUNCATE TABLE `user_captcha`;
-                TRUNCATE TABLE `user_friend_block`;
-                TRUNCATE TABLE `user_garage`;
-                TRUNCATE TABLE `user_mission_carjacker`;
-                TRUNCATE TABLE `user_residence`;
-            ");
-        }
+    public function setRoundView($roundView)
+    {
+        $this->roundView = $roundView;
     }
 }

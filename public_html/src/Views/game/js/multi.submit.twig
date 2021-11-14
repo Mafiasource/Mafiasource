@@ -1,0 +1,35 @@
+{# UGLY AND UNUSED NOW #}
+{# Meerdere submit knoppen in een ajax formulier nodig? In ajax requests worden submit knoppen in formulieren nooit mee gespeeld naar de server. #}
+{# Submit knop 'hack' voor ajax requests om onderscheid te maken tot welke submit knop werd ingedrukt a.h.v. attrName = "clicked" of niet? #}
+{# Bij gebruik van deze 'hack' moet je voor iedere submit input node een hidden input node voorzien zie vb: #}
+
+{#
+  VB Gebruik in ajax formulier met classes 'ajaxForm' & 'multiSubmit':
+    <input type="hidden" name="drop" value="false"/>
+    <input type="submit" name="drop-possess" class="execbutton red small" value="{{ langs.DROP }}"/>&nbsp;
+    <input type="hidden" name="manage" value="false"/>
+    <input type="submit" name="manage-possess" class="execbutton small" value="{{ langs.MANAGE }}"/>
+  Output bij verzenden formulier:
+  Onze ajax controller zal of wel $_POST['drop'] = 'clicked', $_POST['manage'] = 'clicked' of beiden = false binnenkrijgen.
+    - $_POST['drop-possess' / 'manage-possess'] zullen niet bestaan. (Enkel bij ajax requests)
+#}
+
+{# Opgelet! onderstaande code bevat ook een hardcoded fix op AUTOTRANSLATE van google, onze knopen worden dan in een font element geplaatst. #}
+
+$( document ).on( "click", "form.ajaxForm.multiSubmit input[type=submit]", function() {
+    $("form.ajaxForm input[type=hidden][value=clicked]").each(function(){
+        $(this).val("false");
+    });
+    if($(this).parent().prop("tagName") == "FONT" && $(this).parent().parent().prop("tagName") == "FONT") {# HARDCODED GOOGLE TRANSLATE FONT ADD FIX #}
+    {
+        $(this).parent().parent().prev().val('clicked');
+    }
+    else if($(this).parent().prop("tagName") == "FONT") {# HARDCODED GOOGLE TRANSLATE FONT ADD FIX #}
+    {
+        $(this).parent().prev().val('clicked');
+    }
+    else
+    {
+        $(this).prev().val('clicked');
+    }
+});

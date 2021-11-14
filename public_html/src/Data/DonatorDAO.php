@@ -55,4 +55,11 @@ class DonatorDAO extends DBConfig
             ));
         }
     }
+    
+    public function buyLuckybox($boxes, $credits)
+    {
+        $this->con->setData("
+            UPDATE `user` SET `credits`=`credits`- :cr, `luckybox`=`luckybox`+ :lb WHERE `id`= :uid AND `active`='1' AND `deleted`='0';
+        ", array(':cr' => $credits, ':lb' => $boxes, ':uid' => $_SESSION['UID']));
+    }
 }

@@ -544,7 +544,7 @@ class MurderDAO extends DBConfig
     
     public function getMurderLog($from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to  <= 50)
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $from = (int)round($from);
             $to = (int)round($to);
@@ -607,7 +607,7 @@ class MurderDAO extends DBConfig
     
     public function getFamilyMurderLog($from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to  <= 50)
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $from = (int)round($from);
             $to = (int)round($to);

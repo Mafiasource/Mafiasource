@@ -263,8 +263,8 @@ class Routing
     
     public function getLangRaw()
     {
-        $language = $this->getLanguageByIp();
-        if($language == "Dutch")
+        $language = $this->getLang();
+        if($language == "nl")
             return "nl-NL";
         else
             return "en-EN";

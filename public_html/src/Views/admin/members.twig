@@ -17,7 +17,7 @@
             {% set skipFields = ['id','password'] %}
             {% include "/app/Resources/Views/recordstable.twig" %}
             
-            <a href="{{ routing.getRouteByRouteName('admin-create-member') }}" class="btn btn-light">Nieuwe Back-end gebruiker aanmaken</a>
+            <a class="btn btn-default" href="{{ routing.getRouteByRouteName('admin-create-member') }}">Nieuwe Back-end gebruiker aanmaken</a>
         </div>
     </div>
 </div>

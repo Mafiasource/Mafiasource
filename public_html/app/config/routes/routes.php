@@ -175,15 +175,15 @@ array(
     'get-the-app'
     =>
     array(
-        'route' => '/get-the-app',
-        'controller' => 'get.app.php'
+        'route' => '/download-app',
+        'controller' => 'get-app.php'
     ),
     
     'get-the-app_GET'
     =>
     array(
-        'route' => '/get-the-app(?:\?.*)?',
-        'controller' => 'get.app.php'
+        'route' => '/download-app(?:\?.*)?',
+        'controller' => 'get-app.php'
     ),
     
     'link-partners'
@@ -198,6 +198,13 @@ array(
     array(
         'route' => '/link-partners(?:\?.*)?',
         'controller' => 'link-partners.php'
+    ),
+    
+    '_offline'
+    =>
+    array(
+        'route' => '/offline.html',
+        'controller' => 'offline.php'
     ),
     
     /*
@@ -1178,6 +1185,13 @@ array(
         'controller' => 'game/information.php'
     ),
     
+    'information-hall-of-fame'
+    =>
+    array(
+        'route' => '/game/information/hall-of-fame',
+        'controller' => 'game/information.php'
+    ),
+    
     'logout'
     =>
     array(
@@ -2024,6 +2038,27 @@ array(
     array(
         'route' => '/admin/user-friend-block/pagina/[1-9][0-9]{0,3}',
         'controller' => 'admin/user-friend-block.php'
+    ),
+    
+    'admin-round'
+    =>
+    array(
+        'route' => '/admin/round',
+        'controller' => 'admin/round.php'
+    ),
+    
+    'admin-round-pagina'
+    =>
+    array(
+        'route' => '/admin/round/pagina/[1-9][0-9]{0,3}',
+        'controller' => 'admin/round.php'
+    ),
+    
+    'admin-reset'
+    =>
+    array(
+        'route' => '/admin/reset',
+        'controller' => 'admin/reset.php'
     ),
     
     /**

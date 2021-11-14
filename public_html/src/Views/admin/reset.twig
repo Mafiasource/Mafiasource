@@ -1,0 +1,118 @@
+{% extends "/app/Resources/Views/base.admin.twig" %}
+
+{% block content %}
+<div class="row">
+	<div class="col-12">
+        <div class="content-box-header">
+			<div class="panel-title">Spel reset uitvoeren</div>
+		</div>
+		<div class="content-box-large box-with-header clearfix">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p>Alle instellingen en gebruikers / familie vorderingen resetten?&nbsp;In plaats daarvan <a href="{{ routing.getRouteByRouteName('admin-round') }}">hall of fame spelrondes beheren</a>.</p>
+            </div>
+            {% if not offline %}
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <p>Om data corruptie te vermijden is het aangeraden om eerst het spel offline te halen via /app/config/config.php. Doe dit vooral wanneer spelers online zijn.</p>
+                </div>
+            {% endif %}
+            {% block actionMessage %}
+                {% if message %}
+                    {{ message|raw }}
+                {% endif %}
+            {% endblock actionMessage %}
+            <div class="row justify-content-between">
+              <div class="col-6 offset-lg-3">
+                <form id="reset-form" action="{{ routing.getRouteByRouteName('admin-reset') }}" class="ajaxForm" method="POST" data-response="#resetResponse">
+                    <h2>Reset instellingen</h2>
+                    <div id="resetResponse"></div>
+                    
+                    <label>Spel gebruikers *</label>
+                    <div class="form-check">
+                      <input class="form-check-input" name="member-status" type="radio" value="keep" id="keepStatus" />
+                      <label class="form-check-label" for="keepStatus">
+                        Behoud de status van alle spelers (Gold member, VIP, Dona)
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" name="member-status" type="radio" value="rollback-status" id="rollbackStatus" checked="checked" />
+                      <label class="form-check-label" for="rollbackStatus">
+                        Statussen van spelers 1 status achteruit (Gold member wordt VIP wordt Dona wordt Lid)
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" name="member-status" type="radio" value="discard-status" id="discardStatus" />
+                      <label class="form-check-label" for="discardStatus">
+                        Statussen van alle spelers terug lid
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" name="member-status" type="radio" value="remove-members" id="removeMembers" />
+                      <label class="form-check-label" for="removeMembers">
+                        Verijder alle leden (Admins blijven sowiso behouden)
+                      </label>
+                    </div>
+                    
+                    <label>Teamleden</label>
+                    <div class="form-check">
+                      <input class="form-check-input" name="keep-team" aria-describedby="teamHelp" type="checkbox" value="keep" id="keepTeam" />
+                      <label class="form-check-label" for="keepTeam">
+                        Teamleden behouden (AdminCP moderators blijven ongewijzigd)
+                      </label>
+                      <small id="teamHelp" class="form-text text-muted">Enkel van toepassing bij verwijderen alle leden.</small>
+                    </div>
+                    <label>Families</label>
+                    <div class="form-check">
+                      <input class="form-check-input" name="remove-families" aria-describedby="familiesHelp" type="checkbox" value="remove" id="removeFamilies" checked="checked" />
+                      <label class="form-check-label" for="removeFamilies">
+                        Verwijder alle families
+                      </label>
+                      <small id="familiesHelp" class="form-text text-muted">Altijd van toepassing bij verwijderen alle leden.</small>
+                    </div>
+                    {# Always full backup, restore available when sql file is available. | Should change to minimized hall of fame database possibility.
+                    <label>Terugdraaien</label>
+                    <div class="form-check">
+                      <input class="form-check-input" name="rollback-possibility" aria-describedby="rollbackHelp" type="checkbox" value="remove" id="rollbackPossibility" checked="checked" />
+                      <label class="form-check-label" for="rollbackPossibility">
+                        Mogelijkheid tot terugdraaien
+                      </label>
+                      <small id="rollbackHelp" class="form-text text-muted">Er word een volledige back-up gemaakt die word weggeschreven naar de nieuwe database met een mogelijkheid om deze back-up later te herstellen.</small>
+                    </div>
+                    #}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="startDate">Start datum *</label>
+                              <input type="text" class="form-control" id="startDate" name="start-date" aria-describedby="startDateHelp" placeholder="Start datum v/d ronde" required="required" value="{{ previousRound.endDate }}"/>
+                              <small id="startDateHelp" class="form-text text-muted">'2010-12-31 00:00:00' formaat.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              <label for="endDate">Eind datum *</label>
+                              <input type="text" class="form-control" id="endDate" name="end-date" aria-describedby="endDateHelp" placeholder="Eind datum v/d ronde" required="required" value="{{ 'now'|date('Y-m-d H:i:s') }}" />
+                              <small id="endDateHelp" class="form-text text-muted">'2010-12-31 00:00:00' formaat.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="roundNo">Ronde nummer *</label>
+                      <input type="number" class="form-control" id="roundNo" name="round-no" aria-describedby="roundHelp" min="0" placeholder="Ronde nr." required="required" />
+                      <small id="roundHelp" class="form-text text-muted">0 = Beta. Indien mogelijk wordt de hall of fame database aangemaakt en permissies toegevoegd.</small>
+                    </div>
+                    <div class="form-group">
+                      <label for="nextRound">Volgende ronde start</label>
+                      <input type="text" class="form-control" id="nextRound" name="next-round-date" aria-describedby="nextRoundHelp" placeholder="Start datum volgende ronde" />
+                      <small id="nextRoundHelp" class="form-text text-muted">Optioneel: alle bestaande gebruikers krijgen deze start tijd te zien volgende ronde. '2010-12-31 00:00:00' formaat.</small>
+                    </div>
+                    
+                    <input type="hidden" name="submit-reset-sure" value="{{ securityToken }}"/>
+                    <input type="submit" name="submit-reset-sure" class="btn btn-primary" value="{{ routing.settings.gamename }} resetten"/>
+                </form>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

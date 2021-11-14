@@ -132,7 +132,9 @@
             {% endfor %}
         </div>
     </div>
-    
+
+    {% if not fromHallOfFame %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getNewestMemberStatistic|var_dump #}
         <div class="top">{{ langs.NEWEST }} {{ langs.PLAYER|lower }}</div>
@@ -157,6 +159,9 @@
 <br />
 
 <div class="c-row cf">
+
+    {% endif %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getKillerkingStatistic|var_dump #}
         <div class="top">Killerking</div>
@@ -176,7 +181,17 @@
             {% endfor %}
         </div>
     </div>
-    
+
+    {% if fromHallOfFame %}
+
+</div>
+
+<br />
+
+<div class="c-row cf">
+
+    {% endif %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getPrisonBreakingStatistic|var_dump #}
         <div class="top">{{ langs.MOST_SUCCESSFUL_BUSTS }}</div>
@@ -196,11 +211,17 @@
             {% endfor %}
         </div>
     </div>
+
+    {% if not fromHallOfFame %}
+
 </div>
 
 <br />
 
 <div class="c-row cf">
+
+    {% endif %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getCarjackingStatistic|var_dump #}
         <div class="top">{{ langs.MOST_STOLEN_VEHICLES }}</div>
@@ -220,7 +241,17 @@
             {% endfor %}
         </div>
     </div>
-    
+
+    {% if fromHallOfFame %}
+
+</div>
+
+<br />
+
+<div class="c-row cf">
+
+    {% endif %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getCrimesStatistic|var_dump #}
         <div class="top">{{ langs.MOST_SUCCESSFUL_CRIMES }}</div>
@@ -240,11 +271,17 @@
             {% endfor %}
         </div>
     </div>
+
+    {% if not fromHallOfFame %}
+
 </div>
 
 <br />
 
 <div class="c-row cf">
+
+    {% endif %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getPimpingStatistic|var_dump #}
         <div class="top">{{ langs.MOST_WHORES_PIMPED }}</div>
@@ -264,7 +301,17 @@
             {% endfor %}
         </div>
     </div>
-    
+
+    {% if fromHallOfFame %}
+
+</div>
+
+<br />
+
+<div class="c-row cf">
+
+    {% endif %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getSmugglingStatistic|var_dump #}
         <div class="top">{{ langs.MOST_UNITS_SMUGGLED }}</div>
@@ -284,6 +331,9 @@
             {% endfor %}
         </div>
     </div>
+
+    {% if not fromHallOfFame %}
+
 </div>
 
 <br />
@@ -318,7 +368,9 @@
             {% if loop.last %}</div>{% endif %}
         {% endfor %}
     </div>
-    
+
+    {% endif %}
+
     <div class="c-row-50 statsCol col">
         {# stats.getReferralStatistic|var_dump #}
         <div class="top">{{ langs.MOST_REFERRAL_PROFITS }}</div>

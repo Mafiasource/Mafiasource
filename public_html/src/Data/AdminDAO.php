@@ -3,8 +3,12 @@
 namespace src\Data;
 
 use src\Data\MemberDAO;
+use src\Data\StatisticDAO;
 use src\Data\config\DBConfig;
 use vendor\SimpleImage;
+
+use DateTime;
+use stdClass;
 
 class AdminDAO extends DBConfig
 {
@@ -17,7 +21,7 @@ class AdminDAO extends DBConfig
         "airplane", "helpsystem", "vehicle", "residence", "crime", "crime_org", "steal_vehicle", "possess", "possession", "forum_category", "forum_status", "forum_topic",
         "forum_reaction", "smuggle", "detective", "family", "family_alliance", "family_bf_donation_log", "family_bf_send_log", "family_brothel_whore", "family_garage",
         "family_join_invite", "family_mercenary_log", "family_raid", "garage", "gym_competition", "user_garage", "market", "message", "murder_log", "poll_answer",
-        "poll_question", "poll_vote", "seo", "shoutbox_nl", "shoutbox_en", "user_captcha", "user_friend_block"
+        "poll_question", "poll_vote", "seo", "shoutbox_nl", "shoutbox_en", "user_captcha", "user_friend_block", "round"
     );
     
     public function __construct($table = "")
@@ -57,6 +61,18 @@ class AdminDAO extends DBConfig
             else
                 $id = 1;
             return $id;
+        }
+    }
+    
+    public function getLastRecord()
+    {
+        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
+        {
+            $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `active`='1' AND `deleted` = '0' ORDER BY `round` DESC LIMIT 1");
+            $statement->execute();
+            $list = array();
+            $list = $this->checkCommentsForFieldsInRows($list, $statement);
+            return $list;
         }
     }
     
@@ -180,7 +196,7 @@ class AdminDAO extends DBConfig
                 }
             }
             $arr[$key] = $val;
-            array_push($list,$arr);
+            array_push($list, $arr);
         }
         return $list;
     }
@@ -608,6 +624,223 @@ class AdminDAO extends DBConfig
             $list = $this->checkCommentsForFieldsInRows($list, $statement);
             return $list;
         }
+    }
+    
+    public function resetMafiasource($data, $nextRoundStartDate = "now")
+    {
+        // Backup database
+        $adminReset = true;
+        include_once DOC_ROOT . "/app/cronjob/dbbackup.php";
+        $adminReset = null;
+        $dbbackup = $saveFile;
+        $saveFile = null;
+        
+        // Fetch and store hall of fame into new json object
+        $statisticData = new StatisticDAO();
+        $statistic = $statisticData->getStatisticsPage();
+        $hof = $statisticData->getHallOfFamePage(); // Arr
+        $hof['game'] = $statistic->getGameStatistic();
+        $hof['richest'] = $statistic->getRichestStatistic();
+        $hof['mostHonored'] = $statistic->getMostHonoredStatistic();
+        $hof['killerking'] = $statistic->getKillerkingStatistic();
+        $hof['prisonBreaking'] = $statistic->getPrisonBreakingStatistic();
+        $hof['carjacking'] = $statistic->getCarjackingStatistic();
+        $hof['crimes'] = $statistic->getCrimesStatistic();
+        $hof['pimping'] = $statistic->getPimpingStatistic();
+        $hof['smuggling'] = $statistic->getSmugglingStatistic();
+        $hof['referral'] = $statistic->getReferralStatistic();
+        
+        $hofGame = new stdClass();
+        $hofGame->getTotalMembers = $hof['game']->getTotalMembers();
+        $hofGame->getTotalCash = $hof['game']->getTotalCash();
+        $hofGame->getTotalBank = $hof['game']->getTotalBank();
+        $hofGame->getTotalMoney = $hof['game']->getTotalMoney();
+        $hofGame->getAverageMoney = $hof['game']->getAverageMoney();
+        $hofGame->getTotalFamilies = $hof['game']->getTotalFamilies();
+        $hofGame->getTotalBullets = $hof['game']->getTotalBullets();
+        $hofGame->getAverageBullets = $hof['game']->getAverageBullets();
+        $hofGame->getTotalDeathNow = $hof['game']->getTotalDeathNow();
+        $hofGame->getTotalBanned = $hof['game']->getTotalBanned();
+        $gameObj = json_encode($hofGame);
+        
+        $hofObj = new stdClass();
+        $hofObj->game = $gameObj;
+        
+        foreach(array_keys($hof) AS $key)
+        {
+            if($key !== "game")
+            {
+                $hofData = new stdClass();
+                $statList = array();
+                foreach($hof['richest'] AS $stat)
+                {
+                    $obj = new stdClass();
+                    $obj->getKey = $stat->getKey();
+                    $obj->getValue = $stat->getValue();
+                    
+                    array_push($statList, $obj);
+                }
+                $hofData = $statList;
+                $dataObj = json_encode($hofData);
+                
+                switch($key)
+                {
+                    default:
+                    case "richest":
+                        $hofObj->richest = $dataObj;
+                        break;
+                    case "mostHonored":
+                        $hofObj->mostHonored = $dataObj;
+                        break;
+                    case "killerking":
+                        $hofObj->killerking = $dataObj;
+                        break;
+                    case "prisonBreaking":
+                        $hofObj->prisonBreaking = $dataObj;
+                        break;
+                    case "carjacking":
+                        $hofObj->carjacking = $dataObj;
+                        break;
+                    case "crimes":
+                        $hofObj->crimes = $dataObj;
+                        break;
+                    case "pimping":
+                        $hofObj->pimping = $dataObj;
+                        break;
+                    case "smuggling":
+                        $hofObj->smuggling = $dataObj;
+                        break;
+                    case "referral":
+                        $hofObj->referral = $dataObj;
+                        break;
+                }
+            }
+        }
+        $hofJson = json_encode($hofObj);
+        
+        // Insert this round and its hall of fame json
+        $this->con->setData("
+            INSERT INTO `round` (`round`, `startDate`, `endDate`, `hofJson`, `dbbackup`) VALUES (:rnd, :sDate, :eDate, :json, :dbbckp)
+        ", array(':rnd' => $data['round-no'], ':sDate' => $data['start-date'], ':eDate' => $data['end-date'], ':json' => stripslashes($hofJson), 'dbbckp' => $dbbackup));
+        
+        // Standard reset of game
+        $startDate = $nextRoundStartDate !== "now" && (DateTime::createFromFormat('Y-m-d H:i:s', $nextRoundStartDate) !== false) ? $nextRoundStartDate : date("Y-m-d H:i:s");
+        //$startDate = $nextRoundStartDate === "now" ? date("Y-m-d H:i:s") : $nextRoundStartDate;
+        $this->con->setData("
+            TRUNCATE TABLE `bank_log`;
+            UPDATE `bullet_factory` SET `bullets`='10000', `priceEachBullet`='2500', `production`='0';
+            UPDATE `business` SET `last_price`=`opening_price`, `close_price`=`opening_price`, `high_price`=`opening_price`, `low_price`=`opening_price`;
+            -- TRUNCATE TABLE `business_history`;
+            TRUNCATE TABLE `business_stock`;
+            TRUNCATE TABLE `change_email`;
+            TRUNCATE TABLE `crime_org_prep`;
+            TRUNCATE TABLE `detective`;
+            TRUNCATE TABLE `drug_liquid`;
+            TRUNCATE TABLE `equipment`;
+            -- TRUNCATE TABLE `family`;
+            UPDATE `family` SET `vip`='0';
+            TRUNCATE TABLE `family_alliance`;
+            TRUNCATE TABLE `family_bank_log`;
+            TRUNCATE TABLE `family_bf_donation_log`;
+            TRUNCATE TABLE `family_bf_send_log`;
+            TRUNCATE TABLE `family_brothel_whore`;
+            TRUNCATE TABLE `family_crime`;
+            TRUNCATE TABLE `family_donation_log`;
+            TRUNCATE TABLE `family_garage`;
+            TRUNCATE TABLE `family_join_invite`;
+            TRUNCATE TABLE `family_mercenary_log`;
+            TRUNCATE TABLE `family_raid`;
+            TRUNCATE TABLE `fifty_game`;
+            TRUNCATE TABLE `forum_reaction`;
+            TRUNCATE TABLE `forum_read`;
+            TRUNCATE TABLE `forum_topic`;
+            TRUNCATE TABLE `garage`;
+            UPDATE `ground` SET `userID`='0', `building1`='0', `building2`='0', `building3`='0', `building4`='0', `building5`='0', `cBuilding1`='0', `cBuilding2`='0',
+                `cBuilding3`='0', `cBuilding4`='0', `cBuilding5`='0';
+            TRUNCATE TABLE `gym_competition`;
+            TRUNCATE TABLE `hitlist`;
+            TRUNCATE TABLE `honorpoint_log`;
+            TRUNCATE TABLE `login`;
+            TRUNCATE TABLE `lottery`;
+            TRUNCATE TABLE `lottery_winner`;
+            TRUNCATE TABLE `market`;
+            TRUNCATE TABLE `message`;
+            TRUNCATE TABLE `murder_log`;
+            -- TRUNCATE TABLE `news`;
+            TRUNCATE TABLE `notification`;
+            -- TRUNCATE TABLE `poll_answer`;
+            -- TRUNCATE TABLE `poll_question`;
+            -- TRUNCATE TABLE `poll_vote`;
+            UPDATE `possess` SET `userID`='0', `profit`='0', `profit_hour`='0', `stake`='50000';
+            TRUNCATE TABLE `possess_transfer`;
+            TRUNCATE TABLE `prison`;
+            TRUNCATE TABLE `recover_password`;
+            UPDATE `rld` SET `windows`='1', `priceEachWindow`='150';
+            TRUNCATE TABLE `rld_whore`;
+            TRUNCATE TABLE `shoutbox_en`;
+            TRUNCATE TABLE `shoutbox_nl`;
+            TRUNCATE TABLE `smuggle_unit`;
+            -- TRUNCATE TABLE `user`;
+            UPDATE `user`
+              SET `restartDate`= :startDate, `isProtected`='1', `activeTime`='0', `referralProfits`='0', `warns`='0', `forumPosts`='0', `rankpoints`='0', `health`='100', `score`='0',
+                `cash`='2500', `bank`='10000', `swissBank`='0', `swissBankMax`='100000000', `prisonBusts`='0', `honorPoints`='0', `whoresStreet`='0', `kills`='0', `deaths`='0', `headshots`='0',
+                `bullets`='10', `weapon`='0', `protection`='0', `airplane`='0', `weaponExperience`='0', `weaponTraining`='0', `residence`='0', `residenceHistory`='', `power`='0', `cardio`='0',
+                `gymCompetitionWin`='0', `gymCompetitionLoss`='0', `gymProfit`='0', `gymScorePointsEarned`='0', `daily1Amount`='0', `daily2Amount`='0', `daily3Amount`='0', `dailyCompletedDays`='1',
+                `luckybox`='0', `credits`='0', `creditsWon`='0',
+                `crimesLv`='1', `crimesXp`='0,00', `crimesProfit`='0', `crimesSuccess`='0', `crimesFail`='0', `crimesRankpoints`='0',
+                `vehiclesLv`='1', `vehiclesXp`='0,00', `vehiclesProfit`='0', `vehiclesSuccess`='0', `vehiclesFail`='0', `vehiclesRankpoints`='0',
+                `pimpLv`='1', `pimpXp`='0,00', `pimpProfit`='0', `pimpAttempts`='0', `pimpAmount`='0',
+                `smugglingLv`='1', `smugglingXp`='0,00', `smugglingProfit`='0', `smugglingTrips`='0', `smugglingUnits`='0', `smugglingBusts`='0',
+                `m5c`='0', `m8c`='0', `lrsID_nl`='0', `lrfsID_nl`='0', `lrsID_en`='0', `lrfsID_en`='0', `cCrimes`='0', `cWeaponTraining`='0', `cGymTraining`='0', `cStealVehicles`='0', `cPimpWhores`='0',
+                `cFamilyRaid`='0', `cFamilyCrimes`='0', `cBombardement`='0', `cTravelTime`='0', `cPimpWhoresFor`='0';
+            -- UPDATE `user` SET `donatorID`='0' WHERE `donatorID`='1';
+			-- UPDATE `user` SET `donatorID`='1' WHERE `donatorID`='5';
+			-- UPDATE `user` SET `donatorID`='5' WHERE `donatorID`='10';
+            TRUNCATE TABLE `user_captcha`;
+            TRUNCATE TABLE `user_friend_block`;
+            TRUNCATE TABLE `user_garage`;
+            TRUNCATE TABLE `user_mission_carjacker`;
+            TRUNCATE TABLE `user_residence`;
+        ", array(':startDate' => $startDate));
+        
+        // Reset according to $data params
+        
+        function removeFamilies()
+        {
+            global $connection;
+            $connection->setData("
+                TRUNCATE TABLE `family`;
+                UPDATE `user` SET `familyID`='0'
+            ");
+        }
+        
+        if(isset($data['member-status']) && $data['member-status'] === "rollback-status")
+            $this->con->setData("
+                UPDATE `user` SET `donatorID`='0' WHERE `donatorID`='1';
+    			UPDATE `user` SET `donatorID`='1' WHERE `donatorID`='5';
+    			UPDATE `user` SET `donatorID`='5' WHERE `donatorID`='10';
+            ");
+            
+        if(isset($data['member-status']) && $data['member-status'] === "discard-status")
+            $this->con->setData("UPDATE `user` SET `donatorID`='0'");
+        
+        if(isset($data['member-status']) && $data['member-status'] === "remove-members")
+        {
+            $statusID = 2;
+            if(isset($data['keep-team']) && $data['keep-team'] === "keep")
+                $statusID = 6;
+            
+            $this->con->setData("DELETE FROM `user` WHERE `statusID`> :sID", array(':sID' => $statusID));
+            
+            removeFamilies();
+        }
+        
+        if(isset($data['remove-families']) && $data['remove-families'] === "remove")
+            removeFamilies();
+        
+        global $route;
+        //$startDate = $nextRoundStartDate !== "now" && (DateTime::createFromFormat('Y-m-d H:i:s', $nextRoundStartDate) !== false) ? $nextRoundStartDate : date("Y-m-d H:i:s");
+        return $route->successMessage($route->settings['gamename'] . " heeft een reset ondergaan! Volgende datum werd alvast genoteerd voor de volgende ronde: " . $startDate);
     }
     
     public function getValidTables()

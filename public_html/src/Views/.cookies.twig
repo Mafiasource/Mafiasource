@@ -1,7 +1,7 @@
 {% if cookiesAccept != "true" %}
     <div class="alert fade show alert-warning alert-dismissible" role="alert">
         <button type="button" class="close closeCookieMessage" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <img src="{{ staticRoot }}/foto/web/public/images/icons/bell.png" class="icon" alt="Warning" title="Warning" border="0" />
+        <img src="{{ staticRoot }}/foto/web/public/images/icons/bell.png" width="16" height="16" class="icon" alt="Warning" title="Warning" border="0" />
         {{ langs.COOKIES_ACCEPT|raw }}
     </div>
 {% endif %}

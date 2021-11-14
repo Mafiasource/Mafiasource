@@ -94,8 +94,8 @@ class UserCoreDAO extends DBConfig
                         u.`donatorID`, u.`honorPoints`, u.`credits`, d.`donator_".$this->lang."` AS `donator`, u.`familyID`, f.`name` AS `family`, f.`bossUID`, f.`underbossUID`,
                         f.`bankmanagerUID`, f.`forummodUID`, u.`stateID`, s.`name` AS `state`, u.`cityID`, u.`rankpoints`, u.`cash`, u.`bank`, u.`health`, u.`luckybox`,
                         u.`cCrimes`, u.`cWeaponTraining`, u.`cGymTraining`, u.`cStealVehicles`, u.`cPimpWhores`, u.`cFamilyRaid`, u.`cFamilyCrimes`, u.`cBombardement`, u.`cTravelTime`,
-                        u.`avatar`, (SELECT COUNT(id) FROM `message` WHERE `receiverID`= :uid AND `read`= '0' AND `active`='1' AND `deleted`='0') AS `messagesCount`,
-                        (SELECT COUNT(id) FROM `notification` WHERE `userID`= :uid AND `read`= '0') AS `notificationsCount`, u.`weaponTraining`,
+                        u.`avatar`, (SELECT COUNT(id) FROM `message` WHERE `receiverID`=u.`id` AND `read`= '0' AND `active`='1' AND `deleted`='0') AS `messagesCount`,
+                        (SELECT COUNT(id) FROM `notification` WHERE `userID`=u.`id` AND `read`= '0') AS `notificationsCount`, u.`weaponTraining`,
                         c.`name` AS `city`, u.`cPimpWhoresFor`, (SELECT `time` FROM `prison` WHERE `userID`= u.`id`) AS `prisonTime`, u.`lrsID_".$this->lang."` AS `lrsID`,
                         u.`lrfsID_".$this->lang."` AS `lrfsID`, u.`lang`, u.`kills`, u.`whoresStreet`, u.`restartDate`, u.`isProtected`,
                         (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`

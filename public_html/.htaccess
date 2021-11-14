@@ -84,35 +84,38 @@ IndexIgnore *
     RewriteCond %{REQUEST_METHOD} (CONNECT|DEBUG|DELETE|MOVE|PUT|TRACE|TRACK)
     RewriteRule .* - [F]
     
-    ## Now www to www redirect and vice versa for subdomains
-    RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$ [NC]
-    RewriteCond %{HTTPS}s ^on(s)|off [NC]
-    RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    ## Non www to www redirect and vice versa for subdomains
+    #RewriteCond %{HTTPS} off [OR]
+    RewriteCond %{HTTP_HOST} !^static\. [NC]
+    RewriteCond %{HTTP_HOST} !^www\. [NC]
+    RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+    #RewriteCond %{HTTPS} off [OR]
+    RewriteCond %{HTTP_HOST} ^static\. [NC]
     RewriteCond %{HTTP_HOST} ^www\. [NC]
-    RewriteCond %{HTTPS}s ^on(s)|off [NC]
-    RewriteCond http%1://%{HTTP_HOST} ^(https?://)(www\.)(.+\.)(.+\.)(.+)$ [NC]
-    RewriteRule ^ %1%3%4%5%{REQUEST_URI} [R=301,L]
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
     
     ## Rewrite foto.php without query str
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    ## With sizes (currently only steal_vehicles/ and crime/
+    ## With sizes and or zoom crop
     RewriteRule ^foto/([0-9]+)x([0-9]+)/([1-3])/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?w=$1&h=$2&zc=$3&src=$4/$5/$6/$7/$8 [L,B,NC,QSA]
+    RewriteRule ^foto/([0-9]+)x([0-9]+)/([1-3])/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?w=$1&h=$2&zc=$3&src=$4/$5/$6/$7 [L,B,NC,QSA]
     RewriteRule ^foto/([0-9]+)x([0-9]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?w=$1&h=$2&src=$3/$4/$5/$6/$7 [L,B,NC,QSA]
-    ## Without sizes
+    RewriteRule ^foto/([0-9]+)x([0-9]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?w=$1&h=$2&src=$3/$4/$5/$6 [L,B,NC,QSA]
+    ## Without sizes or zoom crop incl. 2 directory levels deeper.
     RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4/$5/$6/$7 [L,B,NC,QSA]
     RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4/$5 [L,B,NC,QSA]
     RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4 [L,B,NC,QSA]
     
-    ## Rewrite default favicon
-    RewriteCond %{HTTPS}s ^on(s)|off [NC]
+    ## Rewrite default favicon force https
     RewriteCond %{REQUEST_URI} /favicon.ico [NC]
-    RewriteRule (.*) http%1://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]
+    RewriteRule (.*) https://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]
     
     ## Redirect all requests to front-controller (/web/index.php) but ignore following URIs:
     RewriteCond %{REQUEST_URI} /google29f33f42f4b5ccd8.html [or]
     RewriteCond %{REQUEST_URI} /sitemap.xml [or]
     RewriteCond %{REQUEST_URI} /robots.txt [or]
+    RewriteCond %{REQUEST_URI} /sw.js [or]
     RewriteCond %{REQUEST_URI} /favicon.ico
     ## Add more or's if needed
     
@@ -136,25 +139,17 @@ IndexIgnore *
     Header always set X-Frame-Options "deny"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
     Header always set X-Content-Type-Options "nosniff"
-    ## Accept encoding on common reqources
-    <FilesMatch ".(js|css|xml|gz|html)$">
+    ## Accept encoding on common resources
+    <FilesMatch ".(js|css|xml|gz|html|shtml)$">
         Header append Vary: Accept-Encoding
     </FilesMatch>
-    ## Allow cross-domain access control for font files.
-    <FilesMatch ".(ttf|ttc|otf|eot|woff|woff2|font.css|css|js)$">
+    ## Allow cross-domain access control for static files and remove cookies.
+    <FilesMatch ".(ttf|ttc|otf|eot|woff|woff2|font.css|ico|png|jpg|jpeg|gif|webp|css|min.css|js|xml|json|txt|pdf|mov|avi|swf)$">
         Header set Access-Control-Allow-Origin "*"
-    </FilesMatch>
-    ## Remove cookies @ static files
-    <FilesMatch ".(js|css|jpg|png|jpeg|gif|xml|json|txt|pdf|mov|avi|otf|woff|ico|swf)$">
         RequestHeader unset Cookie
         Header unset Cookie
         Header unset Set-Cookie
     </FilesMatch>
-    
-    ## Rumored to also remove cookies, not tested
-    #Header unset Pragma
-    #FileETag None 
-    #Header unset ETag
 </IfModule>
 
 ## GZIP compression
@@ -210,21 +205,15 @@ IndexIgnore *
     ExpiresByType image/x-icon "access 1 year"
     ExpiresDefault "access 1 month"
 </IfModule>
-<filesMatch "\.( jpg|jpeg|gif|png|woff|woff2|ico)$">
+<filesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|ico|png|jpg|jpeg|gif|webp)$">
     Header set Cache-Control "max-age=2419200, public, must-revalidate"
 </filesMatch>
-<FilesMatch "\.(xml|txt|pdf|html|css|js)$">
+<FilesMatch "\.(xml|html|css|min.css|js|xml|json|txt|pdf)$">
     Header set Cache-Control "max-age=604800, public, must-revalidate"
 </FilesMatch>
 
 ## Enhance caching
 FileETag MTime Size
-
-## Allow 404.shtml (somehow not working with routing alone)
-<Files 403.shtml>
-    order allow,deny
-    allow from all
-</Files>
 
 ## Redirect 404 & 403 forbidden to /404 not found app route
 ErrorDocument 404 /404

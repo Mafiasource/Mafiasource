@@ -86,6 +86,11 @@ class AdminService
         return $this->data->getLastInsertId();
     }
     
+    public function getLastRecord()
+    {
+        return $this->data->getLastRecord();
+    }
+    
     public function searchRecords($search,$searchBy,$fields,$skipFields)
     {
         return $this->data->searchRecords($search,$searchBy,$fields,$skipFields);
@@ -94,5 +99,10 @@ class AdminService
     public function getCMSTableRowByUserId($id)
     {
         return $this->data->getCMSTableRowByUserId($id);
+    }
+    
+    public function resetMafiasource($data, $nextRoundStartDate = "now")
+    {
+        return $this->data->resetMafiasource($data, $nextRoundStartDate);
     }
 }

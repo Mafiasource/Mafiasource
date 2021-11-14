@@ -11,7 +11,7 @@
         {% endif %}
         
         {% if pagination.page > (1 + adjacents) %}
-            <li class="page-item"><a class="page-link" style="font-size: 13px;" href="{{ pagination.uri }}/pagina/1">1</a></li>
+            <li class="page-item"><a class="page-link" href="{{ pagination.uri }}/pagina/1">1</a></li>
         {% endif %}
         
         {% set pmin = (pagination.page > adjacents)?(pagination.page - adjacents):1 %}
@@ -30,7 +30,7 @@
         {% endfor %}
         
         {% if pagination.page < (pagination.tpages - adjacents) %}
-            <li class="page-item"><a class="page-link" style="font-size:13px;" href="{{ pagination.uri }}/pagina/{{ pagination.tpages }}">{{ pagination.tpages }}</a></li>
+            <li class="page-item"><a class="page-link" href="{{ pagination.uri }}/pagina/{{ pagination.tpages }}">{{ pagination.tpages }}</a></li>
         {% endif %}
         
         {% if pagination.page < pagination.tpages %}

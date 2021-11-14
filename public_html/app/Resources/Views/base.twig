@@ -5,64 +5,89 @@
 <html lang="{{ lang }}">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    {# <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> #}
+    <link rel="manifest" href="{{ docRoot }}/web/public/images/favicon/manifest.json" />
+    <meta name="theme-color" content="#464646" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no{# , user-scalable=no #}" />
+    <meta name="msapplication-config" content="{{ staticRoot }}/web/public/images/favicon/browserconfig.xml" />
+    <meta name="msapplication-TileColor" content="#464646" />
+    <meta name="msapplication-TileImage" content="{{ staticRoot }}/foto/web/public/images/favicon/ms-icon-144x144.png" />
     <base href="{{ docRoot }}"/>
     <title>{{ PAGE_TITLE }}</title>
+    <meta name="author" content="{{ AUTHOR }}" />
+    <meta name="title" content="{{ PAGE_TITLE }}" />
+    <meta name="keywords" content="{{ PAGE_KEYWORDS }}" />
+    <meta name="description" content="{{ PAGE_DESCRIPTION }}" />
+    <meta name="copyright" content="{{ "now"|date("Y") }} &copy; {{ routing.settings.domainBase }}" />
+    <meta name="application-name" content="{{ routing.settings.gamename }}" />
+    <meta name="geo.region" content="{{ routing.getLangRaw }}" /> 
+    <meta name="geo.placename" content="Menen, Belgium" /> 
+    <meta name="geo.position" content="50.79722,3.12245" /> 
+    <meta name="ICBM" content="50.79722,3.12245" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:locale" content="{{ routing.getLangRaw }}" />
+    <meta property="og:type" content="website" />
     <meta property="og:title" content="{{ PAGE_TITLE }}" />
-    <meta property="og:type" content="article" />
-    <meta property="og:image" content="{{ PAGE_IMAGE }}" />
-    <meta property="og:url" content="{{ PAGE_URL }}" />
     <meta property="og:description" content="{{ PAGE_DESCRIPTION }}" />
+    <meta property="og:url" content="{{ PAGE_URL }}" />
     <meta property="og:site_name" content="{{ routing.settings.gamename }}" />
+    <meta property="og:image" content="{{ PAGE_IMAGE }}" />
+    <meta property="og:image:secure_url" content="{{ PAGE_IMAGE }}" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
     <meta name="twitter:card" content="summary_marge_image" />
     <meta name="twitter:title" content="{{ PAGE_TITLE }}" />
     <meta name="twitter:description" content="{{ PAGE_DESCRIPTION }}" />
-    <meta name="twitter:image" content="{{ PAGE_IMAGE }}" />
     <meta name="twitter:site" content="@{{ routing.settings.gamename }}" />
-    <link rel="publisher" href="{{ AUTHOR }}"/>
+    <meta name="twitter:image" content="{{ PAGE_IMAGE }}" />
     <meta property="DC.title" content="{{ PAGE_TITLE }}" />
     <meta property="DC.subject" content="{{ PAGE_SUBJECT }}" />
     <meta property="DC.description" content="{{ PAGE_DESCRIPTION }}" />
     <meta property="DC.format" content="text/html" />
     <meta property="DC.publisher" content="{{ AUTHOR }}" />
-    <meta property="DC.language" content="{{ langsRaw }}" />
-    <meta name="description" content="{{ PAGE_DESCRIPTION }}" />
-    <meta name="keywords" content="{{ PAGE_KEYWORDS }}" />
-    <meta name="author" content="{{ AUTHOR }}" />
-    <meta name="copyright" content="2020 {{ routing.settings.domainBase }}" />
-    <meta name="application-name" content="{{ routing.settings.gamename }}" />
-    <meta name="google-site-verification" content="1pdpzSKdcZBpNYkkzZ0z3Sqxb9FXcZz4eJmolTUHFU8" />
-    <meta name="geo.region" content="{{ langsRaw }}" /> 
-    <meta name="geo.placename" content="Menen, Belgium" /> 
-    <meta name="geo.position" content="50.79722,3.12245" /> 
-    <meta name="ICBM" content="50.79722,3.12245" />
-    <meta name="robots" content="index, follow" />
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png"/>
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png"/>
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png"/>
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png"/>
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png"/>
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png"/>
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png"/>
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png"/>
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png"/>
-    <link rel="icon" type="image/png" sizes="192x192"  href="{{ staticRoot }}/foto/web/public/images/favicon/android-icon-192x192.png"/>
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-32x32.png"/>
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-96x96.png"/>
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-16x16.png"/>
-    <link rel="manifest" href="{{ docRoot }}/web/public/images/favicon/manifest.json"/>
-    <meta name="theme-color" content="#333" />
-    <meta name="msapplication-TileColor" content="#333"/>
-    <meta name="msapplication-TileImage" content="{{ staticRoot }}/foto/web/public/images/favicon/ms-icon-144x144.png"/>
-    <link href="{{ staticRoot }}/web/public/bootstrap/css/bootstrap.min.css" rel="preload" as="style"/>
-    <link href="{{ staticRoot }}/web/public/css/homepage.min.css" rel="preload" as="style"/>
-    <link href="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"rel="preload"  as="script" />
-    <link href="{{ staticRoot }}/web/public/js/outgame.js" rel="preload"  as="script" />
-    <link href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand&display=swap" rel="preload" as="style"/>    
+    <meta property="DC.language" content="{{ routing.getLangRaw }}" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="{{ PAGE_TITLE }}" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar" content="#464646" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="publisher" href="{{ AUTHOR }}"/>
+    <link rel="icon" type="image/x-icon" href="{{ staticRoot }}/web/public/images/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-167x167.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="512x512"  href="{{ staticRoot }}/foto/web/public/images/favicon/android-icon-512x512.png" />
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ staticRoot }}/foto/web/public/images/favicon/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-startup-image" media="(width: 320px) and (height: 568px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-startup-image" media="(width: 375px) and (height: 667px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-startup-image" media="(width: 375px) and (height: 812px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-startup-image" media="(width: 414px) and (height: 896px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-startup-image" media="(width: 414px) and (height: 896px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-startup-image" media="(width: 621px) and (height: 1104px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-startup-image" media="(width: 768px) and (height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-startup-image" media="(width: 834px) and (height: 1112px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-startup-image" media="(width: 834px) and (height: 1194px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-167x167.png" />
+    <link rel="apple-touch-startup-image" media="(width: 1024px) and (height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/bootstrap/css/bootstrap.min.css" as="style" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/css/homepage.min.css" as="style" />
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Sirin+Stencil%7CQuicksand&display=swap" as="style" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js" as="script" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/js/outgame.js" as="script" />
     <link rel="stylesheet" href="{{ staticRoot }}/web/public/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="{{ staticRoot }}/web/public/css/homepage.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil|Quicksand&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil%7CQuicksand&display=swap" />
     <style type="text/css">
         {% for donatorColor in statusDonatorColors.donatorColors %}
             .{{ donatorColor.getDonator|seoUrl }} {color:{{ donatorColor.getColorCode }};}
@@ -114,7 +139,7 @@
                             <input type="text" name="username" placeholder="{{ langs.USERNAME }}" value="{{ username }}"/>
                             <input type="password" name="password" placeholder="{{ langs.PASSWORD }}" value=""/>
                             <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                            <button type="submit" name="submit_login" class="button small-1-icon"><img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" class="icon" alt="{{ langs.LOGIN }}"/></button>
+                            <button type="submit" name="submit_login" class="button small-1-icon"><img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" width="16" height="16" class="icon" alt="{{ langs.LOGIN }}"/></button>
                         </form>
                     </aside>
                 {% endif %}
@@ -153,9 +178,27 @@
     {# Bootstrap core JavaScript #}
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/outgame.js"></script>
-    
+    {#
+    <script type="module">
+        import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
+        
+        const el = document.createElement('pwa-update');
+        document.body.appendChild(el);
+        
+        if("serviceWorker" in navigator) {
+          window.addEventListener("load", function() {
+            navigator.serviceWorker
+              .register("/sw.js")
+              .then(res => console.log("service worker registered"))
+              .catch(err => console.log("service worker not registered", err));
+          });
+        }
+    </script>
+    #}
     {# Twig javascripts #}
     {% block javascripts %} {% endblock %}
 </body>
 </html>
 {% endapply %}
+
+

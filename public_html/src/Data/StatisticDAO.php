@@ -9,10 +9,11 @@ use src\Entities\Statistic\GeneralStatistic;
 use src\Entities\Statistic\StatisticGroup;
 use src\Entities\Statistic;
 use src\Entities\User;
+use src\Entities\Round;
 
 class StatisticDAO extends DBConfig
 {
-    protected $con = "";            
+    protected $con = "";
     private $dbh = "";
     private $lang = "en";
     private $dateFormat = "%d-%m-%y %H:%i:%s";
@@ -91,11 +92,30 @@ class StatisticDAO extends DBConfig
         );
     }
     
-    public function getStatisticsPage()
+    public function getStatisticsPage($round = "")
     {
-        if(isset($_SESSION['UID']))
+        if($round !== "")
         {
-            $statistic = new Statistic();
+            $row = $this->con->getDataSR("SELECT `hofJson` FROM `round` WHERE `round`= :rnd AND `active`='1' AND `deleted`='0' LIMIT 1", array(':rnd' => $round));
+            $hof = json_decode($row['hofJson']);
+        }
+        $statistic = new Statistic();
+        if(isset($hof) && is_object($hof))
+        {
+            if(isset($hof->game)) $statistic->setGameStatistic($hof->game);
+            if(isset($hof->richest)) $statistic->setRichestStatistic($hof->richest);
+            if(isset($hof->mostHonored)) $statistic->setMostHonoredStatistic($hof->mostHonored);
+            if(isset($hof->killerking)) $statistic->setKillerkingStatistic($hof->killerking);
+            if(isset($hof->prisonBreaking)) $statistic->setPrisonBreakingStatistic($hof->prisonBreaking);
+            if(isset($hof->carjacking)) $statistic->setCarjackingStatistic($hof->carjacking);
+            if(isset($hof->crimes)) $statistic->setCrimesStatistic($hof->crimes);
+            if(isset($hof->pimping)) $statistic->setPimpingStatistic($hof->pimping);
+            if(isset($hof->smuggling)) $statistic->setSmugglingStatistic($hof->smuggling);
+            if(isset($hof->referral)) $statistic->setReferralStatistic($hof->referral);
+        }
+        else
+        {
+            /* Game statistics */
             $gameStatsRow = $this->con->getDataSR("
                 SELECT COUNT(`id`) AS `totalMembers`, SUM(`cash`) AS `totalCash`, SUM(`bank`) AS `totalBank`,
                     (SELECT COUNT(`id`) FROM `family` WHERE `active`='1' AND `deleted`='0') AS `totalFamilies`, SUM(`bullets`) AS `totalBullets`,
@@ -115,7 +135,6 @@ class StatisticDAO extends DBConfig
             $gameStatistic->setAverageBullets(round($gameStatsRow['totalBullets'] / $gameStatsRow['totalMembers']));
             $gameStatistic->setTotalDeathNow($gameStatsRow['totalDeathNow']);
             $gameStatistic->setTotalBanned($gameStatsRow['totalBanned']);
-            
             $statistic->setGameStatistic($gameStatistic);
             
             /* Richest Statistics */
@@ -279,8 +298,69 @@ class StatisticDAO extends DBConfig
                 array_push($referralList, $referralStatistic);
             }
             $statistic->setReferralStatistic($referralList);
-            
-            return $statistic;
         }
+        
+        return $statistic;
+    }
+    
+    private static function getHallOfFameJson() // TESTED AND TO BE FINISHED
+    {
+        $file = DOC_ROOT . '/app/Resources/Views/json/hall-of-fame.json'; // Doesn't exist Fetch from round table hofJson field instead.
+        $json = file_get_contents($file);
+        if(file_exists($file))
+        {
+            $result = json_decode($json);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $result;
+            }
+        }
+    }
+    
+    public function getHallOfFamePage($round = "")
+    {
+        // Fetch Hall of fame data from current or past round's database. | TESTED AND TO BE FINISHED
+        if($round === "") // Current
+        {
+            $userDAO = new UserDAO();
+            $familyData = new FamilyDAO();
+            $userDAO->setRoundView("mafiasource_round0."); // Test fetch data, older db
+            $familyData->setRoundView("mafiasource_round0."); // Test fetch data, older db
+            $hofMembers = $userDAO->getToplist(0, 10);
+            $hofFamilies = $familyData->getFamlist(0, 5);
+        }
+        else
+        {
+            $hof = self::getHallOfFameJson();
+            $hofMembers = $hof->rounds[$round]->members;
+            $hofFamilies = $hof->rounds[$round]->families;
+        }
+            
+        return array('members' => $hofMembers, 'families' => $hofFamilies);
+    }
+    
+    public function getHallOfFameRounds()
+    {
+        // Fetch all previous rounds current one excluded.
+        $rows = $this->con->getData("SELECT `round` FROM `round` WHERE `active`='1' AND `deleted`='0' ORDER BY `position` ASC LIMIT 0, 30");
+        $rounds = array();
+        foreach($rows AS $row)
+        {
+            $db = explode("_", $this->database);
+            if(is_array($this->getHallOfFamePage($row['round']))) // Validate first (make sure view table exists)
+            {
+                $round = new Round();
+                $round->setId($row['round']);
+                $round->setRound($row['round']);
+                $round->setRoundName($row['round']);
+                if($this->lang == 'nl')
+                    $round->setRoundName($row['round']);
+                
+                if($row['round'] == 0) // a round 0 gets viewed as "Beta"
+                    $round->setRoundName("Beta");
+                
+                array_push($rounds, $round);
+            }
+        }
+        return $rounds;
     }
 }

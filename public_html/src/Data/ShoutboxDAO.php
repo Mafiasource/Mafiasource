@@ -55,7 +55,7 @@ class ShoutboxDAO extends DBConfig
     
     public function getMessageRows($from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to))
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $statement = $this->dbh->prepare("
                 SELECT s.`id`, s.`message`, s.`userID`, u.`username`,u.`avatar`,u.`statusID`,u.donatorID, st.`status_".$this->lang."` AS `status`, d.`donator_".$this->lang."` AS `donator`,
@@ -117,7 +117,7 @@ class ShoutboxDAO extends DBConfig
     
     public function getMessageRowsIds($from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to))
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $statement = $this->dbh->prepare("
                 SELECT `id` FROM `shoutbox_".$this->lang."` WHERE `deleted`='0' AND `familyID`= :famID ORDER BY `date` DESC LIMIT $from, $to

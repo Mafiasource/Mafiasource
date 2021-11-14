@@ -1,8 +1,8 @@
 {% extends "/app/Resources/Views/base.twig" %}
  
 {% block content %}
-    <h1 style="position: absolute;top: -10em;">CrimeClub Maffia RPG</h1>
     <section id="content">
+        <h1 style="position: absolute;top: -10em;">CrimeClub Maffia RPG</h1>
         <div class="container">
             {% include "/src/Views/.cookies.twig" %}
             {% if offline %}
@@ -12,7 +12,9 @@
                 {# { # Usefull reset timer # }
                     <p><span id="cResetTime">{{ "ResetTime"|countdownHmsTime(date('07/01/2020 13:00:00').timestamp - date().timestamp)|raw }}</span></p>
                 #}
-                <p>{{ langs.ONLINE_MSG|raw }}</p>
+                {% if not offline %}
+                    <p>{{ langs.ONLINE_MSG|raw }}</p>
+                {% endif %}
             </div>
             {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
             <div class="row">
@@ -43,7 +45,7 @@
                         </ul>
                     </section>
                     <br class="clear"/>
-                    <p>{{ langs.LINK_PARTNERS_INFO|raw }}</p>
+                    <p>{{ langs.LINK_PARTNERS_INFO|raw }}<br /><a href=" {{ routing.getRouteByRouteName('get-the-app') }}">{{ langs.DOWNLOAD_APP }}</a></p>
                 </div>
                 <div class="col-lg-6">
                     <section id="stats" class="middle">
@@ -67,7 +69,9 @@
                                 </form>
                                 <br class="clear"/>
                             {% endif %}
-                            <a href="{{ routing.getRouteByRouteName('get-the-app') }}"><img src="{{ staticRoot }}/foto/web/public/images/android-beta.png" alt="Android Beta App"/></a>
+                            {% if not fromAndroid %}
+                                <a href="https://play.google.com/store/apps/details?id=com.mafiasource.webviewapp&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img width="180" height="70" alt="Get it on Google Play" src="{{ staticRoot }}/foto/180x70/2/web/public/images/google-play.png"/></a>
+                            {% endif %}
                         </section>
                     </div>
                 </div>

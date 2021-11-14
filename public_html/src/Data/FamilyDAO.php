@@ -20,6 +20,7 @@ class FamilyDAO extends DBConfig
     private $lang = "en";
     private $dateFormat = "%d-%m-%Y %H:%i:%s";
     private $phpDateFormat = "d-m-Y H:i:s";
+    private $roundView = ""; // current round db, TEST TO BE REVERTED
     
     public function __construct()
     {
@@ -72,15 +73,15 @@ class FamilyDAO extends DBConfig
     
     public function getFamlist($from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50)
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $from = (int)round($from);
             $to = (int)round($to);
             $statement = $this->dbh->prepare("
                 SELECT `id`, `name`, `icon`, `money`, `vip`, `join`,
-                (SELECT COUNT(`id`) FROM `user` WHERE `familyID`=`family`.`id`) AS `totalMembers`,
-                (SELECT SUM(`score`) FROM `user` WHERE `familyID`=`family`.`id` AND `statusID` < 8) AS `totalScore`
-                FROM `family`
+                (SELECT COUNT(`id`) FROM $this->roundView`user` WHERE `familyID`=`family`.`id`) AS `totalMembers`,
+                (SELECT SUM(`score`) FROM $this->roundView`user` WHERE `familyID`=`family`.`id` AND `statusID` < 8) AS `totalScore`
+                FROM $this->roundView`family`
                 WHERE `active`='1' AND `deleted`='0'
                 ORDER BY `totalScore` DESC, `money` DESC, `totalMembers` DESC
                 LIMIT $from, $to
@@ -534,7 +535,7 @@ class FamilyDAO extends DBConfig
     
     public function getFamilyBankLogsByFamilyId($id, $from, $to)
     {
-        if(isset($_SESSION['UID']) && $id > 0)
+        if(isset($_SESSION['UID']) && $id > 0 && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $statement = $this->dbh->prepare("
                 SELECT u.`username` AS `sender`, u2.`username` AS `receiver`, fb.`amount`, DATE_FORMAT( fb.`date`, '".$this->dateFormat."' ) AS `dateF`
@@ -1178,5 +1179,10 @@ class FamilyDAO extends DBConfig
             return implode(',', $membs);
         
         return false;
+    }
+    
+    public function setRoundView($roundView)
+    {
+        $this->roundView = $roundView;
     }
 }

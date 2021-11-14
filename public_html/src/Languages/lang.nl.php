@@ -12,7 +12,7 @@ class GetLanguageContent
         $this->langMap = $this->initBaseLangs();
     }
     
-    public function initBaseLangs()
+    public function initBaseLangs() // Base langs outgame + homepage
     {
         global $user;
         global $route;
@@ -29,13 +29,14 @@ class GetLanguageContent
                 'END_COPY' => "Alle rechten voorbehouden.",
                 'TERMS_AND_CONDITIONS' => "Algemene voorwaarden",
                 'PRIVACY_POLICY' => "Privacybeleid",
-                'OFFLINE_MSG' => "We zijn momenteel offline wegens voorbereidingen voor komende reset!",
+                'OFFLINE_MSG' => "We zijn momenteel offline wegens onderhoud.", //voorbereidingen voor komende reset!",
                 'ONLINE_MSG' => "Er zijn momenteel <span class='online'><strong>{online}</strong></span> spelers online!",
                 'PLAYERS_BEFORE_MSG' => "met <span class='total'>{totalPlayers}</span> criminelen! Of",
                 'REGISTER_BTN' => "Doe mee",
                 'CHANGE_LANG_SUCCESS' => "You have changed the language settings to English.",
                 'COOKIES_ACCEPT' => "Onze website maakt gebruik van cookies om uw browse ervaring te verbeteren, <a href='/privacy-policy'><strong>klik hier</strong></a> voor meer informatie.",
                 'LINK_PARTNERS_INFO' => "Maak kennis met onze <a href='".$route->getRouteByRouteName('link-partners')."'>linkpartners</a>.",
+                'DOWNLOAD_APP' => "Download de app",
                 'WRONG_CAPTCHA' => "Je hebt de verkeerde code ingevoerd!", // Use in & out-game
                 'INVALID_SECURITY_TOKEN' => "Ongeldige beveiligings-sleutel, probeer a.u.b. opnieuw.", // Use in & out-game
                 'INFORMATION' => "Informatie", // Use in & out-game
@@ -43,7 +44,7 @@ class GetLanguageContent
                 'NONE' => "Geen", // Use in & out-game
             );
         }
-        else
+        else // Base langs ingame
         {
             global $route;
             $langs = array(
@@ -208,15 +209,6 @@ class GetLanguageContent
         return $langs;
     }
     
-    public function getAppLangs()
-    {
-        $langs = array(
-            'DOWNLOAD_APP' => "De Beta-app uitproberen",
-            'ANDROID_BETA_INFO' => "Momenteel missen we enkele bronnen om de app-ontwikkeling voor zowel Google Play Store als Apple App Store te voltooien, maar Android-gebruikers hebben de mogelijkheid om onze Beta-app te downloaden als een (niet-vertrouwde) .apk.<br />Als je onze app wilt uitproberen, zorg er dan voor dat je de Android-instelling 'Apps van derden toestaan' inschakelt en je zou in staat moeten zijn om te downloaden, installeren en te spelen!<br /><br /><a href='https://download.mafiasource.nl/web/downloads/msapp.apk' rel='noreferrer'><strong>Beta-app downloaden</strong></a> (enkel Android)",
-        );
-        return $langs;
-    }
-    
     public function loginLangs()
     {
         $langs = array(
@@ -340,7 +332,7 @@ class GetLanguageContent
             'LAST_CHANCE' => "Laatste kans",
             'EQUIPMENT' => "Uitrusting",
             'RESIDENCE' => "Woning",
-            'COPY' => "KopiÃ«ren",
+            'COPY' => "Kopiëren",
             'COPIED' => "Gekopieerd"
         );
         return $langs;
@@ -564,7 +556,7 @@ class GetLanguageContent
             'ATM_NO_MORE_BULLETS_FOR_SALE_IN_THIS' => "Momenteel zijn er geen kogels meer te koop in deze",
             'PRODUCTION' => "Productie",
             'PRICE' => $this->marketLangs()['PRICE'],
-            'BETWEEN_1_AND_999M_BULLETS' => "Je moet tussen de 1 en de 9,999,999 kogels kopen!",
+            'BETWEEN_1_AND_9M_BULLETS' => "Je moet tussen de 1 en de 9,999,999 kogels kopen!",
             'NOT_THAT_MANY_BULLETS_IN_FACTORY' => "Deze kogelfabriek heeft niet meer zoveel kogels over.",
             'BOUGHT_BULLETS_SUCCESS' => "Je hebt {bullets} kogels gekocht en in totaal $&#8203;{price} betaald."
         );
@@ -617,12 +609,12 @@ class GetLanguageContent
             'MURDER_PLAYER_SUCCESS_WEAPON_EXP' => "Je hebt <strong>{exp}%</strong> wapen ervaring erbij gekregen.<br /><br /><br />",
             'MURDER_PLAYER_SUCCESS_HEADSHOT' => "<strong>Jij schoot een <font color=red>H</font><font color=black>E</font><font color=red>A</font><font color=black>D</font><font color=red>S</font><font color=black>H</font><font color=red>O</font><font color=black>T</font> op {victim}</strong><br />Deze moord koste je maar 1 kogel en je hebt hierbij <strong>$500,000</strong> ontvangen!<br />",
             'MURDER_PLAYER_ON_HITLIST_SUCCESS' => "{victim} stond ook op de aanslagenlijst. Je hebt daardoor nog eens $&#8203;{prize} gekregen!",
-            'TAKE_OVER_POSSESSION_TOOK_OVER' => "<div>âœ“Je hebt een {possessionName} overgenomen!.</div>",
-            'TAKE_OVER_POSSESSION_STATUS_ERROR' => "<div>âœ˜Je hebt geen {possessionName} overgenomen omdat je nog bescherming had, deze is tekoop gezet.</div>",
-            'TAKE_OVER_POSSESSION_SELF_ERROR' => "<div>âœ˜Je hebt geen {possessionName} overgenomen omdat je al een {possessionName} bezit, deze is tekoop gezet.</div>",
-            'TAKE_OVER_POSSESSION_SELF_COUNTRY_ERROR' => "<div>âœ˜Je hebt geen {possessionName} overgenomen omdat je al een land bezittingen bezit, deze is tekoop gezet.</div>",
-            'TAKE_OVER_POSSESSION_FAMILY_ERROR' => "<div>âœ˜Je hebt geen {possessionName} overgenomen omdat je familie het maximum aantal bezit, deze is tekoop gezet.</div>",
-            'TAKE_OVER_POSSESSION_FAMILY_COUNTRY_ERROR' => "<div>âœ˜Je hebt geen {possessionName} overgenomen omdat je familie al het maximum aantal land bezittingen bezit, deze is tekoop gezet.</div>",
+            'TAKE_OVER_POSSESSION_TOOK_OVER' => "<div>✓Je hebt een {possessionName} overgenomen!.</div>",
+            'TAKE_OVER_POSSESSION_STATUS_ERROR' => "<div>✘Je hebt geen {possessionName} overgenomen omdat je nog bescherming had, deze is tekoop gezet.</div>",
+            'TAKE_OVER_POSSESSION_SELF_ERROR' => "<div>✘Je hebt geen {possessionName} overgenomen omdat je al een {possessionName} bezit, deze is tekoop gezet.</div>",
+            'TAKE_OVER_POSSESSION_SELF_COUNTRY_ERROR' => "<div>✘Je hebt geen {possessionName} overgenomen omdat je al een land bezittingen bezit, deze is tekoop gezet.</div>",
+            'TAKE_OVER_POSSESSION_FAMILY_ERROR' => "<div>✘Je hebt geen {possessionName} overgenomen omdat je familie het maximum aantal bezit, deze is tekoop gezet.</div>",
+            'TAKE_OVER_POSSESSION_FAMILY_COUNTRY_ERROR' => "<div>✘Je hebt geen {possessionName} overgenomen omdat je familie al het maximum aantal land bezittingen bezit, deze is tekoop gezet.</div>",
             'MURDER_SUCCESS_DIED_VICTIM_SURVIVED' => "Jij schoot op <strong>{victim}</strong>, hij <strong>overleefde</strong> jouw schoten.<br />Jij ging wel dood door zijn laatste schot!<br><strong>{victim}</strong> heeft ook nog eens <strong>$&#8203;{stolenMoney}</strong> gestolen!",
             'MURDER_SUCCESS_BOTH_DIED' => "Jij schoot op <strong>{victim}</strong>, hij ging <strong>dood</strong> door jouw schoten.<br />Jij ging ook <strong>dood</strong> door zijn laatste schot!",
             'MURDER_SUCCESS_KILLED_VICTIM' => "Jij schoot op <strong>{victim}</strong>, hij ging <strong>dood</strong> door jouw schoten.<br />Je hebt ook nog <strong>$&#8203;{stolenMoney}</strong> gestolen!",
@@ -807,7 +799,7 @@ class GetLanguageContent
             'BUY_GROUND_BUILDING_SUCCESS' => "Je hebt een {building} gekocht op je landje in de staat {state}. Je hebt $&#8203;{price} betaald voor dit gebouw.",
             'UPGRADE_GROUND_BUILDING_SUCCESS' => "Je hebt je {building} ge-upgrade op je landje in de staat {state}. Je hebt $&#8203;{price} betaald.",
             'BOMBS_BETWEEN_1_AND_35' => "Je kan maar tussen de 1 en 35 bommen dragen.",
-            'DONT_OWN_AIRPLANE' => "Je hebt geen vliegtuig, je kan er Ã©Ã©n kopen in de <a href='/game/equipment-stores/airplanes'><strong>uitrustingen winkels</strong></a>",
+            'DONT_OWN_AIRPLANE' => "Je hebt geen vliegtuig, je kan er één kopen in de <a href='/game/equipment-stores/airplanes'><strong>uitrustingen winkels</strong></a>",
             'CANNOT_BOMB_OWN_GROUND' => "Je kan je eigen landje niet bombarderen!",
             'USER_BOOMB_TRAVEL_SAME_STATE_AS_MAP' => "Je moet reizen naar een stad in {state} om dit landje te kunnen bombarderen.",
             'BOMB_GROUND_SUCCESS' => "Je hebt dit landje veroverd in {state}! Je hebt $&#8203;{price} betaald in bom kosten en 2 rankpunten verdient.",
@@ -921,6 +913,7 @@ class GetLanguageContent
             'NO_FAMILY' => "Je kan dit pas aankopen als je deel uitmaakt van een familie.",
             'BOUGHT_STATUS_SUCCESS' => "Je hebt een {status} status aangekocht voor {credits} credits!",
             'BOUGHT_FAMILY_VIP_SUCCESS' => "Je hebt een VIP familie status aangekocht voor 500 credits!",
+            'BOUGHT_LUCKYBOX_SUCCESS' => "Je hebt {boxes} boxen gekocht voor {credits} credits!",
         );
         return $langs;
     }
@@ -932,7 +925,7 @@ class GetLanguageContent
             'CLICK_TO_VIEW_HISTORY' => "<strong>Klik hier</strong> om de poll geschiedenis te bekijken",
             'NO_HISTORY_TO_VIEW' => "Er is momenteel geen poll geschiedenis om weer te geven.",
             'STARTED_ON' => "Gestart op",
-            'ENDED_ON' => "BeÃ«indigd op",
+            'ENDED_ON' => "Beëindigd op",
             'TOTAL_VOTES' => "Totaal aantal stemmen",
             'VOTE' => "Stemmen",
             'INVALID_POLL' => "Deze poll bestaat niet!",
@@ -1180,7 +1173,7 @@ class GetLanguageContent
             'PARTICIPANT_DENY_ORGANIZED_CRIME_CONFIRM' => "Weet je zeker dat je deze georganiseerde misdaad wil weigeren?<br /><br /><form id='interactOrganizedCrime' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('prepare-organized-crime') ."' data-response='#refreshCrimeResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='id' value='{id}'/><input type='submit' name='deny-confirm' class='button' value='Misdaad weigeren'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'PARTICIPANT_DENY_ORGANIZED_CRIME_SUCCESS' => "Je hebt de georganiseerde misdaad geweigerd.",
             'MEMBER_NOT_READY' => "{user} moet nog {waitingTime} seconden wachten.",
-            'ONE_OR_MORE_IN_PRISON' => "EÃ©n of meerdere deelnemers zitten in de gevangenis.",
+            'ONE_OR_MORE_IN_PRISON' => "Eén of meerdere deelnemers zitten in de gevangenis.",
             'DRIVER_INVITED_TO_ORGANIZED_CRIME_3' => "Je hebt {username} uitgenodigd als Getaway chauffeur voor jullie georganiseerde misdaad in Las Vegas.",
             'GROUND_INVITED_TO_ORGANIZED_CRIME_3' => "Je hebt {username} uitgenodigd als Grond persoon voor jullie georganiseerde misdaad in Las Vegas.",
             'INTEL_INVITED_TO_ORGANIZED_CRIME_3' => "Je hebt {username} uitgenodigd als Intel voor jullie georganiseerde misdaad in Las Vegas.",
@@ -1283,7 +1276,7 @@ class GetLanguageContent
             'X_SPACE_LEFT_GARAGE_IN_STATE' => "Je hebt {x} plaatsen vrij in je garage in {state}!",
             'HAS_FAMILY_GARAGE_ALREADY' => "Je bezit al een garage in deze staat.",
             'FAMILY_GARAGE_BOUGHT' => "Je hebt een familie garage gekocht, nu is het mogelijk om familie misdaden te plegen met familieleden!",
-            'NO_FAMILY_GARAGE' => "Jullie hebben geen familie garage! Alleen de baas of onderbaas kan er Ã©Ã©n kopen.",
+            'NO_FAMILY_GARAGE' => "Jullie hebben geen familie garage! Alleen de baas of onderbaas kan er één kopen.",
             'NO_SPACE_LEFT_FAMILY_GARAGE' => "Julie hebben geen plaats meer in de familie garage!",
             'X_SPACE_LEFT_FAMILY_GARAGE' => "Jullie hebben {x} plaatsen vrij in de familie garage!",
             'REPAIR' => "Repareren",
@@ -1323,7 +1316,7 @@ class GetLanguageContent
             'SELL_VEHICLE_TUNE_ITEM_SUCCESS' => "Je hebt je {itemName} {type} verkocht voor $&#8203;{price}.",
             /** FAMILY GARAGE LANGS HERE: **/
             'NO_VEHICLES_IN_FAMILY_GARAGE' => "Er staan geen voertuigen in jullie familiegarage.",
-            'SELECT_ONE_OR_MORE_VEHICLES' => "Selecteer Ã©Ã©n of meerdere voertuigen!",
+            'SELECT_ONE_OR_MORE_VEHICLES' => "Selecteer één of meerdere voertuigen!",
             'SELL_FAMILY_VEHICLES_SUCCESS' => "Je hebt alle geselecteerde voertuigen verkocht voor $&#8203;{money}.",
             'NOT_ENOUGH_CRUSH_CONVERT_CAPACITY' => "Jullie hebben niet genoeg crush of convert capaciteit over. Koop er meer bij de <a href='".$route->getRouteByRouteName('family-garage-crusher-converter')."'><strong>crusher & converter</strong></a>.",
             'CRUSH_CONVERT_FAMILY_VEHICLES_SUCCESS' => "Je hebt alle geselecteerde voertuigen gecrushed en geconvert! {bullets} kogels werden toegevoegd aan de familie opslagplaats.",
@@ -1335,8 +1328,8 @@ class GetLanguageContent
             'FAMILY_BOUGHT_ITEM_ALREADY' => "Jullie familie heeft dit al aangekocht!",
             'FAMILY_CRUSHER_BOUGHT' => "Je hebt een nieuwe crusher gekocht voor de familie. De familie heeft $&#8203;{price} betaald, jullie kunnen nu {capacity} voertuigen crushen!",
             'FAMILY_CONVERTER_BOUGHT' => "Je hebt een nieuwe converter gekocht voor de familie. De familie heeft $&#8203;{price} betaald, jullie kunnen nu {capacity} voertuigen converten!",
-            'FAMILY_HAS_NO_CRUSHER' => "De familie heeft nog geen crusher.<br />De baas of bankbeheerder kan er Ã©Ã©n kopen.",
-            'FAMILY_HAS_NO_CONVERTER' => "De familie heeft nog geen converter.<br />De baas of bankbeheerder kan er Ã©Ã©n kopen.",
+            'FAMILY_HAS_NO_CRUSHER' => "De familie heeft nog geen crusher.<br />De baas of bankbeheerder kan er één kopen.",
+            'FAMILY_HAS_NO_CONVERTER' => "De familie heeft nog geen converter.<br />De baas of bankbeheerder kan er één kopen.",
             'FAMILY_CAN_CRUSH_X_VEHICLES' => "De familie kan nog <strong>{capacity}</strong> voertuigen crushen.",
             'FAMILY_CAN_CONVERT_X_VEHICLES' => "De familie kan nog <strong>{capacity}</strong> voertuigen converten."
         );
@@ -1547,7 +1540,7 @@ class GetLanguageContent
             'NOT_INSIDE_SAME_STATE' => "Je bent niet in dezelfde staat als de familie misdaad.",
             'NOT_PART_OF_FAMILY_CRIME' => "Je maakt geen deel uit van deze familie misdaad!",
             'MEMBER_NOT_READY' => "{user} is nog niet klaar en moet nog {waitingTime} seconden wachten.",
-            'ONE_OR_MORE_IN_PRISON' => "EÃ©n of meerdere familie leden zitten in de gevangenis.",
+            'ONE_OR_MORE_IN_PRISON' => "Eén of meerdere familie leden zitten in de gevangenis.",
             'NOT_ENOUGH_MEMBERS_YET' => "Er zijn te weinig leden om deze misdaad te plegen.",
             'JOINED_FAMILY_CRIME' => "Je doet nu mee aan deze familie misdaad!",
             'LEFT_FAMILY_CRIME' => "Je hebt deze familie misdaad verlaten!",

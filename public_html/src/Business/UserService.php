@@ -803,6 +803,7 @@ class UserService
         }
         elseif(isset($post['password-change']))
         {
+            global $userData;
             if($this->data->checkValidOwner() != TRUE)
             {
                 $error = $l ['PASSWORD_UNKNOWN_IP_DETECTED'];

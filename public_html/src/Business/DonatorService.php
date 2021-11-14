@@ -12,6 +12,8 @@ class DonatorService extends DonatorStatics
     private $data;
     
     public $statuses = array();
+    public $luckyboxAmnt = 20; //15;
+    public $luckyboxCr = 200; //300;
     
     public function __construct()
     {
@@ -50,6 +52,7 @@ class DonatorService extends DonatorStatics
         $vip = isset($post['vip']) ? true : null;
         $goldMember = isset($post['gold-member']) ? true : null;
         $vipFamily = isset($post['vip-family']) ? true : null;
+        $luckybox = isset($post['luckybox']) ? true : null;
         
         $familyData = $family->getFamilyDataByName($userData->getFamily());
         if(is_object($familyData)) $familyVip = $familyData->getVip();
@@ -71,28 +74,33 @@ class DonatorService extends DonatorStatics
         }
         elseif(isset($vipFamily))
             $creditsNeeded = 500;
+        elseif(isset($luckybox))
+            $creditsNeeded = $this->luckyboxCr;
         
-        switch($userData->getDonatorID())
+        if(isset($donator) || isset($vip) || isset($goldMember) || isset($vipFamily))
         {
-            case 1:
-                if(isset($vip))
-                    $creditsNeeded = 400;
-                elseif(isset($goldMember))
-                    $creditsNeeded = 1400;
-                
-                $hasStatus = isset($donator) && !isset($vipFamily) ? true : false;
-                break;
-            case 5:
-                if(isset($goldMember))
-                    $creditsNeeded = 1000;
-                
-                $hasStatus = (isset($donator) || isset($vip)) && !isset($vipFamily) ? true : false;
-                break;
-            case 10:
-                $hasStatus = !isset($vipFamily) ? true : false;
-                break;
+            switch($userData->getDonatorID())
+            {
+                case 1:
+                    if(isset($vip))
+                        $creditsNeeded = 400;
+                    elseif(isset($goldMember))
+                        $creditsNeeded = 1400;
+                    
+                    $hasStatus = isset($donator) && !isset($vipFamily) ? true : false;
+                    break;
+                case 5:
+                    if(isset($goldMember))
+                        $creditsNeeded = 1000;
+                    
+                    $hasStatus = (isset($donator) || isset($vip)) && !isset($vipFamily) ? true : false;
+                    break;
+                case 10:
+                    $hasStatus = !isset($vipFamily) ? true : false;
+                    break;
+            }
+            $hasFamilyStatus = isset($familyVip) && $familyVip == true && isset($vipFamily) ? true : false;
         }
-        $hasFamilyStatus = isset($familyVip) && $familyVip == true && isset($vipFamily) ? true : false;
 
         if($security->checkToken($post['security-token']) == FALSE)
         {
@@ -131,11 +139,21 @@ class DonatorService extends DonatorStatics
                 );
                 $replacedMessage = $route->replaceMessageParts($replaces);
             }
-            else
+            elseif($vipFamily)
             {
                 $this->data->buyFamilyVip($familyData->getId(), $creditsNeeded);
                 
                 $replacedMessage = $l['BOUGHT_FAMILY_VIP_SUCCESS'];
+            }
+            elseif($luckybox)
+            {
+                $this->data->buyLuckybox($this->luckyboxAmnt, $creditsNeeded);
+                
+                $replaces = array(
+                    array('part' => number_format($this->luckyboxAmnt, 0, '', ','), 'message' => $l['BOUGHT_LUCKYBOX_SUCCESS'], 'pattern' => '/{boxes}/'), //
+                    array('part' => number_format($creditsNeeded, 0, '', ','), 'message' => FALSE, 'pattern' => '/{credits}/')
+                );
+                $replacedMessage = $route->replaceMessageParts($replaces);
             }
             
             return Routing::successMessage($replacedMessage);

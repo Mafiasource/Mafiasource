@@ -11,5 +11,8 @@ $langs["PLAYERS_BEFORE_MSG"] = $route->replaceMessagePart("<strong>".$totalPlaye
 
 require_once __DIR__ . '/.inc.foot.php';
 
+if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == "com.mafiasource.webviewapp")
+    $twigVars['fromAndroid'] = true;
+
 // Render view
 echo $twig->render('/src/Views/index.twig', $twigVars);

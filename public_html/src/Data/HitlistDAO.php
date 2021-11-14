@@ -35,7 +35,7 @@ class HitlistDAO extends DBConfig
     
     public function getHitlist($from, $to)
     {
-        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50)
+        if(isset($_SESSION['UID']) && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $rows = $this->con->getData("
                 SELECT h.`id`, h.`reason`, h.`prize`, h.`anonymous`, h.`ordererID`, o.`username` AS `orderer`, h.`userID`, u.`username`

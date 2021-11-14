@@ -212,25 +212,28 @@ class InstallService
             
             if(!empty($domain))
             {
+                if(PROTOCOL === "https://")
+                {
+                    $htaccessReplacesMap[87] ='    RewriteCond %{HTTPS} off [OR]';
+                    $htaccessReplaceMap[91] = '    RewriteCond %{HTTPS} off [OR]';
+                }
                 if(strpos($domain, "www.") === false)
                 {
                     $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       BASE_DOMAIN);     // Application runs without www.';
-                    $htaccessReplacesMap[87] = '    RewriteCond %{HTTP_HOST} ^(www\.)(.*) [NC]';
-                    $htaccessReplacesMap[88] = '    #RewriteCond %{HTTPS}s ^on(s)|off [NC]';
-                    $htaccessReplacesMap[89] = '    RewriteRule (.*) ' . PROTOCOL . '%2%{REQUEST_URI} [R=301,L]';
+                    $htaccessReplacesMap[89] = '    #RewriteCond %{HTTP_HOST} !^www\. [NC]';
+                    $htaccessReplacesMap[90] = '    RewriteRule ^(.*)$ ' . PROTOCOL . '%{HTTP_HOST}/$1 [R=301,L]';
                 }
                 else
                 {
                     $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       "www.".BASE_DOMAIN);     // Application runs on www. variant';
-                    $htaccessReplacesMap[87] = '    RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$ [NC]';
-                    $htaccessReplacesMap[88] = '    RewriteCond %{HTTPS}s ^on(s)|off [NC]';
-                    $htaccessReplacesMap[89] = '    RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]';
+                    $htaccessReplacesMap[89] = '    RewriteCond %{HTTP_HOST} !^www\. [NC]';
+                    $htaccessReplacesMap[90] = '    RewriteRule ^(.*)$ ' . PROTOCOL . 'www.%{HTTP_HOST}/$1 [R=301,L]';
                 }
                 if(strpos(PROTOCOL . $_SERVER['HTTP_HOST'], $replacedDomain) !== false)
                 {
                     $configReplacesMap[7] = 'define(\'BASE_DOMAIN\',      "' .  $replacedDomain . '");       // The primary domain';
                     $htaccessReplacesMap[79] = '    RewriteCond %{HTTP_REFERER} !^' . PROTOCOL . '(www\.)?' . $replacedDomain . '/.*$ [NC]';
-                    $htaccessReplacesMap[134] = '    Header always set Content-Security-Policy "script-src \'self\' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
+                    $htaccessReplacesMap[137] = '    Header always set Content-Security-Policy "script-src \'self\' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
                 }
             }
             

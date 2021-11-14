@@ -46,13 +46,10 @@ $srcLoader->register();
 /* Open db connection */
 $con = new DBConfig();
 
-/* Security class (for true randomness) * /
-require_once GAME_DOC_ROOT.'/app/config/security.php';
-$security = new Security(); */
-
 /** ALL DB BACKUP RELATED CODE START FROM HERE **/
 
 /* Automatic DB backup */
+$backupType = isset($adminReset) ? "resetBackup" : "autoBackup";
 $backupTables = "*"; // Which tables? * = all (seperate = `airplane`, `user`, ..)
 if($backupTables == '*')
 {
@@ -63,7 +60,8 @@ else
 	$extname = str_replace(",", "_", $backupTables);
 	$extname = str_replace(" ", "_", $extname);
 }
-$saveFile = __DIR__ . '/backup/' . date("d.m.Y_H_i_s") . '_autoBackup_' . $extname;
+$saveFile = __DIR__ . '/backup/' . date("d.m.Y_H_i_s") . '_' . $backupType . '_' . $extname;
+$backupType = $extname = null;
 $return = "";	
 if($backupTables == '*')
 {
@@ -119,5 +117,6 @@ foreach($backupTables as $table)
 	$return .= "\n\n\n";
 }
 $handle = fopen($saveFile . ".sql", 'w+');
+$backupTables = $con = $result = $row = $row2 = null;
 fwrite($handle, $return);
 fclose($handle); // /CHECKED & OK */

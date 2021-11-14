@@ -72,7 +72,7 @@ class FamilyMercenaryDAO extends DBConfig
     
     public function getPageInfo(int $from, int $to): array
     {
-        if(isset($_SESSION['UID']) && $this->familyID !== 0 && is_int($from) && is_int($to) && $to <= 50)
+        if(isset($_SESSION['UID']) && $this->familyID !== 0 && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $familyMercenaries = $this->getMercenaries();
             

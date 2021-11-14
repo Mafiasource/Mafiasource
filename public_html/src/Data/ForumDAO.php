@@ -21,7 +21,7 @@ class ForumDAO extends DBConfig
     private $topicID = 0; //Init
     private $familyID = 0; //Init
     
-    public function __construct($familyID = false, $categoryID = false,$topicID = false,$reactionID = false)
+    public function __construct($familyID = false, $categoryID = false, $topicID = false, $reactionID = false)
     {
         global $connection;
         $this->con = $connection;
@@ -457,102 +457,108 @@ class ForumDAO extends DBConfig
     
     public function getTopicReactions($from, $to)
     {
-        $statement = $this->dbh->prepare("
-            SELECT r.`id`,r.`content`, r.`userID`, DATE_FORMAT( r.`date`, '".$this->dateFormat."' ) AS `date`, r.`lastEditTime`, u.`username` AS `reactor`, u.`avatar`, u.`forumPosts`,
-            s.`id` AS `statusID`,d.`id` AS `donatorID`, s.`status_".$this->lang."` AS `status`, d.`donator_".$this->lang."` AS `donator`, r.`lastEditTime`, c.`viewStatusID`
-            FROM `forum_reaction` AS r
-            LEFT JOIN `forum_topic` AS t
-            ON (r.`topicID`=t.`id`)
-            LEFT JOIN `forum_category` AS c
-            ON (t.`categoryID`=c.`id`)
-            LEFT JOIN `user` AS u
-            ON (r.`userID`=u.`id`)
-            LEFT JOIN `status` AS s
-            ON (u.statusID=s.id)
-            LEFT JOIN `donator` AS d
-            ON (u.donatorID=d.id)
-            WHERE r.`topicID`= :tid AND r.`active`='1' AND r.`deleted`='0'
-            ORDER BY r.`date` ASC
-            LIMIT $from, $to
-        ");
-        $statement->execute(array(':tid' => $this->topicID));
-        $reactions = array();
-        foreach($statement AS $r)
+        if(is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
-            if($r['statusID'] < 7 || $r['statusID'] == 8)
+            $statement = $this->dbh->prepare("
+                SELECT r.`id`,r.`content`, r.`userID`, DATE_FORMAT( r.`date`, '".$this->dateFormat."' ) AS `date`, r.`lastEditTime`, u.`username` AS `reactor`, u.`avatar`, u.`forumPosts`,
+                s.`id` AS `statusID`,d.`id` AS `donatorID`, s.`status_".$this->lang."` AS `status`, d.`donator_".$this->lang."` AS `donator`, r.`lastEditTime`, c.`viewStatusID`
+                FROM `forum_reaction` AS r
+                LEFT JOIN `forum_topic` AS t
+                ON (r.`topicID`=t.`id`)
+                LEFT JOIN `forum_category` AS c
+                ON (t.`categoryID`=c.`id`)
+                LEFT JOIN `user` AS u
+                ON (r.`userID`=u.`id`)
+                LEFT JOIN `status` AS s
+                ON (u.statusID=s.id)
+                LEFT JOIN `donator` AS d
+                ON (u.donatorID=d.id)
+                WHERE r.`topicID`= :tid AND r.`active`='1' AND r.`deleted`='0'
+                ORDER BY r.`date` ASC
+                LIMIT $from, $to
+            ");
+            $statement->execute(array(':tid' => $this->topicID));
+            $reactions = array();
+            foreach($statement AS $r)
             {
-                $className = SeoService::seoUrl($r['status']);
+                if($r['statusID'] < 7 || $r['statusID'] == 8)
+                {
+                    $className = SeoService::seoUrl($r['status']);
+                }
+                else
+                {
+                    $className = SeoService::seoUrl($r['donator']);
+                }
+                $reaction = new ForumReaction();
+                $reaction->setId($r['id']);
+                $reaction->setTopicID($this->topicID);
+                $reaction->setReactorUID($r['userID']);
+                $reaction->setReactor($r['reactor']);
+                $reaction->setReactorClassName($className);
+                $reaction->setReactorAvatar(FALSE);
+                if(file_exists(DOC_ROOT . '/web/public/images/users/'.$r['userID'].'/uploads/'.$r['avatar'])) $reaction->setReactorAvatar($r['avatar']);
+                $reaction->setReactorPostsCnt($r['forumPosts']);
+                $reaction->setReactorDonatorID($r['donatorID']);
+                $reaction->setContent(ForumService::convertEmoticons($r['content']));
+                $reaction->setQuoteContent("<small class='darkgray'>".$r['reactor']." | ".$r['date']."</small><br />".ForumService::convertEmoticons($r['content']));
+                $reaction->setDate($r['date']);
+                $reaction->setLastEditTime($r['lastEditTime']);
+                array_push($reactions,$reaction);
             }
-            else
-            {
-                $className = SeoService::seoUrl($r['donator']);
-            }
-            $reaction = new ForumReaction();
-            $reaction->setId($r['id']);
-            $reaction->setTopicID($this->topicID);
-            $reaction->setReactorUID($r['userID']);
-            $reaction->setReactor($r['reactor']);
-            $reaction->setReactorClassName($className);
-            $reaction->setReactorAvatar(FALSE);
-            if(file_exists(DOC_ROOT . '/web/public/images/users/'.$r['userID'].'/uploads/'.$r['avatar'])) $reaction->setReactorAvatar($r['avatar']);
-            $reaction->setReactorPostsCnt($r['forumPosts']);
-            $reaction->setReactorDonatorID($r['donatorID']);
-            $reaction->setContent(ForumService::convertEmoticons($r['content']));
-            $reaction->setQuoteContent("<small class='darkgray'>".$r['reactor']." | ".$r['date']."</small><br />".ForumService::convertEmoticons($r['content']));
-            $reaction->setDate($r['date']);
-            $reaction->setLastEditTime($r['lastEditTime']);
-            array_push($reactions,$reaction);
+            return $reactions;
         }
-        return $reactions;
     }
     
     public function getTopicReactionsByTopicId($topicID, $from, $to)
     {
-        $statement = $this->dbh->prepare("
-            SELECT r.`id`,r.`content`, r.`userID`, DATE_FORMAT( r.`date`, '".$this->dateFormat."' ) AS `date`, r.`lastEditTime`, u.`username` AS `reactor`, u.`avatar`, u.`forumPosts`,
-            s.`id` AS `statusID`,d.`id` AS `donatorID`, s.`status_".$this->lang."` AS `status`, d.`donator_".$this->lang."` AS `donator`, r.`lastEditTime`, c.`viewStatusID`
-            FROM `forum_reaction` AS r
-            LEFT JOIN `forum_topic` AS t
-            ON (r.`topicID`=t.`id`)
-            LEFT JOIN `forum_category` AS c
-            ON (t.`categoryID`=c.`id`)
-            LEFT JOIN `user` AS u
-            ON (r.`userID`=u.`id`)
-            LEFT JOIN `status` AS s
-            ON (u.statusID=s.id)
-            LEFT JOIN `donator` AS d
-            ON (u.donatorID=d.id)
-            WHERE r.`topicID`= :tid AND r.`active`='1' AND r.`deleted`='0'
-            ORDER BY r.`date` ASC
-            LIMIT $from, $to
-        ");
-        $statement->execute(array(':tid' => $topicID));
-        $reactions = array();
-        foreach($statement AS $r)
+        if(is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
-            if($r['statusID'] < 7 || $r['statusID'] == 8)
+            $statement = $this->dbh->prepare("
+                SELECT r.`id`,r.`content`, r.`userID`, DATE_FORMAT( r.`date`, '".$this->dateFormat."' ) AS `date`, r.`lastEditTime`, u.`username` AS `reactor`, u.`avatar`, u.`forumPosts`,
+                s.`id` AS `statusID`,d.`id` AS `donatorID`, s.`status_".$this->lang."` AS `status`, d.`donator_".$this->lang."` AS `donator`, r.`lastEditTime`, c.`viewStatusID`
+                FROM `forum_reaction` AS r
+                LEFT JOIN `forum_topic` AS t
+                ON (r.`topicID`=t.`id`)
+                LEFT JOIN `forum_category` AS c
+                ON (t.`categoryID`=c.`id`)
+                LEFT JOIN `user` AS u
+                ON (r.`userID`=u.`id`)
+                LEFT JOIN `status` AS s
+                ON (u.statusID=s.id)
+                LEFT JOIN `donator` AS d
+                ON (u.donatorID=d.id)
+                WHERE r.`topicID`= :tid AND r.`active`='1' AND r.`deleted`='0'
+                ORDER BY r.`date` ASC
+                LIMIT $from, $to
+            ");
+            $statement->execute(array(':tid' => $topicID));
+            $reactions = array();
+            foreach($statement AS $r)
             {
-                $className = SeoService::seoUrl($r['status']);
+                if($r['statusID'] < 7 || $r['statusID'] == 8)
+                {
+                    $className = SeoService::seoUrl($r['status']);
+                }
+                else
+                {
+                    $className = SeoService::seoUrl($r['donator']);
+                }
+                $reaction = new ForumReaction();
+                $reaction->setId($r['id']);
+                $reaction->setTopicID($topicID);
+                $reaction->setReactorUID($r['userID']);
+                $reaction->setReactorClassName($className);
+                $reaction->setReactorAvatar(FALSE);
+                if(file_exists(DOC_ROOT . '/web/public/images/users/'.$r['userID'].'/uploads/'.$r['avatar'])) $reaction->setReactorAvatar($r['avatar']);
+                $reaction->setReactorPostsCnt($r['forumPosts']);
+                $reaction->setReactorDonatorID($r['donatorID']);
+                $reaction->setContent(ForumService::convertEmoticons($r['content']));
+                $reaction->setDate($r['date']);
+                $reaction->setLastEditTime($r['lastEditTime']);
+                array_push($reactions,$reaction);
             }
-            else
-            {
-                $className = SeoService::seoUrl($r['donator']);
-            }
-            $reaction = new ForumReaction();
-            $reaction->setId($r['id']);
-            $reaction->setTopicID($topicID);
-            $reaction->setReactorUID($r['userID']);
-            $reaction->setReactorClassName($className);
-            $reaction->setReactorAvatar(FALSE);
-            if(file_exists(DOC_ROOT . '/web/public/images/users/'.$r['userID'].'/uploads/'.$r['avatar'])) $reaction->setReactorAvatar($r['avatar']);
-            $reaction->setReactorPostsCnt($r['forumPosts']);
-            $reaction->setReactorDonatorID($r['donatorID']);
-            $reaction->setContent(ForumService::convertEmoticons($r['content']));
-            $reaction->setDate($r['date']);
-            $reaction->setLastEditTime($r['lastEditTime']);
-            array_push($reactions,$reaction);
+            return $reactions;
         }
-        return $reactions;
     }
     
     public function getReactionDataByTopicAndReactionId($topicID, $reactionID)

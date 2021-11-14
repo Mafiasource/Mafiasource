@@ -18,7 +18,7 @@
             {% set onlyFields = ['username','ip','registerDate','statusID','donatorID'] %}
             {% include "/app/Resources/Views/recordstable.twig" %}
             
-            <a href="{{ routing.getRouteByRouteName('register') }}" class="btn btn-light">Nieuwe game gebruiker aanmaken</a>
+            <a class="btn btn-default" href="{{ routing.getRouteByRouteName('register') }}">Nieuwe game gebruiker aanmaken</a>
         </div>
     </div>
 </div>

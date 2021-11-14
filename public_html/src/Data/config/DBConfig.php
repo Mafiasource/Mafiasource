@@ -29,8 +29,8 @@ class DBConfig
         {
             try
             {
-                $this->con = new PDO(PDO_CONSTRING,PDO_DBUSER,PDO_DBPASS);
-                $this->con->setAttribute(PDO::ERRMODE_SILENT,PDO::ERRMODE_EXCEPTION);
+                $this->con = new PDO(PDO_CONSTRING, PDO_DBUSER, PDO_DBPASS);
+                $this->con->setAttribute(PDO::ERRMODE_SILENT, PDO::ERRMODE_EXCEPTION);
             }
             catch(\PDOException $e)
             {

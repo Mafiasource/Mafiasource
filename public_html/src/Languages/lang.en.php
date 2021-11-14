@@ -12,7 +12,7 @@ class GetLanguageContent
         $this->langMap = $this->initBaseLangs();
     }
     
-    public function initBaseLangs()
+    public function initBaseLangs() // Base langs outgame + homepage
     {
         global $user;
         global $route;
@@ -29,13 +29,14 @@ class GetLanguageContent
                 'END_COPY' => "All rights reserved.",
                 'TERMS_AND_CONDITIONS' => "Terms and conditions",
                 'PRIVACY_POLICY' => "Privacy policy",
-                'OFFLINE_MSG' => "We're currently offline due to preperations for the coming reset!",
+                'OFFLINE_MSG' => "We're currently offline due to maintenance.", //preperations for the coming reset!",
                 'ONLINE_MSG' => "There are currently <span class='online'><strong>{online}</strong></span> players online!",
                 'PLAYERS_BEFORE_MSG' => "along <span class='total'>{totalPlayers}</span> criminals! Or",
                 'REGISTER_BTN' => "Join",
                 'CHANGE_LANG_SUCCESS' => "Je hebt de taalinstellingen verandert naar het Nederlands.",
                 'COOKIES_ACCEPT' => "Our website uses cookies to improve your browsing experience, <a href='/privacy-policy'><strong>click here</strong></a> for more information.",
                 'LINK_PARTNERS_INFO' => "Get to know our <a href='".$route->getRouteByRouteName('link-partners')."'>link partners</a>.",
+                'DOWNLOAD_APP' => "Download the app",
                 'WRONG_CAPTCHA' => "You've entered the wrong security code!", // Use in & out-game
                 'INVALID_SECURITY_TOKEN' => "Invalid security-token, please try again.", // Use in & out-game
                 'INFORMATION' => "Information", // Use in & out-game
@@ -43,7 +44,7 @@ class GetLanguageContent
                 'NONE' => "None", // Use in & out-game
             );
         }
-        else
+        else // Base langs ingame
         {
             global $route;
             $langs = array(
@@ -205,15 +206,6 @@ class GetLanguageContent
                 'WAITING_TIMES' => "Waiting times",
             );
         }
-        return $langs;
-    }
-    
-    public function getAppLangs()
-    {
-        $langs = array(
-            'DOWNLOAD_APP' => "Try out the Beta app",
-            'ANDROID_BETA_INFO' => "Currently we miss some resources to finish app development for both Google Play Store and Apple App Store, however Android users have a possibility to download our Beta app as an (untrusted) .apk.<br />If you wish to try out our app please make sure to enable the Android setting 'Allow third party apps' and you should be able to download, install and play!<br /><br /><a href='https://download.mafiasource.nl/web/downloads/msapp.apk' rel='noreferrer'><strong>Download Beta app</strong></a> (Android only)",
-        );
         return $langs;
     }
     
@@ -564,7 +556,7 @@ class GetLanguageContent
             'ATM_NO_MORE_BULLETS_FOR_SALE_IN_THIS' => "At the moment there are no more bullets for sale in this",
             'PRODUCTION' => "Production",
             'PRICE' => $this->marketLangs()['PRICE'],
-            'BETWEEN_1_AND_999M_BULLETS' => "You need to buy between 1 and 9,999,999 bullets!",
+            'BETWEEN_1_AND_9M_BULLETS' => "You need to buy between 1 and 9,999,999 bullets!",
             'NOT_THAT_MANY_BULLETS_IN_FACTORY' => "This bullet factory doesn't have that many bullets left.",
             'BOUGHT_BULLETS_SUCCESS' => "You bought {bullets} and payed a total of $&#8203;{price}."
         );
@@ -617,12 +609,12 @@ class GetLanguageContent
             'MURDER_PLAYER_SUCCESS_WEAPON_EXP' => "You received <strong>{exp}%</strong> weapon experience.<br /><br />",
             'MURDER_PLAYER_SUCCESS_HEADSHOT' => "<strong>You made a <font color=red>H</font><font color=black>E</font><font color=red>A</font><font color=black>D</font><font color=red>S</font><font color=black>H</font><font color=red>O</font><font color=black>T</font> on {victim}</strong><br />This murder only costed you 1 bullet and you received an additional <strong>$500,000</strong>!<br />",
             'MURDER_PLAYER_ON_HITLIST_SUCCESS' => "{user} was listed on the hitlist. Because of this you received an additional $&#8203;{prize}!",
-            'TAKE_OVER_POSSESSION_TOOK_OVER' => "<div>âœ“You took over a {possessionName}.</div>",
-            'TAKE_OVER_POSSESSION_STATUS_ERROR' => "<div>âœ˜You didn't take over a {possessionName} because you have protection it was put for sale.</div>",
-            'TAKE_OVER_POSSESSION_SELF_ERROR' => "<div>âœ˜You didn't take over a {possessionName} because you already own a {possessionName} it was put for sale.</div>",
-            'TAKE_OVER_POSSESSION_SELF_COUNTRY_ERROR' => "<div>âœ˜You didn't take over a {possessionName} because you already own a country possession it was put for sale.</div>",
-            'TAKE_OVER_POSSESSION_FAMILY_ERROR' => "<div>âœ˜You didn't take over a {possessionName} because your family already owns the maximum amount it was put for sale.</div>",
-            'TAKE_OVER_POSSESSION_FAMILY_COUNTRY_ERROR' => "<div>âœ˜You didn't take over a {possessionName} because your family already owns the maximum amount of country possessions it was put for sale.</div>",
+            'TAKE_OVER_POSSESSION_TOOK_OVER' => "<div>✓You took over a {possessionName}.</div>",
+            'TAKE_OVER_POSSESSION_STATUS_ERROR' => "<div>✘You didn't take over a {possessionName} because you have protection it was put for sale.</div>",
+            'TAKE_OVER_POSSESSION_SELF_ERROR' => "<div>✘You didn't take over a {possessionName} because you already own a {possessionName} it was put for sale.</div>",
+            'TAKE_OVER_POSSESSION_SELF_COUNTRY_ERROR' => "<div>✘You didn't take over a {possessionName} because you already own a country possession it was put for sale.</div>",
+            'TAKE_OVER_POSSESSION_FAMILY_ERROR' => "<div>✘You didn't take over a {possessionName} because your family already owns the maximum amount it was put for sale.</div>",
+            'TAKE_OVER_POSSESSION_FAMILY_COUNTRY_ERROR' => "<div>✘You didn't take over a {possessionName} because your family already owns the maximum amount of country possessions it was put for sale.</div>",
             'MURDER_SUCCESS_DIED_VICTIM_SURVIVED' => "You shot <strong>{victim}</strong>, he <strong>survived</strong> your shots.<br />You died bu his last shot!<br><strong>{victim}</strong> has also stolen <strong>$&#8203;{stolenMoney}</strong>!",
             'MURDER_SUCCESS_BOTH_DIED' => "You shot <strong>{victim}</strong>, he <strong>died</strong> by your shots.<br />You also <strong>died</strong> by his last shots!",
             'MURDER_SUCCESS_KILLED_VICTIM' => "You shot <strong>{victim}</strong>, he <strong>died</strong> by your shots.<br />You also stole <strong>$&#8203;{stolenMoney}</strong>!",
@@ -921,6 +913,7 @@ class GetLanguageContent
             'NO_FAMILY' => "You can only buy this when you're part of a family.",
             'BOUGHT_STATUS_SUCCESS' => "You bought a {status} status for {credits} credits!",
             'BOUGHT_FAMILY_VIP_SUCCESS' => "You bought a VIP family status for 500 credits!",
+            'BOUGHT_LUCKYBOX_SUCCESS' => "You bought {boxes} boxes for {credits} credits!",
         );
         return $langs;
     }

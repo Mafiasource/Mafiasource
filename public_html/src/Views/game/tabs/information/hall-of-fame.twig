@@ -1,0 +1,102 @@
+{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+
+{% block stylesheets %}
+<style type="text/css">select[name=round] {max-width: 80px;}</style>
+{% endblock stylesheets %}
+
+<div class="content-container">
+    <div class="c-row cf">
+        <div id="ajaxLoader"></div>
+        <h2 class="center">Je bekijkt de hall of fame vanaf ronde:
+            <select name="round">
+                {% for round in rounds %}
+                    <option value="{{ round.getRound }}">{{ round.getRoundName }}</option>
+                {% endfor %}
+                <option value="" selected="selected">huidig</option>
+            </select>
+        </h2>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <h4 class="center">Top 10 spelers</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm table-dark table-bordered">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="center">#</th>
+                          <th scope="col" class="center">{{ langs.USERNAME }}</th>
+                          <th scope="col" class="center">Score</th>
+                          <th scope="col" class="center">{{ langs.FAMILY }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for member in hof.members %}
+                        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                          <td scope="row" style="vertical-align: middle;" class="center">
+                            {% if loop.index == 1 %}
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_gold_1.png" class="icon" alt="{{ langs.FIRST_PLACE }}"/>
+                            {% elseif loop.index == 2 %}
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_silver_1.png" class="icon" alt="{{ langs.SECOND_PLACE }}"/>
+                            {% elseif loop.index == 3 %}
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_bronze_1.png" class="icon" alt="{{ langs.THIRD_PLACE }}"/>
+                            {% else %}
+                                {{ loop.index }}
+                            {% endif %}
+                          </td>
+                          <td>{{ userTagManager.write('topListMember', member.getScorePosition, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'True') }}</td>
+                          <td style="vertical-align: middle;">{{ member.getScore|valueFormat }}</td>
+                          <td style="vertical-align: middle;">{% if member.getFamilyID != 0 %}<a href="/game/family-page/{{ member.getFamily }}">{% endif %}{{ member.getFamily }}{% if member.getFamilyID != 0 %}</a>{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <h4 class="center">Top 5 families</h4>
+                <div class="table-reponsive">
+                    <table class="table table-sm table-dark table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="center">#</th>
+                                <th scope="col" class="center">{{ langs.NAME }}</th>
+                                <th scope="col" class="center">{{ langs.MONEY }}</th>
+                                <th scope="col" class="center">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fam in hof.families %}
+                                <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                                  <td scope="row" class="center">
+                                    {% if loop.index == 1 %}
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_gold_1.png" class="icon" alt="{{ langs.FIRST_PLACE }}"/>
+                                    {% elseif loop.index == 2 %}
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_silver_1.png" class="icon" alt="{{ langs.SECOND_PLACE }}"/>
+                                    {% elseif loop.index == 3 %}
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_bronze_1.png" class="icon" alt="{{ langs.THIRD_PLACE }}"/>
+                                    {% else %}
+                                        {{ loop.index }}
+                                    {% endif %}
+                                  </td>
+                                  <td><a href="/game/family-page/{{ fam.getName }}"><span{% if fam.getVip %} class="vip"{% endif %}>{{ fam.getName }}</span></a></td>
+                                  <td>{{ fam.getMoney|moneyFormat }}</td>
+                                  <td>{{ fam.getTotalScore|valueFormat }}</td>
+                                </tr>
+                            {% endfor %}
+                            {% if hof.families is empty %}
+                                <tr>
+                                  <td colspan="5">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NONE }}
+                                  </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <p><strong>Deze</strong> ronde werd gepeeld van 28/12/2020 t.e.m. nu.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "/src/Views/game/tabs/information/statistics.twig" with {fromHallOfFame: 'True'} %}

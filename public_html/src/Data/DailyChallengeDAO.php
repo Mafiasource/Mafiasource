@@ -122,7 +122,8 @@ class DailyChallengeDAO extends DBConfig
                             else
                                 $upToLuckies = $prizePayout->getRewardAmount();
                             
-                            $prizePayout->setRewardAmount($upToLuckies);
+                            $prizeLuckyPayout = $upToLuckies > 0 ? $upToLuckies : 0;
+                            $prizePayout->setRewardAmount($prizeLuckyPayout);
                             $this->con->setData("
                                 UPDATE `user` SET `".$prizePayout->getRewardDb()."`=`".$prizePayout->getRewardDb()."`+ :amnt WHERE `id`= :uid AND `active`='1' AND `deleted`='0'
                             ", array(':amnt' => $prizePayout->getRewardAmount(), ':uid' => $userID));
@@ -175,9 +176,8 @@ class DailyChallengeDAO extends DBConfig
                                 $upToLuckies = 5 - $dailyStreak['luckybox'];
                             else
                                 $upToLuckies = $luckies;
-                                
                             
-                            $luckyPayout = $upToLuckies;
+                            $luckyPayout = $upToLuckies > 0 ? $upToLuckies : 0;
                             $this->con->setData("
                                 UPDATE `user` SET `luckybox`=`luckybox`+ :l, `dailyCompletedDays`=`dailyCompletedDays`+'1' WHERE `id`= :uid AND `active`='1' AND `deleted`='0'
                             ", array(':l' => $upToLuckies, ':uid' => $userID));

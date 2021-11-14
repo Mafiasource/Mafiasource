@@ -197,7 +197,7 @@ class FamilyPropertyDAO extends DBConfig
     
     public function getFamilyBulletFactoryPageInfo($from, $to, $hasRights = false)
     {
-        if(isset($_SESSION['UID']) && $this->familyID != 0)
+        if(isset($_SESSION['UID']) && $this->familyID != 0 && is_int($from) && is_int($to) && $to <= 50 && $to >=1)
         {
             $bf = $this->con->getDataSR("
                 SELECT `bullets`, `bulletFactory`, `bfProduction`, `cBulletFactory` FROM `family` WHERE `id`= :fid AND `active`='1' AND `deleted`='0' LIMIT 1
