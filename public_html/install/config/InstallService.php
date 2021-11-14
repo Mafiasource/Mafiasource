@@ -215,7 +215,7 @@ class InstallService
                 if(PROTOCOL === "https://")
                 {
                     $htaccessReplacesMap[87] ='    RewriteCond %{HTTPS} off [OR]';
-                    $htaccessReplaceMap[91] = '    RewriteCond %{HTTPS} off [OR]';
+                    $htaccessReplacesMap[91] = '    RewriteCond %{HTTPS} off [OR]';
                 }
                 if(strpos($domain, "www.") === false)
                 {
