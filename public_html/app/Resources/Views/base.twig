@@ -178,23 +178,7 @@
     {# Bootstrap core JavaScript #}
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/outgame.js"></script>
-    {#
-    <script type="module">
-        import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
-        
-        const el = document.createElement('pwa-update');
-        document.body.appendChild(el);
-        
-        if("serviceWorker" in navigator) {
-          window.addEventListener("load", function() {
-            navigator.serviceWorker
-              .register("/sw.js")
-              .then(res => console.log("service worker registered"))
-              .catch(err => console.log("service worker not registered", err));
-          });
-        }
-    </script>
-    #}
+    
     {# Twig javascripts #}
     {% block javascripts %} {% endblock %}
 </body>
