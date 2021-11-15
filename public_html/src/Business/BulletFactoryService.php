@@ -68,7 +68,7 @@ class BulletFactoryService
         }
         if($bullets < 1 || $bullets > 9999999)
         {
-            $error = $l['BETWEEN_1_AND_999M_BULLETS'];
+            $error = $l['BETWEEN_1_AND_9M_BULLETS'];
         }
         
         if(isset($error))
