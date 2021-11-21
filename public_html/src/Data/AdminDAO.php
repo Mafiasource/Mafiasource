@@ -16,6 +16,7 @@ class AdminDAO extends DBConfig
     protected $database = "";
     private $dbh = "";
     private $table = "";
+    private $phpDateFormat = "Y-m-d H:i:s";
     public $validTables = array(
         "categories", "cms", "member", "status", "user", "donator", "profession", "state", "city", "news", "ground", "ground_building", "rld_whore", "weapon", "protection",
         "airplane", "helpsystem", "vehicle", "residence", "crime", "crime_org", "steal_vehicle", "possess", "possession", "forum_category", "forum_status", "forum_topic",
@@ -757,7 +758,13 @@ class AdminDAO extends DBConfig
         // Insert current round data, its hall of fame json and database backup path.
         $this->con->setData("
             INSERT INTO `round` (`round`, `startDate`, `endDate`, `hofJson`, `dbbackup`) VALUES (:rnd, :sDate, :eDate, :json, :dbbckp)
-        ", array(':rnd' => $data['round-no'], ':sDate' => $data['start-date'], ':eDate' => $data['end-date'], ':json' => stripslashes($hofJson), 'dbbckp' => $dbbackup));
+        ", array(
+            ':rnd' => (int)$data['round-no'],
+            ':sDate' => date($this->phpDateFormat, strtotime($data['start-date'])),
+            ':eDate' => date($this->phpDateFormat, strtotime($data['end-date'])),
+            ':json' => stripslashes($hofJson),
+            'dbbckp' => $dbbackup
+        ));
         
         $startDate = $nextRoundStartDate !== "now" && (DateTime::createFromFormat('Y-m-d H:i:s', $nextRoundStartDate) !== false) ? $nextRoundStartDate : date("Y-m-d H:i:s");
         
