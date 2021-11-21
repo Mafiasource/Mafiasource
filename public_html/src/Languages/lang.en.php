@@ -1247,7 +1247,7 @@ class GetLanguageContent
             'UNITS_IN_POSSESSION' => "In possession",
             'UNITS_AVAILABLE' => "Free space",
             'EACH' => "Each",
-            'VIEWING_PROFIT_INDEX_FOR' => "Your viewing the profit index for",
+            'VIEWING_PROFIT_INDEX_FOR' => "You're viewing the profit index for",
             'IN_POSSESSION' => "In possession",
             'INVALID_UNIT_SELECTED' => "You've selected an invalid smuggle unit or inserted an invalid amount.",
             'CANNOT_CARRY_THAT_MUCH' => "You cannot caary that much {type}, you're able to carry {units} more units.",
@@ -1657,7 +1657,12 @@ class GetLanguageContent
             'MOST_WHORES_PIMPED' => "Most hoes pimped",
             'MOST_UNITS_SMUGGLED' => "Most units smuggled",
             'POPULATION' => "Population",
-            'MOST_REFERRAL_PROFITS' => "Most referral profits"
+            'MOST_REFERRAL_PROFITS' => "Most referral profits",
+            'VIEWING_ROUND_FROM' => "You're viewing the hall of fame from round",
+            'CURRENT' => $this->murderLangs()['CURRENT'],
+            'ROUND_PLAYED_FROM' => "This round was played from",
+            'NOW' => "Now", // Override
+            'TO' => "Up to" // Override
         );
         return $langs;
     }

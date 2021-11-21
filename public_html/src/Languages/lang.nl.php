@@ -1657,7 +1657,12 @@ class GetLanguageContent
             'MOST_WHORES_PIMPED' => "Meeste hoeren gepimpt",
             'MOST_UNITS_SMUGGLED' => "Meeste goederen gesmokkeld",
             'POPULATION' => "Bevolking",
-            'MOST_REFERRAL_PROFITS' => "Meeste referral opbrengsten"
+            'MOST_REFERRAL_PROFITS' => "Meeste referral opbrengsten",
+            'VIEWING_ROUND_FROM' => "Je bekijkt de hall of fame vanaf ronde",
+            'CURRENT' => $this->murderLangs()['CURRENT'],
+            'ROUND_PLAYED_FROM' => "Deze ronde werd gepeeld van",
+            'NOW' => "Nu", // Override
+            'TO' => "T.e.m." // Override
         );
         return $langs;
     }

@@ -24,7 +24,6 @@ class UserDAO extends DBConfig
     private $lang = "en";
     private $dateFormat = "%d-%m-%Y %H:%i:%s"; // SQL Format
     private $phpDateFormat = "d-m-Y H:i:s";
-    private $roundView = ""; // current round db, TEST TO BE REVERTED
     
     public function __construct()
     {
@@ -737,13 +736,13 @@ class UserDAO extends DBConfig
             $statement = $this->dbh->prepare("
                 SELECT u.`id`, u.`username`, u.`avatar`, u.`rankpoints`, u.`cash`, u.`bank`, u.`familyID`, f.`name` AS `familyName`, u.`health`, u.`kills`,
                     u.`statusID`, u.donatorID, st.`status_".$this->lang."` AS `status`, d.`donator_".$this->lang."` AS `donator`, u.`whoresStreet`, u.`honorPoints`,
-                    (SELECT SUM(`whores`) FROM $this->roundView`rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, u.`restartDate`, u.`isProtected`, u.`score`
-                FROM $this->roundView`user` AS u
-                LEFT JOIN $this->roundView`family` AS f
+                    (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, u.`restartDate`, u.`isProtected`, u.`score`
+                FROM `user` AS u
+                LEFT JOIN `family` AS f
                 ON (u.`familyID`=f.`id`)
-                LEFT JOIN $this->roundView`status` AS st
+                LEFT JOIN `status` AS st
                 ON (u.`statusID`=st.`id`)
-                LEFT JOIN $this->roundView`donator` AS d
+                LEFT JOIN `donator` AS d
                 ON (u.`donatorID`=d.`id`)
                 $cond u.`active`='1' AND u.`deleted`='0'
                 ORDER BY u.`score` DESC, u.`honorPoints` DESC, u.`whoresStreet` DESC, u.`rankpoints` DESC, u.`power` DESC, u.`cardio` DESC, u.`crimesLv` DESC,
@@ -1590,10 +1589,5 @@ class UserDAO extends DBConfig
                 UPDATE `user` SET `credits`=`credits`+ :c, `creditsWon`=`creditsWon`+ :c WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
             ", array(':c' => $credits, ':uid' => $_SESSION['UID']));
         }
-    }
-    
-    public function setRoundView($roundView)
-    {
-        $this->roundView = $roundView;
     }
 }

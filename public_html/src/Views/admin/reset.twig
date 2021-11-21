@@ -26,6 +26,7 @@
               <div class="col-6 offset-lg-3">
                 <form id="reset-form" action="{{ routing.getRouteByRouteName('admin-reset') }}" class="ajaxForm" method="POST" data-response="#resetResponse">
                     <h2>Reset instellingen</h2>
+                    
                     <div id="resetResponse"></div>
                     
                     <label>Spel gebruikers *</label>
@@ -70,16 +71,6 @@
                       </label>
                       <small id="familiesHelp" class="form-text text-muted">Altijd van toepassing bij verwijderen alle leden.</small>
                     </div>
-                    {# Always full backup, restore available when sql file is available. | Should change to minimized hall of fame database possibility.
-                    <label>Terugdraaien</label>
-                    <div class="form-check">
-                      <input class="form-check-input" name="rollback-possibility" aria-describedby="rollbackHelp" type="checkbox" value="remove" id="rollbackPossibility" checked="checked" />
-                      <label class="form-check-label" for="rollbackPossibility">
-                        Mogelijkheid tot terugdraaien
-                      </label>
-                      <small id="rollbackHelp" class="form-text text-muted">Er word een volledige back-up gemaakt die word weggeschreven naar de nieuwe database met een mogelijkheid om deze back-up later te herstellen.</small>
-                    </div>
-                    #}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -98,8 +89,8 @@
                     </div>
                     <div class="form-group">
                       <label for="roundNo">Ronde nummer *</label>
-                      <input type="number" class="form-control" id="roundNo" name="round-no" aria-describedby="roundHelp" min="0" placeholder="Ronde nr." required="required" />
-                      <small id="roundHelp" class="form-text text-muted">0 = Beta. Indien mogelijk wordt de hall of fame database aangemaakt en permissies toegevoegd.</small>
+                      <input type="number" class="form-control" id="roundNo" name="round-no" aria-describedby="roundHelp" min="0" placeholder="Ronde nr." required="required" value="{{ previourRound.getRound + 1 }}"/>
+                      <small id="roundHelp" class="form-text text-muted">0 = Beta.</small>
                     </div>
                     <div class="form-group">
                       <label for="nextRound">Volgende ronde start</label>
@@ -116,3 +107,23 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    let clicked = false;
+    $(document).on("click", "input[name=submit_reset]", function (e) {
+      console.log(clicked);
+      $('#ajaxLoader').show();
+      $('input[name=submit_reset]').hide();
+      $('input[name=cancel]').hide();
+      if(clicked) {
+        e.preventDefault();
+        setTimeout(function() {
+          clicked = true;
+        }, 5000);
+      }
+      clicked = false;
+      $('#ajaxLoader').hide();
+    });
+</script>
+{% endblock javascripts %}

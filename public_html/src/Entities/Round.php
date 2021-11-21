@@ -10,6 +10,8 @@ class Round
     private $round;
     private $startDate;
     private $endDate;
+    private $hofJson;
+    private $dbbackup;
     private $active;
     
     private $roundName;
@@ -46,7 +48,23 @@ class Round
     public function setEndDate($endDate){
         $this->endDate = $endDate;
     }
-    
+
+    public function getHofJson(){
+        return $this->hofJson;
+    }
+
+    public function setHofJson($hofJson){
+        $this->hofJson = $hofJson;
+    }
+
+    public function getDbbackup(){
+        return $this->dbbackup;
+    }
+
+    public function setDbbackup($dbbackup){
+        $this->dbbackup = $dbbackup;
+    }
+
     public function getActive(){
         return $this->active;
     }

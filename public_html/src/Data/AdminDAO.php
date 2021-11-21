@@ -639,6 +639,7 @@ class AdminDAO extends DBConfig
         $statisticData = new StatisticDAO();
         $statistic = $statisticData->getStatisticsPage();
         $hof = $statisticData->getHallOfFamePage(); // Arr
+        
         $hof['game'] = $statistic->getGameStatistic();
         $hof['richest'] = $statistic->getRichestStatistic();
         $hof['mostHonored'] = $statistic->getMostHonoredStatistic();
@@ -649,6 +650,40 @@ class AdminDAO extends DBConfig
         $hof['pimping'] = $statistic->getPimpingStatistic();
         $hof['smuggling'] = $statistic->getSmugglingStatistic();
         $hof['referral'] = $statistic->getReferralStatistic();
+        
+        $memberList = array();
+        foreach($hof['members'] AS $member)
+        {
+            $hofMember = new stdClass();
+            $hofMember->getScorePosition = $member->getScorePosition();
+            $hofMember->getId = $member->getId();
+            $hofMember->getUsername = $member->getUsername();
+            $hofMember->getDonatorID = $member->getDonatorID();
+            $hofMember->getUsernameClassName = $member->getUsernameClassName();
+            $hofMember->getAvatar = $member->getAvatar();
+            $hofMember->getScore = $member->getScore();
+            $hofMember->getFamilyID = $member->getFamilyID();
+            $hofMember->getFamily = $member->getFamily();
+            
+            array_push($memberList, $hofMember);
+        }
+        
+        $hofObj = new stdClass();
+        $hofObj->members = $memberList;
+        
+        $famList = array();
+        foreach($hof['families'] AS $fam)
+        {
+            $hofFamily = new stdClass();
+            $hofFamily->getName = $fam->getName();
+            $hofFamily->getVip = $fam->getVip();
+            $hofFamily->getMoney = $fam->getMoney();
+            $hofFamily->getTotalScore = $fam->getTotalScore();
+            
+            array_push($famList, $hofFamily);
+        }
+        
+        $hofObj->families = $famList;
         
         $hofGame = new stdClass();
         $hofGame->getTotalMembers = $hof['game']->getTotalMembers();
@@ -661,18 +696,18 @@ class AdminDAO extends DBConfig
         $hofGame->getAverageBullets = $hof['game']->getAverageBullets();
         $hofGame->getTotalDeathNow = $hof['game']->getTotalDeathNow();
         $hofGame->getTotalBanned = $hof['game']->getTotalBanned();
-        $gameObj = json_encode($hofGame);
+        $gameObj = $hofGame; //json_encode($hofGame);
         
-        $hofObj = new stdClass();
         $hofObj->game = $gameObj;
         
         foreach(array_keys($hof) AS $key)
         {
-            if($key !== "game")
+            $denyKeys = array("game", "members", "families", "startDate", "endDate");
+            if(!in_array($key, $denyKeys))
             {
                 $hofData = new stdClass();
                 $statList = array();
-                foreach($hof['richest'] AS $stat)
+                foreach($hof[$key] AS $stat)
                 {
                     $obj = new stdClass();
                     $obj->getKey = $stat->getKey();
@@ -681,7 +716,7 @@ class AdminDAO extends DBConfig
                     array_push($statList, $obj);
                 }
                 $hofData = $statList;
-                $dataObj = json_encode($hofData);
+                $dataObj = $hofData;//json_encode($hofData);
                 
                 switch($key)
                 {
@@ -717,27 +752,26 @@ class AdminDAO extends DBConfig
             }
         }
         $hofJson = json_encode($hofObj);
+        // /End create hof json
         
-        // Insert this round and its hall of fame json
+        // Insert current round data, its hall of fame json and database backup path.
         $this->con->setData("
             INSERT INTO `round` (`round`, `startDate`, `endDate`, `hofJson`, `dbbackup`) VALUES (:rnd, :sDate, :eDate, :json, :dbbckp)
         ", array(':rnd' => $data['round-no'], ':sDate' => $data['start-date'], ':eDate' => $data['end-date'], ':json' => stripslashes($hofJson), 'dbbckp' => $dbbackup));
         
-        // Standard reset of game
         $startDate = $nextRoundStartDate !== "now" && (DateTime::createFromFormat('Y-m-d H:i:s', $nextRoundStartDate) !== false) ? $nextRoundStartDate : date("Y-m-d H:i:s");
-        //$startDate = $nextRoundStartDate === "now" ? date("Y-m-d H:i:s") : $nextRoundStartDate;
+        
+        // Standard reset of game
         $this->con->setData("
             TRUNCATE TABLE `bank_log`;
             UPDATE `bullet_factory` SET `bullets`='10000', `priceEachBullet`='2500', `production`='0';
             UPDATE `business` SET `last_price`=`opening_price`, `close_price`=`opening_price`, `high_price`=`opening_price`, `low_price`=`opening_price`;
-            -- TRUNCATE TABLE `business_history`;
             TRUNCATE TABLE `business_stock`;
             TRUNCATE TABLE `change_email`;
             TRUNCATE TABLE `crime_org_prep`;
             TRUNCATE TABLE `detective`;
             TRUNCATE TABLE `drug_liquid`;
             TRUNCATE TABLE `equipment`;
-            -- TRUNCATE TABLE `family`;
             UPDATE `family` SET `vip`='0';
             TRUNCATE TABLE `family_alliance`;
             TRUNCATE TABLE `family_bank_log`;
@@ -766,11 +800,7 @@ class AdminDAO extends DBConfig
             TRUNCATE TABLE `market`;
             TRUNCATE TABLE `message`;
             TRUNCATE TABLE `murder_log`;
-            -- TRUNCATE TABLE `news`;
             TRUNCATE TABLE `notification`;
-            -- TRUNCATE TABLE `poll_answer`;
-            -- TRUNCATE TABLE `poll_question`;
-            -- TRUNCATE TABLE `poll_vote`;
             UPDATE `possess` SET `userID`='0', `profit`='0', `profit_hour`='0', `stake`='50000';
             TRUNCATE TABLE `possess_transfer`;
             TRUNCATE TABLE `prison`;
@@ -780,7 +810,6 @@ class AdminDAO extends DBConfig
             TRUNCATE TABLE `shoutbox_en`;
             TRUNCATE TABLE `shoutbox_nl`;
             TRUNCATE TABLE `smuggle_unit`;
-            -- TRUNCATE TABLE `user`;
             UPDATE `user`
               SET `restartDate`= :startDate, `isProtected`='1', `activeTime`='0', `referralProfits`='0', `warns`='0', `forumPosts`='0', `rankpoints`='0', `health`='100', `score`='0',
                 `cash`='2500', `bank`='10000', `swissBank`='0', `swissBankMax`='100000000', `prisonBusts`='0', `honorPoints`='0', `whoresStreet`='0', `kills`='0', `deaths`='0', `headshots`='0',
@@ -793,9 +822,6 @@ class AdminDAO extends DBConfig
                 `smugglingLv`='1', `smugglingXp`='0,00', `smugglingProfit`='0', `smugglingTrips`='0', `smugglingUnits`='0', `smugglingBusts`='0',
                 `m5c`='0', `m8c`='0', `lrsID_nl`='0', `lrfsID_nl`='0', `lrsID_en`='0', `lrfsID_en`='0', `cCrimes`='0', `cWeaponTraining`='0', `cGymTraining`='0', `cStealVehicles`='0', `cPimpWhores`='0',
                 `cFamilyRaid`='0', `cFamilyCrimes`='0', `cBombardement`='0', `cTravelTime`='0', `cPimpWhoresFor`='0';
-            -- UPDATE `user` SET `donatorID`='0' WHERE `donatorID`='1';
-			-- UPDATE `user` SET `donatorID`='1' WHERE `donatorID`='5';
-			-- UPDATE `user` SET `donatorID`='5' WHERE `donatorID`='10';
             TRUNCATE TABLE `user_captcha`;
             TRUNCATE TABLE `user_friend_block`;
             TRUNCATE TABLE `user_garage`;
@@ -839,7 +865,6 @@ class AdminDAO extends DBConfig
             removeFamilies();
         
         global $route;
-        //$startDate = $nextRoundStartDate !== "now" && (DateTime::createFromFormat('Y-m-d H:i:s', $nextRoundStartDate) !== false) ? $nextRoundStartDate : date("Y-m-d H:i:s");
         return $route->successMessage($route->settings['gamename'] . " heeft een reset ondergaan! Volgende datum werd alvast genoteerd voor de volgende ronde: " . $startDate);
     }
     

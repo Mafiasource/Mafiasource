@@ -1192,6 +1192,13 @@ array(
         'controller' => 'game/information.php'
     ),
     
+    'information-hall-of-fame-round'
+    =>
+    array(
+        'route' => '/game/information/hall-of-fame/[0-9][0-9]{0,3}',
+        'controller' => 'game/information.php'
+    ),
+    
     'logout'
     =>
     array(

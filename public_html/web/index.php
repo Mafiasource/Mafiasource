@@ -100,7 +100,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         $user = new UserCoreService();
         $userData = $user->getUserData();
         
-        // Get preferred language class & contents
+        // Get preferred language class & contents, but (re)set a logged in users language first
         $lang = $route->getLang();
         if(is_object($userData) && $userData->getLang() != $lang && in_array($userData->getLang(), $route->allowedLangs) && !isset($_SESSION['lang']['setAfterLogin']))
         {
@@ -114,14 +114,12 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         require_once DOC_ROOT.'/src/Languages/lang.' . $lang . '.php'; // Require user's preferred language
         $language = new GetLanguageContent(); // Class mostly used in all service classes (Business layer)
         $langs = $language->langMap; // Base langs available on every page, contents depend on a player in- or out-game
-        
-        
 
         // Check if controller actually exists and include it
         if(file_exists(__DIR__.'/../src/Controllers/'.$route->getController()))
         {
-            include_once __DIR__.'/../src/Controllers/'.$route->getController();
             $denyPrevRouteSaves = array("notfound.php", "languageSelect.php", "game/captcha.test.php", "game/rest.in.peace.php");
+            include_once __DIR__.'/../src/Controllers/'.$route->getController();
             if(!in_array($route->getController(), $denyPrevRouteSaves)) $route->setPrevRoute(); // Save previous route
         }
         // Session lockdown after controller did its job

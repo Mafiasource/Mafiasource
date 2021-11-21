@@ -17,6 +17,9 @@ class StatisticDAO extends DBConfig
     private $dbh = "";
     private $lang = "en";
     private $dateFormat = "%d-%m-%y %H:%i:%s";
+    private $phpDateFormat = "d-m-Y H:i:s";
+    
+    public $roundStartDate = "2020-12-28 14:00:00";
     
     public function __construct()
     {
@@ -25,7 +28,11 @@ class StatisticDAO extends DBConfig
         $this->dbh = $connection->con;
         global $route;
         $this->lang = $route->getLang();
-        if($this->lang == 'en') $this->dateFormat = "%m-%d-%y %r";
+        if($this->lang == 'en')
+        {
+            $this->dateFormat = "%m-%d-%y %r";
+            $this->phpDateFormat = "m-d-Y g:i:s A";
+        }
     }
     
     public function __destruct()
@@ -97,7 +104,8 @@ class StatisticDAO extends DBConfig
         if($round !== "")
         {
             $row = $this->con->getDataSR("SELECT `hofJson` FROM `round` WHERE `round`= :rnd AND `active`='1' AND `deleted`='0' LIMIT 1", array(':rnd' => $round));
-            $hof = json_decode($row['hofJson']);
+            if(isset($row['hofJson']))
+                $hof = json_decode($row['hofJson']);
         }
         $statistic = new Statistic();
         if(isset($hof) && is_object($hof))
@@ -303,53 +311,55 @@ class StatisticDAO extends DBConfig
         return $statistic;
     }
     
-    private static function getHallOfFameJson() // TESTED AND TO BE FINISHED
+    private function getHallOfFameJsonByRound($round = 0)
     {
-        $file = DOC_ROOT . '/app/Resources/Views/json/hall-of-fame.json'; // Doesn't exist Fetch from round table hofJson field instead.
-        $json = file_get_contents($file);
-        if(file_exists($file))
+        $row = $this->con->getDataSR("
+            SELECT `hofJson`, DATE_FORMAT(`startDate`, '".$this->dateFormat."' ) AS `sDate`, DATE_FORMAT(`endDate`, '".$this->dateFormat."' ) AS `eDate`
+            FROM `round` WHERE `round`= :rnd AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':rnd' => $round));
+        $hof = json_decode($row['hofJson']);
+        if(isset($hof) && is_object($hof))
         {
-            $result = json_decode($json);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return $result;
-            }
+            $hof->startDate = $row['sDate'];
+            $hof->endDate = $row['eDate'];
+            return $hof;
         }
+        
+        return false;
     }
     
     public function getHallOfFamePage($round = "")
     {
-        // Fetch Hall of fame data from current or past round's database. | TESTED AND TO BE FINISHED
-        if($round === "") // Current
+        $userDAO = new UserDAO();
+        $familyData = new FamilyDAO();
+        $hofMembers = $userDAO->getToplist(0, 10);
+        $hofFamilies = $familyData->getFamlist(0, 5);
+        $startDate = date($this->phpDateFormat, strtotime($this->roundStartDate));
+        $endDate = false;
+        
+        if(is_int($round) || $round == 0)
         {
-            $userDAO = new UserDAO();
-            $familyData = new FamilyDAO();
-            $userDAO->setRoundView("mafiasource_round0."); // Test fetch data, older db
-            $familyData->setRoundView("mafiasource_round0."); // Test fetch data, older db
-            $hofMembers = $userDAO->getToplist(0, 10);
-            $hofFamilies = $familyData->getFamlist(0, 5);
-        }
-        else
-        {
-            $hof = self::getHallOfFameJson();
-            $hofMembers = $hof->rounds[$round]->members;
-            $hofFamilies = $hof->rounds[$round]->families;
+            $hof = $this->getHallOfFameJsonByRound($round);
+            $hofMembers = $hof->members;
+            $hofFamilies = $hof->families;
+            $startDate = $hof->startDate;
+            $endDate = $hof->endDate;
         }
             
-        return array('members' => $hofMembers, 'families' => $hofFamilies);
+        return array('members' => $hofMembers, 'families' => $hofFamilies, 'startDate' => $startDate, 'endDate' => $endDate);
     }
     
     public function getHallOfFameRounds()
     {
         // Fetch all previous rounds current one excluded.
-        $rows = $this->con->getData("SELECT `round` FROM `round` WHERE `active`='1' AND `deleted`='0' ORDER BY `position` ASC LIMIT 0, 30");
+        $rows = $this->con->getData("SELECT `id`, `round` FROM `round` WHERE `endDate`!='NULL' AND`active`='1' AND `deleted`='0' ORDER BY `position` DESC LIMIT 0, 30");
         $rounds = array();
         foreach($rows AS $row)
         {
-            $db = explode("_", $this->database);
-            if(is_array($this->getHallOfFamePage($row['round']))) // Validate first (make sure view table exists)
+            if(is_array($this->getHallOfFamePage($row['round'])))
             {
                 $round = new Round();
-                $round->setId($row['round']);
+                $round->setId($row['id']);
                 $round->setRound($row['round']);
                 $round->setRoundName($row['round']);
                 if($this->lang == 'nl')

@@ -1,23 +1,19 @@
 {% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
 
-{% block stylesheets %}
-<style type="text/css">select[name=round] {max-width: 80px;}</style>
-{% endblock stylesheets %}
-
 <div class="content-container">
     <div class="c-row cf">
         <div id="ajaxLoader"></div>
-        <h2 class="center">Je bekijkt de hall of fame vanaf ronde:
-            <select name="round">
-                {% for round in rounds %}
-                    <option value="{{ round.getRound }}">{{ round.getRoundName }}</option>
+        <h2 class="center">{{ langs. VIEWING_ROUND_FROM }}:
+            <select name='round' onChange="document.location='{{ routing.getRouteByRouteName('information-hall-of-fame') }}' + this.value">
+                {% for r in rounds %}
+                    <option value="/{{ r.getRound }}"{% if r.getRound == round %} selected="selected"{% endif %}>{{ r.getRoundName|capitalize }}</option>
                 {% endfor %}
-                <option value="" selected="selected">huidig</option>
+                <option value=""{% if round != "0" %}{% if not round %} selected="selected"{% endif %}{% endif %}>{{ langs.CURRENT }}</option>
             </select>
         </h2>
         <div class="c-row-50 col">
             <div class="inner-c-container">
-                <h4 class="center">Top 10 spelers</h4>
+                <h4 class="center">Top 10 {{ langs.MEMBERS|lower }}</h4>
                 <div class="table-responsive">
                     <table class="table table-sm table-dark table-bordered">
                       <thead>
@@ -55,7 +51,7 @@
         <div class="c-row-50 col">
             <div class="inner-c-container">
                 <h4 class="center">Top 5 families</h4>
-                <div class="table-reponsive">
+                <div class="table-responsive">
                     <table class="table table-sm table-dark table-bordered">
                         <thead>
                             <tr>
@@ -94,7 +90,7 @@
                         </tbody>
                     </table>
                 </div>
-                <p><strong>Deze</strong> ronde werd gepeeld van 28/12/2020 t.e.m. nu.</p>
+                <p>{{ langs.ROUND_PLAYED_FROM }} <strong>{{ hof.startDate }}</strong> {{ langs.TO|lower }} <strong>{% if not hof.endDate %}{{ langs.NOW|lower }}{% else %}{{ hof.endDate }}{% endif %}</strong>.</p>
             </div>
         </div>
     </div>

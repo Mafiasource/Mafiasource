@@ -27,8 +27,16 @@ switch($route->getRouteName())
     case 'information-hall-of-fame':
         $tab = "hall-of-fame";
         $statistic = new StatisticService();
-        $statistics = $statistic->getStatisticsPage(0);
-        $hallOfFame = $statistic->getHallOfFamePage(0);
+        $statistics = $statistic->getStatisticsPage();
+        $hallOfFame = $statistic->getHallOfFamePage();
+        $rounds = $statistic->getHallOfFameRounds();
+        break;
+    case 'information-hall-of-fame-round':
+        $tab = "hall-of-fame";
+        $round = (int) $route->requestGetParam(4, array('min' => 0, 'max' => 1));
+        $statistic = new StatisticService();
+        $statistics = $statistic->getStatisticsPage($round);
+        $hallOfFame = $statistic->getHallOfFamePage($round);
         $rounds = $statistic->getHallOfFameRounds();
         break;
 }
@@ -42,5 +50,6 @@ if(isset($tab) && $tab == "team-members") $twigVars['teamMembers'] = $userServic
 if(isset($statistics) && $tab == "statistics" || $tab == "hall-of-fame") $twigVars['stats'] = $statistics;
 if(isset($hallOfFame) && $tab == "hall-of-fame") $twigVars['hof'] = $hallOfFame;
 if(isset($rounds) && $tab == "hall-of-fame") $twigVars['rounds'] = $rounds;
+if(isset($round) && $tab == "hall-of-fame") $twigVars['round'] = (string) $round;
 
 echo $twig->render('/src/Views/game/information.twig', $twigVars);

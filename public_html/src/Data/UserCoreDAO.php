@@ -41,10 +41,9 @@ class UserCoreDAO extends DBConfig
             {
                 global $route;
                 global $security;
+                global $denyPrevRouteSaves;
                 $captchaService = new CaptchaService();
                 $userCaptcha = $captchaService->getUserCaptcha();
-                
-                $denyPrevControllers = array("not_found", "languageSelect.php", "game/captcha.test.php", "game/rest.in.peace.php");
                 
                 if($row['statusID'] == 8 && $route->getRouteName() != "home")
                 { // Banned
@@ -54,7 +53,7 @@ class UserCoreDAO extends DBConfig
                 }
                 elseif($security->checkCaptcha($userCaptcha->getSecurityTodo(), $userCaptcha->getSecurity()) && $route->getRouteName() != "captcha_test" && $route->getRouteName() != "rest_in_peace")
                 {
-                    if(!in_array($route->getController(), $denyPrevControllers))
+                    if(!in_array($route->getController(), $denyPrevRouteSaves))
                         $route->setPrevRoute();
                     
                     $route->headTo('captcha_test');
@@ -62,7 +61,7 @@ class UserCoreDAO extends DBConfig
                 }
                 elseif($this->getUserData()->getHealth() <= 0 && $route->getRouteName() != "rest_in_peace" && $route->getRouteName() != "captcha_test")
                 {
-                    if(!in_array($route->getController(), $denyPrevControllers))
+                    if(!in_array($route->getController(), $denyPrevRouteSaves))
                         $route->setPrevRoute();
                     
                     $route->headTo('rest_in_peace');
