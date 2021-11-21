@@ -190,7 +190,8 @@
                         <li><a href="{{ routing.getRouteByRouteName('admin-garage') }}"><i class="fas fa-wrench"></i> Garage voertuigen</a></li>
                         <li><a href="{{ routing.getRouteByRouteName('admin-states') }}"><i class="fas fa-flag-usa"></i> Staten</a></li>
                         <li><a href="{{ routing.getRouteByRouteName('admin-cities') }}"><i class="fas fa-location-arrow"></i> Steden</a></li>
-                        <li><a href="{{ routing.getRouteByRouteName('admin-vehicles') }}"><i class="fas fa-car"></i> Voertuigen</a></li>                     
+                        <li><a href="{{ routing.getRouteByRouteName('admin-vehicles') }}"><i class="fas fa-car"></i> Voertuigen</a></li>
+                        <li><a href="{{ routing.getRouteByRouteName('admin-reset') }}"><i class="fa fa-sync"></i> Reset</a></li>
                     {% endif %}
                     {% if memberObj.getStatus == 3 %}
                         <li class="current"><a href="{{ routing.getRouteByRouteName('admin') }}"><i class="fas fa-tachometer-alt"></i>&thinsp;Dashboard</a></li>

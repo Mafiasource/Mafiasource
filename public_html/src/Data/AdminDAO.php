@@ -696,7 +696,7 @@ class AdminDAO extends DBConfig
         $hofGame->getAverageBullets = $hof['game']->getAverageBullets();
         $hofGame->getTotalDeathNow = $hof['game']->getTotalDeathNow();
         $hofGame->getTotalBanned = $hof['game']->getTotalBanned();
-        $gameObj = $hofGame; //json_encode($hofGame);
+        $gameObj = $hofGame;
         
         $hofObj->game = $gameObj;
         
@@ -716,7 +716,7 @@ class AdminDAO extends DBConfig
                     array_push($statList, $obj);
                 }
                 $hofData = $statList;
-                $dataObj = $hofData;//json_encode($hofData);
+                $dataObj = $hofData;
                 
                 switch($key)
                 {

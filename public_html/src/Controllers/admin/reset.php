@@ -4,6 +4,8 @@ use src\Business\AdminService;
 
 require_once __DIR__ . '/.inc.head.php';
 
+if($member->getStatus() > 2) $route->headTo('admin');
+
 if(isset($_POST) && !empty($_POST))
 {
     $round = new AdminService("round");
