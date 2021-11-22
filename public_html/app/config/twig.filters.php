@@ -117,6 +117,10 @@ function lotteryTicket($in)
     return intToString($in, 5);
 }
 
+function isJson($string){
+   return is_string($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false;
+}
+
 /* Remove possible XSS attacks in images */
 function noXSS ($input)
 {
@@ -151,40 +155,15 @@ function deXSS_img($m){
 }
 /* //END Remove possible XSS attacks in images */
 
-/* Counter functions | UGLY TO DO */
+/* Counter functions */
 function counter($i, $fetchedTime)
 {
     global $langs;
     $verschil = ($fetchedTime - time());
     if($verschil > 0)
     {
-        $msg = "
-        <script type='text/javascript'>
-             var seconds". $i."=". $verschil.";
-             var timeoutC".$i." = '';
-             function displayC". $i."()
-             {
-               seconds". $i."=seconds". $i."-1;
-               if(seconds". $i." < 0)
-               {
-                  var countdown". $i." = document.all? document.all[\"c".$i."\"] : document.getElementById ? document.getElementById (\"c". $i."\") 
-                  : \"\";
-                  countdown". $i.".innerHTML=\"".$langs['NOW']."!\";
-               }
-               else
-               {
-                var countdown". $i." = document.all? document.all[\"c".$i."\"] : document.getElementById ? document.getElementById (\"c". $i."\") 
-                : \"\";
-                if (countdown". $i.")
-                {
-                    countdown". $i.".innerHTML=seconds". $i."+'!';
-                    timeoutC".$i." = setTimeout('displayC". $i."()',1000);
-                }
-               }
-             }  
-            displayC". $i."();
-        </script>
-        ";
+        global $twig;
+        $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "", 'langs' => $langs));
     }
     else
     {
@@ -198,35 +177,8 @@ function counterActive($i, $fetchedTime)
     $verschil = ($fetchedTime - time());
     if($verschil > 0)
     {
-        $msg = "
-        <script type='text/javascript'>
-             var seconds". $i."=". $verschil.";
-             var timeoutCA".$i." = '';
-             function displayCA". $i."()
-             {
-               seconds". $i."=seconds". $i."-1;
-               if(seconds". $i." < 0)
-               {
-                  var countdown". $i." = document.all? document.all[\"c".$i."\"] : document.getElementById ? document.getElementById (\"c". $i."\") 
-                  : \"\";
-                  countdown". $i.".innerHTML=\"\";
-                  var par = countdown". $i.".parentNode;
-                  par.classList.add('active');
-               }
-               else
-               {
-                var countdown". $i." = document.all? document.all[\"c".$i."\"] : document.getElementById ? document.getElementById (\"c". $i."\") 
-                : \"\";
-                if (countdown". $i.")
-                {
-                    countdown". $i.".innerHTML=seconds". $i.";
-                    timeoutCA".$i." = setTimeout('displayCA". $i."()',1000);
-                }
-               }
-             }  
-            displayCA". $i."();
-        </script>
-        ";
+        global $twig;
+        $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "A"));
     }
     else
     {
@@ -240,33 +192,8 @@ function counterClean($i, $fetchedTime)
     $verschil = ($fetchedTime - time());
     if($verschil > 0)
     {
-        $msg = "
-        <script type='text/javascript'>
-             var seconds". $i."=". $verschil.";
-             var timeoutCC".$i." = '';
-             function displayCC". $i."()
-             {
-               seconds". $i."=seconds". $i."-1;
-               if(seconds". $i." < 0)
-               {
-                  var countdown". $i." = document.all? document.all[\"c".$i."\"] : document.getElementById ? document.getElementById (\"c". $i."\") 
-                  : \"\";
-                  countdown". $i.".innerHTML=\"0\";
-               }
-               else
-               {
-                var countdown". $i." = document.all? document.all[\"c".$i."\"] : document.getElementById ? document.getElementById (\"c". $i."\") 
-                : \"\";
-                if (countdown". $i.")
-                {
-                    countdown". $i.".innerHTML=seconds". $i."+'';
-                    timeoutCC".$i." = setTimeout('displayCC". $i."()',1000);
-                }
-               }
-             }  
-            displayCC". $i."();
-        </script>
-        ";
+        global $twig;
+        $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "C"));
     }
     else
     {
@@ -280,33 +207,8 @@ function counterPrisonMoney($i, $fetchedTime, $costs = 250)
     $verschil = ($fetchedTime - time())*$costs;
     if($verschil > 0)
     {
-        $msg = "
-        <script type='text/javascript'>
-             var seconds" . $i . "=" . $verschil . ";
-             var timeoutCPM" . $i . " = '';
-             function displayCPM" . $i . "()
-             {
-               seconds" . $i . "=seconds" . $i . "-" . $costs . ";
-               if(seconds". $i." < 0)
-               {
-                  var countdown". $i ." = document.all? document.all[\"c" . $i . "\"] : document.getElementById ? document.getElementById (\"c" . $i . "\") 
-                  : \"\";
-                  countdown". $i .".innerHTML=\"0\";
-               }
-               else
-               {
-                var countdown" . $i . " = document.all? document.all[\"c" . $i . "\"] : document.getElementById ? document.getElementById (\"c" . $i . "\") 
-                : \"\";
-                if (countdown" . $i . ")
-                {
-                    countdown" . $i . ".innerHTML=number_format(seconds" . $i . ",0,'',',')+'';
-                    timeoutCPM" . $i . " = setTimeout('displayCPM" . $i . "()',1000);
-                }
-               }
-             }  
-            displayCPM" . $i . "();
-        </script>
-        ";
+        global $twig;
+        $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "PM", 'langs' => false, 'costs' => $costs));
     }
     else
     {
@@ -326,60 +228,8 @@ function countdownHmsTime($i, $fetchedTime)
     $verschil = (time() - $fetchedTime);
     if($verschil > 0)
     {
-        $msg = "
-        <script type='text/javascript'>
-             var seconds". $i ."=". $seconds .";
-             var minutes". $i ."=". $minutes .";
-             var hours". $i ."=". $hours .";
-             var timeoutCHT". $i ." = '';
-             function displayCHT". $i ."()
-             {
-               var secTrail = '';
-               var minTrail = '';
-               var hourTrail = '';
-               if(seconds". $i ." == 0)
-               {
-                if(minutes". $i ." == 0)
-                {
-                    hours". $i ."=hours". $i ."-1;
-                    minutes". $i ."=60;
-                }
-                minutes". $i ."=minutes". $i ."-1;
-                seconds". $i ."=60;
-               }
-               seconds". $i ."=seconds". $i ."-1;
-               if(String(hours". $i .").length == 1)
-               {
-                 hourTrail = '0';
-               }
-               if(String(minutes". $i .").length == 1)
-               {
-                 minTrail = '0';
-               }
-               if(String(seconds". $i .").length == 1)
-               {
-                 secTrail = '0';
-               }
-               if(seconds". $i ." == 0 && minutes". $i ." == 0 && hours". $i ." == 0)
-               {
-                  var countdown". $i ." = document.all? document.all[\"c". $i ."\"] : document.getElementById ? document.getElementById (\"c". $i ."\") 
-                  : \"\";
-                  countdown". $i.".innerHTML=\" ".$langs['NONE']." \";
-               }
-               else
-               {
-                var countdown". $i ." = document.all? document.all[\"c". $i ."\"] : document.getElementById ? document.getElementById (\"c". $i ."\") 
-                : \"\";
-                if (countdown". $i .")
-                {
-                    countdown". $i.".innerHTML=hourTrail+hours". $i ."+':'+minTrail+minutes". $i ."+':'+secTrail+seconds". $i ."+'';
-                    timeoutCHT". $i ." = setTimeout('displayCHT". $i ."()',1000);
-                }
-               }
-             }  
-            displayCHT". $i."();
-        </script>
-        ";
+        global $twig;
+        $msg = $twig->render("src/Views/game/js/countdown.hms.twig", array('el' => $i, 'seconds' => $seconds, 'minutes' => $minutes, 'hours' => $hours, 'langs' => $langs));
     }
     else
     {

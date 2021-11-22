@@ -43,6 +43,13 @@
                           <td style="vertical-align: middle;">{% if member.getFamilyID != 0 %}<a href="/game/family-page/{{ member.getFamily }}">{% endif %}{{ member.getFamily }}{% if member.getFamilyID != 0 %}</a>{% endif %}</td>
                         </tr>
                         {% endfor %}
+                        {% if hof.members is empty %}
+                            <tr>
+                              <td colspan="5">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NONE }}
+                              </td>
+                            </tr>
+                        {% endif %}
                       </tbody>
                     </table>
                 </div>
