@@ -33,7 +33,7 @@ switch($route->getRouteName())
         break;
     case 'information-hall-of-fame-round':
         $tab = "hall-of-fame";
-        $round = (int) $route->requestGetParam(4, array('min' => 0, 'max' => 1));
+        $round = (int) $route->requestGetParam(4, array('min' => 0, 'max' => 1)); // Increase max with total rounds
         $statistic = new StatisticService();
         $statistics = $statistic->getStatisticsPage($round);
         $hallOfFame = $statistic->getHallOfFamePage($round);

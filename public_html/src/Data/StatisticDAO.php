@@ -19,7 +19,7 @@ class StatisticDAO extends DBConfig
     private $dateFormat = "%d-%m-%y %H:%i:%s";
     private $phpDateFormat = "d-m-Y H:i:s";
     
-    public $roundStartDate = "2020-12-28 14:00:00";
+    public $roundStartDate = "2020-12-28 14:00:00"; // Fill with current round start date
     
     public function __construct()
     {
@@ -317,7 +317,7 @@ class StatisticDAO extends DBConfig
             SELECT `hofJson`, DATE_FORMAT(`startDate`, '".$this->dateFormat."' ) AS `sDate`, DATE_FORMAT(`endDate`, '".$this->dateFormat."' ) AS `eDate`
             FROM `round` WHERE `round`= :rnd AND `active`='1' AND `deleted`='0' LIMIT 1
         ", array(':rnd' => $round));
-        $hof = json_decode($row['hofJson']);
+        $hof = isset($row['hofJson']) && isJson($row['hofJson']) ? json_decode($row['hofJson']) : null;
         if(isset($hof) && is_object($hof))
         {
             $hof->startDate = $row['sDate'];
@@ -340,10 +340,10 @@ class StatisticDAO extends DBConfig
         if(is_int($round) || $round == 0)
         {
             $hof = $this->getHallOfFameJsonByRound($round);
-            $hofMembers = $hof->members;
-            $hofFamilies = $hof->families;
-            $startDate = $hof->startDate;
-            $endDate = $hof->endDate;
+            $hofMembers = isset($hof->members) ? $hof->members : false;
+            $hofFamilies = isset($hof->families) ? $hof->families : false;
+            $startDate = isset($hof->startDate) ? $hof->startDate : false;
+            $endDate = isset($hof->endDate) ? $hof->endDate : false;
         }
             
         return array('members' => $hofMembers, 'families' => $hofFamilies, 'startDate' => $startDate, 'endDate' => $endDate);
