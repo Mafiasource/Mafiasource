@@ -1,0 +1,52 @@
+<script type='text/javascript'>
+     var seconds{{ el }} = "{{ seconds }}";
+     var minutes{{ el }} = "{{ minutes }}";
+     var hours{{ el }} = "{{ hours }}";
+     var timeoutCHT{{ el }} = '';
+     function displayCHT{{ el }}()
+     {
+       var secTrail = '';
+       var minTrail = '';
+       var hourTrail = '';
+       if(seconds{{ el }} == 0)
+       {
+        if(minutes{{ el }} == 0)
+        {
+            hours{{ el }}=hours{{ el }}-1;
+            minutes{{ el }} = 60;
+        }
+        minutes{{ el }}=minutes{{ el }}-1;
+        seconds{{ el }} = 60;
+       }
+       seconds{{ el }}=seconds{{ el }}-1;
+       if(String(hours{{ el }}).length == 1)
+       {
+         hourTrail = '0';
+       }
+       if(String(minutes{{ el }}).length == 1)
+       {
+         minTrail = '0';
+       }
+       if(String(seconds{{ el }}).length == 1)
+       {
+         secTrail = '0';
+       }
+       if(seconds{{ el }} == 0 && minutes{{ el }} == 0 && hours{{ el }} == 0)
+       {
+          var countdown{{ el }} = document.all? document.all["c{{ el }}"] : document.getElementById ? document.getElementById ("c{{ el }}")
+          : "";
+          countdown{{ el }}.innerHTML = "{{ langs.NONE }}";
+       }
+       else
+       {
+        var countdown{{ el }} = document.all? document.all["c{{ el }}"] : document.getElementById ? document.getElementById ("c{{ el }}")
+        : "";
+        if (countdown{{ el }})
+        {
+            countdown{{ el }}.innerHTML=hourTrail+hours{{ el }} + ':' + minTrail + minutes{{ el }} + ':' + secTrail + seconds{{ el }};
+            timeoutCHT{{ el }} = setTimeout('displayCHT{{ el }}()',1000);
+        }
+       }
+     }  
+    displayCHT{{ el }}();
+</script>

@@ -1,0 +1,16 @@
+{% import "app/Resources/Views/macros/time.count.macro.twig" as time %}
+
+{% if el and diff %}
+    {% if not type %}
+        {% set type = '' %}
+    {% endif %}
+    {% if not costs %}
+        {% set costs = 'False' %}
+    {% endif %}
+    {% if not langs %}
+        {% set langs = 'False' %}
+    {% endif %}
+    {% if type in ['', 'A', 'C', 'PM'] %}
+        {{ time.count(el, diff, type, langs, costs) }}
+    {% endif %}
+{% endif %}

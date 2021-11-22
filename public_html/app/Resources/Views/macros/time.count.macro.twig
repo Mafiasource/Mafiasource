@@ -1,0 +1,45 @@
+{% macro count(el, diff, type='', langs='False', costs='False') %}
+<script type='text/javascript'>
+    var seconds{{ el }} = {{ diff }};
+    var timeoutC{{ type }}{{ el }} = '';
+    function displayC{{ type }}{{ el }}()
+    {
+        {% if type == 'PM' and costs %}
+            seconds{{ el }} = seconds{{ el }} - {{ costs }};
+        {% else %}
+            seconds{{ el }} = seconds{{ el }} - 1;
+        {% endif %}
+        if(seconds{{ el }} < 0)
+        {
+            var countdown{{ el }} = document.all? document.all["c{{ el }}"] : document.getElementById ? document.getElementById ("c{{ el }}")
+            : "";
+            {% if type == '' %}
+                countdown{{ el }}.innerHTML="{{ langs.NOW }}!";
+            {% elseif type == 'A' %}
+                countdown{{ el }}.innerHTML="";
+                var par = countdown{{ el }}.parentNode;
+                par.classList.add('active');
+            {% elseif type == 'C' or type == 'PM' %}
+                countdown{{ el }}.innerHTML="0";
+            {% endif %}
+        }
+        else
+        {
+            var countdown{{ el }} = document.all? document.all["c{{ el }}"] : document.getElementById ? document.getElementById ("c{{ el }}")
+            : "";
+            if (countdown{{ el }})
+            {
+                {% if type == '' %}
+                    countdown{{ el }}.innerHTML=seconds{{ el }}+'!';
+                {% elseif type == 'A' or type == 'C' %}
+                    countdown{{ el }}.innerHTML=seconds{{ el }};
+                {% elseif type == 'PM' %}
+                    countdown{{ el }}.innerHTML=number_format(seconds{{ el }}, 0, '', ',');
+                {% endif %}
+                timeoutC{{ type }}{{ el }} = setTimeout('displayC{{ type }}{{ el }}()',1000);
+            }
+        }
+    }
+    displayC{{ type }}{{ el }}();
+</script>
+{% endmacro count %}
