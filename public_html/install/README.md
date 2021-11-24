@@ -99,7 +99,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
     #127.0.0.1 www.static.domainname.ex
 ```
 3) Ready to install on a local non-secure environment at http://localhost/install or http://www.domainname.ex/install
-4) Server error persists? Edit /.htaccess and comment out all lines from 88 to 94 including, after installation.
+4) Server error persists? Edit /.htaccess and comment out all lines from 88 to 95 including, after installation.
 5) Still nothing? Maybe [500 or above server error persists](#p-500-or-above-server-error-persists) could help.
 
 ###### P) Successful installation but still a blank application like initially.
@@ -124,12 +124,13 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 ###### A) Will pop-up after a successful manual server installation but without a proper database connection.
 1) MySQL is not running on the configured web server. (Server side)
 2) The MySQL server database name and or database user and or password are incorrectly configured. (Server side)
-3) OPTIONAL Remote MySQL? Make sure your web server IP address is whitelisted if remote connections are restricted. (MySQL Server side)
-4) The provided database credentials in /../security.php are invalid. (Application side)
-5) Double check any connection restrictions that might have been set.
+3) MySQL database not added to the MySQL user with the minimal permissions: DELETE, SELECT, DROP, INSERT, UPDATE (Server side)
+4) OPTIONAL Remote MySQL? Make sure your web server IP address is whitelisted if remote connections are restricted. (MySQL Server side)
+5) The provided database credentials in /../security.php are invalid. (Application side)
+6) Double check any connection restrictions that might have been set.
 
 ###### P) 500 or above server error persists
-###### A) Not entirely sure yet as there could be a number of (still unknown) reaons
+###### A) Make sure the following requirements are met:
 - Missing resources can cause internal server error on strict configured web servers
 - Install any missing dependencies
 - Enable any missing extensions
