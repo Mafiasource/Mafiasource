@@ -74,8 +74,8 @@ class Crimes
         }
         $connection = new DBConfig();
         $donatorStatics = new DonatorStatics();
-        $d = $connection->getDataSR("SELECT `donatorID` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $uid));
-        $waitingTime = $donatorStatics->adjustWaitingTime($waitingTime, $d['donatorID']);
+        $d = $connection->getDataSR("SELECT `donatorID`, `cHalvingTimes` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $uid));
+        $waitingTime = $donatorStatics->adjustWaitingTime($waitingTime, $d['donatorID'], $d['cHalvingTimes']);
         $connection->setData("
             UPDATE `user`
             SET `cash`=`cash` + :money, `crimesProfit`=`crimesProfit`+ :money, `crimesSuccess`=`crimesSuccess`+'1',
@@ -99,8 +99,8 @@ class Crimes
         }
         $connection = new DBConfig();
         $donatorStatics = new DonatorStatics();
-        $d = $connection->getDataSR("SELECT `donatorID` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $uid));
-        $waitingTime = $donatorStatics->adjustWaitingTime($waitingTime, $d['donatorID']);
+        $d = $connection->getDataSR("SELECT `donatorID`, `cHalvingTimes` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $uid));
+        $waitingTime = $donatorStatics->adjustWaitingTime($waitingTime, $d['donatorID'], $d['cHalvingTimes']);
         $connection->setData("
             UPDATE `user`
             SET `crimesFail`=`crimesFail`+'1', `cCrimes` = :wait ".$addSet."

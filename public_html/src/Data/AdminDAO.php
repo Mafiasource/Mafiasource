@@ -822,7 +822,7 @@ class AdminDAO extends DBConfig
                 `cash`='2500', `bank`='10000', `swissBank`='0', `swissBankMax`='100000000', `prisonBusts`='0', `honorPoints`='0', `whoresStreet`='0', `kills`='0', `deaths`='0', `headshots`='0',
                 `bullets`='10', `weapon`='0', `protection`='0', `airplane`='0', `weaponExperience`='0', `weaponTraining`='0', `residence`='0', `residenceHistory`='', `power`='0', `cardio`='0',
                 `gymCompetitionWin`='0', `gymCompetitionLoss`='0', `gymProfit`='0', `gymScorePointsEarned`='0', `daily1Amount`='0', `daily2Amount`='0', `daily3Amount`='0', `dailyCompletedDays`='1',
-                `luckybox`='0', `credits`='0', `creditsWon`='0',
+                `luckybox`='0', `credits`='0', `creditsWon`='0', `cHalvingTimes`='0', `cBribingPolice`='0',
                 `crimesLv`='1', `crimesXp`='0,00', `crimesProfit`='0', `crimesSuccess`='0', `crimesFail`='0', `crimesRankpoints`='0',
                 `vehiclesLv`='1', `vehiclesXp`='0,00', `vehiclesProfit`='0', `vehiclesSuccess`='0', `vehiclesFail`='0', `vehiclesRankpoints`='0',
                 `pimpLv`='1', `pimpXp`='0,00', `pimpProfit`='0', `pimpAttempts`='0', `pimpAmount`='0',

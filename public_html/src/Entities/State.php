@@ -9,6 +9,8 @@ class State
     private $id;
     private $name;
     
+    private $cities;
+    
    	public function getId(){
 		return $this->id;
 	}
@@ -23,5 +25,13 @@ class State
 
 	public function setName($name){
 		$this->name = $name;
+	}
+    
+    public function getCities(){
+		return $this->cities;
+	}
+
+	public function setCities($cities){
+		$this->cities = $cities;
 	}
 }

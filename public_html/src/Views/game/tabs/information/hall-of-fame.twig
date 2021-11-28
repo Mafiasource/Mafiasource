@@ -5,6 +5,7 @@
         <div id="ajaxLoader"></div>
         <h2 class="center">{{ langs. VIEWING_ROUND_FROM }}:
             <select name='round' onChange="document.location='{{ routing.getRouteByRouteName('information-hall-of-fame') }}' + this.value">
+                <option value="">{{ langs.MAKE_A_CHOICE }}</option>
                 {% for r in rounds %}
                     <option value="/{{ r.getRound }}"{% if r.getRound == round %} selected="selected"{% endif %}>{{ r.getRoundName|capitalize }}</option>
                 {% endfor %}
@@ -28,12 +29,8 @@
                         {% for member in hof.members %}
                         <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
                           <td scope="row" style="vertical-align: middle;" class="center">
-                            {% if loop.index == 1 %}
-                                <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_gold_1.png" class="icon" alt="{{ langs.FIRST_PLACE }}"/>
-                            {% elseif loop.index == 2 %}
-                                <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_silver_1.png" class="icon" alt="{{ langs.SECOND_PLACE }}"/>
-                            {% elseif loop.index == 3 %}
-                                <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_bronze_1.png" class="icon" alt="{{ langs.THIRD_PLACE }}"/>
+                            {% if loop.index >= 1 and loop.index <= 3 %}
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_{% if loop.index == 1 %}gold{% elseif loop.index == 2 %}silver{% elseif loop.index == 3 %}bronze{% endif %}_1.png" class="icon" alt="{% if loop.index == 1 %}{{ langs.FIRST_PLACE }}{% elseif loop.index == 2 %}{{ langs.SECOND_PLACE }}{% elseif loop.index == 3 %}{{ langs.THIRD_PLACE }}{% endif %}"/>
                             {% else %}
                                 {{ loop.index }}
                             {% endif %}
@@ -72,12 +69,8 @@
                             {% for fam in hof.families %}
                                 <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
                                   <td scope="row" class="center">
-                                    {% if loop.index == 1 %}
-                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_gold_1.png" class="icon" alt="{{ langs.FIRST_PLACE }}"/>
-                                    {% elseif loop.index == 2 %}
-                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_silver_1.png" class="icon" alt="{{ langs.SECOND_PLACE }}"/>
-                                    {% elseif loop.index == 3 %}
-                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_bronze_1.png" class="icon" alt="{{ langs.THIRD_PLACE }}"/>
+                                    {% if loop.index >= 1 and loop.index <= 3 %}
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/award_star_{% if loop.index == 1 %}gold{% elseif loop.index == 2 %}silver{% elseif loop.index == 3 %}bronze{% endif %}_1.png" class="icon" alt="{% if loop.index == 1 %}{{ langs.FIRST_PLACE }}{% elseif loop.index == 2 %}{{ langs.SECOND_PLACE }}{% elseif loop.index == 3 %}{{ langs.THIRD_PLACE }}{% endif %}"/>
                                     {% else %}
                                         {{ loop.index }}
                                     {% endif %}

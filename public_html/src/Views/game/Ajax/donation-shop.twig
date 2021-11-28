@@ -8,70 +8,112 @@
         {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
     </div>
 {% endif %}
-<form class="ajaxForm row cols cf" action="{{ routing.getAjaxRouteByRouteName('interact-donation-shop') }}" method="POST" data-response="#interactShopResponse">
-    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-    <div class="c-50 column center">
-        {% if userData.getDonatorID == 0 %}
-        <figure>
-          <img src="{{ staticRoot }}/foto/web/public/images/donator/{% if lang == 'nl' %}donateur{% else %}donator{% endif %}.png" alt="Donator" width="249" height="76"/>
-          <figcaption>
-            {{ crIcon|raw }} 100 <input type="submit" name="donator" value="{{ langs.BUY }}"/>
-          </figcaption>
-        </figure>
-        {% endif %}
-        {% if userData.getDonatorID < 5 %}
-        <figure>
-          <img src="{{ staticRoot }}/foto/web/public/images/donator/vip.png" alt="VIP" width="249" height="76"/>
-          <figcaption>
-            {% set creditsVIP = 500 - (userData.getDonatorID * 100) %}
-            {{ crIcon|raw }} {{ creditsVIP|valueFormat }} <input type="submit" name="vip" value="{{ langs.BUY }}"/>
-          </figcaption>
-        </figure>
-        {% endif %}
-        <figure>
-          <img src="{{ staticRoot }}/foto/web/public/images/donator/gold-member.png" alt="Gold Member" width="249" height="76"/>
-          <figcaption>
-            {% if userData.getDonatorID == 10 %}
-                <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/> {{ langs.ACHIEVED_HIGHEST_STATUS }}
-            {% elseif userData.getDonatorID == 0 %} {# Korting #}
-                <small>{{ langs.PROFIT_DISCOUNT }}</small><br />
-                {{ crIcon|raw }}&nbsp;<s>1,500</s> 1,250
-            {% else %}
-                {% set creditsGoldMember = 1500 - (userData.getDonatorID * 100) %}
-                {{ crIcon|raw }} {{ creditsGoldMember|valueFormat }}
+<form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-donation-shop') }}" method="POST" data-response="#interactShopResponse">
+    <div class="row cols cf">
+        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+        <div class="c-50 column center">
+            {% if userData.getDonatorID == 0 %}
+            <figure>
+              <img src="{{ staticRoot }}/foto/web/public/images/donator/{% if lang == 'nl' %}donateur{% else %}donator{% endif %}.png" alt="Donator" width="249" height="76"/>
+              <figcaption>
+                {{ crIcon|raw }} 100 <input type="submit" name="donator" value="{{ langs.BUY }}"/>
+              </figcaption>
+            </figure>
             {% endif %}
-            {% if userData.getDonatorID < 10 %}
-                &nbsp;<input type="submit" name="gold-member" value="{{ langs.BUY }}"/>
+            {% if userData.getDonatorID < 5 %}
+            <figure>
+              <img src="{{ staticRoot }}/foto/web/public/images/donator/vip.png" alt="VIP" width="249" height="76"/>
+              <figcaption>
+                {% set creditsVIP = 500 - (userData.getDonatorID * 100) %}
+                {{ crIcon|raw }} {{ creditsVIP|valueFormat }} <input type="submit" name="vip" value="{{ langs.BUY }}"/>
+              </figcaption>
+            </figure>
             {% endif %}
-          </figcaption>
-        </figure>
-        <figure>
-          <img src="{{ staticRoot }}/foto/web/public/images/donator/luckybox.png" alt="Luckybox" width="249" height="76"/>
-          <figcaption>
-            {% if userData.getId %} {# Korting #}
-                <small><s>15</s> {{ luckyboxAmnt }} {{ langs.BOXES }}</small><br />
-                {{ crIcon|raw }}&nbsp;<s>300</s> {{ luckyboxCr }}
-            {% else %}
-                <small>15 {{ langs.BOXES }}</small><br />
-                {{ crIcon|raw }}&nbsp; 300
-            {% endif %}
-                &nbsp;<input type="submit" name="luckybox" value="{{ langs.BUY }}"/>
-          </figcaption>
-        </figure>
+            <figure>
+              <img src="{{ staticRoot }}/foto/web/public/images/donator/gold-member.png" alt="Gold Member" width="249" height="76"/>
+              <figcaption>
+                {% if userData.getDonatorID == 10 %}
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/> {{ langs.ACHIEVED_HIGHEST_STATUS }}
+                {% elseif userData.getDonatorID == 0 %} {# Korting #}
+                    <small>{{ langs.PROFIT_DISCOUNT }}</small><br />
+                    {{ crIcon|raw }}&nbsp;<s>1,500</s> 1,250
+                {% else %}
+                    {% set creditsGoldMember = 1500 - (userData.getDonatorID * 100) %}
+                    {{ crIcon|raw }} {{ creditsGoldMember|valueFormat }}
+                {% endif %}
+                {% if userData.getDonatorID < 10 %}
+                    &nbsp;<input type="submit" name="gold-member" value="{{ langs.BUY }}"/>
+                {% endif %}
+              </figcaption>
+            </figure>
+            {#
+            <figure>
+              <img src="{{ staticRoot }}/foto/web/public/images/donator/luckybox.png" alt="Luckybox" width="249" height="76"/>
+              <figcaption>
+                {% if userData.getId %} { # Korting # }
+                    <small><s>15</s> {{ luckyboxAmnt }} {{ langs.BOXES }}</small><br />
+                    {{ crIcon|raw }}&nbsp;<s>300</s> {{ luckyboxCr }}
+                {% else %}
+                    <small>15 {{ langs.BOXES }}</small><br />
+                    {{ crIcon|raw }}&nbsp; 300
+                {% endif %}
+                    &nbsp;<input type="submit" name="luckybox" value="{{ langs.BUY }}"/>
+              </figcaption>
+            </figure>
+            #}
+        </div>
+        <div class="c-50 column center">
+            <figure>
+              <img src="{{ staticRoot }}/foto/web/public/images/donator/vip-{{ langs.FAMILY|lower }}.png" alt="VIP {{ langs.FAMILY }}" width="249" height="76"/>
+              <figcaption>
+                {% if familyData.getVip %}
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/> {{ langs.FAMILY_IS_VIP }}
+                {% else %}
+                    {{ crIcon|raw }} 500 <input type="submit" name="vip-family" value="{{ langs.BUY }}"/>
+                {% endif %}
+              </figcaption>
+            </figure>
+        </div>
     </div>
-    <div class="c-50 column center">
-        <figure>
-          <img src="{{ staticRoot }}/foto/web/public/images/donator/vip-{{ langs.FAMILY|lower }}.png" alt="VIP {{ langs.FAMILY }}" width="249" height="76"/>
-          <figcaption>
-            {% if familyData.getVip %}
-                <img src="{{ staticRoot }}/foto/web/public/images/icons/tick.png" class="icon" alt="{{ langs.IN_POSSESSION }}"/> {{ langs.FAMILY_IS_VIP }}
-            {% else %}
-                {{ crIcon|raw }} 500 <input type="submit" name="vip-family" value="{{ langs.BUY }}"/>
-            {% endif %}
-          </figcaption>
-        </figure>
+    <div class="row center">
+        {{ langs.DONATION_SHOP_INFO|raw }}
+    </div>
+    <div class="row cols cf">
+        <div class="c-100 column">
+            <div style="max-width: 520px;margin: 0 auto;">
+                <div class="table-reponsive">
+                    <table class="table table-sm table-dark table-bordered">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="center">Item</th>
+                          <th scope="col" class="center">Credits</th>
+                          <th scope="col" class="center">{{ langs.BUY }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><s>15x</s> {{ luckyboxAmnt }}x  Luckybox</td>
+                          <td class="center">{{ crIcon|raw }}&nbsp;<s>300</s> {{ luckyboxCr }}</td>
+                          <td class="center"><input type="submit" name="luckybox" value="{{ langs.BUY }}" /></td>
+                        </tr>
+                        {% if userData.getCHalvingTimes < date().timestamp %}
+                            <tr>
+                              <td>{{ langs.HALVING_TIMES }}</td>
+                              <td class="center">{{ crIcon|raw }} 250</td>
+                              <td class="center"><input type="submit" name="halving-times" value="{{ langs.BUY }}" /></td>
+                            </tr>
+                        {% endif %}
+                        {% if userData.getCBribingPolice < date().timestamp %}
+                            <tr>
+                              <td>{{ langs.BRIBING_BORDER_PATROL }}</td>
+                              <td class="center">{{ crIcon|raw }} {% if userData.getCharType == 6 %}110{% else %}150{% endif %}</td>
+                              <td class="center"><input type="submit" name="bribing-police" value="{{ langs.BUY }}"/></td>
+                            </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </form>
-<div class="row center">
-    {{ langs.DONATION_SHOP_INFO|raw }}
-</div>

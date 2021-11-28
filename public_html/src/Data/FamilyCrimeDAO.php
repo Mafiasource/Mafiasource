@@ -252,9 +252,9 @@ class FamilyCrimeDAO extends DBConfig
     { // Successful crime? Also add 3 honorpoints.
         if(isset($_SESSION['UID'])  && $this->familyID != 0)
         {
-            $d = $this->con->getDataSR("SELECT `donatorID` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $uid));
+            $d = $this->con->getDataSR("SELECT `donatorID`, `cHalvingTimes` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $uid));
             $donatorService = new DonatorService();
-            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $d['donatorID']);
+            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $d['donatorID'], $d['cHalvingTimes']);
             if($success === true)
                 $this->con->setData("
                     UPDATE `user` SET `cFamilyCrimes`= :time, `honorPoints`=`honorPoints`+ :hp WHERE `id`= :uid AND `active`='1' AND `deleted`='0'

@@ -47,7 +47,7 @@
                         </div>
                         {% if item.getDescription %}
                             <div class="row">
-                                <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" class="icon" alt="Help"/> {{ item.getDescription|capitalize }}
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" class="icon" alt="Help"/> {{ item.getDescription|raw }}
                             </div>
                         {% endif %}
                         <div class="row">

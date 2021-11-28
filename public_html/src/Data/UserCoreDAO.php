@@ -92,12 +92,12 @@ class UserCoreDAO extends DBConfig
                 SELECT  u.`id`, u.`username`, u.`lastclick`, u.`charType`, b.`profession_".$this->lang."` AS `profession`, u.`statusID`, st.`status_".$this->lang."` AS `status`,
                         u.`donatorID`, u.`honorPoints`, u.`credits`, d.`donator_".$this->lang."` AS `donator`, u.`familyID`, f.`name` AS `family`, f.`bossUID`, f.`underbossUID`,
                         f.`bankmanagerUID`, f.`forummodUID`, u.`stateID`, s.`name` AS `state`, u.`cityID`, u.`rankpoints`, u.`cash`, u.`bank`, u.`health`, u.`luckybox`,
-                        u.`cCrimes`, u.`cWeaponTraining`, u.`cGymTraining`, u.`cStealVehicles`, u.`cPimpWhores`, u.`cFamilyRaid`, u.`cFamilyCrimes`, u.`cBombardement`, u.`cTravelTime`,
-                        u.`avatar`, (SELECT COUNT(id) FROM `message` WHERE `receiverID`=u.`id` AND `read`= '0' AND `active`='1' AND `deleted`='0') AS `messagesCount`,
+                        u.`cHalvingTimes`, u.`cBribingPolice`, u.`cCrimes`, u.`cWeaponTraining`, u.`cGymTraining`, u.`cStealVehicles`, u.`cPimpWhores`, u.`cFamilyRaid`,
+                        u.`cFamilyCrimes`, u.`cBombardement`, u.`cTravelTime`, u.`avatar`, u.`lang`, u.`kills`, u.`whoresStreet`, u.`restartDate`, u.`isProtected`,
+                        c.`name` AS `city`, u.`cPimpWhoresFor`, u.`lrsID_".$this->lang."` AS `lrsID`, u.`lrfsID_".$this->lang."` AS `lrfsID`,
+                        (SELECT COUNT(id) FROM `message` WHERE `receiverID`=u.`id` AND `read`= '0' AND `active`='1' AND `deleted`='0') AS `messagesCount`,
                         (SELECT COUNT(id) FROM `notification` WHERE `userID`=u.`id` AND `read`= '0') AS `notificationsCount`, u.`weaponTraining`,
-                        c.`name` AS `city`, u.`cPimpWhoresFor`, (SELECT `time` FROM `prison` WHERE `userID`= u.`id`) AS `prisonTime`, u.`lrsID_".$this->lang."` AS `lrsID`,
-                        u.`lrfsID_".$this->lang."` AS `lrfsID`, u.`lang`, u.`kills`, u.`whoresStreet`, u.`restartDate`, u.`isProtected`,
-                        (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`
+                        (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, (SELECT `time` FROM `prison` WHERE `userID`= u.`id`) AS `prisonTime`
                 FROM `user` AS u
                 LEFT JOIN `state` AS s
                 ON (u.stateID=s.id)
@@ -180,6 +180,8 @@ class UserCoreDAO extends DBConfig
                 $userObj->setLuckybox($row['luckybox']);
                 $userObj->setLastReadShoutboxID($row['lrsID']);
                 $userObj->setLastReadFamilyShoutboxID($row['lrfsID']);
+                $userObj->setCHalvingTimes($row['cHalvingTimes']);
+                $userObj->setCBribingPolice($row['cBribingPolice']);
                 $userObj->setCCrimes($row['cCrimes']);
                 $userObj->setCWeaponTraining($row['cWeaponTraining']);
                 $userObj->setCGymTraining($row['cGymTraining']);

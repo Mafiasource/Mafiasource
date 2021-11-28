@@ -108,8 +108,8 @@ array(
     'travel-state-select'
     =>
     array(
-        'route' => '/game/travel/state-select',
-        'controller' => 'Ajax/travel.state.select.php'
+        'route' => '/game/travel/city-select',
+        'controller' => 'Ajax/travel.city.select.php'
     ),
     
     'travel'

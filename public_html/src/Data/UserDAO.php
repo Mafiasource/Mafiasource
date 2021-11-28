@@ -1285,7 +1285,7 @@ class UserDAO extends DBConfig
         {
             global $userData;
             $donatorService = new DonatorService();
-            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
             $this->con->setData("
                 UPDATE `user` SET `power`=`power`+ :p, `cardio`=`cardio`+ :c, `cGymTraining`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0'
             ", array(':p' => $stats['power'], ':c' => $stats['cardio'], ':time' => (time() + $waitingTime), ':uid' => $_SESSION['UID']));

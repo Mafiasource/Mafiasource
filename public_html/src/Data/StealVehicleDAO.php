@@ -136,7 +136,7 @@ class StealVehicleDAO extends DBConfig
             global $userData;            
             $waitingTime = 120;
             $donatorService = new DonatorService();
-            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
             $statement = $this->dbh->prepare("
                 UPDATE `user`
                 SET `vehiclesProfit`=`vehiclesProfit`+ :sv, `vehiclesSuccess`=`vehiclesSuccess`+'1',
@@ -156,7 +156,7 @@ class StealVehicleDAO extends DBConfig
             global $userData;            
             $waitingTime = 120;
             $donatorService = new DonatorService();
-            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
             $statement = $this->dbh->prepare("
                 UPDATE `user`
                 SET `vehiclesFail`=`vehiclesFail`+'1', `cStealVehicles` = :wait

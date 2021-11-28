@@ -914,6 +914,10 @@ class GetLanguageContent
             'BOUGHT_STATUS_SUCCESS' => "You bought a {status} status for {credits} credits!",
             'BOUGHT_FAMILY_VIP_SUCCESS' => "You bought a VIP family status for 500 credits!",
             'BOUGHT_LUCKYBOX_SUCCESS' => "You bought {boxes} boxes for {credits} credits!",
+            'HALVING_TIMES' => "Halving waiting times for 12 hours",
+            'BOUGHT_HALVING_TIMES_SUCCESS' => "You spent 250 credits to halve your waiting times for 12 hours starting from now.",
+            'BRIBING_BORDER_PATROL' => "Bribe border patrol for 8 hours",
+            'BOUGHT_BRIBING_POLICE_SUCCESS' => "You handed over {credits} credits to the border patrol to be able to smuggle for 8 hours without being caught.",
         );
         return $langs;
     }

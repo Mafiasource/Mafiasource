@@ -1,0 +1,5 @@
+{% if routeNotPossible %}
+    <span><img src="{{ staticRoot }}/web/public/images/icons/cross.png" class="icon" alt="Error"/>&nbsp;{{ langs.ROUTE_NOT_POSSIBLE|raw }}</span>
+{% else %}
+    <span><img src="{{ staticRoot }}/web/public/images/icons/help.png" class="icon" alt="Help"/>&nbsp;<strong>{{ city }}</strong> {{ langs.COSTS }}: {{ price|moneyFormat }}</span>
+{% endif %}

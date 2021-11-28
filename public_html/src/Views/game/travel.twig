@@ -39,12 +39,12 @@
 <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
 <script type="text/javascript">
     $("select[name=cityID]").on('change', function(){
-        var val = $("select[name=cityID] option:selected").text();
+        var val = $("select[name=cityID] option:selected").val();
         $.ajax(
         {
         	url : "{{ routing.getAjaxRouteByRouteName('travel-state-select') }}",
         	type: "POST",
-        	data : {fromCity:'{{ userData.getCity }}',toCity: val, type: '{{ tab }}'},
+        	data : {fromCity:'{{ userData.getCityID }}',toCity: val, type: '{{ tab }}'},
         	success:function(data, textStatus, jqXHR) 
         	{
         	  $("#priceResponse").html(data);

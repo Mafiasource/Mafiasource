@@ -53,6 +53,8 @@ class DonatorService extends DonatorStatics
         $goldMember = isset($post['gold-member']) ? true : null;
         $vipFamily = isset($post['vip-family']) ? true : null;
         $luckybox = isset($post['luckybox']) ? true : null;
+        $halvingTimes = isset($post['halving-times']) ? true : null;
+        $bribingPolice = isset($post['bribing-police']) ? true : null;
         
         $familyData = $family->getFamilyDataByName($userData->getFamily());
         if(is_object($familyData)) $familyVip = $familyData->getVip();
@@ -76,6 +78,12 @@ class DonatorService extends DonatorStatics
             $creditsNeeded = 500;
         elseif(isset($luckybox))
             $creditsNeeded = $this->luckyboxCr;
+        elseif(isset($halvingTimes))
+            $creditsNeeded = 250;
+        elseif(isset($bribingPolice) && $userData->getCharType() == 6)
+            $creditsNeeded = 110;
+        elseif(isset($bribingPolice) && $userData->getCharType() != 6)
+            $creditsNeeded = 150;
         
         if(isset($donator) || isset($vip) || isset($goldMember) || isset($vipFamily))
         {
@@ -101,6 +109,8 @@ class DonatorService extends DonatorStatics
             }
             $hasFamilyStatus = isset($familyVip) && $familyVip == true && isset($vipFamily) ? true : false;
         }
+        elseif((isset($halvingTimes) && $userData->getCHalvingTimes() > time()) || (isset($bribingPolice) && $userData->getCBribingPolice() > time()))
+            $hasStatus = true;
 
         if($security->checkToken($post['security-token']) == FALSE)
         {
@@ -154,6 +164,18 @@ class DonatorService extends DonatorStatics
                     array('part' => number_format($creditsNeeded, 0, '', ','), 'message' => FALSE, 'pattern' => '/{credits}/')
                 );
                 $replacedMessage = $route->replaceMessageParts($replaces);
+            }
+            elseif($halvingTimes)
+            {
+                $this->data->buyHalvingTimes($creditsNeeded);
+                
+                $replacedMessage = $l['BOUGHT_HALVING_TIMES_SUCCESS'];
+            }
+            elseif($bribingPolice)
+            {
+                $this->data->buyBribingPolice($creditsNeeded);
+                
+                $replacedMessage = $route->replaceMessagePart(number_format($creditsNeeded, 0, '', ','), $l['BOUGHT_BRIBING_POLICE_SUCCESS'], '/{credits}/');
             }
             
             return Routing::successMessage($replacedMessage);

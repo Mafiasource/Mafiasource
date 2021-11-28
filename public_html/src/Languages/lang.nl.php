@@ -914,6 +914,10 @@ class GetLanguageContent
             'BOUGHT_STATUS_SUCCESS' => "Je hebt een {status} status aangekocht voor {credits} credits!",
             'BOUGHT_FAMILY_VIP_SUCCESS' => "Je hebt een VIP familie status aangekocht voor 500 credits!",
             'BOUGHT_LUCKYBOX_SUCCESS' => "Je hebt {boxes} boxen gekocht voor {credits} credits!",
+            'HALVING_TIMES' => "Wachttijden halveren voor 12 uur",
+            'BOUGHT_HALVING_TIMES_SUCCESS' => "Je hebt 250 credits uitgegeven om vanaf nu uw wachttijden voor 12 uur te halveren.",
+            'BRIBING_BORDER_PATROL' => "Douane omkopen voor 8 uur",
+            'BOUGHT_BRIBING_POLICE_SUCCESS' => "Je gaf {credits} credits aan de douane om 8 uur lang te kunnen smokkelen zonder gepakt te worden.",
         );
         return $langs;
     }

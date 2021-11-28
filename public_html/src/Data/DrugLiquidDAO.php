@@ -93,7 +93,7 @@ class DrugLiquidDAO extends DBConfig
             global $userData;
             $waitingTime = 600;
             $donatorService = new DonatorService();
-            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
             $extraQueries = "";
             $price = 0;
             for($i = 1; $i <= $count; $i++)

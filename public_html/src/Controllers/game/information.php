@@ -25,15 +25,12 @@ switch($route->getRouteName())
         $tab = "team-members";
         break;
     case 'information-hall-of-fame':
-        $tab = "hall-of-fame";
-        $statistic = new StatisticService();
-        $statistics = $statistic->getStatisticsPage();
-        $hallOfFame = $statistic->getHallOfFamePage();
-        $rounds = $statistic->getHallOfFameRounds();
-        break;
     case 'information-hall-of-fame-round':
         $tab = "hall-of-fame";
-        $round = (int) $route->requestGetParam(4, array('min' => 0, 'max' => 1)); // Increase max with total rounds
+        $round = "";
+        if($route->getRouteName() == "information-hall-of-fame-round")
+            $round = (int) $route->requestGetParam(4, array('min' => 0, 'max' => 1)); // Increase max with total rounds
+        
         $statistic = new StatisticService();
         $statistics = $statistic->getStatisticsPage($round);
         $hallOfFame = $statistic->getHallOfFamePage($round);

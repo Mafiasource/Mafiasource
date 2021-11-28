@@ -223,7 +223,7 @@ class GroundDAO extends DBConfig
                 global $userData;
                 $waitingTime = 60*60*24;
                 $donatorService = new DonatorService();
-                $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+                $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
                 $this->con->setData("
                     UPDATE `ground`
                     SET `building".$building->getId()."`=`building".$building->getId()."`+'1', `cBuilding".$building->getId()."`= :buildTime
@@ -246,7 +246,7 @@ class GroundDAO extends DBConfig
                 global $userData;
                 $waitingTime = 900;
                 $donatorService = new DonatorService();
-                $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+                $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
                 if($success == TRUE)
                 {
                     $this->con->setData("

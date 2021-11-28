@@ -523,7 +523,7 @@ class MurderDAO extends DBConfig
             global $userService;
             $waitingTime = 300;
             $donatorService = new DonatorService();
-            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
             
             $p = $security->randInt(1, 3);
             if(($userService->getStatusPageInfo()->getWeaponTraining() + $p) >= 100)

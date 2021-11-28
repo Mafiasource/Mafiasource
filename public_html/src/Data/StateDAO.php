@@ -28,25 +28,38 @@ class StateDAO extends DBConfig
     
     public function getStates()
     {
-
-
-        global  $userSession;
-
-        if( !$userSession)
-        return array();
-
-            $statement = $this->dbh->prepare("SELECT `id`, `name` FROM `state` WHERE `active`='1' AND `deleted`='0' ORDER BY `position` ASC");
-            $statement->execute();
-            $list = array();
-            foreach($statement AS $row)
-            {
-                $state = new State();
-                $state->setId($row['id']);
-                $state->setName($row['name']);
-                array_push($list, $state);
-            }
-            return $list;
-       
+        global $userData;
+        
+        $statement = $this->dbh->prepare("SELECT `id`, `name` FROM `state` WHERE `active`='1' AND `deleted`='0' ORDER BY `position` ASC");
+        $statement->execute();
+        $list = array();
+        foreach($statement AS $row)
+        {
+            $state = new State();
+            $state->setId($row['id']);
+            $state->setName($row['name']);
+            $cities = $this->getCitiesInStateButHomeCity($state->getId(), $userData->getCityID());
+            $state->setCities($cities);
+            
+            array_push($list, $state);
+        }
+        return $list;
+    }
+    
+    public function getCitiesInStateButHomeCity($stateID, $cityID)
+    {
+        $statement = $this->dbh->prepare("SELECT `id`, `stateID`, `name` FROM `city` WHERE `stateID`= :stateID AND `active`='1' AND `deleted`='0' AND `id`!= :cityID ORDER BY `position` ASC");
+        $statement->execute(array(':stateID' => $stateID, ':cityID' => $cityID));
+        $list = array();
+        foreach($statement AS $row)
+        {
+            $city = new City();
+            $city->setId($row['id']);
+            $city->setStateID($row['stateID']);
+            $city->setName($row['name']);
+            array_push($list, $city);
+        }
+        return $list;
     }
     
     public function getCitiesButHomeCity($cityID)

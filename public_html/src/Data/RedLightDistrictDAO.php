@@ -96,7 +96,7 @@ class RedLightDistrictDAO extends DBConfig
             global $userData;
             $waitingTime = 300;
             $donatorService = new DonatorService();
-            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID());
+            $waitingTime = $donatorService->adjustWaitingTime($waitingTime, $userData->getDonatorID(), $userData->getCHalvingTimes());
             if($who == FALSE)
             {
                 $uid = $_SESSION['UID'];

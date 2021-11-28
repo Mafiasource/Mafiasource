@@ -303,25 +303,15 @@ class FamilyRaidDAO extends DBConfig
     {
         if(isset($_SESSION['UID']) && $this->familyID != 0)
         {
-            $waitingTime = 720;
-            $donatorService = new DonatorService();
-            $participantQry  = "SELECT `donatorID` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1";
-            $dL = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getLeaderID()));
-            $dD = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getDriverID()));
-            $dB = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getBombExpertID()));
-            $dW = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getWeaponExpertID()));
-            $waitingTimeL = $donatorService->adjustWaitingTime($waitingTime, $dL['donatorID']);
-            $waitingTimeD = $donatorService->adjustWaitingTime($waitingTime, $dD['donatorID']);
-            $waitingTimeB = $donatorService->adjustWaitingTime($waitingTime, $dB['donatorID']);
-            $waitingTimeW = $donatorService->adjustWaitingTime($waitingTime, $dW['donatorID']);
             $params = array(
                 ':priceEach' => $priceEach, ':uid' => $_SESSION['UID'], ':fid' => $this->familyID, ':did' => $familyRaid->getDriverID(),
                 ':bid' => $familyRaid->getBombExpertID(), ':wid' => $familyRaid->getWeaponExpertID(), ':frid' => $familyRaid->getId()
             );
-            $params[':timeL'] =  (time() + $waitingTimeL);
-            $params[':timeD'] =  (time() + $waitingTimeD);
-            $params[':timeB'] =  (time() + $waitingTimeB);
-            $params[':timeW'] =  (time() + $waitingTimeW);
+            $waitingTimes = $this->getWaitingTimes($familyRaid);
+            $params[':timeL'] =  (time() + $waitingTimes['L']);
+            $params[':timeD'] =  (time() + $waitingTimes['D']);
+            $params[':timeB'] =  (time() + $waitingTimes['B']);
+            $params[':timeW'] =  (time() + $waitingTimes['W']);
             $this->con->setData("
                 UPDATE `user` SET `bank`=`bank`+ :priceEach, `rankpoints`=`rankpoints`+'3', `cFamilyRaid`= :timeL WHERE `id`= :uid AND `familyID`= :fid AND `active`='1' AND `deleted`='0';
                 UPDATE `user` SET `bank`=`bank`+ :priceEach, `rankpoints`=`rankpoints`+'3', `cFamilyRaid`= :timeD WHERE `id`= :did AND `familyID`= :fid AND `active`='1' AND `deleted`='0';
@@ -336,25 +326,15 @@ class FamilyRaidDAO extends DBConfig
     {
         if(isset($_SESSION['UID']) && $this->familyID != 0)
         {
-            $waitingTime = 720;
-            $donatorService = new DonatorService();
-            $participantQry  = "SELECT `donatorID` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1";
-            $dL = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getLeaderID()));
-            $dD = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getDriverID()));
-            $dB = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getBombExpertID()));
-            $dW = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getWeaponExpertID()));
-            $waitingTimeL = $donatorService->adjustWaitingTime($waitingTime, $dL['donatorID']);
-            $waitingTimeD = $donatorService->adjustWaitingTime($waitingTime, $dD['donatorID']);
-            $waitingTimeB = $donatorService->adjustWaitingTime($waitingTime, $dB['donatorID']);
-            $waitingTimeW = $donatorService->adjustWaitingTime($waitingTime, $dW['donatorID']);
             $params = array(
                 ':uid' => $_SESSION['UID'], ':fid' => $this->familyID, ':did' => $familyRaid->getDriverID(),
                 ':bid' => $familyRaid->getBombExpertID(), ':wid' => $familyRaid->getWeaponExpertID(), ':frid' => $familyRaid->getId()
             );
-            $params[':timeL'] =  (time() + $waitingTimeL);
-            $params[':timeD'] =  (time() + $waitingTimeD);
-            $params[':timeB'] =  (time() + $waitingTimeB);
-            $params[':timeW'] =  (time() + $waitingTimeW);
+            $waitingTimes = $this->getWaitingTimes($familyRaid);
+            $params[':timeL'] =  (time() + $waitingTimes['L']);
+            $params[':timeD'] =  (time() + $waitingTimes['D']);
+            $params[':timeB'] =  (time() + $waitingTimes['B']);
+            $params[':timeW'] =  (time() + $waitingTimes['W']);
             $this->con->setData("
                 UPDATE `user` SET `cFamilyRaid`= :timeL WHERE `id`= :uid AND `familyID`= :fid AND `active`='1' AND `deleted`='0';
                 UPDATE `user` SET `cFamilyRaid`= :timeD WHERE `id`= :did AND `familyID`= :fid AND `active`='1' AND `deleted`='0';
@@ -363,5 +343,22 @@ class FamilyRaidDAO extends DBConfig
                 DELETE FROM `family_raid` WHERE `id`= :frid AND `leaderID`= :uid
             ", $params);
         }
+    }
+    
+    public function getWaitingTimes($familyRaid)
+    {
+        $waitingTime = 720;
+        $donatorService = new DonatorService();
+        $participantQry  = "SELECT `donatorID`, `cHalvingTimes` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1";
+        $dL = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getLeaderID()));
+        $dD = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getDriverID()));
+        $dB = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getBombExpertID()));
+        $dW = $this->con->getDataSR($participantQry, array(':uid' => $familyRaid->getWeaponExpertID()));
+        $waitingTimeL = $donatorService->adjustWaitingTime($waitingTime, $dL['donatorID'], $dL['cHalvingTimes']);
+        $waitingTimeD = $donatorService->adjustWaitingTime($waitingTime, $dD['donatorID'], $dD['cHalvingTimes']);
+        $waitingTimeB = $donatorService->adjustWaitingTime($waitingTime, $dB['donatorID'], $dB['cHalvingTimes']);
+        $waitingTimeW = $donatorService->adjustWaitingTime($waitingTime, $dW['donatorID'], $dW['cHalvingTimes']);
+        
+        return array('L' => $waitingTimeL, 'D' => $waitingTimeD, 'B' => $waitingTimeB, 'W' => $waitingTimeW);
     }
 }

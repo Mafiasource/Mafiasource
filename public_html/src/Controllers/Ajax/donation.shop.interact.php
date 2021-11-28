@@ -5,7 +5,15 @@ use src\Business\FamilyService;
 
 require_once __DIR__ . '/.inc.head.ajax.php';
 
-if(isset($_POST['security-token']) && (isset($_POST['donator']) || isset($_POST['vip']) || isset($_POST['gold-member']) || isset($_POST['vip-family']) || isset($_POST['luckybox'])))
+$orCheck = false;
+$orKeys = array("donator", "vip", "gold-member", "vip-family", "luckybox", "halving-times", "bribing-police");
+foreach($orKeys AS $key)
+{
+    if(array_key_exists($key, $_POST) && isset($_POST[$key]))
+        $orCheck = true;
+}
+
+if(isset($_POST['security-token']) && $orCheck)
 {
     $donator = new DonatorService();
     $family = new FamilyService();

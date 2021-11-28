@@ -38,16 +38,15 @@ switch($route->getRouteName())
 
 $state = new StateService();
 $states = $state->getStates();
-$cities = $state->getCitiesButHomeCity($userData->getCityID());
+$cities = $states[0]->getCities(); //$state->getCitiesButHomeCity($userData->getCityID());
 $arrayKeys = array_keys($cities);
 $cityTo = $cities[$arrayKeys[0]];
-$price = $state->calculatePrice($userData->getCity(), $cityTo->getName(), $tab);
+$price = $state->calculatePrice($userData->getCityID(), $cityTo->getId(), $tab);
 
 require_once __DIR__ . '/.inc.foot.php';
 
 $twigVars['tab'] = $tab;
 $twigVars['states'] = $states;
-$twigVars['cities'] = $cities;
 $twigVars['langs'] = array_merge($twigVars['langs'], $language->travelLangs());
 $twigVars['price'] = $price;
 $twigVars['possessId'] = $possessId;
