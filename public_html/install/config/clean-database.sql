@@ -216,7 +216,7 @@ CREATE TABLE `change_email`  (
 DROP TABLE IF EXISTS `city`;
 CREATE TABLE `city`  (
   `id` tinyint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
-  `stateID` int NULL DEFAULT NULL COMMENT 'couple=city&factor=id&show=name',
+  `stateID` int NULL DEFAULT NULL COMMENT 'couple=state&factor=id&show=name',
   `name` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
