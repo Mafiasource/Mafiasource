@@ -67,15 +67,15 @@ class DonatorDAO extends DBConfig
     {
         $halvingTime = (time() + (60*60*12));
         $this->con->setData("
-            UPDATE `user` SET `cHalvingTimes`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
-        ", array(':uid' => $_SESSION['UID'], ':time' => $halvingTime));
+            UPDATE `user` SET `credits`=`credits`- :cr, `cHalvingTimes`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':cr' => $credits, ':time' => $halvingTime, ':uid' => $_SESSION['UID']));
     }
     
     public function buyBribingPolice($credits)
     {
         $bribingTime = (time() + (60*60*8));
         $this->con->setData("
-            UPDATE `user` SET `cBribingPolice`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
-        ", array(':uid' => $_SESSION['UID'], ':time' => $bribingTime));
+            UPDATE `user` SET `credits`=`credits`- :cr, `cBribingPolice`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':cr' => $credits, ':time' => $bribingTime, ':uid' => $_SESSION['UID']));
     }
 }
