@@ -419,7 +419,7 @@ class StateService
                     return $twig->render("/src/Views/game/Ajax/travel.city.possible.twig", array('routeNotPossible' => true, 'langs' => $l));
                 elseif($routeNotPossible === false && $raw == false)
                     return $twig->render("/src/Views/game/Ajax/travel.city.possible.twig", array('routeNotPossible' => false, 'langs' => $l,
-                        'city' => $this->allowedCities[$toID], 'price' => $price));
+                        'city' => $this->data->getCityNameById($toID), 'price' => $price));
                 elseif($routeNotPossible === true)
                     return FALSE;
                 else
