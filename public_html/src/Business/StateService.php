@@ -11,8 +11,6 @@ use src\Business\SmuggleService;
 use src\Business\PrisonService;
 use src\Data\StateDAO;
 
-/* Class has some cleaning up TO DO move as much HTML/CSS/JS as possible into the View layer. */
-
 class StateService
 {
     private $data;
