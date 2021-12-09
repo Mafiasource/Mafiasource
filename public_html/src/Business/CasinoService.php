@@ -359,6 +359,10 @@ class CasinoService
         {
             $error = $pl['UNKNOWN_POSSESSION'];
         }
+        if($horse < 1 || $horse > 11)
+        {
+            $error = $langs['INVALID_ACTION'];
+        }
         if($userData->getCash() < $stake)
         {
             $error = $langs['NOT_ENOUGH_MONEY_CASH'];

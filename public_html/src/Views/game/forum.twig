@@ -30,7 +30,7 @@ blockquote {padding-left:10px;border-left:5px solid #808080;box-sizing:border-bo
 <div class="content-container">
     {% if routing.getRouteName == 'game-forum' %}
         <div class="row">
-            <a href="{{ routing.getRouteByRouteName('forum') }}" target="_blank">{{ langs.VIEW_FORUM_OUTGAME|raw }}</a>
+            <a href="{{ routing.getRouteByRouteName('forum') }}" target="_blank">{{ langs.VIEW_FORUM_OUTGAME|raw }}</a>&nbsp;<a href="{{ routing.getRouteByRouteName('information-rules') }}" class="right">{% if lang == "en" %}Rules{% else %}Regels{% endif %}</a>
         </div>
     {% endif %}
     {% if navigation is not empty and (catData is not empty or topicData is not empty) %}

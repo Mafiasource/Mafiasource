@@ -47,8 +47,7 @@ class UserCoreDAO extends DBConfig
                 
                 if($row['statusID'] == 8 && $route->getRouteName() != "home")
                 { // Banned
-                    unset($_SESSION['UID']);
-                    $route->headTo('home');
+                    $route->headTo('logout');
                     exit(0);
                 }
                 elseif($security->checkCaptcha($userCaptcha->getSecurityTodo(), $userCaptcha->getSecurity()) && $route->getRouteName() != "captcha_test" && $route->getRouteName() != "rest_in_peace")
@@ -80,6 +79,37 @@ class UserCoreDAO extends DBConfig
                     return TRUE;
                 }
             }
+        }
+        return FALSE;
+    }
+    
+    public function checkCookieHash($hash, $id)
+    {
+        if(!isset($_SESSION['UID']))
+        {
+            $id = (int)$id;
+            $statement = $this->dbh->prepare("SELECT u.`id`, u.`email`, u.`password` FROM `user` AS u LEFT JOIN `status` AS s ON (u.statusID=s.id) WHERE u.`id` = :id AND u.`active`='1' AND u.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 0,1");
+            $statement->execute(array(':id' => $id));
+            $row = $statement->fetch();
+            $saltFile = DOC_ROOT . "/app/Resources/userSalts/".$id.".txt";
+            if(file_exists($saltFile))
+            {
+                $file = fopen($saltFile, "r");
+                $salt = fgets($file);
+                fclose($file);
+                
+                if(hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
+                {
+                    $_SESSION['UID'] = $id;
+                    $_SESSION['logon']['cookiehash'] = $hash;
+                    return TRUE;
+                }
+            }
+        }
+        elseif(isset($_SESSION['logon']['cookiehash']))
+        {
+            if(hash_equals($hash, $_SESSION['logon']['cookiehash']))
+                return TRUE;
         }
         return FALSE;
     }

@@ -28,7 +28,7 @@ class StateDAO extends DBConfig
     
     public function getStates()
     {
-        global $userData;
+        global $userSession;
         
         $statement = $this->dbh->prepare("SELECT `id`, `name` FROM `state` WHERE `active`='1' AND `deleted`='0' ORDER BY `position` ASC");
         $statement->execute();
@@ -38,8 +38,12 @@ class StateDAO extends DBConfig
             $state = new State();
             $state->setId($row['id']);
             $state->setName($row['name']);
-            $cities = $this->getCitiesInStateButHomeCity($state->getId(), $userData->getCityID());
-            $state->setCities($cities);
+            if($userSession)
+            {
+                global $userData;
+                $cities = $this->getCitiesInStateButHomeCity($state->getId(), $userData->getCityID());
+                $state->setCities($cities);
+            }
             
             array_push($list, $state);
         }

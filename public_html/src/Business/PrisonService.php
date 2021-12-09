@@ -103,7 +103,7 @@ class PrisonService
                     
                     if($success >= 30)
                     {
-                        $rankpoints = round((($prisonerInfo->getTime() - time()) / 18) * 0.1, 1);
+                        $rankpoints = round((($prisonerInfo->getTime() - time()) / 9) * 0.1, 1);
                         $this->data->successfulBreakOutPlayerByPID($pid, $rankpoints);
                         $replacedMessage = $route->replaceMessagePart($username, $l['USER_BREAK_OUT_OF_PRISON'], '/{playerName}/');
                         $replacedMessage = Routing::successMessage($replacedMessage);

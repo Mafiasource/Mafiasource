@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+</head>
+<body>
+  <div id="paypalResponse">
+    {{ langs.DONATE_BTN_HEAD|raw }}
+    <div id="paypal-donate-button-container" class="pp-btn"></div>
+    {{ langs.DONATE_BTN_FOOT|raw }}
+  </div>
+  <script type="text/javascript">
+  function validate(params)
+  {
+    var url = '/game/donation-shop/donate';
+    var formData = new FormData();
+    formData.append('security-token', "{{ securityToken }}");
+    function addToFormData(key, value, formData)
+    {
+        formData.append(key, value);
+    }
+    Object.entries(params).forEach(([key, value]) => {
+        addToFormData(key, value, formData);
+    });
+    
+    let response = fetch(url, { method: 'POST', body: formData })
+    .then(function (response) {
+      return response.text();
+    })
+    .then(function (body) {
+        var x = document.getElementById("paypalResponse");
+        var btn = x.querySelector(".pp-btn");
+        btn.parentNode.removeChild(btn);
+        x.innerHTML = body;
+    });
+    
+    return response;
+  }
+  PayPal.Donation.Button({
+      env: '{{ env }}',
+      hosted_button_id: '{{ btnID }}',
+      // business: 'YOUR_EMAIL_OR_PAYERID',
+      image: {
+          src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif',
+          title: 'PayPal - The safer, easier way to pay online!',
+          alt: 'Donate with PayPal button'
+      },
+      onComplete: function (params) {
+        return validate(params);
+      },
+  }).render('#paypal-donate-button-container');
+  </script>
+</body>
+</html>

@@ -49,6 +49,11 @@ section#content section#forum .dateActions {position: relative;top:.25em;margin-
         {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
         <section id="forum">
             <h1>{{ forumTitle|raw }}</h1>
+            {% if catID is empty %}
+                {% if userData is not empty %}
+                    <a href="{{ routing.getRouteByRouteName('information-rules') }}" class="right">{% if lang == "en" %}Rules{% else %}Regels{% endif %}</a>
+                {% endif %}
+            {% endif %}
             {% if navigation is not empty and (catData is not empty or topicData is not empty) %}
                 <div class="row">
                     <div class="col-12">

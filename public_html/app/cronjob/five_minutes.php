@@ -84,3 +84,28 @@ if(date('H') >= 8 && date('H') <= 18)
         }
     }
 } // /CHECKED & OK
+
+/* Add one inactive player gym competition if player did not create competition yet and if there are less than 3-5 $randCompetitions */
+$inactivePlayer = $con->getDataSR("
+    SELECT u.`id`,
+      (SELECT COUNT(`id`) FROM `gym_competition` WHERE `userID`=u.`id` AND `winnerID`='0' AND `active`='1' AND `deleted`='0') AS `openCompetition`
+    FROM `user` AS u
+    WHERE u.`lastclick` < '".(time() - (60*60*24*7))."' AND u.`statusID`<='7' AND u.`health`>'0'
+    ORDER BY RAND()
+    LIMIT 0, 1
+");
+if(isset($inactivePlayer) && $inactivePlayer['openCompetition'] < 1)
+{
+    $randCompetitions = $security->randInt(3, 5);
+    $activeCompetitions = $con->getDataSR("SELECT COUNT(`id`) AS `count` FROM `gym_competition` WHERE `winnerID`='0' AND `active`='1' AND `deleted`='0'");
+    if(isset($activeCompetitions['count']) && $activeCompetitions['count'] < $randCompetitions)
+    {
+        $con->setData("
+            UPDATE `user` SET `power`= :p, `cardio`= :c WHERE `id`= :uid AND `active`='1' AND `deleted`='0';
+            INSERT INTO `gym_competition` (`userID`, `cityID`, `type`, `stake`, `startDate`) VALUES (:uid, :cid, :type, :stake, NOW())
+        ", array(
+            ':p' => $security->randInt(0, 40), ':c' => $security->randInt(0, 30), ':uid' => $inactivePlayer['id'],
+            ':cid' => $security->randInt(1, 18), ':type' => $security->randInt(1, 5), ':stake' => $security->randInt(50, 500000)
+        ));
+    }
+}

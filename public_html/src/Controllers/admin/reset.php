@@ -6,6 +6,7 @@ require_once __DIR__ . '/.inc.head.php';
 
 if($member->getStatus() > 2) $route->headTo('admin');
 
+$resetPossible = false;
 if(isset($_POST) && !empty($_POST))
 {
     $round = new AdminService("round");
@@ -23,7 +24,9 @@ if(isset($_POST) && !empty($_POST))
         $nrd = isset($nrd) && (DateTime::createFromFormat('Y-m-d H:i:s', $nrd) !== false) ? $nrd : "now";
         $data['next-round-date'] = null;
         
-        if(!isset($data) || !is_array($data) || !array_key_exists($allowedFields[0], $data))
+        if(!$resetPossible)
+            $response = $route->errorMessage("Awh! Activeer deze reset in <strong>/src/Controllers/admin/reset.php</strong> met de <strong>\$resetPossible</strong> variabele.");
+        elseif(!isset($data) || !is_array($data) || !array_key_exists($allowedFields[0], $data))
             $response = $route->errorMessage("Je hebt ongeldige instellingen opgegeven!");
         else
             $response = $round->resetMafiasource($data, $nrd);

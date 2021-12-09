@@ -61,54 +61,69 @@ function checkMessages(receiver)
         var method = "POST";
         $.ajax(
         {
-        	url : formURL,
-        	type: method,
-        	data : postData,
-        	success:function(data) 
-        	{
-     	      try 
-              {
-         	      obj = JSON.parse(data);
-            	  if(obj.IDThen != obj.IDNow)
+       	    url : formURL,
+       	    type: method,
+       	    data : postData,
+            success:function(data)
+            {
+                try 
+                {
+                  obj = JSON.parse(data);
+                  if(obj.IDThen != obj.IDNow)
                   {
-                    reloadMessages(receiver);
-                    return true;
+                      reloadMessages(receiver);
+                      return true;
                   }
-              }
-              catch(e)
-              {
-                console.log("Error message: " + e.message);
-              }
-        	}
+                }
+                catch(e)
+                {
+                    console.log("Error message: " + e.message);
+                }
+                return false;
+            }
         });
-        return false;
     }
+    return false;
 }
 
 function reloadMessages(receiver)
 {
-    $("#ajaxLoaderMessages").show();
+    if($("#ajaxLoaderMessages").length)
+    {
+        $("#ajaxLoaderMessages").show();
+    }
     var postData = {receiver: receiver, securityToken: $("#message-container").closest("input[name=security-token]").val()};
     var formURL = "/game/messages/reload";
     var method = "POST";
     var responseField = "#message-container";
     $.ajax({
-    	url : formURL,
-    	type: method,
-    	data : postData,
-    	success:function(data) 
-    	{
- 	      $("#ajaxLoaderMessages").hide();
-    	  $(responseField).html(data);
-          $(responseField).stop().animate({
-              scrollTop: $(responseField)[0].scrollHeight
-          }, 800);
-          if($("input[name=receiver]").length)
+   	    url : formURL,
+   	    type: method,
+   	    data : postData,
+   	    success:function(data) 
+   	    {
+          try 
           {
-            $("input[name=receiver]").val(receiver);
+              if($("#ajaxLoaderMessages").length)
+              {
+                  $("#ajaxLoaderMessages").hide();
+              }
+              $(responseField).html(data);
+              $(responseField).stop().animate({
+                  scrollTop: $(responseField)[0].scrollHeight
+              }, 800);
+              if($("input[name=receiver]").length)
+              {
+                  $("input[name=receiver]").val(receiver);
+              }
           }
-    	}
+          catch(e)
+          {
+              console.log("Error message: " + e.message);
+          }
+   	    }
     });
+    return false;
 }
 
 $(document).on("focusin", function(e) {

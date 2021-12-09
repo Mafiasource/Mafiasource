@@ -104,9 +104,9 @@ class GroundDAO extends DBConfig
                     $ground->setBuildings($buildingsList);
                 }
                 $ground->setInPossession(false);
-                if($row['userID'] == $_SESSION['UID']) $ground->setInPossession(true);
+                if(isset($row['userID']) && $row['userID'] == $_SESSION['UID']) $ground->setInPossession(true);
                 $ground->setPicture("ground-map/no-owner.".$this->lang.".png");
-                if($row['userID'] != 0)
+                if(isset($row['userID']) && $row['userID'] != 0)
                 {
                     $familyID = $this->con->getDataSR("SELECT `familyID` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0'", array(':uid' => $row['userID']))['familyID'];
                     if($familyID == 0)

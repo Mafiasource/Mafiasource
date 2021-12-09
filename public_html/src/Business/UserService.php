@@ -19,20 +19,22 @@ class UserService
     public $creditsChance = 25; // <= 25
     public $creditsChanceRand = 100; // rand 1, [100]
     public $creditsWon = 0; // Init
+    public $tryAgainMessage = ""; // Init
 
     public function __construct()
     {
         global $security;
+        global $lang;
         $this->data = new UserDAO();
         $this->creditsChanceRand = $security->randInt(1, 100);
         $this->creditsWon = $security->randInt(2, 4);
-        /* Double credits sample:
-        if(strtotime("2021-01-01 14:00:00") < strtotime('now') && strtotime("2021-01-04 14:00:00") > strtotime('now'))
+        $this->tryAgainMessage = $lang == "en" ? "Try again later." : "Probeer later opnieuw.";
+        /* Double credits sample: */
+        if(strtotime("2021-12-07 14:00:00") < strtotime('now') && strtotime("2021-12-10 14:00:00") > strtotime('now'))
         {
             $this->creditsChance *= 2;
             $this->creditsWon *= 2;
         }
-        */
     }
 
     public function __destruct()
@@ -309,6 +311,9 @@ class UserService
         {
             $n = isset($nameSet) ? $nameSet->fetch() : null;
             $e = isset($emailSet) ? $emailSet->fetch() : null;
+            if((isset($n['id']) && $this->data->isPasswordInRecovery($n['id'])) || (isset($e['id']) && $this->data->isPasswordInRecovery($e['id'])))
+                return $this->tryAgainMessage;
+            
             if(isset($username) && isset($n))
             {
                 if($this->data->recoverPassword($n['id'], $username, $n['email']))
@@ -698,6 +703,10 @@ class UserService
             {
         		$error = $r['EMAIL_TAKEN'];
         	}
+            elseif($this->data->isEmailInChange($userData->getId()))
+            {
+                $error = $this->tryAgainMessage;
+            }
             /* Developer working on a piece of action, response based code sample:
             elseif($userData->getId() != 1)
             {

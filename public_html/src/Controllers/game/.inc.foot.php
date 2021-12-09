@@ -20,10 +20,15 @@ $twigVars = array(
     'offline' => OFFLINE
 );
 $twigVars['langs']['TRAVELING'] = $route->replaceMessagePart($travelCounter, $twigVars['langs']['TRAVELING'], '/{sec}/');
-if(strtotime("2021-01-01 14:00:00") < strtotime('now') && strtotime("2021-01-04 14:00:00") > strtotime('now'))
+if(strtotime("2021-12-03 14:00:00") < strtotime('now') && strtotime("2021-12-06 14:00:00") > strtotime('now'))
+{
+    $twigVars['eventName'] = "Levels XP x2";
+    $twigVars['eventCountdown'] = countdownHmsTime("EventCountdown", strtotime("2021-12-06 14:00:00") - time());
+}
+if(strtotime("2021-12-07 14:00:00") < strtotime('now') && strtotime("2021-12-10 14:00:00") > strtotime('now'))
 {
     $twigVars['eventName'] = "Credits x2";
-    $twigVars['eventCountdown'] = countdownHmsTime("EventCountdown", strtotime("2021-01-04 14:00:00") - time());
+    $twigVars['eventCountdown'] = countdownHmsTime("EventCountdown", strtotime("2021-12-10 14:00:00") - time());
 }
 if(strtotime("2021-01-05 14:00:00") < strtotime('now') && strtotime("2021-01-08 14:00:00") > strtotime('now'))
 {

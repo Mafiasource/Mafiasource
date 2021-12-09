@@ -1,7 +1,7 @@
 <div class="row center">
     {% set crIcon = '<img src="' ~ staticRoot ~'/foto/web/public/images/icons/star.png" class="icon" alt="Credits"/>' %}
     {% set creditsInfo = routing.replaceMessagePart(userData.getCredits|valueFormat, langs.CREDITS_INFO, '/{credits}/') %}
-    {{ crIcon|raw }} {{ creditsInfo|raw }}
+    {{ crIcon|raw }} {{ creditsInfo|raw }} <a href="javascript:void(0);" class="ajaxTab" data-tab="donate"><i class='donator'>{{ langs.DONATE }}!</i></a>
 </div>
 {% if response %}
     <div class="rowMsg">
@@ -92,21 +92,21 @@
                       </thead>
                       <tbody>
                         <tr>
-                          <td><s>15x</s> {{ luckyboxAmnt }}x  Luckybox</td>
-                          <td class="center">{{ crIcon|raw }}&nbsp;<s>300</s> {{ luckyboxCr }}</td>
+                          <td>{{ luckyboxAmnt }}x  Luckybox</td>
+                          <td class="center">{{ crIcon|raw }} {{ luckyboxCr }}</td>
                           <td class="center"><input type="submit" name="luckybox" value="{{ langs.BUY }}" /></td>
                         </tr>
                         {% if userData.getCHalvingTimes < date().timestamp %}
                             <tr>
                               <td>{{ langs.HALVING_TIMES }}</td>
-                              <td class="center">{{ crIcon|raw }} 250</td>
+                              <td class="center">{{ crIcon|raw }} 63</td>
                               <td class="center"><input type="submit" name="halving-times" value="{{ langs.BUY }}" /></td>
                             </tr>
                         {% endif %}
                         {% if userData.getCBribingPolice < date().timestamp %}
                             <tr>
                               <td>{{ langs.BRIBING_BORDER_PATROL }}</td>
-                              <td class="center">{{ crIcon|raw }} {% if userData.getCharType == 6 %}110{% else %}150{% endif %}</td>
+                              <td class="center">{{ crIcon|raw }} {% if userData.getCharType == 6 %}28{% else %}38{% endif %}</td>
                               <td class="center"><input type="submit" name="bribing-police" value="{{ langs.BUY }}"/></td>
                             </tr>
                         {% endif %}

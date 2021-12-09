@@ -44,12 +44,16 @@ class UserCoreService
     public function checkLoggedSession($update = true)
     {
         if(isset($_SESSION['UID']))
+        {
             if($this->data->checkUser($_SESSION['UID'], $update))
                 return TRUE;
-            else
-                return FALSE;
-        else
-            return FALSE;
+        }
+        elseif(isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
+        {
+            if($this->data->checkCookieHash($_COOKIE['remember'], $_COOKIE['UID']))
+                return TRUE;
+        }
+        return FALSE;
     }
     
     public static function getCappedRankpoints($rank, $kills, $honorPoints, $whores, $protected)

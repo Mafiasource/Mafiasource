@@ -23,150 +23,6 @@
     </div>
 </div>
 <br />
-<div id="interactPositionlessPossessResponse"></div>
-<div class="top">{{ langs.COUNTRY_POSSESSIONS }}</div>
-<div class="content-container">
-    <!-- bootstrap carousel -->
-    <div id="carousel-positionlessPossessions" class="carousel slide" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            {% for item in possessions.positionlessPossessions %}
-                <li data-target="#carousel-positionlessPossessions" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
-            {% endfor %}
-        </ol>
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner center">
-            {% for item in possessions.positionlessPossessions %}
-                <div class="carousel-item{% if loop.first %} active{% endif %}" style="top:-12px;">
-                    <div style="{% if item.getPicture is not empty %}height:269px;margin:-4px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
-                        <form id="possess_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#interactPositionlessPossessResponse">
-                          <h2>{{ item.getName }}</h2>
-                          <div class="possess-info">
-                            <div class="c-row cols cf">
-                                <div class="c-50 no-border">
-                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.OWNER }}" class="icon"/>&nbsp;{{ langs.OWNER }}:
-                                </div>
-                                <div class="c-50 no-border">
-                                    {% if item.getPossessDetails.getUserID > 0 %}<a href="/game/profile/{{ item.getPossessDetails.getUsername }}">{{ item.getPossessDetails.getUsername }}</a>{% else %}{{ item.getPossessDetails.getUsername }}{% endif %}
-                                </div>
-                            </div>
-                            <div class="c-row cols cf">
-                                <div class="c-50 no-border">
-                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="{{ langs.TOTAL_REVENUE }}" class="icon"/>&nbsp;{{ langs.TOTAL_REVENUE }}:
-                                </div>
-                                <div class="c-50 no-border">
-                                    {{ item.getPossessDetails.getProfit|moneyFormat }}
-                                </div>
-                            </div>
-                            <div class="c-row cols cf">
-                                <div class="c-50 no-border">
-                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" alt="{{ langs.LOCATION }}" class="icon"/>&nbsp;{{ langs.LOCATION }}:
-                                </div>
-                                <div class="c-50 no-border">
-                                    {{ langs.EVERYWHERE_IN_THE_US }}
-                                </div>
-                            </div>
-                          </div>
-                          <br />
-                          <input type="hidden" name="id" value="{{ item.getPossessDetails.getId }}"/>
-                          <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                          {% if item.getPossessDetails.getUserID == 0 %}
-                            <input type="submit" name="buy" class="execbutton green small" value="{{ langs.BUY }} {{ item.getPrice|moneyFormat }}"/>
-                          {% endif %}
-                          {% if item.getPossessDetails.getUserID == userData.getId %}
-                            <input type="submit" name="drop" class="execbutton red small" value="{{ langs.DROP }}"/>&nbsp;
-                            <a href="javascript:void(0);" class="ajaxTab execbutton small" data-tab="possession.manage" data-id="{{ item.getPossessDetails.getId }}">{{ langs.MANAGE }}</a>
-                          {% endif %}
-                        </form>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <!-- Controls left/right -->
-        <a class="left carousel-control-prev" href="#carousel-positionlessPossessions" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">&nbsp;</span>
-        </a>
-        <a class="right carousel-control-next" href="#carousel-positionlessPossessions" role="button" data-slide="next">
-          <span class="sr-only">&nbsp;</span>
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </a>
-    </div>
-</div>
-<br /><br />
-<div id="interactStatePossessResponse"></div>
-<div class="top">{{ langs.STATE_POSSESSIONS }}</div>
-<div class="content-container">
-    <!-- bootstrap carousel -->
-    <div id="carousel-statePossessions" class="carousel slide" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            {% for item in possessions.statePossessions %}
-                <li data-target="#carousel-statePossessions" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
-            {% endfor %}
-        </ol>
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner center">
-            {% for item in possessions.statePossessions %}
-                <div class="carousel-item{% if loop.first %} active{% endif %}" style="top:-12px;">
-                    <div style="{% if item.getPicture is not empty %}height:269px;margin:-4px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
-                        <form id="possess_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#interactStatePossessResponse">
-                          <h2>{{ item.getName }}</h2>
-                          <div class="possess-info">
-                            <div class="c-row cols cf">
-                                <div class="c-50 no-border">
-                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.OWNER }}" class="icon"/>&nbsp;{{ langs.OWNER }}:
-                                </div>
-                                <div class="c-50 no-border">
-                                    {% if item.getPossessDetails.getUserID > 0 %}<a href="/game/profile/{{ item.getPossessDetails.getUsername }}">{{ item.getPossessDetails.getUsername }}</a>{% else %}{{ item.getPossessDetails.getUsername }}{% endif %}
-                                </div>
-                            </div>
-                            <div class="c-row cols cf">
-                                <div class="c-50 no-border">
-                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="{{ langs.TOTAL_REVENUE }}" class="icon"/>&nbsp;{{ langs.TOTAL_REVENUE }}:
-                                </div>
-                                <div class="c-50 no-border">
-                                    {{ item.getPossessDetails.getProfit|moneyFormat }}
-                                </div>
-                            </div>
-                            {% if item.getPossessDetails.getState %}
-                                <div class="c-row cols cf">
-                                    <div class="c-50 no-border">
-                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" alt="{{ langs.LOCATION }}" class="icon"/>&nbsp;{{ langs.LOCATION }}:
-                                    </div>
-                                    <div class="c-50 no-border">
-                                        {{ item.getPossessDetails.getState }}{% if item.getPossessDetails.getCity %}, {{ item.getPossessDetails.getCity }} {% endif %}
-                                    </div>
-                                </div>
-                            {% endif %}
-                          </div>
-                          <br />
-                          <input type="hidden" name="id" value="{{ item.getPossessDetails.getId }}"/>
-                          <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                          {% if item.getPossessDetails.getUserID == 0 and item.getPossessDetails.getStateID == userData.getStateID %}
-                            <input type="submit" name="buy" class="execbutton green small" value="{{ langs.BUY }} {{ item.getPrice|moneyFormat }}"/>
-                          {% endif %}
-                          {% if item.getPossessDetails.getUserID == userData.getId %}
-                            <input type="submit" name="drop" class="execbutton red small" value="{{ langs.DROP }}"/>&nbsp;
-                            <a href="javascript:void(0);" class="ajaxTab execbutton small" data-tab="possession.manage" data-id="{{ item.getPossessDetails.getId }}">{{ langs.MANAGE }}</a>
-                          {% endif %}
-                        </form>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <!-- Controls left/right -->
-        <a class="left carousel-control-prev" href="#carousel-statePossessions" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">&nbsp;</span>
-        </a>
-        <a class="right carousel-control-next" href="#carousel-statePossessions" role="button" data-slide="next">
-          <span class="sr-only">&nbsp;</span>
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </a>
-    </div>
-</div>
-<br /><br />
 <div id="interactCityPossessResponse"></div>
 <div class="top">{{ langs.CITY_POSSESSIONS }}</div>
 <div class="content-container">
@@ -239,4 +95,148 @@
         </a>
     </div>
 </div>
-<br /><br />
+<br />
+<div id="interactStatePossessResponse"></div>
+<div class="top">{{ langs.STATE_POSSESSIONS }}</div>
+<div class="content-container">
+    <!-- bootstrap carousel -->
+    <div id="carousel-statePossessions" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            {% for item in possessions.statePossessions %}
+                <li data-target="#carousel-statePossessions" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
+            {% endfor %}
+        </ol>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner center">
+            {% for item in possessions.statePossessions %}
+                <div class="carousel-item{% if loop.first %} active{% endif %}" style="top:-12px;">
+                    <div style="{% if item.getPicture is not empty %}height:269px;margin:-4px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
+                        <form id="possess_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#interactStatePossessResponse">
+                          <h2>{{ item.getName }}</h2>
+                          <div class="possess-info">
+                            <div class="c-row cols cf">
+                                <div class="c-50 no-border">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.OWNER }}" class="icon"/>&nbsp;{{ langs.OWNER }}:
+                                </div>
+                                <div class="c-50 no-border">
+                                    {% if item.getPossessDetails.getUserID > 0 %}<a href="/game/profile/{{ item.getPossessDetails.getUsername }}">{{ item.getPossessDetails.getUsername }}</a>{% else %}{{ item.getPossessDetails.getUsername }}{% endif %}
+                                </div>
+                            </div>
+                            <div class="c-row cols cf">
+                                <div class="c-50 no-border">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="{{ langs.TOTAL_REVENUE }}" class="icon"/>&nbsp;{{ langs.TOTAL_REVENUE }}:
+                                </div>
+                                <div class="c-50 no-border">
+                                    {{ item.getPossessDetails.getProfit|moneyFormat }}
+                                </div>
+                            </div>
+                            {% if item.getPossessDetails.getState %}
+                                <div class="c-row cols cf">
+                                    <div class="c-50 no-border">
+                                        <img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" alt="{{ langs.LOCATION }}" class="icon"/>&nbsp;{{ langs.LOCATION }}:
+                                    </div>
+                                    <div class="c-50 no-border">
+                                        {{ item.getPossessDetails.getState }}{% if item.getPossessDetails.getCity %}, {{ item.getPossessDetails.getCity }} {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                          </div>
+                          <br />
+                          <input type="hidden" name="id" value="{{ item.getPossessDetails.getId }}"/>
+                          <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                          {% if item.getPossessDetails.getUserID == 0 and item.getPossessDetails.getStateID == userData.getStateID %}
+                            <input type="submit" name="buy" class="execbutton green small" value="{{ langs.BUY }} {{ item.getPrice|moneyFormat }}"/>
+                          {% endif %}
+                          {% if item.getPossessDetails.getUserID == userData.getId %}
+                            <input type="submit" name="drop" class="execbutton red small" value="{{ langs.DROP }}"/>&nbsp;
+                            <a href="javascript:void(0);" class="ajaxTab execbutton small" data-tab="possession.manage" data-id="{{ item.getPossessDetails.getId }}">{{ langs.MANAGE }}</a>
+                          {% endif %}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Controls left/right -->
+        <a class="left carousel-control-prev" href="#carousel-statePossessions" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">&nbsp;</span>
+        </a>
+        <a class="right carousel-control-next" href="#carousel-statePossessions" role="button" data-slide="next">
+          <span class="sr-only">&nbsp;</span>
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </a>
+    </div>
+</div>
+<br />
+<div id="interactPositionlessPossessResponse"></div>
+<div class="top">{{ langs.COUNTRY_POSSESSIONS }}</div>
+<div class="content-container">
+    <!-- bootstrap carousel -->
+    <div id="carousel-positionlessPossessions" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            {% for item in possessions.positionlessPossessions %}
+                <li data-target="#carousel-positionlessPossessions" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
+            {% endfor %}
+        </ol>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner center">
+            {% for item in possessions.positionlessPossessions %}
+                <div class="carousel-item{% if loop.first %} active{% endif %}" style="top:-12px;">
+                    <div style="{% if item.getPicture is not empty %}height:269px;margin:-4px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
+                        <form id="possess_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#interactPositionlessPossessResponse">
+                          <h2>{{ item.getName }}</h2>
+                          <div class="possess-info">
+                            <div class="c-row cols cf">
+                                <div class="c-50 no-border">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.OWNER }}" class="icon"/>&nbsp;{{ langs.OWNER }}:
+                                </div>
+                                <div class="c-50 no-border">
+                                    {% if item.getPossessDetails.getUserID > 0 %}<a href="/game/profile/{{ item.getPossessDetails.getUsername }}">{{ item.getPossessDetails.getUsername }}</a>{% else %}{{ item.getPossessDetails.getUsername }}{% endif %}
+                                </div>
+                            </div>
+                            <div class="c-row cols cf">
+                                <div class="c-50 no-border">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="{{ langs.TOTAL_REVENUE }}" class="icon"/>&nbsp;{{ langs.TOTAL_REVENUE }}:
+                                </div>
+                                <div class="c-50 no-border">
+                                    {{ item.getPossessDetails.getProfit|moneyFormat }}
+                                </div>
+                            </div>
+                            <div class="c-row cols cf">
+                                <div class="c-50 no-border">
+                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" alt="{{ langs.LOCATION }}" class="icon"/>&nbsp;{{ langs.LOCATION }}:
+                                </div>
+                                <div class="c-50 no-border">
+                                    {{ langs.EVERYWHERE_IN_THE_US }}
+                                </div>
+                            </div>
+                          </div>
+                          <br />
+                          <input type="hidden" name="id" value="{{ item.getPossessDetails.getId }}"/>
+                          <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                          {% if item.getPossessDetails.getUserID == 0 %}
+                            <input type="submit" name="buy" class="execbutton green small" value="{{ langs.BUY }} {{ item.getPrice|moneyFormat }}"/>
+                          {% endif %}
+                          {% if item.getPossessDetails.getUserID == userData.getId %}
+                            <input type="submit" name="drop" class="execbutton red small" value="{{ langs.DROP }}"/>&nbsp;
+                            <a href="javascript:void(0);" class="ajaxTab execbutton small" data-tab="possession.manage" data-id="{{ item.getPossessDetails.getId }}">{{ langs.MANAGE }}</a>
+                          {% endif %}
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Controls left/right -->
+        <a class="left carousel-control-prev" href="#carousel-positionlessPossessions" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">&nbsp;</span>
+        </a>
+        <a class="right carousel-control-next" href="#carousel-positionlessPossessions" role="button" data-slide="next">
+          <span class="sr-only">&nbsp;</span>
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </a>
+    </div>
+</div>
+<br />

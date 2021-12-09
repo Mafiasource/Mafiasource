@@ -419,11 +419,12 @@ class GarageDAO extends DBConfig
                     if($userData->getDonatorID() >= 1)
                         $g['vehiclePrice'] *= 0.95;
                     
+                    $g['vehiclePrice'] *= 0.65;
                     $garage = new Garage();
                     $garage->setId($g['id']);
                     $garage->setUserGarageID($g['userGarageID']);
                     $garage->setFamGarageID(0);
-                    $garage->setValue((($g['vehiclePrice']/100) * (100-$g['damage'])));
+                    $garage->setValue(((round($g['vehiclePrice']) / 100) * (100 - $g['damage'])));
                     $garage->setDamage($g['damage']);
                     
                     $vehicle = new Vehicle();
@@ -434,11 +435,7 @@ class GarageDAO extends DBConfig
                     
                     $garage->setVehicle($vehicle);
                     
-                    $price = $g['vehiclePrice'];
-                    $pr = 100 - $g['damage'];
-                    $pr = $pr / 100;
-                    $price = round($price * $pr, 0);
-                    $diff = $g['vehiclePrice'] - $price;
+                    $diff = round($g['vehiclePrice']) - $garage->getValue();
                     $costs = round($diff * 1.25, 0);
                     
                     $garage->setRepairCosts($costs);
@@ -689,11 +686,12 @@ class GarageDAO extends DBConfig
                     if($userData->getDonatorID() >= 1)
                         $g['vehiclePrice'] *= 0.95;
                     
+                    $g['vehiclePrice'] *= 0.65;
                     $garage = new Garage();
                     $garage->setId($g['id']);
                     $garage->setUserGarageID($g['userGarageID']);
                     $garage->setFamGarageID(0);
-                    $garage->setValue((($g['vehiclePrice']/100) * (100-$g['damage'])));
+                    $garage->setValue(((round($g['vehiclePrice']) / 100) * (100 - $g['damage'])));
                     $garage->setDamage($g['damage']);
                     $garage = $this->setGarageTuneInfo($garage, $g);
                     
@@ -706,11 +704,7 @@ class GarageDAO extends DBConfig
                     
                     $garage->setVehicle($vehicle);
                     
-                    $price = $g['vehiclePrice'];
-                    $pr = 100 - $g['damage'];
-                    $pr = $pr / 100;
-                    $price = round($price * $pr, 0);
-                    $diff = $g['vehiclePrice'] - $price;
+                    $diff = $g['vehiclePrice'] - $garage->getValue();
                     $costs = round($diff * 1.25, 0);
                     
                     $garage->setRepairCosts($costs);

@@ -12,8 +12,8 @@ class DonatorService extends DonatorStatics
     private $data;
     
     public $statuses = array();
-    public $luckyboxAmnt = 20; //15;
-    public $luckyboxCr = 200; //300;
+    public $luckyboxAmnt = 15; //15;
+    public $luckyboxCr = 300; //300;
     
     public function __construct()
     {
@@ -79,11 +79,11 @@ class DonatorService extends DonatorStatics
         elseif(isset($luckybox))
             $creditsNeeded = $this->luckyboxCr;
         elseif(isset($halvingTimes))
-            $creditsNeeded = 250;
+            $creditsNeeded = 63;
         elseif(isset($bribingPolice) && $userData->getCharType() == 6)
-            $creditsNeeded = 110;
+            $creditsNeeded = 28;
         elseif(isset($bribingPolice) && $userData->getCharType() != 6)
-            $creditsNeeded = 150;
+            $creditsNeeded = 38;
         
         if(isset($donator) || isset($vip) || isset($goldMember) || isset($vipFamily))
         {
@@ -178,7 +178,129 @@ class DonatorService extends DonatorStatics
                 $replacedMessage = $route->replaceMessagePart(number_format($creditsNeeded, 0, '', ','), $l['BOUGHT_BRIBING_POLICE_SUCCESS'], '/{credits}/');
             }
             
-            return Routing::successMessage($replacedMessage);
+            return $route->successMessage($replacedMessage);
         }
+    }
+    
+    public function donate($post)
+    {
+        global $route;
+        global $security;
+        global $language;
+        global $langs;
+        $l = $language->donationShopLangs();
+        
+        if($security->checkToken($post['security-token']) == FALSE)
+        {
+            $error = $langs['INVALID_SECURITY_TOKEN'];
+        }
+        if(isset($error))
+        {
+            return $route->errorMessage($error);
+        }
+        else
+        {
+            global $twig;
+            global $lang;
+            
+            return $twig->render("/src/Views/game/Ajax/tabs/paypal/donate.btn.twig", array(
+                'lang' => $lang,
+                'securityToken' => $security->getToken(),
+                'env' => PP_ENV,
+                'btnID' => PP_BTN_ID,
+                'langs' => $l
+            ));
+        }
+    }
+    
+    public function validateDonation($post)
+    { // Ignore security-token on purpose to avoid possible failed donations for an expired token.
+        global $route;
+        global $language;
+        global $langs;
+        global $userData;
+        $l = $language->donationShopLangs();
+        
+        $paymentID = $post['tx'];
+
+        if($this->data->donationExistsByTxID($paymentID))
+        {
+            error_log("Duplicate donation attempt by UserID: " . $userData->getId() . " with username: " . $userData->getUsername() . "!", 0);
+            $error = $langs['DONATE_REWARDED_ALREADY'];
+        }
+        if(isset($error))
+        {
+            return $route->errorMessage($error);
+        }
+        else
+        {
+            $sbAdd = "";
+            if(PP_SANDBOX)
+                $sbAdd = "sandbox.";
+            
+            $url = "https://api-m." . $sbAdd . "paypal.com/v2/payments/captures/" . $paymentID;
+            $clientId = PP_CLIENT;
+            $secret = PP_SECRET;
+            $auth = $clientId . ":" . $secret;
+            
+            $headers = [
+                "Content-Type: application/json",
+                "X-Content-Type-Options:nosniff",
+                "Accept:application/json",
+                "Cache-Control:no-cache"
+            ];
+            
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_ENCODING, "utf8");
+            curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_setopt($curl, CURLOPT_USERPWD, $auth);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+            $result = curl_exec($curl);
+            
+            curl_close($curl);
+            
+            $replacedMessage = $l['DONATE_ERROR'];
+            if(empty($result)) return $route->errorMessage($replacedMessage);
+            else
+            {
+                $json = json_decode($result);
+            }
+            
+            if(is_object($json) && isset($json->status) && $json->status === "COMPLETED")
+            {
+                $replacedMessage = $l['DONATE_SUCCESS_LIMIT'];
+                $dData = $this->data->getDonationData();
+                $crPoss = isset($dData['cr']) ? (int)$dData['cr'] : 0;
+                $crLimit = 5000;
+                $crDiff = $crLimit - $crPoss;
+                $cr = (int)$json->amount->value * 100;
+                if($crPoss + $cr <= $crLimit && $cr >= 100)
+                {
+                    $this->data->addCredits($cr);
+                    $replacedMessage = $route->replaceMessagePart(number_format($cr, 0, '', ','), $l['DONATE_SUCCESS'], '/{credits}/');
+                }
+                elseif($crDiff > 0 && $cr >= 100)
+                {
+                    $this->data->addCredits($crDiff);
+                    $replacedMessage = $route->replaceMessagePart(number_format($crDiff, 0, '', ','), $l['DONATE_SUCCESS_HIT_LIMIT'], '/{credits}/');
+                }
+                $this->data->saveCompletedDonation($json);
+                
+                return $route->successMessage($replacedMessage);
+            }
+            return $route->errorMessage($replacedMessage);
+        }
+    }
+    
+    public function getDonationData()
+    {
+        return $this->data->getDonationData();
     }
 }

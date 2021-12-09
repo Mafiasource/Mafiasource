@@ -94,7 +94,7 @@ class UserDAO extends DBConfig
     public function checkLoginGetIdOnSuccess($username, $pass)
     {
         $id = $this->getIdByUsername($username);
-        if($id !== FALSE)
+        if($id !== FALSE && file_exists(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt"))
         {
             $file = fopen(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt", "r");
             $salt = fgets($file);
@@ -102,11 +102,18 @@ class UserDAO extends DBConfig
             
             $hash = hash('sha256', $salt . hash('sha256', $pass));
 
-            $statement = $this->dbh->prepare("SELECT `id` FROM `user` WHERE `username` = :username AND `password` = :password  AND `active`='1' AND `deleted`='0' LIMIT 1");
+            $statement = $this->dbh->prepare("SELECT `id`, `email`, `password` FROM `user` WHERE `username` = :username AND `password` = :password  AND `active`='1' AND `deleted`='0' LIMIT 1");
             $statement->execute(array(':username' => $username, ':password' => $hash));
             $row = $statement->fetch();
             if(isset($row['id']) && $row['id'] == $id)
+            {
+                global $route;
+                $hash2 = hash('sha256',$salt.$row['email'].$row['password'].$salt);
+                setcookie('remember', $hash2, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
+                setcookie('UID', $row['id'], time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
+                    
                 return $id;
+            }
         }
         return FALSE;
     }
@@ -335,7 +342,6 @@ class UserDAO extends DBConfig
             die("Email could not be sent. SMTP server not configured correctly, contact Administrator for help. Error: {$mail->ErrorInfo}");
             exit(0);
         }
-        return FALSE;
     }
 
     public function setNewEmailRequest($email)
@@ -440,6 +446,17 @@ class UserDAO extends DBConfig
             return FALSE;
     }
     
+    public function isEmailInChange($userID)
+    {
+        $row = $this->con->getDataSR("
+            SELECT `id` FROM `change_email` WHERE `userID`= :uid AND `date`> :datePast LIMIT 1
+        ", array(':uid' => $userID, ':datePast' => date('Y-m-d H:i:s', strtotime('-2 hours'))));
+        if(isset($row['id']) && $row['id'] > 0)
+            return true;
+        
+        return false;
+    }
+    
     public function changeEmail($changeEmailData)
     {
         if(is_object($changeEmailData))
@@ -509,8 +526,11 @@ class UserDAO extends DBConfig
     public function checkPassword($pass)
     {
         if(isset($_SESSION['UID']))
+            $saltFile = DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt";
+        
+        if(isset($saltFile) && file_exists($saltFile))
         {
-            $file = fopen(DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt", "r");
+            $file = fopen($saltFile, "r");
             $salt = fgets($file);
             fclose($file);
 
@@ -534,35 +554,54 @@ class UserDAO extends DBConfig
         {
             global $userData;
             $this->changePasswordByUsername($pass, $userData->getUsername(), $_SESSION['UID']);
+            unset($_SESSION['UID']);
         }
     }
     
     public function changePasswordByUsername($pass, $username, $id = FALSE)
     { // This function is one of the 2 password related functions for users, here we are editing passwords
     // This passchange function is related to the recovery option and also used for the ingame pass change option
-        if($id == FALSE) $id = $this->getIdByUsername($username); //Avoid another query
-        // Remove old salt..
-        unlink(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt");
+        if($id == FALSE)
+            $id = $this->getIdByUsername($username);
         
-        $hash = hash('sha256', $pass);
+        if(isset($id))
+            $saltFile = DOC_ROOT . "/app/Resources/userSalts/" . $id . ".txt";
         
-        global $security;
-        $salt = $security->createSalt();
+        if(isset($saltFile) && file_exists($saltFile))
+        {
+            // Remove old salt..
+            unlink($saltFile);
+            
+            $hash = hash('sha256', $pass);
+            
+            global $security;
+            $salt = $security->createSalt();
+            
+            $hash = hash('sha256', $salt . $hash);
+    
+            $statement = $this->dbh->prepare("UPDATE `user` SET `password`= :hash WHERE `id`= :uid");
+            $statement->execute(array(':hash' => $hash, ':uid' => $id));
+    
+            // Save new salt
+            $ourFileHandle = fopen($saltFile, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
+            $stringData = $salt;
+            fwrite($ourFileHandle, $stringData);
+            fclose($ourFileHandle);
+            chmod($saltFile, 0600);
+            
+            $this->con->setData("DELETE FROM `recover_password` WHERE `userID`= :uid", array(':uid' => $id));
+        }
+    }
+    
+    public function isPasswordInRecovery($userID)
+    {
+        $row = $this->con->getDataSR("
+            SELECT `id` FROM `recover_password` WHERE `userID`= :uid AND `date`> :datePast
+        ", array(':uid' => $userID, ':datePast' => date('Y-m-d H:i:s', strtotime('-2 hours'))));
+        if(isset($row['id']) && $row['id'] > 0)
+            return true;
         
-        $hash = hash('sha256', $salt . $hash);
-
-        $statement = $this->dbh->prepare("UPDATE `user` SET `password`= :hash WHERE `id`= :uid");
-        $statement->execute(array(':hash' => $hash, ':uid' => $id));
-
-        // Save new salt
-        $ourFileName = DOC_ROOT . "/app/Resources/userSalts/".$id.".txt";
-        $ourFileHandle = fopen($ourFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
-        $stringData = $salt;
-        fwrite($ourFileHandle, $stringData);
-        fclose($ourFileHandle);
-        chmod($ourFileName, 0600);
-        
-        $this->con->setData("DELETE FROM `recover_password` WHERE `userID`= :uid", array(':uid' => $id));
+        return false;
     }
     
     public function recoverPassword($id, $username, $email)
@@ -603,7 +642,7 @@ class UserDAO extends DBConfig
 
     public function getRecoverPasswordDataByKey($key)
     {
-        $this->con->setData("DELETE FROM `recover_password` WHERE `date` < :datePast", array(':datePast' => date('Y-m-d H:i:s', strtotime('-2 hours'))));
+        $this->con->setData("DELETE FROM `recover_password` WHERE `date`< :datePast", array(':datePast' => date('Y-m-d H:i:s', strtotime('-2 hours'))));
         
         $row = $this->con->getDataSR("
             SELECT re.`id`, u.`username` FROM `recover_password` AS re LEFT JOIN `user` AS u ON (re.`userID`=u.`id`) WHERE re.`key`= :key

@@ -46,6 +46,9 @@
                     </section>
                     <br class="clear"/>
                     <p>{{ langs.LINK_PARTNERS_INFO|raw }}<br /><a href=" {{ routing.getRouteByRouteName('get-the-app') }}">{{ langs.DOWNLOAD_APP }}</a></p>
+                    {#
+                        <p>Reset:&nbsp;<span id="cResetTime">{{ "ResetTime"|countdownHmsTime(date('11/30/2021 19:00:00').timestamp - date().timestamp)|raw }}</span></p>
+                    #}
                 </div>
                 <div class="col-lg-6">
                     <section id="stats" class="middle">

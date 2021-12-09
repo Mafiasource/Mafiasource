@@ -7,6 +7,8 @@ use src\Business\NotificationService;
 use src\Business\GroundService;
 use src\Business\PossessionService;
 use src\Business\GarageService;
+use src\Business\DonatorService;
+use src\Business\CMSService;
 
 require_once __DIR__ . '/.inc.head.ajax.php';
 
@@ -14,7 +16,7 @@ $allowedTabs = array(
     "help", "settings", "luckybox", "friends", "messages", "sendmessage", "notifications",
     "forum.new.topic", "forum.new.reaction", "forum.new.quoted.reaction", "forum.edit.reaction",
     "forum.edit.topic", "market.new.item", "ground", "possession.manage", "vehicle.tune",
-    "more.friends"
+    "more.friends", "donate"
 );
 $tab = "help"; // Standard tab
 $content = ""; // Init
@@ -167,6 +169,24 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
         $username = $security->xssEscape($_POST['username']);
         $twigVars['username'] = $username;
         $twigVars['friends'] = $userService->getFriendsBlock($username);
+    }
+    elseif($tab == "donate")
+    {
+        $cms = new CMSService();
+        $donatePage = $cms->getCMSById(11, $lang);
+        $twigVars['donatePage'] = $donatePage;
+        $donator = new DonatorService();
+        $dData = $donator->getDonationData();
+        $langs = array_merge($langs, $language->donationShopLangs());
+        $creditsLimit = 5000;
+        if(isset($dData['cr']))
+        {
+            $creditsLimit -= (int)$dData['cr'];
+            $creditsLimit = $creditsLimit > 0 ? $creditsLimit : 0;
+            $langs['LIMIT_RESET'] = $route->replaceMessagePart($dData['tDate'], $langs['LIMIT_RESET'], '/{date}/');
+            $twigVars['dData'] = $dData;
+        }
+        $langs['CAN_RECEIVE'] = $route->replaceMessagePart(number_format($creditsLimit, 0, "", ","), $langs['CAN_RECEIVE'], '/{credits}/');
     }
 }
 $twigVars['langs'] = $langs; // Extend base langs

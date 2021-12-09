@@ -8,12 +8,21 @@ class DonatorDAO extends DBConfig
 {
     protected $con = "";
     private $dbh = "";
+    private $dateFormat = "%d-%m-%Y %H:%i:%s"; // SQL Format
+    private $phpDateFormat = "d-m-Y H:i:s";
     
     public function __construct()
     {
         global $connection;
         $this->con = $connection;
         $this->dbh = $connection->con;
+        global $route;
+        $this->lang = $route->getLang();
+        if($this->lang == 'en')
+        {
+            $this->dateFormat = "%m-%d-%Y %r"; // SQL Format
+            $this->phpDateFormat = "m-d-Y g:i:s A";
+        }
     }
     
     public function __destruct()
@@ -77,5 +86,68 @@ class DonatorDAO extends DBConfig
         $this->con->setData("
             UPDATE `user` SET `credits`=`credits`- :cr, `cBribingPolice`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
         ", array(':cr' => $credits, ':time' => $bribingTime, ':uid' => $_SESSION['UID']));
+    }
+    
+    public function donationExistsByTxID($txID)
+    {
+        $row = $this->con->getDataSR("SELECT `id` FROM `donate` WHERE `id`= :tid", array(':tid' => $txID));
+        if(isset($row['id']) && $row['id'] > 0)
+            return true;
+        
+        return false;
+    }
+    
+    public function getDonationData()
+    {
+        $id = $_SESSION['UID'];
+        $date = $this->con->getDataSR("
+            SELECT `date` FROM `donate` WHERE `userID`= :uid AND `date` >= :datePast AND `active`='1' AND `deleted`='0' ORDER BY `date` ASC LIMIT 1
+        ", array(':uid' => $id, ':datePast' => date('Y-m-d H:i:s', strtotime("-31 days"))));
+        
+        $datePast = isset($date['date']) ? $date['date'] : null;
+        
+        if(isset($datePast) && $datePast != "0000-00-00 00:00:00")
+        {
+            $row = $this->con->getDataSR("
+                SELECT (SELECT SUM(`credits`) FROM `donate` WHERE `userID`= :uid AND `date`>= :datePast AND `active`='1' AND `deleted`='0') AS `cr`,
+                    DATE_FORMAT(MAX(`date`), '".$this->dateFormat."') AS `tDate`
+                FROM `donate`
+                WHERE `userID`= :uid AND `date`>= :datePast AND `active`='1' AND `deleted`='0' GROUP BY `userID`
+            ", array(':uid' => $id, ':datePast' => $datePast));
+            
+            if(isset($row['cr']))
+            {
+                $row['tDate'] = date($this->phpDateFormat, strtotime($row['tDate'])+(60*60*24*31));
+                return $row;
+            }
+        }
+    }
+    
+    public function saveCompletedDonation($ppJson)
+    {
+        global $userData;
+        
+        $credits = (int)$ppJson->amount->value * 100;
+        if($this->con->setData("
+            INSERT INTO `donate` (`userID`, `sandbox`, `tx`, `currency`, `amount`, `net_amount`, `credits`, `date`) VALUES (:uid, :sb, :tx, :cc, :amt, :namt, :cr, NOW())
+        ", array(
+            ':uid' => $userData->getId(),
+            ':sb' => PP_SANDBOX,
+            ':tx' => $ppJson->id,
+            ':cc' => $ppJson->amount->currency_code,
+            ':amt' => $ppJson->amount->value,
+            ':namt' => $ppJson->seller_receivable_breakdown->net_amount->value,
+            ':cr' => $credits
+        )))
+            return true;
+        
+        return false;
+    }
+    
+    public function addCredits($credits)
+    {
+        $this->con->setData("
+            UPDATE `user` SET `credits`=`credits`+ :cr WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':cr' => $credits, ':uid' => $_SESSION['UID']));
     }
 }

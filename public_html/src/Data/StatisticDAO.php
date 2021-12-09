@@ -352,7 +352,7 @@ class StatisticDAO extends DBConfig
     public function getHallOfFameRounds()
     {
         // Fetch all previous rounds current one excluded.
-        $rows = $this->con->getData("SELECT `id`, `round` FROM `round` WHERE `endDate`!='NULL' AND`active`='1' AND `deleted`='0' ORDER BY `position` DESC LIMIT 0, 30");
+        $rows = $this->con->getData("SELECT `id`, `round` FROM `round` WHERE `endDate`!='NULL' AND`active`='1' AND `deleted`='0' ORDER BY `position` ASC LIMIT 0, 30");
         $rounds = array();
         foreach($rows AS $row)
         {

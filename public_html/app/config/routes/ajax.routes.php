@@ -807,6 +807,13 @@ array(
         'controller' => 'Ajax/status.remove.protection.php'
     ),
     
+    'donate'
+    =>
+    array(
+        'route' => '/game/donation-shop/donate',
+        'controller' => 'Ajax/donate.php'
+    ),
+    
     /**
      * Admin Ajax routes
      * **/

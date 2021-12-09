@@ -31,6 +31,9 @@ use src\Business\UserCoreService;
 use src\Data\config\DBConfig;
 use src\Languages\GetLanguageContent;
 
+// Set correct timezone
+ini_set('date.timezone', 'Europe/Amsterdam');
+
 // Daily maintenance 1 min: (/app/cronjob/dbbackup.php)
 if(date('H') == 4 && date('i') == 00)
 {
@@ -38,23 +41,20 @@ if(date('H') == 4 && date('i') == 00)
     exit(0);
 }
 
-// Set correct timezone
-ini_set('date.timezone', 'Europe/Amsterdam');
-
 // Include routing: controllers > views
 require_once __DIR__.'/../app/config/routing.php';
 $route = new Routing();
 
 // Set error reporting according to DEVELOPMENT global (/app/config/config.php)
 $errRepInt = DEVELOPMENT === true ? 1 : 0;
-ini_set('log_errors', "1");
-ini_set('display_errors', (string)$errRepInt);
-ini_set('display_startup_errors', (string)$errRepInt);
 if($errRepInt === 0)
     error_reporting($errRepInt);
 else
     error_reporting(-1);
 
+ini_set('log_errors', 1);
+ini_set('display_errors', (string)$errRepInt);
+ini_set('display_startup_errors', (string)$errRepInt);
 $errRepInt = null;
 
 $stream = @stream_socket_server('tcp://0.0.0.0:7600', $errno, $errmg, STREAM_SERVER_BIND);

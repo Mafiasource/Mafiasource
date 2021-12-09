@@ -153,7 +153,13 @@ class StealVehicleService
                     $dailyChallengeService = new DailyChallengeService();
                     $dailyChallengeService->addToDailiesIfActive(1);
                     
-                    $stolenValue = round(($stolenVehicle->getPrice()/100) * (100-$dmg));
+                    $vehiclePrice = $stolenVehicle->getPrice();
+                    
+                    if($userData->getDonatorID() >= 1)
+                        $vehiclePrice *= 0.95;
+                    
+                    $vehiclePrice *= 0.65;
+                    $stolenValue = round((round($vehiclePrice) / 100) * (100 - $dmg));
                     $stateID = $userData->getStateID();
                     $this->data->stealVehicleSuccess($stolenValue, $rpCollected, $newLvlData['levelAfter'], $newLvlData['xpAfter']);
                     if($garage->hasGarageInState($stateID) === TRUE && $dmg < 75 && $garage->hasSpaceLeftInGarage($stateID) === TRUE)

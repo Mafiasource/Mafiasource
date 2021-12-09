@@ -5,6 +5,12 @@ use src\Business\SeoService;
 
 if($security->checkSSL() === false) exit(0);
 
+if(!$userSession || !$userData)
+{
+    $loggedSession = $user->checkLoggedSession(false) ? true : false;
+    if($loggedSession) $userData = $user->getUserData();
+}
+
 $cookie = "false";
 $username = "";
 if(isset($_COOKIE['cookies-accepted']) && $_COOKIE['cookies-accepted'] == "accepted") $cookie = "true";

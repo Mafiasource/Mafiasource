@@ -28,6 +28,20 @@ require_once __DIR__.'/../../../../app/config/routing.php';
 require_once __DIR__.'/../../../../vendor/SessionManager.php';
 require_once __DIR__.'/../../../../src/Business/Logic/SeoURL.php';
 $route = new Routing();
+
+// Set error reporting according to DEVELOPMENT global (/app/config/config.php)
+$errRepInt = DEVELOPMENT === true ? 1 : 0;
+if($errRepInt === 0)
+    error_reporting($errRepInt);
+else
+    error_reporting(-1);
+
+ini_set('log_errors', 1);
+ini_set('display_errors', (string)$errRepInt);
+ini_set('display_startup_errors', (string)$errRepInt);
+$errRepInt = null;
+
+// Start session
 $session = new SessionManager();
 $seoURL = new SeoURL();
 ini_set('session.save_handler', 'files');
