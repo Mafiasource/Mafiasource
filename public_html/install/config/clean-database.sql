@@ -452,6 +452,30 @@ CREATE TABLE `detective`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for donate
+-- ----------------------------
+DROP TABLE IF EXISTS `donate`;
+CREATE TABLE `donate`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
+  `userID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
+  `sandbox` tinyint(1) NOT NULL DEFAULT 0,
+  `tx` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `currency` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `amount` float(10, 2) NOT NULL DEFAULT 0.00,
+  `net_amount` float(10, 2) NOT NULL DEFAULT 0.00,
+  `credits` bigint NOT NULL DEFAULT 0,
+  `date` datetime NOT NULL,
+  `position` int NULL DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of donate
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for donator
 -- ----------------------------
 DROP TABLE IF EXISTS `donator`;
