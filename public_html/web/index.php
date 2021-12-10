@@ -1,10 +1,10 @@
 <?PHP
 
 // Mafiasource online mafia RPG, this software is inspired by Crimeclub.
-// Copyright � 2016 Michael Carrein, 2006 Crimeclub.nl
+// Copyright © 2016 Michael Carrein, 2006 Crimeclub.nl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the �Software�),
+// copy of this software and associated documentation files (the “Software”),
 // to deal in the Software without restriction, including without limitation
 // the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the
@@ -13,7 +13,7 @@
 // The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED �AS IS�, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
 // NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -47,14 +47,10 @@ $route = new Routing();
 
 // Set error reporting according to DEVELOPMENT global (/app/config/config.php)
 $errRepInt = DEVELOPMENT === true ? 1 : 0;
-if($errRepInt === 0)
-    error_reporting($errRepInt);
-else
-    error_reporting(-1);
-
+error_reporting(-1);
 ini_set('log_errors', 1);
-ini_set('display_errors', (string)$errRepInt);
-ini_set('display_startup_errors', (string)$errRepInt);
+ini_set('display_errors', $errRepInt);
+ini_set('display_startup_errors', $errRepInt);
 $errRepInt = null;
 
 $stream = @stream_socket_server('tcp://0.0.0.0:7600', $errno, $errmg, STREAM_SERVER_BIND);

@@ -94,9 +94,10 @@ class UserDAO extends DBConfig
     public function checkLoginGetIdOnSuccess($username, $pass)
     {
         $id = $this->getIdByUsername($username);
-        if($id !== FALSE && file_exists(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt"))
+        $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/".$id.".txt" : null;
+        if($id !== FALSE && isset($saltFile) && file_exists($saltFile))
         {
-            $file = fopen(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt", "r");
+            $file = fopen($saltFile, "r");
             $salt = fgets($file);
             fclose($file);
             
@@ -525,9 +526,7 @@ class UserDAO extends DBConfig
     
     public function checkPassword($pass)
     {
-        if(isset($_SESSION['UID']))
-            $saltFile = DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt";
-        
+        $saltFile = isset($_SESSION['UID']) ? DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt" : null;
         if(isset($saltFile) && file_exists($saltFile))
         {
             $file = fopen($saltFile, "r");
@@ -564,9 +563,7 @@ class UserDAO extends DBConfig
         if($id == FALSE)
             $id = $this->getIdByUsername($username);
         
-        if(isset($id))
-            $saltFile = DOC_ROOT . "/app/Resources/userSalts/" . $id . ".txt";
-        
+        $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/" . $id . ".txt" : null;
         if(isset($saltFile) && file_exists($saltFile))
         {
             // Remove old salt..

@@ -31,14 +31,10 @@ $route = new Routing();
 
 // Set error reporting according to DEVELOPMENT global (/app/config/config.php)
 $errRepInt = DEVELOPMENT === true ? 1 : 0;
-if($errRepInt === 0)
-    error_reporting($errRepInt);
-else
-    error_reporting(-1);
-
+error_reporting(-1);
 ini_set('log_errors', 1);
-ini_set('display_errors', (string)$errRepInt);
-ini_set('display_startup_errors', (string)$errRepInt);
+ini_set('display_errors', $errRepInt);
+ini_set('display_startup_errors', $errRepInt);
 $errRepInt = null;
 
 // Start session
