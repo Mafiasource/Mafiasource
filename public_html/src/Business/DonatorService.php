@@ -218,15 +218,13 @@ class DonatorService extends DonatorStatics
         global $route;
         global $language;
         global $langs;
-        global $userData;
         $l = $language->donationShopLangs();
         
         $paymentID = $post['tx'];
 
         if($this->data->donationExistsByTxID($paymentID))
         {
-            error_log("Duplicate donation attempt by UserID: " . $userData->getId() . " with username: " . $userData->getUsername() . "!", 0);
-            $error = $langs['DONATE_REWARDED_ALREADY'];
+            $error = $l['DONATE_REWARDED_ALREADY'];
         }
         if(isset($error))
         {
@@ -281,7 +279,7 @@ class DonatorService extends DonatorStatics
                 $crLimit = 5000;
                 $crDiff = $crLimit - $crPoss;
                 $cr = (int)$json->amount->value * 100;
-                if($crPoss + $cr <= $crLimit && $cr >= 100)
+                if($crPoss + $cr < $crLimit && $cr >= 100)
                 {
                     $this->data->addCredits($cr);
                     $replacedMessage = $route->replaceMessagePart(number_format($cr, 0, '', ','), $l['DONATE_SUCCESS'], '/{credits}/');
@@ -289,7 +287,8 @@ class DonatorService extends DonatorStatics
                 elseif($crDiff > 0 && $cr >= 100)
                 {
                     $this->data->addCredits($crDiff);
-                    $replacedMessage = $route->replaceMessagePart(number_format($crDiff, 0, '', ','), $l['DONATE_SUCCESS_HIT_LIMIT'], '/{credits}/');
+                    $replacedMessage = $route->replaceMessagePart(number_format($crDiff, 0, '', ','), $l['DONATE_SUCCESS'], '/{credits}/');
+                    $replacedMessage .= " " . $l['DONATE_SUCCESS_HIT_LIMIT'];
                 }
                 $this->data->saveCompletedDonation($json);
                 

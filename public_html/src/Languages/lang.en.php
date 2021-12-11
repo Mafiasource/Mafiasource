@@ -926,7 +926,7 @@ class GetLanguageContent
             'DONATE_REWARDED_ALREADY' => "This donation bonus has already been claimed!",
             'DONATE_ERROR' => "An error occured with your donation, contact an Administrator for asistance.",
             'DONATE_SUCCESS' => "Your donation was received and {credits} credits have been added to your account as a reward.",
-            'DONATE_SUCCESS_HIT_LIMIT' => "Your donation was received and {credits} credits have been added to your account as a reward. You have reached your limit which will reset within 31 days.",
+            'DONATE_SUCCESS_HIT_LIMIT' => "You have reached your limit which will reset within 31 days.",
             'DONATE_SUCCESS_LIMIT' => "Your donation was received but because of your limit you didn't receive any credits!",
         );
         return $langs;

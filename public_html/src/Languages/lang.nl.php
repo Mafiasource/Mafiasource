@@ -926,7 +926,7 @@ class GetLanguageContent
             'DONATE_REWARDED_ALREADY' => "Deze donatiebonus is al geclaimd!",
             'DONATE_ERROR' => "Er is een probleem opgetreden met je donatie, contacteer een Administrator voor hulp.",
             'DONATE_SUCCESS' => "Je donatie werd ontvangen en {credits} credits werden aan je account toegevoegd als beloning.",
-            'DONATE_SUCCESS_HIT_LIMIT' => "Je donatie werd ontvangen en {credits} credits werden aan je account toegevoegd als beloning. Je hebt wel je limiet bereikt die zal resetten binnen 31 dagen.",
+            'DONATE_SUCCESS_HIT_LIMIT' => "Je hebt wel je limiet bereikt die zal resetten binnen 31 dagen.",
             'DONATE_SUCCESS_LIMIT' => "Je donatie werd ontvangen maar door je limiet heb je geen credits ontvangen!",
         );
         return $langs;

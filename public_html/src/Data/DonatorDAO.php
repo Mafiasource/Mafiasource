@@ -90,7 +90,7 @@ class DonatorDAO extends DBConfig
     
     public function donationExistsByTxID($txID)
     {
-        $row = $this->con->getDataSR("SELECT `id` FROM `donate` WHERE `id`= :tid", array(':tid' => $txID));
+        $row = $this->con->getDataSR("SELECT `id` FROM `donate` WHERE `tx`= :tid", array(':tid' => $txID));
         if(isset($row['id']) && $row['id'] > 0)
             return true;
         
