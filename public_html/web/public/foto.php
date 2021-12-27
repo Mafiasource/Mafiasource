@@ -37,18 +37,21 @@ $allowedSites = array (
 // STOP MODIFYING HERE!
 // --------------------
 
+/* Security fix Mafiasource */
 // sort out image source
 $src = get_request ('src', '');
-if ($src == '' || strlen ($src) <= 3) {
+if ($src == '' || strlen ($src) <= 3 || strpos($src, 'http')) {
     display_error ('no image specified');
+    $src = null;
 }
 
 
 // clean params before use
-$src = clean_source ($src);
+if(isset($src)) $src = clean_source ($src);
 
 // get mime type of src
-$mime_type = mime_type ($src);
+if(isset($src)) $mime_type = mime_type ($src);
+/* //End security fix Mafiasource */
 
 // used for external websites only
 $external_data_string = '';
@@ -122,8 +125,9 @@ if ($new_width == 0 && $new_height == 0) {
 // ensure size limits can not be abused
 $new_width = min ($new_width, MAX_WIDTH);
 $new_height = min ($new_height, MAX_HEIGHT);
-$GLOBALS["width"] = round($new_width);
-$GLOBALS["height"] = round($new_height);
+$sizes = array();
+$sizes["width"] = round($new_width);
+$sizes["height"] = round($new_height);
 
 // set memory limit to be able to have enough space to resize larger images
 ini_set ('memory_limit', MEMORY_LIMIT);
@@ -880,12 +884,20 @@ function get_document_root ($src) {
  * @param <type> $errorString
  */
 function display_error ($errorString = '') {
-		$my_img = imagecreate( $GLOBALS["width"], $GLOBALS["height"]);
+    /* Security fix Mafiasource */
+    global $sizes;
+    if(!is_array($sizes) || !array_key_exists("width", $sizes) || !array_key_exists("height", $sizes))
+    {
+        $sizes["width"] = 340;
+	$sizes["height"] = 90;
+    }
+    /* //End security fix Mafiasource */
+		$my_img = imagecreate( $sizes["width"], $sizes["height"]);
 		$background = imagecolorallocate( $my_img, 200, 200, 200);
 		$text_colour = imagecolorallocate( $my_img, 0, 0, 0 );
 		
-		$center = ($GLOBALS["width"]/2)-42;
-		$centerv = ($GLOBALS["height"]/2)-10;
+		$center = ($sizes["width"]/2)-42;
+		$centerv = ($sizes["height"]/2)-10;
 		
 		imagestring($my_img, 4, $center, $centerv, "PLACEHOLDER",$text_colour );
 		header( "Content-type: image/png" );
