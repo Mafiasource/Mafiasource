@@ -41,7 +41,7 @@ $allowedSites = array (
 /* Security fix Mafiasource */
 // sort out image source
 $src = get_request ('src', '');
-if ($src == '' || strlen ($src) <= 3 || strpos($src, "://") !== false || strpos(strtoupper($src), "%3A%2F%2F" !== false)) {
+if ($src == '' || strlen ($src) <= 3 || strpos($src, "://") !== false || strpos(strtoupper($src), "%3A%2F%2F") !== false) {
     display_error ('no image specified');
     $src = null;
 }
