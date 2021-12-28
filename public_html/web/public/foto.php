@@ -60,7 +60,8 @@ $fh = '';
 
 // check to see if this image is in the cache already
 // if already cached then display the image and die
-check_cache ($mime_type);
+// But only when dealing with a valid mime_type
+if(isset($mime_type)) check_cache ($mime_type);
 
 // cache doesn't exist and then process everything
 // check to see if GD function exist
@@ -524,22 +525,23 @@ function filemtime_compare ($a, $b) {
  * @return <type>
  */
 function mime_type ($file) {
-
-	$file_infos = getimagesize ($file);
-	$mime_type = $file_infos['mime'];
-
-	// no mime type
-	if (empty ($mime_type)) {
-		display_error ('no mime type specified');
-	}
-
-    // use mime_type to determine mime type
-    if (!preg_match ("/jpg|jpeg|gif|png/i", $mime_type)) {
-		display_error ('Invalid src mime type: ' . $mime_type);
+    if(is_file($file))
+    {
+    	$file_infos = getimagesize ($file);
+    	$mime_type = $file_infos['mime'];
+    
+    	// no mime type
+    	if (empty ($mime_type)) {
+    		display_error ('no mime type specified');
+    	}
+    
+        // use mime_type to determine mime type
+        if (!preg_match ("/jpg|jpeg|gif|png/i", $mime_type)) {
+    		display_error ('Invalid src mime type: ' . $mime_type);
+        }
+    
+        return $mime_type;
     }
-
-    return $mime_type;
-
 }
 
 
@@ -803,37 +805,39 @@ function curl_write ($handle, $data) {
  * @return string
  */
 function clean_source ($src) {
-
-	$host = str_replace ('www.', '', $_SERVER['HTTP_HOST']);
-	$regex = "/^(http(s|):\/\/)(www\.|)" . $host . "\//i";
-
-	$src = preg_replace ($regex, '', $src);
-	$src = strip_tags ($src);
-	$src = str_replace (' ', '%20', $src);
-    $src = check_external ($src);
-
-    // remove slash from start of string
-    if (strpos ($src, '/') === 0) {
-        $src = substr ($src, -(strlen ($src) - 1));
+    if(isset($src))
+    {
+    	$host = str_replace ('www.', '', $_SERVER['HTTP_HOST']);
+    	$regex = "/^(http(s|):\/\/)(www\.|)" . $host . "\//i";
+    
+    	$src = preg_replace ($regex, '', $src);
+    	$src = strip_tags ($src);
+    	$src = str_replace (' ', '%20', $src);
+        $src = check_external ($src);
+    
+        // remove slash from start of string
+        if (strpos ($src, '/') === 0) {
+            $src = substr ($src, -(strlen ($src) - 1));
+        }
+    
+        // don't allow users the ability to use '../'
+        // in order to gain access to files below document root
+        $src = preg_replace ("/\.\.+\//", "", $src);
+    
+        // get path to image on file system
+        $src = get_document_root ($src) . '/' . $src;
+    
+    	if (!is_file ($src)) {
+    		display_error ('source is not a valid file');
+    	}
+        else
+        {
+        	if (filesize ($src) > MAX_FILE_SIZE) {
+        		display_error ('source file is too big (filesize > MAX_FILE_SIZE)');
+        	}
+        }
+        return realpath ($src);
     }
-
-    // don't allow users the ability to use '../'
-    // in order to gain access to files below document root
-    $src = preg_replace ("/\.\.+\//", "", $src);
-
-    // get path to image on file system
-    $src = get_document_root ($src) . '/' . $src;
-
-	if (!is_file ($src)) {
-		display_error ('source is not a valid file');
-	}
-
-	if (filesize ($src) > MAX_FILE_SIZE) {
-		display_error ('source file is too big (filesize > MAX_FILE_SIZE)');
-	}
-
-    return realpath ($src);
-
 }
 
 
@@ -855,7 +859,10 @@ function get_document_root ($src) {
 	if (!substr ($_SERVER['SCRIPT_FILENAME'], 0, 1) == '/') {
 		$path = $_SERVER['DOCUMENT_ROOT'];
 	}
-
+    
+    if(!isset($path))
+        $path = "";
+    
     foreach ($parts as $part) {
         $path .= '/' . $part;
         if (file_exists ($path . '/' . $src)) {
@@ -902,8 +909,8 @@ function display_error ($errorString = '') {
 		imagestring($my_img, 4, $center, $centerv, "PLACEHOLDER",$text_colour );
 		header( "Content-type: image/png" );
 		imagepng( $my_img );
-		imagecolordeallocate( $line_color );
-		imagecolordeallocate( $text_color );
-		imagecolordeallocate( $background );
+		imagecolordeallocate( $my_img, $text_colour );
+		imagecolordeallocate( $my_img, $text_colour );
+		imagecolordeallocate( $my_img, $background );
 		imagedestroy( $my_img );
 }
