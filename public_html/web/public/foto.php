@@ -40,7 +40,7 @@ $allowedSites = array (
 /* Security fix Mafiasource */
 // sort out image source
 $src = get_request ('src', '');
-if ($src == '' || strlen ($src) <= 3 || strpos($src, 'http')) {
+if ($src == '' || strlen ($src) <= 3 || strpos($src, 'http') !== false) {
     display_error ('no image specified');
     $src = null;
 }
@@ -51,7 +51,6 @@ if(isset($src)) $src = clean_source ($src);
 
 // get mime type of src
 if(isset($src)) $mime_type = mime_type ($src);
-/* //End security fix Mafiasource */
 
 // used for external websites only
 $external_data_string = '';
@@ -128,6 +127,7 @@ $new_height = min ($new_height, MAX_HEIGHT);
 $sizes = array();
 $sizes["width"] = round($new_width);
 $sizes["height"] = round($new_height);
+/* //End security fix Mafiasource */
 
 // set memory limit to be able to have enough space to resize larger images
 ini_set ('memory_limit', MEMORY_LIMIT);
@@ -889,7 +889,7 @@ function display_error ($errorString = '') {
     if(!is_array($sizes) || !array_key_exists("width", $sizes) || !array_key_exists("height", $sizes))
     {
         $sizes["width"] = 340;
-	$sizes["height"] = 90;
+        $sizes["height"] = 90;
     }
     /* //End security fix Mafiasource */
 		$my_img = imagecreate( $sizes["width"], $sizes["height"]);
