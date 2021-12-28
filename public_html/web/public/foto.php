@@ -26,6 +26,7 @@ define ('MEMORY_LIMIT', '150M');			// set PHP memory limit
 define ('MAX_FILE_SIZE', 4500000);			// file size limit to prevent possible DOS attacks (roughly 1.5 megabytes)
 
 // external domains that are allowed to be displayed on your website
+// None of these are allowed anymore
 $allowedSites = array (
 	'flickr.com',
 	'picasa.com',
@@ -40,7 +41,7 @@ $allowedSites = array (
 /* Security fix Mafiasource */
 // sort out image source
 $src = get_request ('src', '');
-if ($src == '' || strlen ($src) <= 3 || strpos($src, 'http') !== false) {
+if ($src == '' || strlen ($src) <= 3 || strpos($src, "://") !== false || strpos(strtoupper($src), "%3A%2F%2F" !== false)) {
     display_error ('no image specified');
     $src = null;
 }
@@ -89,10 +90,10 @@ if (function_exists ('imagefilter') && defined ('IMG_FILTER_NEGATE')) {
 $new_width =  (int) abs (get_request ('w', 0));
 $new_height = (int) abs (get_request ('h', 0));
 $zoom_crop = (int) get_request ('zc', 1);
-$quality = (int) abs (get_request ('q', 100));
-$align = get_request ('a', 'c');
-$filters = get_request ('f', '');
-$sharpen = (bool) get_request ('s', 0);
+$quality = 100; //(int) abs (get_request ('q', 100));
+$align = "c"; //get_request ('a', 'c');
+$filters = ""; //get_request ('f', '');
+$sharpen = 0; //(bool) get_request ('s', 0);
 
 /*echo $src;
 echo "<h1>elel</h1>";
