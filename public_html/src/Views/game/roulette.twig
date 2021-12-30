@@ -41,7 +41,7 @@
                         {% if colName|upper in langs|keys %}
                             {% set colName = langs[colName|upper] %}
                         {% endif %}
-                        {% if v in ['1_col', '2_col', '3_col'] %}<img src="{{ staticRoot }}/web/public/images/icons/arrow_up.png" class="icon" alt="Col"/>{% endif %}&nbsp;{{ colName|ucfirst }}:&nbsp;<span class="right">$&nbsp;<input type="text" name="{{ v }}" value="{{ value }}" class="roulette-field" placeholder="{{ langs.STAKE }}" maxlength="7" /></span>
+                        {% if v in ['1_col', '2_col', '3_col'] %}<img src="{{ staticRoot }}/web/public/images/icons/arrow_up.png" class="icon" alt="Col"/>{% endif %}&nbsp;{{ colName|capitalize }}:&nbsp;<span class="right">$&nbsp;<input type="text" name="{{ v }}" value="{{ value }}" class="roulette-field" placeholder="{{ langs.STAKE }}" maxlength="7" /></span>
                     </td>
                 {% endfor %}
                 <tr id="playRouletteResponse" class="rowMsg"></tr>
@@ -58,17 +58,8 @@
     <div class="content-container cf">
         <div id="buyPossessResponse"></div>
         <div class="center">
-            {% if possessionData.getPossessDetails.getUserID == 0 %}
-                <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
-                <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
-                    <input type="hidden" name="id" value="{{ possessId }}"/>
-                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                    <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
-                </form>
-                <br class="clear"/>
-            {% else %}
-                <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
-            {% endif %}
+            {% include "/src/Views/game/.inc.possess.twig" with {article: langs.DEZETHIS} %}
+            <br class="clear"/>
         </div>
     </div>
 </div>

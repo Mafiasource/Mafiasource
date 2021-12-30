@@ -1062,8 +1062,8 @@ class UserDAO extends DBConfig
             {
                 $profitOwner = round($amount * 0.05, 0);
                 
-                $statement = $this->dbh->prepare("UPDATE `user` SET `swissBank`=`swissBank`+ :amount, `bank`=`bank`- :amount WHERE `id`= :uid AND `active`='1' AND `deleted`='0'");
-                $statement->execute(array(':amount' => ($amount*0.95), ':uid' => $_SESSION['UID']));
+                $statement = $this->dbh->prepare("UPDATE `user` SET `swissBank`=`swissBank`+ :amount, `bank`=`bank`- :costs WHERE `id`= :uid AND `active`='1' AND `deleted`='0'");
+                $statement->execute(array(':amount' => ($amount*0.95), ':costs' => $amount, ':uid' => $_SESSION['UID']));
                 
                 /** Possession logic for bank transfer to swiss bank | pay owner if exists and not self **/
                 if(is_object($pData)) $bankOwner = $pData->getPossessDetails()->getUserID();

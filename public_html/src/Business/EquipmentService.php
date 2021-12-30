@@ -140,7 +140,7 @@ class EquipmentService
         {
             $error = $l['EQUIPMENT_DOESNT_EXIST'];
         }
-        if(is_object($equipment) && $equipment->getInPossession() == false)
+        if(isset($equipment) && is_object($equipment) && $equipment->getInPossession() == false)
         {
             $error = $l['DONT_OWN_EQUIPMENT'];
         }

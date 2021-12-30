@@ -14,6 +14,7 @@ class Crime
     private $minProfit;
     private $maxProfit;
     private $difficulty;
+    private $donatorID;
     private $maxRankPoints;
     private $active;
     
@@ -79,6 +80,14 @@ class Crime
 
 	public function setDifficulty($difficulty){
 		$this->difficulty = $difficulty;
+	}
+    
+    public function getDonatorID(){
+		return $this->donatorID;
+	}
+
+	public function setDonatorID($donatorID){
+		$this->donatorID = $donatorID;
 	}
 
 	public function getMaxRankPoints(){

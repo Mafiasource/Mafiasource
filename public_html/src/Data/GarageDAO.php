@@ -181,13 +181,18 @@ class GarageDAO extends DBConfig
                 $statement->execute(array(':gid' => $gid));
                 $num = $statement->rowCount();
                 if($num >= $sVal)
+                {
+                    if($returnOccupied)
+                        return (int)$num;
+                    
                     return FALSE;
+                }
                 else
                 {
                     if($returnOccupied)
                         return (int)$num;
-                    else
-                        return TRUE;
+                    
+                    return TRUE;
                 }
             }
         }
@@ -240,13 +245,18 @@ class GarageDAO extends DBConfig
                 $statement->execute(array(':gid' => $gid));
                 $num = $statement->rowCount();
                 if($num >= $sVal)
+                {
+                    if($returnOccupied)
+                        return (int)$num;
+                    
                     return FALSE;
+                }
                 else
                 {
                     if($returnOccupied)
                         return (int)$num;
-                    else
-                        return TRUE;
+                    
+                    return TRUE;
                 }
             }
         }
@@ -255,20 +265,20 @@ class GarageDAO extends DBConfig
     
     public function spaceLeftInGarage($stateID, $maxSpace)
     {
-        $num = $this->hasSpaceLeftInGarage($stateID, true);
-        if($num >= 0)
-            return $maxSpace - $num;
+        $occupied = $this->hasSpaceLeftInGarage($stateID, true);
+        if($occupied >= 0)
+            return $maxSpace - $occupied;
         
-        return FALSE;
+        return 0;
     }
     
     public function spaceLeftInFamilyGarage($famID, $maxSpace)
     {
-        $num = $this->hasSpaceLeftInFamilyGarage($famID, true);
-        if($num >= 0)
-            return $maxSpace - $num;
+        $occupied = $this->hasSpaceLeftInFamilyGarage($famID, true);
+        if($occupied >= 0)
+            return $maxSpace - $occupied;
         
-        return FALSE;
+        return 0;
     }
     
     public function getGaragesWithFreeSpace()

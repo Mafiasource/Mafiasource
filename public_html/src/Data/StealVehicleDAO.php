@@ -35,7 +35,7 @@ class StealVehicleDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT COUNT(*) AS `total` FROM `steal_vehicle` WHERE `deleted` = '0' AND `active` = '1' LIMIT 1");
             $statement->execute();
             $row = $statement->fetch();
-            return $row['total'];
+            return isset($row['total']) ? $row['total'] : 0;
         }
     }
     
@@ -56,7 +56,7 @@ class StealVehicleDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT `id`, `vehiclesLv`, `vehiclesXp`, `vehiclesProfit`, `vehiclesSuccess`, `vehiclesFail`, `vehiclesRankpoints` FROM `user` WHERE `id` = :uid AND `active`='1' AND `deleted`='0' LIMIT 1");
             $statement->execute(array(':uid' => $_SESSION['UID']));
             $row = $statement->fetch();
-            if($row['id'] > 0)
+            if(isset($row['id']) && $row['id'] > 0)
             {
                 $userObj = new User();
                 $userObj->setVehiclesLv($row['vehiclesLv']);
@@ -111,7 +111,7 @@ class StealVehicleDAO extends DBConfig
             ");
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
-            if($row['id'] > 0)
+            if(isset($row['id']) && $row['id'] > 0)
             {
                 $sv = new StealVehicle();
                 $sv->setId($row['id']);

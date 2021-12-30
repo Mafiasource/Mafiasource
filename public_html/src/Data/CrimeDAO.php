@@ -81,8 +81,12 @@ class CrimeDAO extends DBConfig
                 
                 if(!isset($organized))
                 {
-                    $statement2 = $this->dbh->prepare("SELECT `id`, `name_".$this->lang."` AS `name`, `description_".$this->lang."` AS `description`, `picture`, `level`, `minProfit`, `maxProfit` FROM `crime` WHERE `level` <= :crimesLv  AND `active`='1' AND `deleted`='0' ORDER BY `level` ASC");
-                    $statement2->execute(array(':crimesLv' => $row['crimesLv']));
+                    global $userData;
+                    $statement2 = $this->dbh->prepare("
+                        SELECT `id`, `name_".$this->lang."` AS `name`, `description_".$this->lang."` AS `description`, `picture`, `level`, `minProfit`, `maxProfit`, `donatorID`
+                        FROM `crime` WHERE `level` <= :crimesLv AND `donatorID`<= :donatorID  AND `active`='1' AND `deleted`='0' ORDER BY `level` ASC
+                    ");
+                    $statement2->execute(array(':crimesLv' => $row['crimesLv'], ':donatorID' => $userData->getDonatorID()));
                     $crimesList = array();
                     $cnt = $statement2->rowCount();
                     $i = 1;
@@ -96,6 +100,7 @@ class CrimeDAO extends DBConfig
                         if(file_exists(DOC_ROOT.'/web/public/images/crime/'.$row2['picture'])) $crime->setPicture($row2['picture']);
                         $crime->setMinProfit($row2['minProfit']);
                         $crime->setMaxProfit($row2['maxProfit']);
+                        $crime->setDonatorID($row2['donatorID']);
                         $crime->setActive(false);
                         if($i == $cnt) $crime->setActive(true);
                         

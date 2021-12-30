@@ -108,4 +108,4 @@ if(isset($inactivePlayer) && $inactivePlayer['openCompetition'] < 1)
             ':cid' => $security->randInt(1, 18), ':type' => $security->randInt(1, 5), ':stake' => $security->randInt(50, 500000)
         ));
     }
-}
+} // /CHECKED & OK

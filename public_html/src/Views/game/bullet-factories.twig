@@ -20,17 +20,8 @@
             <div class="row">
                 <img src="{{ staticRoot }}/foto/web/public/images/bulletfactory.jpg" class="middle" alt="{{ langs.BULLET_FACTORY }}"/>
                 <div class="center">
-                    {% if possessionData.getPossessDetails.getUserID == 0 %}
-                        <p>{{ langs.DEZETHIS }} {{ possessionData.getName|lower }} {{ langs.HAS_NO_OWNER_YET|lower }}</p>
-                        <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
-                            <input type="hidden" name="id" value="{{ possessId }}"/>
-                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                            <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|ucfirst }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
-                        </form>
-                        <br class="clear"/> {# ADDED #}
-                    {% else %}
-                        <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ langs.DEZETHIS|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
-                    {% endif %}
+                    {% include "/src/Views/game/.inc.possess.twig" with {article: langs.DEZETHIS} %}
+                    <br class="clear"/>
                     {{ langs.THIS_BF_IS_CURRENTLY }}: {% if bfInfo.producing %}<span class="lightgreen">{{ langs.PRODUCING|lower }}.</span>{% else %}<span class="red">{{ langs.DORMANT|lower }}.</span>{% endif %}
                     <br class="clear"/>
                 </div>

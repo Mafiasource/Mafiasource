@@ -13,11 +13,11 @@
                             {% for key,name in values %}
                                 {% if onlyFields is iterable %}
                                     {% if key in onlyFields and key|isstr %}    
-                                        <option value="{{ key }}">{{ key|ucfirst }}</option>
+                                        <option value="{{ key }}">{{ key|capitalize }}</option>
                                     {% endif %}
                                 {% else %}
                                     {% if key not in skipFields and key != 'position' and key != 'active' and key != 'deleted' and key|isstr %}    
-                                        <option value="{{ key }}">{{ key|ucfirst }}</option>
+                                        <option value="{{ key }}">{{ key|capitalize }}</option>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
@@ -60,11 +60,11 @@
                                 {% for key,name in values %}
                                     {% if onlyFields is iterable %}
                                         {% if key in onlyFields and key|isstr %}    
-                                            <th>{{ key|ucfirst }}</th>
+                                            <th>{{ key|capitalize }}</th>
                                         {% endif %}
                                     {% else %}
                                         {% if key not in skipFields and key != 'position' and key != 'active' and key != 'deleted' and key|isstr %}    
-                                            <th>{{ key|ucfirst }}</th>
+                                            <th>{{ key|capitalize }}</th>
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}

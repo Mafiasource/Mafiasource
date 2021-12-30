@@ -62,7 +62,7 @@
         <form class="row ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-family-property') }}" method="POST" data-response="#interactPropertyResponse">
             <input type="hidden" name="security-token" value="{{ securityToken }}"/>
             <input type="hidden" name="property" value="bullet-factory"/>
-            <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ langs.BULLET_FACTORY|lower }}{% else %}{{ langs.BULLET_FACTORY|ucfirst }} {{ langs.BUY|lower }}{% endif %} {{ langs.FOR|lower }} {{ price|moneyFormat }}"/>
+            <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ langs.BULLET_FACTORY|lower }}{% else %}{{ langs.BULLET_FACTORY|capitalize }} {{ langs.BUY|lower }}{% endif %} {{ langs.FOR|lower }} {{ price|moneyFormat }}"/>
         </form>
     {% endif %}
 {% endif %}

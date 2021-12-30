@@ -37,7 +37,7 @@ class GroundDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT COUNT(*) AS `total` FROM `ground` WHERE  `active` = '1' AND `deleted` = '0'");
             $statement->execute();
             $row = $statement->fetch();
-            return $row['total'];
+            return isset($row['total']) ? $row['total'] : 0;
         }
     }
     
@@ -77,7 +77,7 @@ class GroundDAO extends DBConfig
                 WHERE g.`stateID`= :sid AND g.`gID`= :gID AND g.`active`='1' AND g.`deleted`='0'
             ", array(':sid' => $stateID, ':gID' => $groundID));
             
-            if($row['id'] > 0)
+            if(isset($row['id']) && $row['id'] > 0)
             {
                 $state = new StateService();
                 
@@ -131,7 +131,7 @@ class GroundDAO extends DBConfig
             $row = $this->con->getDataSR("
                 SELECT `id`, `name_".$this->lang."` AS `name` , `picture`, `price`, `income` FROM `ground_building` WHERE `id`= :bid AND `active`='1' AND `deleted`='0'
             ", array(':bid' => $id));
-            if($row['id'] > 0)
+            if(isset($row['id']) && $row['id'] > 0)
             {
                 $building = new GroundBuilding();
                 $building->setId($row['id']);
@@ -159,7 +159,7 @@ class GroundDAO extends DBConfig
             $row = $this->con->getDataSR("
                 SELECT COUNT(`id`) AS `ground` FROM `ground` WHERE `userID`= :uid AND `active`='1' AND `deleted`='0'
             ", array(':uid' => $_SESSION['UID']));
-            return $row['ground'];
+            return isset($row['ground']) ? $row['ground'] : 0;
         }
     }
     
@@ -187,7 +187,8 @@ class GroundDAO extends DBConfig
             $row = $this->con->getDataSR("
                 SELECT `building".$building->getId()."` FROM `ground` WHERE `userID`= :uid AND `stateID`= :sid AND `gID`= :gID AND `id`= :id AND `active`='1' AND `deleted`='0'
             ", array(':uid' => $_SESSION['UID'], ':sid' => $ground->getStateID(), ':gID' => $ground->getGID(), ':id' => $ground->getId()));
-            if($row['building'.$building->getId()] >= 1 && $row['building'.$building->getId()] <= 5)
+            $bid = isset($row['building' . $building->getId()]) ? $row['building' . $building->getId()] : null;
+            if(isset($bid) && $bid >= 1 && $bid <= 5)
                 return TRUE;
             else
                 return FALSE;

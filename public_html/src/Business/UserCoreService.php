@@ -35,7 +35,7 @@ class UserCoreService
         if(preg_match('{^/forum/game-forum.*$}', $_SERVER['REQUEST_URI']))
             return TRUE;
         
-        if(strpos($_SERVER['REQUEST_URI'], 'game'))
+        if(preg_match('{^/game.*$}', $_SERVER['REQUEST_URI']))
             return FALSE;
         
         return TRUE;

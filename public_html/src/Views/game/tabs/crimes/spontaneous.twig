@@ -23,7 +23,7 @@
                             <div class="carousel-item {% if item.getActive == true %}active{% endif %}">
                               <form id="commitCrime_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('commit-crime') }}" data-response="#commitCrimeResponse">
                                   <h2>{{ item.getName }} - <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="Money" class="icon"/> {{ item.getMinProfit|moneyFormat }} - {{ item.getMaxProfit|moneyFormat }} - <img src="{{ staticRoot }}/foto/web/public/images/icons/star.png" alt="Level" class="icon"/> Lv. {{ item.getLevel }}</h2>
-                                  <p>{{ item.getDescription }}</p>
+                                  <p>{{ item.getDescription }}&nbsp;<strong class="{% if item.getDonatorID == 5 %}vip{% elseif item.getDonatorID == 10 %}gold-member{% endif %}">{% if item.getDonatorID == 5 %}VIP{% elseif item.getDonatorID == 10 %}Gold Member{% endif %}</strong></p>
                                   {% if item.getPicture is not empty %}<img src="{{ staticRoot }}/foto/300x70/1/web/public/images/crime/{{ item.getPicture }}{#&w=300&h=70&zc=1#}" class="middle" alt="{{ item.getName }}"/>{% endif %}
                                   <br />
                                   <input type="hidden" name="id" value="{{ item.getId }}"/>

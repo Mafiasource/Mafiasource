@@ -1,0 +1,10 @@
+{% if possessionData.getPossessDetails.getUserID == 0 %}
+    <p>{{ article }} {{ possessionData.getName|lower }} {% if isThese %}{{ langs.HAVE_NO_OWNER_YET|lower }}{% else %}{{ langs.HAS_NO_OWNER_YET|lower }}{% endif %}</p>
+    <form id="possess_{{ possessionData.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#buyPossessResponse">
+        <input type="hidden" name="id" value="{{ possessId }}"/>
+        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+        <input type="submit" name="buy" value="{% if lang == 'en' %}{{ langs.BUY }} {{ possessionData.getName|lower }}{% else %}{{ possessionData.getName|capitalize }}{% endif %} {% if lang == 'nl' %}{{ langs.BUY|lower }} {% endif %}{{ langs.FOR|lower }} {{ possessionData.getPrice|moneyFormat }}"/>
+    </form>
+{% else %}
+    <p><a href="/game/profile/{{ possessionData.getPossessDetails.getUsername }}"><strong>{{ possessionData.getPossessDetails.getUsername }}</strong></a> {{ langs.IS_THE_OWNER_OF|lower }} {{ article|lower }} <strong>{{ possessionData.getName|lower }}</strong>.</p>
+{% endif %}

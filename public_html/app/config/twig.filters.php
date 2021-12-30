@@ -3,30 +3,23 @@
 use src\Business\SeoService;
 
 /* TWIG GLOBALS */
-$twig->addGlobal('docRoot', PROTOCOL.$_SERVER['HTTP_HOST']);
-$twig->addGlobal('staticRoot', PROTOCOL.STATIC_SUBDOMAIN.".".$route->settings['domainBase']);
+$twig->addGlobal('docRoot', PROTOCOL . $_SERVER['HTTP_HOST']);
+$twig->addGlobal('staticRoot', PROTOCOL . STATIC_SUBDOMAIN . "." . $route->settings['domainBase']);
 
 /* Twig filter functions (Can be used in the entire application by their PHP func name too, set in front-controller) */
 function isstr($str)
 {
-    if(!is_numeric($str))
-    {
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }
+    return is_string($str);
 }
 
 function implodeComma($arr)
 {
-    return implode(',',$arr);
+    return implode(',', $arr);
 }
 
 function moneyFormat($str)
 {
-    return "$".number_format($str,0,'',',');
+    return "$" . number_format($str,0,'',',');
 }
 
 function valueFormat($str)
@@ -63,10 +56,8 @@ function DOMinnerHTML(DOMNode $element)
     $innerHTML = ""; 
     $children  = $element->childNodes;
 
-    foreach ($children as $child) 
-    { 
+    foreach ($children as $child)
         $innerHTML .= $element->ownerDocument->saveHTML($child);
-    }
 
     return $innerHTML; 
 } 
@@ -84,13 +75,9 @@ function secondsToPlaytime($s)
     $minutes = floor(($s / 60) % 60);
     $seconds = $s % 60;
     if(isset($_COOKIE['lang']) && $_COOKIE['lang'] == "en")
-    {
         return 'Online playtime: '.$days.' Days '.$hours.' Hours '.$minutes.' Minutes '.$seconds.' Seconds';
-    }
-    else
-    {
-        return 'Online speeltijd: '.$days.' Dagen '.$hours.' Uren '.$minutes.' Minuten '.$seconds.' Seconden';
-    }
+    
+    return 'Online speeltijd: '.$days.' Dagen '.$hours.' Uren '.$minutes.' Minuten '.$seconds.' Seconden';
 }
 
 function pureHtml($in)
@@ -146,10 +133,9 @@ function deXSS_img($m){
     $m[1] = $security->xssEscape($m[1]);
     $m[1] = strtok($m[1],'?');
     $accept = array("png", "gif", "jpg");
+    $r = "<img src=\"".noXSS($m[1])."\" alt=\"\">";
     if (!preg_match('/\.('.implode('|', $accept).')$/', $m[1]))
         $r = "<img src=\"/web/public/images/users/nopic.jpg\" alt=\"\">";
-    else
-    	$r = "<img src=\"".noXSS($m[1])."\" alt=\"\">";
     
     return $r;
 }
@@ -159,60 +145,48 @@ function deXSS_img($m){
 function counter($i, $fetchedTime)
 {
     global $langs;
+    $msg = $langs['NOW']."!";
     $verschil = ($fetchedTime - time());
     if($verschil > 0)
     {
         global $twig;
         $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "", 'langs' => $langs));
     }
-    else
-    {
-        $msg = $langs['NOW']."!";
-    }
     return removeBreaks($msg);
 }
 
 function counterActive($i, $fetchedTime)
 {
+    $msg = "";
     $verschil = ($fetchedTime - time());
     if($verschil > 0)
     {
         global $twig;
         $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "A"));
     }
-    else
-    {
-        $msg = "";
-    }
     return removeBreaks($msg);
 }
 
 function counterClean($i, $fetchedTime)
 {
+    $msg = "0";
     $verschil = ($fetchedTime - time());
     if($verschil > 0)
     {
         global $twig;
         $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "C"));
     }
-    else
-    {
-        $msg = "0";
-    }
     return removeBreaks($msg);
 }
 
 function counterPrisonMoney($i, $fetchedTime, $costs = 250)
 {
+    $msg = "0";
     $verschil = ($fetchedTime - time())*$costs;
     if($verschil > 0)
     {
         global $twig;
         $msg = $twig->render("src/Views/game/js/time.count.twig", array('el' => $i, 'diff' => $verschil, 'type' => "PM", 'langs' => false, 'costs' => $costs));
-    }
-    else
-    {
-        $msg = "0";
     }
     return removeBreaks($msg);
 }
@@ -225,15 +199,12 @@ function countdownHmsTime($i, $fetchedTime)
     $minutes = $date->format('i');
     $seconds = $date->format('s');
     
+    $msg = $langs['NONE'];
     $verschil = (time() - $fetchedTime);
     if($verschil > 0)
     {
         global $twig;
         $msg = $twig->render("src/Views/game/js/countdown.hms.twig", array('el' => $i, 'seconds' => $seconds, 'minutes' => $minutes, 'hours' => $hours, 'langs' => $langs));
-    }
-    else
-    {
-        $msg = $langs['NONE'];
     }
     return removeBreaks($msg);
 }
@@ -242,8 +213,7 @@ function countdownHmsTime($i, $fetchedTime)
 /* Twig Filters */
 $twig->addFilter(new \Twig\TwigFilter('var_dump', function ($in) { return var_dump($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('isstr', function ($in) { return isstr($in); } ));
-$twig->addFilter(new \Twig\TwigFilter('ucfirst', function ($in) { return ucfirstt($in); } )); /** !!!???! **/
-$twig->addFilter(new \Twig\TwigFilter('implode', function ($in) { return implodeComma($in); } )); /** !!!???! **/
+$twig->addFilter(new \Twig\TwigFilter('implode', function ($in) { return implodeComma($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('lower', function ($in) { return strtolower($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('moneyFormat', function ($in) { return moneyFormat($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('valueFormat', function ($in) { return valueFormat($in); } ));

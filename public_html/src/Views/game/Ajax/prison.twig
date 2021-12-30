@@ -1,29 +1,58 @@
-{# In opposition to clearing timeouts in ajax views: timeouts have been cleared in the success block of the ajax call towards this Prison View! #}
+<script type="text/javascript">
+    {% for prisoner in prisoners %}
+        if (typeof timeoutCCPrisonersTime_{{ prisoner.getId }} !== "undefined")
+        {
+            clearTimeout(timeoutCCPrisonersTime_{{ prisoner.getId }});
+        }
+        if(typeof timeoutCPMPrisonersBuyOutMoney_{{ prisoner.getId }} !== "undefined")
+        {
+            clearTimeout(timeoutCPMPrisonersBuyOutMoney_{{ prisoner.getId }});
+        }
+    {% endfor %}
+</script>
 
-{% for prisoner in prisoners %}
-    <tr id="pRecord_{{ prisoner.getId }}" class="{{ cycle(['odd', 'even'], loop.index0) }}"{% if prisoner.getUserID == userData.getId %} style="background:gray;"{% endif %}>
-      <td scope="row" class="center">{% set suboutcome = prisoner.getId - prisoner.getId + loop.index + pagination.from %}{{ suboutcome }}</td>
-      <td><a href="/game/profile/{{ prisoner.getUsername }}">{{ prisoner.getUsername }}</a></td>
-      <td><span id="cPrisonersTime_{{ prisoner.getId }}">{{ "PrisonersTime_#{prisoner.getId}"|countClean(prisoner.getTime)|raw }}</span></td>
-      <td>
-        <a href="javascript:void(0);" data-action="buy-out" data-pid="{{ prisoner.getId }}" class="button action">
-            {{ langs.BUY_OUT }}
-            <small>$<span id="cPrisonersBuyOutMoney_{{ prisoner.getId }}">
-                {% if prisoner.getUserID == userData.getId %}
-                    {{ "PrisonersBuyOutMoney_#{prisoner.getId}"|countPrisonMoney(prisoner.getTime, 750)|raw }}
-                {% else %}
-                    {{ "PrisonersBuyOutMoney_#{prisoner.getId}"|countPrisonMoney(prisoner.getTime)|raw }}
-                {% endif %}
-            </span></small>
-        </a>
-        &nbsp;-
-        <a href="javascript:void(0);" data-action="break-out" data-pid="{{ prisoner.getId }}" class="button action">{{ langs.BREAK_OUT }}</a></td>
-    </tr>
-{% endfor %}
-{% if prisoners is empty %}
-    <tr>
-      <td colspan="4">
-        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_PRISONERS }}
-      </td>
-    </tr>
-{% endif %}
+{% include "src/Views/.Paginate.twig" %}
+<br class="clear"/>
+
+<div class="table-reponsive">
+    <table class="table table-sm table-dark table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" class="center">#</th>
+                <th scope="col" class="center">{{ langs.USER }}</th>
+                <th scope="col" class="center">{{ langs.TIME_LEFT }}</th>
+                <th scope="col" class="center">{{ langs.ACTION }}s</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prisoner in prisoners %}
+                <tr id="pRecord_{{ prisoner.getId }}" class="{{ cycle(['odd', 'even'], loop.index0) }}"{% if prisoner.getUserID == userData.getId %} style="background:gray;"{% endif %}>
+                  <td scope="row" class="center">{% set suboutcome = prisoner.getId - prisoner.getId + loop.index + pagination.from %}{{ suboutcome }}</td>
+                  <td><a href="/game/profile/{{ prisoner.getUsername }}">{{ prisoner.getUsername }}</a></td>
+                  <td><span id="cPrisonersTime_{{ prisoner.getId }}">{{ "PrisonersTime_#{prisoner.getId}"|countClean(prisoner.getTime)|raw }}</span></td>
+                  <td>
+                    <a href="javascript:void(0);" data-action="buy-out" data-pid="{{ prisoner.getId }}" class="button action">
+                        {{ langs.BUY_OUT }}
+                        <small>$<span id="cPrisonersBuyOutMoney_{{ prisoner.getId }}">
+                            {% if prisoner.getUserID == userData.getId %}
+                                {{ "PrisonersBuyOutMoney_#{prisoner.getId}"|countPrisonMoney(prisoner.getTime, 750)|raw }}
+                            {% else %}
+                                {{ "PrisonersBuyOutMoney_#{prisoner.getId}"|countPrisonMoney(prisoner.getTime)|raw }}
+                            {% endif %}
+                        </span></small>
+                    </a>
+                    &nbsp;-
+                    <a href="javascript:void(0);" data-action="break-out" data-pid="{{ prisoner.getId }}" class="button action">{{ langs.BREAK_OUT }}</a></td>
+                </tr>
+            {% endfor %}
+            {% if prisoners is empty %}
+                <tr>
+                  <td colspan="4">
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_PRISONERS }}
+                  </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% include "src/Views/.Paginate.twig" %}
