@@ -9,7 +9,7 @@ Admin fields that seem locked can be overwritten.
 This application runs stable on web servers with the following (min) requirements
 - Web server 128MB+ RAM - 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
 - Apache 2
-- PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD
+- PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD, CURL
 - MySQL 8 or higher or MariaDB 10 or higher
 
 ## Dependencies
