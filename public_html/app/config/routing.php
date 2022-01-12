@@ -131,6 +131,15 @@ class Routing
         return $route;
     }
     
+    private function replaceRouteRegex($route)
+    {
+        foreach($this->routeRegex AS $regex)
+        {
+            $route = preg_replace('/' . $regex . '/', '', $route);
+        }
+        return $route;
+    }
+    
     public function getRouteByRouteName($routeName)
     {
         $result = isset($this->routeMap[$routeName]) ? $this->routeMap[$routeName]['route'] : null;
@@ -217,7 +226,7 @@ class Routing
                 if($what < $range['min'] || $what > $range['max'])
                     $this->headTo('not_found');
             }
-            $what = $this->removeRouteRegex($what);
+            $what = $this->replaceRouteRegex($what);
             
             return $what;
         }
