@@ -2311,6 +2311,28 @@ INSERT INTO `protection` VALUES (5, 'Top Camere Security', 'aeaf7b21.jpg', 25000
 INSERT INTO `protection` VALUES (6, 'Armored Helicopter', '06d4a5e5.jpg', 4000000, 77, 6, 1, 0);
 
 -- ----------------------------
+-- Table structure for public_mission
+-- ----------------------------
+DROP TABLE IF EXISTS `public_mission`;
+CREATE TABLE `public_mission`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
+  `missionID` tinyint(1) NOT NULL DEFAULT 0,
+  `minAmount` int NOT NULL DEFAULT 0,
+  `rewardType` tinyint(1) NOT NULL DEFAULT 0,
+  `rewardAmount` int NOT NULL DEFAULT 0,
+  `reward2Type` tinyint(1) NOT NULL DEFAULT 0,
+  `reward2Amount` int NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of public_mission
+-- ----------------------------
+INSERT INTO `public_mission` VALUES (1, 16, 3, 2, 55, 1, 5);
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- ----------------------------
 -- Table structure for recover_password
 -- ----------------------------
 DROP TABLE IF EXISTS `recover_password`;
@@ -2830,6 +2852,7 @@ CREATE TABLE `user`  (
   `smugglingBusts` int NOT NULL DEFAULT 0,
   `m5c` mediumint NOT NULL DEFAULT 0,
   `m8c` mediumint NOT NULL DEFAULT 0,
+  `publicMission` mediumint NOT NULL DEFAULT 0,
   `lrsID_nl` int NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `lrsID_en` int NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `lrfsID_nl` int NOT NULL DEFAULT 0 COMMENT 'type=disabled',
