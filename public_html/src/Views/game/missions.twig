@@ -4,56 +4,39 @@
 
 {% block stylesheets %}
     <style type="text/css">
-        .table {width: 100.0039999999%;max-width: 100.0039999999%;}
-        .table > tbody > tr > td {vertical-align: middle;}
+        {% if tab == 'missions' %}
+            .table {width: 100.0039999999%;max-width: 100.0039999999%;}
+            .table > tbody > tr > td {vertical-align: middle;}
+        {% endif %}
+        {% if tab == 'public' %}
+            @media (max-width: 688px) {
+                section#ccontainer section#content .c-row.cf > .c-row-50.col {width:100%;border:none;}
+            }
+        {% endif %}
     </style>
 {% endblock stylesheets %}
 
 {% block content %}
-<table class="table table-sm table-dark table-bordered">
-  <thead>
-    <th scope="col" colspan="3" class="top center"><strong>{{ langs.MISSIONS }}</strong></th>
-  </thead>
-  <tbody>
-    {% for k, m in missions %}
-        {% set prizeMoney = missionTiers[k]['prizeMoney'][tierProgress[k]['t']] %}
-        {% set prizeHp = missionTiers[k]['prizeHp'][tierProgress[k]['t']] %}
-        <tr>
-            <td style="min-width: 64px;">
-                <img src="{{ staticRoot }}/foto/web/public/images/missions/{{ m.name|seoUrl }}.png" class="middle"/>
-            </td>
-            <td>
-                <strong>{{ m.name }}</strong> {{ tierProgress[k]['t'] }} / {% if k == 7 %}1{% else %}6{% endif %}<br />
-                <span class="gray">
-                    {% if k == 8 %} {# states indexed from 0 = tier - 1 #}
-                        {% set m8Replaces = [
-                            {part: states[tierProgress[k]['t'] - 1].getName, message: m.description, pattern: '/{state}/'},
-                            {part: missionTiers[k]['todo'][tierProgress[k]['t']]|valueFormat, message: 'False', pattern: '/{amount}/'}
-                        ] %}
-                        {% set m8Replaces = routing.replaceMessageParts(m8Replaces) %}
-                        {{ m8Replaces|raw }}
-                    {% else %}
-                        {{ m.description }}
-                    {% endif %}
-                    <br />
-                    {{ langs.AMNT }}: {{ tierProgress[k]['p']|valueFormat }} / {{ missionTiers[k]['todo'][tierProgress[k]['t']]|valueFormat }}<br />
-                    {% if (tierProgress[k]['t'] < 6 and k != 7) or tierProgress[k]['p'] < missionTiers[k]['todo'][tierProgress[k]['t']] %}
-                        {{ langs.PRIZE }}: <strong>{{ prizeMoney|moneyFormat }} + {{ prizeHp|valueFormat }} {{ langs.HONOR_POINTS }}</strong>
-                        {#
-                        {% if k == 7 %}
-                            <br />Extra beloning: <strong>$1,000,000 + 3 {{ langs.HONOR_POINTS }} {{ langs.EACH|lower }} {{ langs.VEHICLE|lower }}</strong>
-                        {% endif %}
-                        #}
-                    {% endif %}
-                </span>
-            </td>
-            <td style="min-width: 64px;">
-                <img src="{{ staticRoot }}/foto/web/public/images/missions/{% if (tierProgress[k]['t'] < 6 and k != 7) or tierProgress[k]['p'] < missionTiers[k]['todo'][tierProgress[k]['t']] %}not-{% endif %}completed.png" class="middle"/>
-            </td>
-        </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="top">
+    {% if tab == 'public' %}{{ langs.PUBLIC }} {{ langs.MISSION }}{% else %}{{ langs.MISSIONS }}{% endif %}
+</div>
+<div class="tab-container cf">
+    <div class="tab {% if tab == 'missions' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('missions') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/user_suit.png" class="icon" alt=""/> {{ langs.MISSIONS }}
+        </a>
+    </div>
+    <div class="tab {% if tab == 'public' %}tab_on{% endif %} t-50">
+        <a href="{{ routing.getRouteByRouteName('missions-public-mission') }}">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt=""/> {{ langs.PUBLIC }} {{ langs.MISSION }}
+        </a>
+    </div>
+</div>
+{% include "/src/Views/game/tabs/missions/"~tab~".twig" %}
 <br class="clear"/>
-{{ alert.build('Info', 'alert-info', 'help', langs.MISSIONS_INFO) }}
+{% if tab == 'public' %}
+    {{ alert.build('Info', 'alert-info', 'help', publicMission.getMissionDescription) }}
+{% elseif tab == 'missions' %}
+    {{ alert.build('Info', 'alert-info', 'help', langs.MISSIONS_INFO) }}
+{% endif %}
 {% endblock content %}

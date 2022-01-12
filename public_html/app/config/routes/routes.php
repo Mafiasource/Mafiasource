@@ -1,9 +1,7 @@
 <?PHP
 
 /**
- * IMPORTANT! (06/15/2020) Outgame pages or others (never ingame) that require sharing in general need proper redirection from social media:
- *  - Should get an additional $applicationRoutes index "name_GET" with route "/name(?:\?.*)?" pointing to the (same) controller "name.php"
- *  - "(?:\?.*)?" will allow any and all kind of GET parameters to be included into the request URI (route) and won't point to "not_found" anymore.
+ *  - $routeGET "(?:\?.*)?" will allow any and all kind of GET parameters to be included into the request URI (route) and won't point to "not_found" anymore.
  **/
          
 $applicationRoutes =
@@ -17,18 +15,11 @@ array(
         /**
          * @RoutePath
          **/
-        'route' => '/',
+        'route' => '/' . $routeGET,
         
         /**
          * @Controller
          **/
-        'controller' => 'index.php'
-    ),
-    
-    'home_GET'
-    => 
-    array(
-        'route' => '/(?:\?.*)?',
         'controller' => 'index.php'
     ),
     
@@ -49,56 +40,35 @@ array(
     'login'
     =>
     array(
-        'route' => '/login',
+        'route' => '/login' . $routeGET,
         'controller' => 'login.php'
     ),
     
     'screenshots'
     =>
     array(
-        'route' => '/screenshots',
-        'controller' => 'screenshots.php'
-    ),
-    
-    'screenshots_GET'
-    =>
-    array(
-        'route' => '/screenshots(?:\?.*)?',
+        'route' => '/screenshots' . $routeGET,
         'controller' => 'screenshots.php'
     ),
     
     'register'
     =>
     array(
-        'route' => '/register',
-        'controller' => 'register.php'
-    ),
-    
-    'register_GET'
-    =>
-    array(
-        'route' => '/register(?:\?.*)?',
+        'route' => '/register' . $routeGET,
         'controller' => 'register.php'
     ),
     
     'register-referral'
     =>
     array(
-        'route' => '/register/referral/[A-Za-z0-9-]{3,15}',
-        'controller' => 'register.php'
-    ),
-    
-    'register-referral_GET'
-    =>
-    array(
-        'route' => '/register/referral/[A-Za-z0-9-]{3,15}(?:\?.*)?',
+        'route' => '/register/referral/[A-Za-z0-9-]{3,15}' . $routeGET,
         'controller' => 'register.php'
     ),
     
     'recover-password'
     =>
     array(
-        'route' => '/recover-password',
+        'route' => '/recover-password' . $routeGET,
         'controller' => 'recover-password.php'
     ),
     
@@ -119,84 +89,56 @@ array(
     'forum'
     =>
     array(
-        'route' => '/forum',
+        'route' => '/forum' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'forum-cat'
     =>
     array(
-        'route' => '/forum/[A-Za-z0-9-]{3,25}',
+        'route' => '/forum/[A-Za-z0-9-]{3,25}' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'forum-cat-topic'
     =>
     array(
-        'route' => '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}',
+        'route' => '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'forum-cat-topic-page'
     =>
     array(
-        'route' => '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}/page/[1-9][0-9]{0,3}',
+        'route' => '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}/page/[1-9][0-9]{0,3}' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'privacy-policy'
     =>
     array(
-        'route' => '/privacy-policy',
-        'controller' => 'privacy-policy.php'
-    ),
-    
-    'privacy-policy_GET'
-    =>
-    array(
-        'route' => '/privacy-policy(?:\?.*)?',
+        'route' => '/privacy-policy' . $routeGET,
         'controller' => 'privacy-policy.php'
     ),
     
     'terms-and-conditions'
     =>
     array(
-        'route' => '/terms-and-conditions',
-        'controller' => 'terms-and-conditions.php'
-    ),
-    
-    'terms-and-conditions_GET'
-    =>
-    array(
-        'route' => '/terms-and-conditions(?:\?.*)?',
+        'route' => '/terms-and-conditions' . $routeGET,
         'controller' => 'terms-and-conditions.php'
     ),
     
     'get-the-app'
     =>
     array(
-        'route' => '/download-app',
-        'controller' => 'get-app.php'
-    ),
-    
-    'get-the-app_GET'
-    =>
-    array(
-        'route' => '/download-app(?:\?.*)?',
+        'route' => '/download-app' . $routeGET,
         'controller' => 'get-app.php'
     ),
     
     'link-partners'
     =>
     array(
-        'route' => '/link-partners',
-        'controller' => 'link-partners.php'
-    ),
-    
-    'link-partners_GET'
-    =>
-    array(
-        'route' => '/link-partners(?:\?.*)?',
+        'route' => '/link-partners' . $routeGET,
         'controller' => 'link-partners.php'
     ),
     
@@ -585,6 +527,13 @@ array(
     =>
     array(
         'route' => '/game/missions',
+        'controller' => 'game/missions.php'
+    ),
+    
+    'missions-public-mission'
+    =>
+    array(
+        'route' => '/game/missions/public',
         'controller' => 'game/missions.php'
     ),
     

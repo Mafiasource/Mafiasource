@@ -413,7 +413,7 @@ class CrimeDAO extends DBConfig
         if(isset($_SESSION['UID']))
         {
             $this->con->setData("
-                UPDATE `crime_org_prep` SET `participant".$num."ID`='0' WHERE `orgCrimeID`= :ocid AND `participant".$num."ID`= :uid
+                UPDATE `crime_org_prep` SET `participant".$num."ID`='0', `participant".$num."Ready`='0' WHERE `orgCrimeID`= :ocid AND `participant".$num."ID`= :uid
             ", array(':ocid' => $id, ':uid' => $_SESSION['UID']));
         }
     }

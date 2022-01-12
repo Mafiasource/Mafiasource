@@ -133,7 +133,6 @@ IndexIgnore *
 ## Mod headers
 <IfModule mod_headers.c>
     Header set Connection keep-alive
-    Header always set Access-Control-Allow-Origin "https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com https://static.mafiasource.nl"
     Header always set Content-Security-Policy "script-src 'self' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com https://static.mafiasource.nl 'unsafe-inline' 'unsafe-eval'"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
     Header always set X-Frame-Options "deny"

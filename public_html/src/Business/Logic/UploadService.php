@@ -55,7 +55,9 @@ class UploadService
         while(!feof($f)) $content .= fgets($f);
         fclose($f);
         $badWords = array(
-            "html", "php", "form", "iframe", "link", "script", "java", "submit", "body", "head", "var", "function", "href"
+            "html", "php", "form", "iframe", "link", "script", "java", "submit", "body", "head", "var", "function", "href",
+            "jar", "jscript", "javascript", "wscript", "vbscript", "vbs", "applescript", "behavior", "mocha", "livescript", 
+            "view-source"
         );
         foreach($badWords AS $badWord)
             if(strpos($content, $badWord))

@@ -4,6 +4,7 @@ namespace src\Business;
 
 use app\config\Routing;
 use src\Business\PossessionService;
+use src\Business\PublicMissionService;
 use src\Data\PrisonDAO;
 
 /* Class has some cleaning up TO DO move as much HTML/CSS/JS as possible into the View layer. */
@@ -103,6 +104,9 @@ class PrisonService
                     
                     if($success >= 30)
                     {
+                        $publicMissionService = new PublicMissionService();
+                        $publicMissionService->addToPublicMisionIfActive(12);
+                        
                         $rankpoints = round((($prisonerInfo->getTime() - time()) / 9) * 0.1, 1);
                         $this->data->successfulBreakOutPlayerByPID($pid, $rankpoints);
                         $replacedMessage = $route->replaceMessagePart($username, $l['USER_BREAK_OUT_OF_PRISON'], '/{playerName}/');

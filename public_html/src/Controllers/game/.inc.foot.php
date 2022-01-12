@@ -35,3 +35,8 @@ if(strtotime("2021-12-24 14:00:00") < strtotime('now') && strtotime("2021-12-27 
     $twigVars['eventName'] = $twigVars['langs']['WAITING_TIMES'] . " /2";
     $twigVars['eventCountdown'] = countdownHmsTime("EventCountdown", strtotime("2021-12-27 14:00:00") - time());
 }
+if(strtotime("2022-01-07 00:00:00") < strtotime('now') && strtotime("2022-01-07 23:59:59") > strtotime('now'))
+{
+    $twigVars['eventName'] = $twigVars['langs']['MERCENARIES'] . " /2";
+    $twigVars['eventCountdown'] = countdownHmsTime("EventCountdown", strtotime("2022-01-07 23:59:59") - time());
+}

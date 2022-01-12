@@ -5,6 +5,7 @@ namespace src\Business;
 use app\config\Routing;
 use src\Business\NotificationService;
 use src\Business\DailyChallengeService;
+use src\Business\PublicMissionService;
 use src\Data\GymCompetitionDAO;
  
 class GymCompetitionService
@@ -208,20 +209,30 @@ class GymCompetitionService
             if($winnerID && $loserID == -1) $loserScore = $winnerScore; // Draw
             
             $dailyChallengeService = new DailyChallengeService();
+            $publicMissionService = new PublicMissionService();
             if($winnerID == $userData->getId())
             {
                 $dailyChallengeService->addToDailiesIfActive(12, $winnerScore);
                 $dailyChallengeService->addToDailiesIfActive(12, $loserScore, $loserID);
+                
+                $publicMissionService->addToPublicMisionIfActive(9, $winnerScore);
+                $publicMissionService->addToPublicMisionIfActive(9, $loserScore, $loserID);
             }
             elseif($loserID == $userData->getId())
             {
                 $dailyChallengeService->addToDailiesIfActive(12, $loserScore);
                 $dailyChallengeService->addToDailiesIfActive(12, $winnerScore, $winnerID);
+                
+                $publicMissionService->addToPublicMisionIfActive(9, $loserScore);
+                $publicMissionService->addToPublicMisionIfActive(9, $winnerScore, $winnerID);
             }
             else // Draw!
             {
                 $dailyChallengeService->addToDailiesIfActive(12, $winnerScore);
                 $dailyChallengeService->addToDailiesIfActive(12, $winnerScore, $competition->getUserID());
+                
+                $publicMissionService->addToPublicMisionIfActive(9, $winnerScore);
+                $publicMissionService->addToPublicMisionIfActive(9, $winnerScore, $competition->getUserID());
             }
             
             $this->data->updateChallengedCompetition($competition, $winnerID, round($winnerScore), $loserID, round($loserScore));

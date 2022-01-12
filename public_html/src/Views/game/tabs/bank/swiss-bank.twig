@@ -7,7 +7,7 @@
             <div class="content-container">
                 <div class="row cols cf">
                     <div class="c-30 column">
-                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="" class="icon" border="0" /> {{ langs.SPACE_VAULT }}
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" alt="" class="icon" border="0" /> {{ langs.SPACE_VAULT }}
                     </div>
                     <div class="c-70 column">
                         {{ bankData.getSwissBank|moneyFormat }}
@@ -23,7 +23,7 @@
                 </div>
                 <div class="row cols cf">
                     <div class="c-30 column">
-                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" alt="" class="icon" border="0" /> {{ langs.SPACE_LEFT }}
+                        <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" alt="" class="icon" border="0" /> {{ langs.SPACE_LEFT }}
                     </div>
                     <div class="c-70 column">
                         {% set swissLeft = bankData.getSwissBankMax - bankData.getSwissBank %}
@@ -47,7 +47,7 @@
                 <form id="bank-transfer" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('swiss-bank-transfer') }}" data-response="#swissBankTransferResponse">
                     <div class="row cols cf">
                         <div class="c-50 column">
-                            <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" alt="" class="icon" border="0" /> Bank
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" alt="Bank" class="icon" border="0" /> Bank
                         </div>
                         <div class="c-50 column">
                             {{ userData.getBank|moneyFormat }}
@@ -55,21 +55,21 @@
                     </div>
                     <div class="row cols cf">
                         <div class="c-50 column">
-                            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" alt="" class="icon" border="0" /> {{ langs.AMOUNT }}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_refresh.png" alt="" class="icon" border="0" /> {{ langs.ACTION }}
                         </div>
                         <div class="c-50 column">
-                            <input type="text" name="amount" placeholder="{{ langs.AMOUNT }}" value="{{ userData.getBank }}"/>
+                            <select id="swissBankTransferAction" name="action">
+                                <option value="getMoney">{{ langs.WITHDRAW_MONEY_FROM_BANK }}</option>
+                                <option value="putMoney">{{ langs.STORE_MONEY_IN_BANK }}</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row cols cf">
                         <div class="c-50 column">
-                            <img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_refresh.png" alt="" class="icon" border="0" /> {{ langs.ACTION }}
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" alt="" class="icon" border="0" /> {{ langs.AMOUNT }}
                         </div>
                         <div class="c-50 column">
-                            <select name="action">
-                                <option value="getMoney">{{ langs.WITHDRAW_MONEY_FROM_BANK }}</option>
-                                <option value="putMoney">{{ langs.STORE_MONEY_IN_BANK }}</option>
-                            </select>
+                            <input id="swissBankTransferValueField" type="text" name="amount" placeholder="{{ langs.AMOUNT }}" value="{{ bankData.getSwissBank }}"/>
                         </div>
                     </div>
                     <div class="row">

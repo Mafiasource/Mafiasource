@@ -1,0 +1,83 @@
+<div class="content-container">
+    <div class="c-row cf">
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="subtop">
+                    {{ publicMission.getMissionName }}
+                </div>
+                <div class="content-container">
+                    <div class="row center">
+                        <img src="{{ staticRoot }}/foto/web/public/images/missions/public/{{ publicMission.getMissionName|seoUrl }}.png" alt=""/>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ taticRoot }}/foto/web/public/images/icons/fastpass.png" class="icon" alt="{{ langs.TIME_LEFT }}"/> {{ langs.TIME_LEFT }}
+                        </div>
+                        <div class="c-50 column">
+                            +- <span id="cMissionTime_{{ publicMission.getMissionID }}">{{ "MissionTime_#{publicMission.getMissionID}"|countdownHmsTime(futureHourTime - date().timestamp)|raw }}</span>
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ taticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="Min. {{ langs.PAYOUT|lower }} {{ langs.AMNT|lower }}"/> Min. {{ langs.PAYOUT|lower }} {{ langs.AMNT|lower }}
+                        </div>
+                        <div class="c-50 column">
+                            {{ publicMission.getMinAmount|valueFormat }}
+                        </div>
+                    </div>
+                    <div class="row cols cf">
+                        <div class="c-50 column">
+                            <img src="{{ taticRoot }}/foto/web/public/images/icons/stats.png" class="icon" alt="{{ langs.PROGRESS }}"/> {{ langs.PROGRESS }}
+                        </div>
+                        <div class="c-50 column">
+                            {{ publicMission.getProgress|valueFormat }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-row-50 col">
+            <div class="inner-c-container">
+                <div class="table-reponsive">
+                    <table class="table table-sm table-bordered table-dark">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">{{ langs.USERNAME }}</th>
+                          <th scope="col">{{ langs.AMNT }}</th>
+                          <th scope="col">{{ langs.PRIZE }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for pmr in ranking %}
+                            <tr>
+                                <td class="center">{{ loop.index }}</td>
+                                <td>
+                                    {% if pmr.getUsername == langs.NONE %}
+                                        {{ pmr.getUsername }}
+                                    {% else %}
+                                        <a href="/game/profile/{{ pmr.getUsername }}">{{ pmr.getUsername }}</a>
+                                    {% endif %}
+                                </td>
+                                <td>{{ pmr.getAmount|valueFormat }}</td>
+                                <td>
+                                    {% set rewardType = " " ~ publicMission.getRewardType %}
+                                    {% if publicMission.getRewardType == 'Bank' %}
+                                        {% set rewardType = '' %}
+                                    {% endif %}
+                                    {% if rewardType == '' %}${% endif %}{{ pmr.getReward|valueFormat }}{{ rewardType }} &amp; {{ pmr.getAdditionalReward|valueFormat }} {{ publicMission.getReward2Type }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% if ranking is empty %}
+                            <tr>
+                              <td colspan="4"><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}" /> {{ langs.NONE }}</td>
+                            </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

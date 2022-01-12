@@ -104,6 +104,9 @@ class Notifications
             "MARKET_BOUGHT_HOES_SUCCESS" => "You've received {amount} hoes through the market!",
             "MARKET_SOLD_HP_SUCCESS" => "Your {amount} honor points on the market were sold for $&#8203;{price}!",
             "MARKET_BOUGHT_HP_SUCCESS" => "You've received {amount} honor points through the market!",
+            
+            /* PUBLIC MISSION */
+            "USER_WON_PUBLIC_MISSION" => "You ended at no. {place} in the past Public Mission and received {prizeAmount} {prize} &amp; {prize2Amount} {prize2}.",
         ),
         'NL' => array(
             /* FAMILY */
@@ -201,6 +204,9 @@ class Notifications
             "MARKET_BOUGHT_HOES_SUCCESS" => "Je hebt {amount} hoeren ontvangen via de markt!",
             "MARKET_SOLD_HP_SUCCESS" => "Jouw {amount} eerpunten op de markt werden verkocht voor $&#8203;{price}!",
             "MARKET_BOUGHT_HP_SUCCESS" => "Je hebt {amount} eerpunten ontvangen via de markt!",
+            
+            /* PUBLIC MISSION */
+            "USER_WON_PUBLIC_MISSION" => "Je bent op de {place}e plaats ge&euml;indigd in de Publieke Missie en hierdoor {prizeAmount} {prize} &amp; {prize2Amount} {prize2} ontvangen.",
         )
     );
     

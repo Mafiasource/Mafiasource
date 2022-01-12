@@ -8,6 +8,7 @@ use src\Business\PossessionService;
 use src\Business\MissionService;
 use src\Business\NotificationService;
 use src\Business\DailyChallengeService;
+use src\Business\PublicMissionService;
 use src\Data\RedLightDistrictDAO;
  
 class RedLightDistrictService
@@ -167,8 +168,11 @@ class RedLightDistrictService
                     $notification->sendNotification($userData->getId(), 'USER_ACHIEVED_MISSION', $params);
                 }
             }
+            $publicMissionService = new PublicMissionService();
             if($who !== false)
             {
+                $publicMissionService->addToPublicMisionIfActive(18, $pimped);
+                
                 $notification = new NotificationService();
                 $params = "user=".$userData->getUsername()."&whores=".$pimped;
                 $notification->sendNotification($whoID, 'USER_PIMPED_FOR_YOU', $params);
@@ -177,8 +181,10 @@ class RedLightDistrictService
                 $replacedMessage = $route->replaceMessagePart($userService->getUserProfile($who)->getUsername(), $replacedMessage, '/{user}/');
             }
             else
+            {
+                $publicMissionService->addToPublicMisionIfActive(5, $pimped);
                 $replacedMessage = $route->replaceMessagePart($pimped, $l['PIMP_WHORES_SELF_SUCCESS'], '/{amount}/');
-            
+            }
             $this->data->pimpWhores($pimped, $newLvlData['levelAfter'], $newLvlData['xpAfter'], $who);
             
             $searchCreditsMessage = $userService->searchCredits($langs['PIMP_WHORES']);

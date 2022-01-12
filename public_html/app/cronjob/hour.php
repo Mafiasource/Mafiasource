@@ -29,6 +29,7 @@ use src\Business\Logic\game\Statics\Lottery AS LotteryStatics;
 use src\Business\Logic\game\Statics\FamilyProperty AS FamilyPropertyStatics;
 use src\Business\Logic\game\Statics\BulletFactory AS BulletFactoryStatics;
 use src\Business\Logic\game\Ground\IncomeCalculation AS GroundIncomeCalculation;
+use src\Business\Logic\game\Statics\PublicMission AS PublicMissionStatics;
 use src\Data\config\DBConfig;
 
 /* Error reporting (debugging) */
@@ -422,6 +423,238 @@ if(date('H') == 19)
         $i++;
     }
     $con->setData("DELETE FROM `lottery` WHERE `type`= :t", array(':t' => $type));
+} // /CHECKED & OK
+
+/* Public Missions */
+$publicMissionStatics = new PublicMissionStatics();
+$publicMission = $con->getDataSR("SELECT `id`, `missionID`, `minAmount`, `rewardType`, `rewardAmount`, `reward2Type`, `reward2Amount` FROM `public_mission` WHERE `id`>'0' ORDER BY `id` DESC LIMIT 1");
+if(isset($publicMission['id']) && $publicMission['id'] > 0)
+{
+    $r1Field = $publicMissionStatics->missionRewardDbFields[$publicMission['rewardType']];
+    $r2Field = $publicMissionStatics->additionalRewardDbFields[$publicMission['reward2Type']];
+    $ranking = $con->getData("SELECT `id`, `lang`, `publicMission` FROM `user` WHERE `statusID`<='7' AND `health`>'0' AND `active`='1' AND `deleted`='0' ORDER BY `publicMission` DESC, `id` DESC LIMIT 9");
+    $i = 1;
+    foreach($ranking AS $rank)
+    {
+        // Payout current mission if eligible
+        if($publicMission['minAmount'] <= $rank['publicMission'])
+        {
+            $prizes = array('rewardAmount' => $publicMission['rewardAmount'], 'reward2Amount' => $publicMission['reward2Amount']);
+            $prizes = $publicMissionStatics->getPrizesByRank($prizes, $i);
+            $publicMission['rewardAmount'] = $prizes['rewardAmount'];
+            $publicMission['reward2Amount'] = $prizes['reward2Amount'];
+            $prizes = null;
+            
+            $setAdd = "";
+            if($r2Field == "credits")
+                $setAdd = ", `creditsWon`=`creditsWon`+ :r2";
+            
+            $con->setData("
+                UPDATE `user` SET `".$r1Field."`=`".$r1Field."`+ :r1, `".$r2Field."`=`".$r2Field."`+ :r2 ".$setAdd." WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
+            ", array(':r1' => $publicMission['rewardAmount'], ':r2' => $publicMission['reward2Amount'], ':uid' => $rank['id']));
+            
+            $missionRewards = array(1 => "Bank geld", "Hoeren", "Eerpunten", "Score");
+            $additionalMissionRewards = array(1 => "Rankpunten", "Score", "Lucky boxen", "Credits"); // Credits low chance ratio
+            if($rank['lang'] == "en")
+            {
+                $missionRewards = array(1 => "Bank money", "Hoes", "Honor points", "Score");
+                $additionalMissionRewards = array(1 => "Rank points", "Score", "Lucky boxes", "Credits"); // Credits low chance ratio
+            }
+            
+            //User won prize notification
+            $params = "prizeAmount=" . number_format($publicMission['rewardAmount'], 0, '', ',') . "&prize2Amount=" . number_format($publicMission['reward2Amount'], 0, '', ',');
+            $params .= "&prize=" . $missionRewards[$publicMission['rewardType']] . "&prize2=" . $additionalMissionRewards[$publicMission['reward2Type']];
+            $params .= "&place=" . $i;
+            $con->setData("
+                INSERT INTO `notification` (`userID`, `notification`, `params`, `date`) VALUES (:uid, :note, :params, NOW())
+            ", array(':uid' => $rank['id'], ':note' => 'USER_WON_PUBLIC_MISSION', ':params' => $params));
+            $i++;
+        }
+    }
+    // Assemble new mission
+    $prizeDifficulties = array("easy", "medium", "hard");
+    $missionRewardDbFields = $publicMissionStatics->missionRewardDbFields;
+    $additionalRewardDbFields = $publicMissionStatics->additionalRewardDbFields;
+    if($security->randInt(1, 12) == 1)
+        $prizeDifficulties[] = "extra-hard";
+    else
+    {
+        $prizeDbRemoved = array_pop($missionRewardDbFields);
+        $additionalPrizeDbRemoved = array_pop($additionalRewardDbFields);
+    }
+    
+    $prizeDb = array_rand($missionRewardDbFields);
+    $additionalPrizeDb = array_rand($additionalRewardDbFields);
+    
+    function getDefaultPrizeMultipliers($easyPrizes)
+    {
+        return array(
+            'medium' => array(round($easyPrizes[0] * 3), round($easyPrizes[1] * 3), round($easyPrizes[2] * 3), round($easyPrizes[3] * 3), round($easyPrizes[4] * 3), round($easyPrizes[5] * 3),
+                round($easyPrizes[6] * 3), round($easyPrizes[7] * 3), round($easyPrizes[8] * 3)),
+            'hard' => array(round($easyPrizes[0] * 6), round($easyPrizes[1] * 6), round($easyPrizes[2] * 6), round($easyPrizes[3] * 6), round($easyPrizes[4] * 6), round($easyPrizes[5] * 6),
+                round($easyPrizes[6] * 6), round($easyPrizes[7] * 6), round($easyPrizes[8] * 6)),
+            'extra-hard' => array(round($easyPrizes[0] * 10), round($easyPrizes[1] * 10), round($easyPrizes[2] * 10), round($easyPrizes[3] * 10), round($easyPrizes[4] * 10),
+                round($easyPrizes[5] * 10), round($easyPrizes[6] * 10), round($easyPrizes[7] * 10), round($easyPrizes[8] * 10)),
+        );
+    }
+    $missions = $publicMissionStatics->missions;
+    unset($missions[$publicMission['missionID']]);
+    $mission = array_rand($missions);
+    $difficulty = array_rand($prizeDifficulties);
+    
+    $easyAmnt = array($security->randInt(10,20), $security->randInt(8, 22), $security->randInt(12, 18));
+    $mediumAmnt = array($security->randInt(15,30), $security->randInt(13, 32), $security->randInt(17, 28));
+    $hardAmnt = array($security->randInt(20,40), $security->randInt(18, 42), $security->randInt(22, 38));
+    $extraHardAmnt = array($security->randInt(25,50), $security->randInt(23, 52), $security->randInt(27, 48));
+    
+    $m = 1;
+    $d = false;
+    if($mission == 1 || $mission == 3) // Gone in 60 sec, Crime time
+        $d = 2;
+    elseif($mission == 2 || $mission == 4 || $mission == 6 || $mission == 8 || $mission == 10) // Drugs, liquids, fireworks, weapons, animals
+        $m = 100;
+    elseif($mission == 5 || $mission == 18) // Pimp, pimp others
+        $m = 2;
+    elseif($mission == 7 || $mission == 12 || $mission == 16 || $mission == 16) // Power trainer, prison breaker, stamina striver
+        $d = 3;
+    elseif($mission == 11 || $mission == 13 || $mission == 15 || $mission == 17 || $mission == 19) // Dobbling, racetrack, roulette, sotmachine, blackjack
+        $m = 10000;
+    elseif($mission == 9) // Beat gym (score)
+        $m = 3;
+    elseif($mission == 14) // Credits scavenger
+        $d = 4;
+        
+    if(is_int($d) && $d !== false)
+    {
+        $easyAmnt = array(round($easyAmnt[0] / $d), round($easyAmnt[1] / $d), round($easyAmnt[2] / $d));
+        $mediumAmnt = array(round($mediumAmnt[0] / $d), round($mediumAmnt[1] / $d), round($mediumAmnt[2] / $d));
+        $hardAmnt = array(round($hardAmnt[0] / $d), round($hardAmnt[1] / $d), round($hardAmnt[2] / $d));
+        $extraHardAmnt = array(round($extraHardAmnt[0] / $d), round($extraHardAmnt[1] / $d), round($extraHardAmnt[2] / $d));
+    }
+    elseif(is_int($m))
+    {
+        $easyAmnt = array(round($easyAmnt[0] * $m), round($easyAmnt[1] * $m), round($easyAmnt[2] * $m));
+        $mediumAmnt = array(round($mediumAmnt[0] * $m), round($mediumAmnt[1] * $m), round($mediumAmnt[2] * $m));
+        $hardAmnt = array(round($hardAmnt[0] * $m), round($hardAmnt[1] * $m), round($hardAmnt[2] * $m));
+        $extraHardAmnt = array(round($extraHardAmnt[0] * $m), round($extraHardAmnt[1] * $m), round($extraHardAmnt[2] * $m));
+    }
+    
+    switch($prizeDb)
+    {
+        case 1:
+            $easyPrizes = array(250000, 275000, 300000, 325000, 350000, 375000, 400000, 425000, 450000);
+            break;
+        case 2:
+            $easyPrizes = array(55, 60, 65, 70, 75, 80, 85, 90, 95);
+            break;
+        case 3:
+            $easyPrizes = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+            $prizeAmnt = array(
+                'easy' => $easyPrizes,
+                'medium' => array(round($easyPrizes[0] * 2), round($easyPrizes[1] * 2), round($easyPrizes[2] * 2), round($easyPrizes[3] * 2), round($easyPrizes[4] * 2),
+                    round($easyPrizes[5] * 2), round($easyPrizes[6] * 2), round($easyPrizes[7] * 2), round($easyPrizes[8] * 2)),
+                'hard' => array(round($easyPrizes[0] * 3), round($easyPrizes[1] * 3), round($easyPrizes[2] * 3), round($easyPrizes[3] * 3), round($easyPrizes[4] * 3),
+                    round($easyPrizes[5] * 3), round($easyPrizes[6] * 3), round($easyPrizes[7] * 3), round($easyPrizes[8] * 3)),
+                'extra-hard' => array(round($easyPrizes[0] * 5), round($easyPrizes[1] * 5), round($easyPrizes[2] * 5), round($easyPrizes[3] * 5), round($easyPrizes[4] * 5),
+                    round($easyPrizes[5] * 5), round($easyPrizes[6] * 5), round($easyPrizes[7] * 5), round($easyPrizes[8] * 5)),
+            );
+            break;
+        case 4:
+            $easyPrizes = array(88000, 91000, 94000, 97000, 100000, 103000, 106000, 109000, 112000);
+            break;
+    }
+    switch($additionalPrizeDb)
+    {
+        case 1:
+            $easyPrizes2 = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+            $prize2Amnt = array(
+                'easy' => $easyPrizes2,
+                'medium' => array(round($easyPrizes2[0] * 2), round($easyPrizes2[1] * 2), round($easyPrizes2[2] * 2), round($easyPrizes2[3] * 2), round($easyPrizes2[4] * 2),
+                    round($easyPrizes2[5] * 2), round($easyPrizes2[6] * 2), round($easyPrizes2[7] * 2), round($easyPrizes2[8] * 2)),
+                'hard' => array(round($easyPrizes2[0] * 3), round($easyPrizes2[1] * 3), round($easyPrizes2[2] * 3), round($easyPrizes2[3] * 3), round($easyPrizes2[4] * 3),
+                    round($easyPrizes2[5] * 3), round($easyPrizes2[6] * 3), round($easyPrizes2[7] * 3), round($easyPrizes2[8] * 3)),
+                'extra-hard' => array(round($easyPrizes2[0] * 5), round($easyPrizes2[1] * 5), round($easyPrizes2[2] * 5), round($easyPrizes2[3] * 5), round($easyPrizes2[4] * 5),
+                    round($easyPrizes2[5] * 5), round($easyPrizes2[6] * 5), round($easyPrizes2[7] * 5), round($easyPrizes2[8] * 5)),
+            );
+            break;
+        case 2:
+            $easyPrizes2 = array(8800, 9100, 9400, 9700, 10000, 10300, 10600, 10900, 11200);
+            break;
+        case 3:
+            $easyPrizes2 = array(2, 3);
+            $prize2Amnt = array(
+                'easy' => $easyPrizes2,
+                'medium' => array(3, 4),
+                'hard' => array(4, 5),
+                'extra-hard' => array(4, 6)
+            );
+            break;
+        case 4:
+            $easyPrizes2 = array(50, 55, 60, 65, 70, 75, 80, 85, 90);
+            $prize2Amnt = array(
+                'easy' => $easyPrizes2,
+                'medium' => array(round($easyPrizes2[0] * 2), round($easyPrizes2[1] * 2), round($easyPrizes2[2] * 2), round($easyPrizes2[3] * 2), round($easyPrizes2[4] * 2),
+                    round($easyPrizes2[5] * 2), round($easyPrizes2[6] * 2), round($easyPrizes2[7] * 2), round($easyPrizes2[8] * 2)),
+                'hard' => array(round($easyPrizes2[0] * 3), round($easyPrizes2[1] * 3), round($easyPrizes2[2] * 3), round($easyPrizes2[3] * 3), round($easyPrizes2[4] * 3),
+                    round($easyPrizes2[5] * 3), round($easyPrizes2[6] * 3), round($easyPrizes2[7] * 3), round($easyPrizes2[8] * 3)),
+                'extra-hard' => array(round($easyPrizes2[0] * 4), round($easyPrizes2[1] * 4), round($easyPrizes2[2] * 4), round($easyPrizes2[3] * 4), round($easyPrizes2[4] * 4),
+                    round($easyPrizes2[5] * 4), round($easyPrizes2[6] * 4), round($easyPrizes2[7] * 4), round($easyPrizes2[8] * 4)),
+            );
+    }
+    
+    if(!isset($prizeAmnt))
+    {
+        $defaultMultipliers = getDefaultPrizeMultipliers($easyPrizes);
+        $prizeAmnt = array(
+            'easy' => $easyPrizes,
+            'medium' => $defaultMultipliers['medium'],
+            'hard' => $defaultMultipliers['hard'],
+            'extra-hard' => $defaultMultipliers['extra-hard']
+        );
+    }
+    if(!isset($prize2Amnt))
+    {
+        $defaultMultipliers = getDefaultPrizeMultipliers($easyPrizes2);
+        $prize2Amnt = array(
+            'easy' => $easyPrizes2,
+            'medium' => $defaultMultipliers['medium'],
+            'hard' => $defaultMultipliers['hard'],
+            'extra-hard' => $defaultMultipliers['extra-hard']
+        );
+    }
+    
+    switch($difficulty)
+    {
+        case 1:
+            $amount = $mediumAmnt[array_rand($mediumAmnt)];
+            $prize = $prizeAmnt['medium'][array_rand($prizeAmnt['medium'])];
+            $prize2 = $prize2Amnt['medium'][array_rand($prize2Amnt['medium'])];
+            break;
+        case 0:
+            $amount = $easyAmnt[array_rand($easyAmnt)];
+            $prize = $prizeAmnt['easy'][array_rand($prizeAmnt['easy'])];
+            $prize2 = $prize2Amnt['easy'][array_rand($prize2Amnt['easy'])];
+            break;
+        case 2:
+            $amount = $hardAmnt[array_rand($hardAmnt)];
+            $prize = $prizeAmnt['hard'][array_rand($prizeAmnt['hard'])];
+            $prize2 = $prize2Amnt['hard'][array_rand($prize2Amnt['hard'])];
+            break;
+        case 3:
+            $amount = $extraHardAmnt[array_rand($extraHardAmnt)];
+            $prize = $prizeAmnt['extra-hard'][array_rand($prizeAmnt['extra-hard'])];
+            $prize2 = $prize2Amnt['extra-hard'][array_rand($prize2Amnt['extra-hard'])];
+            break;
+        default:
+            break;
+    }
+    
+    // Insert mission, after reset
+    $con->setData("
+        TRUNCATE TABLE `public_mission`;
+        UPDATE `user` SET `publicMission`='0' WHERE `publicMission`!='0';
+        INSERT INTO `public_mission` (`missionID`, `minAmount`, `rewardType`, `rewardAmount`, `reward2Type`, `reward2Amount`) VALUES (:mid, :amnt, :rw, :rwAmnt, :rw2, :rw2Amnt)
+    ", array(':mid' => $mission, ':amnt' => $amount, ':rw' => $prizeDb, ':rwAmnt' => $prize, ':rw2' => $additionalPrizeDb, ':rw2Amnt' => $prize2));
 } // /CHECKED & OK
 
 /* Gym stats drainage /TO DO */

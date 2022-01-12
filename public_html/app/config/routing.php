@@ -17,6 +17,11 @@ if(extension_loaded('opcache'))
 
 class Routing
 {
+    private $route;
+    private $routeName;
+    private $controller;
+    private $routeRegex = array();
+    
     public $settings = array(
         'domainBase' => BASE_DOMAIN, // see config.php
         'gamename' => APP_GAMENAME, // see config.php
@@ -29,10 +34,6 @@ class Routing
         'ssl' => SSL_ENABLED, // see config.php
         'twigCache' => FALSE, // Init, DO NOT CHANGE see config.php 'DEVELOPMENT'
     );
-    
-    private $route;
-    private $routeName;
-    private $controller;
     public $routeMap = array();
     public $ajaxRouteMap = array();
     public $allowedLangs = array("nl", "en");
@@ -42,17 +43,15 @@ class Routing
         $this->settings['twigCache'] = DOC_ROOT . '/app/cache/TwigCompilation/';
         if(DEVELOPMENT == true) $this->settings['twigCache'] = FALSE;
         
+        $this->routeRegex[] = $routeGET = "(?:\?.*)?";
         require_once __DIR__.'/routes/routes.php';
+        $routeGET = null;
         
         $this->routeMap = $routeMap = $applicationRoutes;
         $routeMap = $applicationRoutes = null;
-        unset($routeMap);
-        unset($applicationRoutes);
         
         $this->ajaxRouteMap = $ajaxRouteMap = $ajaxRoutes;
         $ajaxRouteMap = $ajaxRoutes = null;
-        unset($ajaxRouteMap);
-        unset($ajaxRoutes);
         
         $requestURI = explode('/', $_SERVER['REQUEST_URI']);
         $routeParams = array();
@@ -67,7 +66,6 @@ class Routing
             $endRoute .= '/'.$value;
         
         $controller = $routeName = FALSE;
-        
         foreach($this->routeMap AS $key => $value)
         {
             if(preg_match('{^'.$value['route'].'$}', $endRoute))
@@ -90,17 +88,15 @@ class Routing
             }
         }
         
+        $this->route =  $endRoute;
+        $this->controller = "notfound.php";
+        $this->routeName = "not_found";
+        
         if($controller != false)
         {
             $this->route = $endRoute;
             $this->controller = $controller;
             $this->routeName = $routeName;
-        }
-        else
-        {
-            $this->route =  $endRoute;
-            $this->controller = "notfound.php";
-            $this->routeName = "not_found";
         }
     }
     
@@ -125,11 +121,24 @@ class Routing
         return $this->controller;
     }
     
+    private function removeRouteRegex($route)
+    {
+        foreach($this->routeRegex AS $regex)
+        {
+            if(strpos($route, $regex) !== false)
+                $route = str_replace($regex, '', $route);
+        }
+        return $route;
+    }
+    
     public function getRouteByRouteName($routeName)
     {
         $result = isset($this->routeMap[$routeName]) ? $this->routeMap[$routeName]['route'] : null;
-        if($result != null)
-            return $result;
+        if(isset($result))
+        {
+            $result = $this->removeRouteRegex($result);
+        }
+        return $result;
     }
     
     public function getRouteNameByRoute($route)
@@ -143,34 +152,26 @@ class Routing
     
     public function getAjaxRouteByRouteName($routeName)
     {
-        $result = isset($this->ajaxRouteMap[$routeName]) ? $this->ajaxRouteMap[$routeName]['route'] : null;
-        if($result != null)
-            return $result;
+        return isset($this->ajaxRouteMap[$routeName]) ? $this->ajaxRouteMap[$routeName]['route'] : null;
     }
     
     public function getPrevRouteName()
     {
-        if(isset($_SESSION['PREV_ROUTE_NAME']))
-            return $_SESSION['PREV_ROUTE_NAME'];
-        else
-            return $_SESSION['PREV_ROUTE_NAME'] = $this->routeName;
+        return isset($_SESSION['PREV_ROUTE_NAME']) ? $_SESSION['PREV_ROUTE_NAME'] : $this->routeName;
     }
     
-    public function setPrevRouteNameByRoute($route)
+    private function setPrevRouteNameByRoute($route)
     {
         if(isset($_SESSION['PREV_ROUTE']) && preg_match('{^'.$route.'$}', $_SESSION['PREV_ROUTE']))
         {
             $_SESSION['PREV_ROUTE_NAME'] = $this->routeName;
-            return TRUE;
         }
+        return TRUE;
     }
     
     public function getPrevRoute()
     {
-        if(isset($_SESSION['PREV_ROUTE']))
-            return $_SESSION['PREV_ROUTE'];
-        else
-            return $_SESSION['PREV_ROUTE'] = "/";
+        return isset($_SESSION['PREV_ROUTE']) ? $_SESSION['PREV_ROUTE'] : "/";
     }
     
     public function setPrevRoute()
@@ -191,6 +192,8 @@ class Routing
         $result = isset($this->routeMap[$routeName]) ? $this->routeMap[$routeName]['route'] : null;
         if($result != null)
         {
+            $result = $this->removeRouteRegex($result);
+            
             header("HTTP/2 301 Moved Permanently");
             header('Location: ' . $result . $addToHeader, TRUE, 301);
             exit(0);
@@ -214,6 +217,8 @@ class Routing
                 if($what < $range['min'] || $what > $range['max'])
                     $this->headTo('not_found');
             }
+            $what = $this->removeRouteRegex($what);
+            
             return $what;
         }
         return FALSE;
@@ -222,52 +227,36 @@ class Routing
     function getLanguageByIp()
     {
         $host = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+        $language = "English";
         if(preg_match("/nl$/", $host) || preg_match("/be$/", $host) || preg_match("/arpa$/", $host))
             $language = "Dutch";
-        else
-            $language = "English";
         
         return $language;
     }
     
-    public function getFirstVisitLang()
+    private function getFirstVisitLang()
     {
         $language = $this->getLanguageByIp();
+        if($language == "English")
+        {
+            setcookie('lang', 'en', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
+            return "en";
+        }
         if($language == "Dutch")
         {
             setcookie('lang', 'nl', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
             return "nl";
         }
-        else
-        {
-            setcookie('lang', 'en', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
-            return "en";
-        }
     }
     
     public function getLang()
     {
-        if(!isset($_COOKIE['lang']))
-        {
-            return $this->getFirstVisitLang();
-        }
-        else
-        {
-            
-            if(in_array($_COOKIE['lang'], $this->allowedLangs))
-                return $_COOKIE['lang'];
-            else
-                return $this->getFirstVisitLang();
-        }
+        return isset($_COOKIE['lang']) && in_array($_COOKIE['lang'], $this->allowedLangs) ? $_COOKIE['lang'] : $this->getFirstVisitLang();
     }
     
     public function getLangRaw()
     {
-        $language = $this->getLang();
-        if($language == "nl")
-            return "nl-NL";
-        else
-            return "en-EN";
+        return $this->getLang() == "nl" ? "nl-NL" : "en-EN";
     }
     
     public function createActionMessage($msg)
@@ -285,18 +274,18 @@ class Routing
     
     public function replaceMessagePart($part, $message, $pattern)
     {
-        $replaced = preg_replace($pattern, $part, $message);
-        return $replaced;
+        return preg_replace($pattern, $part, $message);
     }
     
     public function replaceMessageParts($message)
     {
         foreach($message AS $part)
         {
+            if(isset($replaced))
+                $replaced = preg_replace($part['pattern'], $part['part'], $replaced);
+            
             if(!isset($replaced))
                 $replaced = preg_replace($part['pattern'], $part['part'], $part['message']);
-            else
-                $replaced = preg_replace($part['pattern'], $part['part'], $replaced);
         }
         return $replaced;
     }

@@ -221,7 +221,7 @@ foreach($dailies AS $k => $id)
             $easyPrizes = array(3, 5, 7, 9, 11, 13, 15, 17, 19);
             break;
         case 5:
-            $easyPrizes = array(8800, 9100, 9400, 9700, 10000, 10300, 10600, 10900, 11200);
+            $easyPrizes = array(88000, 91000, 9400, 97000, 100000, 103000, 106000, 109000, 112000);
             break;
         case 6:
             $easyPrizes = array(1, 2);
@@ -247,7 +247,6 @@ foreach($dailies AS $k => $id)
     
     switch($difficulties[$k])
     {
-        default:
         case 1:
             $amount = $mediumAmnt[array_rand($mediumAmnt)];
             $prize = $prizeAmnt['medium'][array_rand($prizeAmnt['medium'])];
@@ -263,6 +262,8 @@ foreach($dailies AS $k => $id)
         case 3:
             $amount = $extraHardAmnt[array_rand($extraHardAmnt)];
             $prize = $prizeAmnt['extra-hard'][array_rand($prizeAmnt['extra-hard'])];
+            break;
+        default:
             break;
         
     }

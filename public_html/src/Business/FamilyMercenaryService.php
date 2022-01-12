@@ -14,7 +14,7 @@ class FamilyMercenaryService
     public function __construct()
     {
         $this->data = new FamilyMercenaryDAO();
-        if(strtotime("2020-12-31 14:00:00") < strtotime('now') && strtotime("2021-01-01 14:00:00") > strtotime('now'))
+        if(strtotime("2022-01-07 00:00:00") < strtotime('now') && strtotime("2022-01-07 23:59:59") > strtotime('now'))
             $this->price /= 2;
     }
     

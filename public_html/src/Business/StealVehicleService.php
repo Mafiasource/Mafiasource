@@ -9,6 +9,7 @@ use src\Business\GarageService;
 use src\Business\MissionService;
 use src\Business\NotificationService;
 use src\Business\DailyChallengeService;
+use src\Business\PublicMissionService;
 use src\Data\StealVehicleDAO;
 use app\config\Routing;
 
@@ -151,7 +152,9 @@ class StealVehicleService
                     }
                     
                     $dailyChallengeService = new DailyChallengeService();
+                    $publicMissionService = new PublicMissionService();
                     $dailyChallengeService->addToDailiesIfActive(1);
+                    $publicMissionService->addToPublicMisionIfActive(1);
                     
                     $vehiclePrice = $stolenVehicle->getPrice();
                     

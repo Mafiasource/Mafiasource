@@ -34,6 +34,9 @@ use src\Languages\GetLanguageContent;
 // Set correct timezone
 ini_set('date.timezone', 'Europe/Amsterdam');
 
+// Set memory limit
+ini_set ('memory_limit', '128M');
+
 // Daily maintenance 1 min: (/app/cronjob/dbbackup.php)
 if(date('H') == 4 && date('i') == 00)
 {

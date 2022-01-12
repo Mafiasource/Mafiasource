@@ -814,6 +814,11 @@ class GetLanguageContent
             'PRIZE' => $this->luckyboxLangs()['PRIZE'],
             'EACH' => $this->stockExchangeLangs()['EACH'],
             'MISSIONS_INFO' => "Speel missies volledig vrij om hun badge vrij te spelen op je spelersprofiel.",
+            "PUBLIC" => "Publieke",
+            "MISSION" => "Missie",
+            "TIME_LEFT" => "Tijd over",
+            "PAYOUT" => "Uitbetaal",
+            "PROGRESS" => "Vooruitgang",
         );
         return $langs;
     }

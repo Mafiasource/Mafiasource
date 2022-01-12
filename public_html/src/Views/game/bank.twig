@@ -41,6 +41,7 @@
 {% endblock content %}
 
 {% block javascripts %}
+{% set swissLeft = bankData.getSwissBankMax - bankData.getSwissBank %}
 <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
 <script type="text/javascript">
     $(document).on('change', 'select#bankTransferAction', function (e) {
@@ -59,6 +60,28 @@
                     $("input#bankTransferValueField").val('999999999');
                 } else {
                     $("input#bankTransferValueField").val('{{ userData.getCash }}');
+                }
+                break;
+        }
+    }).change();
+    $(document).on('change', 'select#swissBankTransferAction', function (e) {
+        var val = $(this).val();
+        switch(val)
+        {
+            case 'getMoney':
+                if( {{ bankData.getSwissBank }} >= 999999999 ) {
+                    $("input#swissBankTransferValueField").val('999999999');
+                } else {
+                    $("input#swissBankTransferValueField").val('{{ bankData.getSwissBank }}');
+                }
+                break;
+            case 'putMoney':
+                if( {{ userData.getBank }} >= 999999999 ) {
+                    $("input#swissBankTransferValueField").val('999999999');
+                } else if( {{ userData.getBank }} >= {{ swissLeft }} ) {
+                    $("input#swissBankTransferValueField").val('{{ swissLeft }}');
+                } else {
+                    $("input#swissBankTransferValueField").val('{{ userData.getBank }}');
                 }
                 break;
         }

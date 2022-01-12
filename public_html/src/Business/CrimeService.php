@@ -8,6 +8,7 @@ use src\Business\GarageService;
 use src\Business\MissionService;
 use src\Business\NotificationService;
 use src\Business\DailyChallengeService;
+use src\Business\PublicMissionService;
 use src\Data\CrimeDAO;
 use app\config\Routing;
 
@@ -125,6 +126,9 @@ class CrimeService extends CrimeStatics
                     
                     $dailyChallengeService = new DailyChallengeService();
                     $dailyChallengeService->addToDailiesIfActive(3);
+                    
+                    $publicMissionService = new PublicMissionService();
+                    $publicMissionService->addToPublicMisionIfActive(3);
                     
                     $this->data->commitCrimeSuccess($stolenMoney, $rpCollected, $newLvlData['levelAfter'], $newLvlData['xpAfter']);
                     

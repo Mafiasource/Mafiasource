@@ -814,6 +814,11 @@ class GetLanguageContent
             'PRIZE' => $this->luckyboxLangs()['PRIZE'],
             'EACH' => $this->stockExchangeLangs()['EACH'],
             'MISSIONS_INFO' => "Fully complete missions to unlock their badge on your player profile.",
+            "PUBLIC" => "Public",
+            "MISSION" => "Mission",
+            "TIME_LEFT" => "Time left",
+            "PAYOUT" => "Payout",
+            "PROGRESS" => "Progress",
         );
         return $langs;
     }

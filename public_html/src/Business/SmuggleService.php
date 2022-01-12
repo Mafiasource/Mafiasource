@@ -6,6 +6,7 @@ use src\Business\CrimeService;
 use src\Business\MissionService;
 use src\Business\NotificationService;
 use src\Business\DailyChallengeService;
+use src\Business\PublicMissionService;
 use src\Data\SmuggleDAO;
 use app\config\Routing;
 
@@ -275,26 +276,32 @@ class SmuggleService
                     }
                     
                     $dailyChallengeService = new DailyChallengeService();
+                    $publicMissionService = new PublicMissionService();
                     switch($post['type'])
                     {
                         default:
                         case 'drugs':
-                            $challengeID = 2;
+                            $challengeID = $missionID = 2;
                             break;
                         case 'liquids':
                             $challengeID = 5;
+                            $missionID = 4;
                             break;
                         case 'fireworks':
                             $challengeID = 8;
+                            $missionID = 6;
                             break;
                         case 'weapons':
                             $challengeID = 11;
+                            $missionID = 8;
                             break;
                         case 'exotic-animals':
                             $challengeID = 14;
+                            $missionID = 10;
                             break;
                     }
                     $dailyChallengeService->addToDailiesIfActive($challengeID, $amount);
+                    $publicMissionService->addToPublicMisionIfActive($missionID, $amount);
                     
                     $this->data->sellUnits($type, $this->unitNumbers[$id], $amount, $totalPrice, $newLvlData);
                 }

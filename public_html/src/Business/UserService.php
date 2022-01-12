@@ -8,6 +8,7 @@ use src\Business\StateService;
 use src\Business\PossessionService;
 use src\Business\NotificationService;
 use src\Business\DailyChallengeService;
+use src\Business\PublicMissionService;
 use src\Business\Logic\UploadService;
 use src\Data\UserDAO;
 
@@ -1187,8 +1188,17 @@ class UserService
             $stats = $this->getGymStatsGainedByTraining($training);
             
             $dailyChallengeService = new DailyChallengeService();
-            if($stats['power'] > 0) $dailyChallengeService->addToDailiesIfActive(6, $stats['power']);
-            if($stats['cardio'] > 0) $dailyChallengeService->addToDailiesIfActive(9, $stats['cardio']);
+            $publicMissionService = new PublicMissionService();
+            if($stats['power'] > 0)
+            {
+                $dailyChallengeService->addToDailiesIfActive(6, $stats['power']);
+                $publicMissionService->addToPublicMisionIfActive(7, $stats['power']);
+            }
+            if($stats['cardio'] > 0)
+            {
+                $dailyChallengeService->addToDailiesIfActive(9, $stats['cardio']);
+                $publicMissionService->addToPublicMisionIfActive(16, $stats['cardio']);
+            }
             
             $this->data->gymTraining($stats, $waitingTime);
             
@@ -1626,6 +1636,10 @@ class UserService
         {
             global $route;
             global $langs;
+            
+            $publicMissionService = new PublicMissionService();
+            $publicMissionService->addToPublicMisionIfActive(14, $credits);
+            
             $this->addCreditsFound($credits);
             
             $replaces = array(
