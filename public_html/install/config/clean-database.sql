@@ -2330,8 +2330,6 @@ CREATE TABLE `public_mission`  (
 -- ----------------------------
 INSERT INTO `public_mission` VALUES (1, 16, 3, 2, 55, 1, 5);
 
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- ----------------------------
 -- Table structure for recover_password
 -- ----------------------------
