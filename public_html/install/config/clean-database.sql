@@ -2855,7 +2855,7 @@ CREATE TABLE `user`  (
   `lrsID_en` int NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `lrfsID_nl` int NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `lrfsID_en` int NOT NULL DEFAULT 0 COMMENT 'type=disabled',
-  `ground` tinyint NOT NULL DEFAULT 0,
+  `ground` tinyint(1) NOT NULL DEFAULT 0,
   `smugglingCapacity` smallint NOT NULL DEFAULT 0,
   `cHalvingTimes` bigint NOT NULL DEFAULT 0,
   `cBribingPolice` bigint NOT NULL DEFAULT 0,
