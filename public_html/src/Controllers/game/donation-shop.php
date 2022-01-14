@@ -15,5 +15,6 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->donationShopLang
 $twigVars['familyData'] = $familyData;
 $twigVars['luckyboxAmnt'] = $donator->luckyboxAmnt;
 $twigVars['luckyboxCr'] = $donator->luckyboxCr;
+$twigVars['shopData'] = $donator->getDonationShopData();
 
 echo $twig->render('/src/Views/game/donation-shop.twig', $twigVars);

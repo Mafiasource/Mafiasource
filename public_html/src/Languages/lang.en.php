@@ -906,6 +906,7 @@ class GetLanguageContent
     public function donationShopLangs()
     {
         global $route;
+        $registerLangs = $this->registerLangs();
         $langs = array(
             'CREDITS_INFO' => "You have <strong>{credits} credits</strong> in possession. <!-- <a href='#'><i class='donator'>Donate!</i></a> -->",
             'DONATION_SHOP_INFO' => "Al status benefits can be found on the <a href='javascript:void(0);' class='ajaxTab help' data-tab='help'><img src='/foto/web/public/images/icons/help.png' class='icon' alt='Help'/> Help page.</a>",
@@ -923,6 +924,20 @@ class GetLanguageContent
             'BOUGHT_HALVING_TIMES_SUCCESS' => "You spent 63 credits to halve your waiting times for 12 hours starting from now.",
             'BRIBING_BORDER_PATROL' => "Bribe border patrol for 8 hours",
             'BOUGHT_BRIBING_POLICE_SUCCESS' => "You handed over {credits} credits to the border patrol to be able to smuggle for 8 hours without being caught.",
+            'GROUND' => "Extra ground area",
+            'BOUGHT_GROUND_SUCCESS' => "You traded 100 credits for an extra holding space on the ground map.",
+            'SMUGGLING_CAPACITY' => "100 extra smuggle capacity",
+            'BOUGHT_SMUGGLING_CAPACITY_SUCCESS' => "You bought 100 extra smuggling capacity for 100 credits!",
+            'NEW_PROFESSION' => "New profession",
+            'SELECT_TAG_CHOOSE' => $registerLangs['SELECT_TAG_CHOOSE'],
+            'CARJACKER' => $registerLangs['CARJACKER'],
+            'PRISON_BREAKER' => $registerLangs['PRISON_BREAKER'],
+            'THIEF' => $registerLangs['THIEF'],
+            'PIMP' => $registerLangs['PIMP'],
+            'BANKER' => $registerLangs['BANKER'],
+            'SMUGGLER' => $registerLangs['SMUGGLER'],
+            'INVALID_PROFESSION' => $registerLangs['INVALID_PROFESSION'],
+            'BOUGHT_NEW_PROFESSION_SUCCESS' => "For 50 credits, your profession was changed to {profession}.",
             'CONTINUE' => "Continue",
             'CAN_RECEIVE' => "You can receive up to {credits} more credits as a donation reward.",
             'LIMIT_RESET' => "On {date} your limit will be reset to 5,000.",

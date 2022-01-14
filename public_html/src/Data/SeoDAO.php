@@ -13,12 +13,12 @@ class SeoDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
-        global $route;
         
         $this->con = $connection;
         $this->dbh = $connection->con;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
     }
     
     public function __destruct()

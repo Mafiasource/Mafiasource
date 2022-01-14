@@ -19,11 +19,12 @@ class PollDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
+        
         $this->con = $connection;                        
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r"; // SQL Format
         $this->questionSelects = "pq.`id`, pq.`question_".$this->lang."` AS `question`, pq.`description_".$this->lang."` AS `description`";
     }

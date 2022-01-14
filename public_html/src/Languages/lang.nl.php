@@ -906,6 +906,7 @@ class GetLanguageContent
     public function donationShopLangs()
     {
         global $route;
+        $registerLangs = $this->registerLangs();
         $langs = array(
             'CREDITS_INFO' => "Je hebt <strong>{credits} credits</strong> in je bezit. <!-- <a href='#'><i class='donator'>Doneren!</i></a> -->",
             'DONATION_SHOP_INFO' => "Alle status voordelen kan je vinden op de <a href='javascript:void(0);' class='ajaxTab help' data-tab='help'><img src='/foto/web/public/images/icons/help.png' class='icon' alt='Help'/> Help pagina.</a>",
@@ -923,6 +924,20 @@ class GetLanguageContent
             'BOUGHT_HALVING_TIMES_SUCCESS' => "Je hebt 63 credits uitgegeven om vanaf nu uw wachttijden voor 12 uur te halveren.",
             'BRIBING_BORDER_PATROL' => "Douane omkopen voor 8 uur",
             'BOUGHT_BRIBING_POLICE_SUCCESS' => "Je gaf {credits} credits aan de douane om 8 uur lang te kunnen smokkelen zonder gepakt te worden.",
+            'GROUND' => "Extra plattegrond landje",
+            'BOUGHT_GROUND_SUCCESS' => "Je hebt 100 credits ingewisseld voor een extra landje op de plattegrond.",
+            'SMUGGLING_CAPACITY' => "100 extra smokkel draagvermogen",
+            'BOUGHT_SMUGGLING_CAPACITY_SUCCESS' => "Je hebt 100 extra smokkel capaciteit gekocht voor 100 credits!",
+            'NEW_PROFESSION' => "Nieuw beroep",
+            'SELECT_TAG_CHOOSE' => $registerLangs['SELECT_TAG_CHOOSE'],
+            'CARJACKER' => $registerLangs['CARJACKER'],
+            'PRISON_BREAKER' => $registerLangs['PRISON_BREAKER'],
+            'THIEF' => $registerLangs['THIEF'],
+            'PIMP' => $registerLangs['PIMP'],
+            'BANKER' => $registerLangs['BANKER'],
+            'SMUGGLER' => $registerLangs['SMUGGLER'],
+            'INVALID_PROFESSION' => $registerLangs['INVALID_PROFESSION'],
+            'BOUGHT_NEW_PROFESSION_SUCCESS' => "Voor 50 credits werd je beroep veranderd in {profession}.",
             'CONTINUE' => "Doorgaan",
             'CAN_RECEIVE' => "Je kunt nog tot {credits} credits ontvangen als donatie beloning.",
             'LIMIT_RESET' => "Op {date} word je limiet terug op 5,000 gezet.",

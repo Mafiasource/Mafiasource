@@ -21,12 +21,12 @@
     <meta name="description" content="{{ PAGE_DESCRIPTION }}" />
     <meta name="copyright" content="{{ "now"|date("Y") }} &copy; {{ routing.settings.domainBase }}" />
     <meta name="application-name" content="{{ routing.settings.gamename }}" />
-    <meta name="geo.region" content="{{ routing.getLangRaw }}" /> 
+    <meta name="geo.region" content="{{ langRaw }}" /> 
     <meta name="geo.placename" content="Menen, Belgium" /> 
     <meta name="geo.position" content="50.79722,3.12245" /> 
     <meta name="ICBM" content="50.79722,3.12245" />
     <meta name="robots" content="index, follow" />
-    <meta property="og:locale" content="{{ routing.getLangRaw }}" />
+    <meta property="og:locale" content="{{ langRaw }}" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="{{ PAGE_TITLE }}" />
     <meta property="og:description" content="{{ PAGE_DESCRIPTION }}" />
@@ -46,7 +46,7 @@
     <meta property="DC.description" content="{{ PAGE_DESCRIPTION }}" />
     <meta property="DC.format" content="text/html" />
     <meta property="DC.publisher" content="{{ AUTHOR }}" />
-    <meta property="DC.language" content="{{ routing.getLangRaw }}" />
+    <meta property="DC.language" content="{{ langRaw }}" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-touch-fullscreen" content="yes" />
     <meta name="apple-mobile-web-app-title" content="{{ PAGE_TITLE }}" />
@@ -54,32 +54,33 @@
     <meta name="apple-mobile-web-app-status-bar" content="#464646" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="publisher" href="{{ AUTHOR }}"/>
-    <link rel="icon" type="image/x-icon" href="{{ staticRoot }}/web/public/images/favicon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png" />
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="167x167" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-167x167.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png" />
-    <link rel="icon" type="image/png" sizes="512x512"  href="{{ staticRoot }}/foto/web/public/images/favicon/android-icon-512x512.png" />
-    <link rel="icon" type="image/png" sizes="192x192"  href="{{ staticRoot }}/foto/web/public/images/favicon/android-icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-96x96.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ staticRoot }}/foto/web/public/images/favicon/favicon-16x16.png" />
-    <link rel="apple-touch-startup-image" media="(width: 320px) and (height: 568px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-57x57.png" />
-    <link rel="apple-touch-startup-image" media="(width: 375px) and (height: 667px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-60x60.png" />
-    <link rel="apple-touch-startup-image" media="(width: 375px) and (height: 812px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-72x72.png" />
-    <link rel="apple-touch-startup-image" media="(width: 414px) and (height: 896px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-76x76.png" />
-    <link rel="apple-touch-startup-image" media="(width: 414px) and (height: 896px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-114x114.png" />
-    <link rel="apple-touch-startup-image" media="(width: 621px) and (height: 1104px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-120x120.png" />
-    <link rel="apple-touch-startup-image" media="(width: 768px) and (height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-144x144.png" />
-    <link rel="apple-touch-startup-image" media="(width: 834px) and (height: 1112px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-152x152.png" />
-    <link rel="apple-touch-startup-image" media="(width: 834px) and (height: 1194px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-167x167.png" />
-    <link rel="apple-touch-startup-image" media="(width: 1024px) and (height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/foto/web/public/images/favicon/apple-icon-180x180.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ staticRoot }}/web/public/images/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-167x167.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="512x512"  href="{{ staticRoot }}/web/public/images/favicon/android-icon-512x512.png" />
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ staticRoot }}/web/public/images/favicon/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ staticRoot }}/web/public/images/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ staticRoot }}/web/public/images/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ staticRoot }}/web/public/images/favicon/favicon-16x16.png" />
+    <link rel="mask-icon" href="{{ staticRoot }}/web/public/images/favicon/maskable_icon.png"
+    <link rel="apple-touch-startup-image" media="(width: 320px) and (height: 568px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-57x57.png" />
+    <link rel="apple-touch-startup-image" media="(width: 375px) and (height: 667px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-60x60.png" />
+    <link rel="apple-touch-startup-image" media="(width: 375px) and (height: 812px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-72x72.png" />
+    <link rel="apple-touch-startup-image" media="(width: 414px) and (height: 896px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-76x76.png" />
+    <link rel="apple-touch-startup-image" media="(width: 414px) and (height: 896px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-114x114.png" />
+    <link rel="apple-touch-startup-image" media="(width: 621px) and (height: 1104px) and (-webkit-device-pixel-ratio: 3)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-120x120.png" />
+    <link rel="apple-touch-startup-image" media="(width: 768px) and (height: 1024px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-144x144.png" />
+    <link rel="apple-touch-startup-image" media="(width: 834px) and (height: 1112px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-152x152.png" />
+    <link rel="apple-touch-startup-image" media="(width: 834px) and (height: 1194px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-167x167.png" />
+    <link rel="apple-touch-startup-image" media="(width: 1024px) and (height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-180x180.png" />
     <link rel="preload" href="{{ staticRoot }}/web/public/images/bg.webp" as="image" />
     <link rel="preload" href="{{ staticRoot }}/web/public/bootstrap/css/bootstrap.min.css" as="style" />
     <link rel="preload" href="{{ staticRoot }}/web/public/css/homepage.min.css" as="style" />

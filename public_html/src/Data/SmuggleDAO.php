@@ -19,12 +19,12 @@ class SmuggleDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
-        global $route;
         
         $this->con = $connection;                        
         $this->dbh = $connection->con;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
     }
     
     public function __destruct()
@@ -151,7 +151,8 @@ class SmuggleDAO extends DBConfig
                     
                     $su = new SmuggleUnit();
                     $su->setInPossession(array_sum($carrying));
-                    $su->setMaxCapacity((($userData->getRankID() + '1' ) * 100) - $su->getInPossession());
+                    $capacity = (int)(($userData->getRankID() + '1' ) * 100) + ($userData->getSmugglingCapacity() * 100);
+                    $su->setMaxCapacity($capacity - $su->getInPossession());
                     
                     return array('user' => $userObj, 'smuggle' => $smuggleList, 'unitsInfo' => $su);
                 }
@@ -218,7 +219,8 @@ class SmuggleDAO extends DBConfig
             
             $su = new SmuggleUnit();
             $su->setInPossession(array_sum($carrying));
-            $su->setMaxCapacity((($userData->getRankID() + '1' ) * 100) - $su->getInPossession());
+            $capacity = (int)(($userData->getRankID() + '1' ) * 100) + ($userData->getSmugglingCapacity() * 100);
+            $su->setMaxCapacity($capacity - $su->getInPossession());
             $data['unitsInfo'] = $su;
             
             return $data;

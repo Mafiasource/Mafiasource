@@ -1,7 +1,8 @@
 <?PHP
 
 /**
- *  - $routeGET "(?:\?.*)?" will allow any and all kind of GET parameters to be included into the request URI (route) and won't point to "not_found" anymore.
+ *  - $routeGET: Outgame social media sharing, allow any and all GET parameters in request URI
+ *  - $routeLang: Outgame multilingual SEO purposes
  **/
          
 $applicationRoutes =
@@ -15,7 +16,7 @@ array(
         /**
          * @RoutePath
          **/
-        'route' => '/' . $routeGET,
+        'route' => $routeLang . '/' . $routeGET,
         
         /**
          * @Controller
@@ -40,112 +41,112 @@ array(
     'login'
     =>
     array(
-        'route' => '/login' . $routeGET,
+        'route' => $routeLang . '/login' . $routeGET,
         'controller' => 'login.php'
     ),
     
     'screenshots'
     =>
     array(
-        'route' => '/screenshots' . $routeGET,
+        'route' => $routeLang . '/screenshots' . $routeGET,
         'controller' => 'screenshots.php'
     ),
     
     'register'
     =>
     array(
-        'route' => '/register' . $routeGET,
+        'route' => $routeLang . '/register' . $routeGET,
         'controller' => 'register.php'
     ),
     
     'register-referral'
     =>
     array(
-        'route' => '/register/referral/[A-Za-z0-9-]{3,15}' . $routeGET,
+        'route' => $routeLang . '/register/referral/[A-Za-z0-9-]{3,15}' . $routeGET,
         'controller' => 'register.php'
     ),
     
     'recover-password'
     =>
     array(
-        'route' => '/recover-password' . $routeGET,
+        'route' => $routeLang . '/recover-password' . $routeGET,
         'controller' => 'recover-password.php'
     ),
     
     'change-password'
     =>
     array(
-        'route' => '/recover-password/key/[A-Za-z0-9-]{64,64}',
+        'route' => $routeLang . '/recover-password/key/[A-Za-z0-9-]{64,64}',
         'controller' => 'recover-password.php'
     ),
     
     'change-email'
     =>
     array(
-        'route' => '/change-email/key/[A-Za-z0-9-]{64,64}',
+        'route' => $routeLang . '/change-email/key/[A-Za-z0-9-]{64,64}',
         'controller' => 'change-email.php'
     ),
     
     'forum'
     =>
     array(
-        'route' => '/forum' . $routeGET,
+        'route' => $routeLang . '/forum' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'forum-cat'
     =>
     array(
-        'route' => '/forum/[A-Za-z0-9-]{3,25}' . $routeGET,
+        'route' => $routeLang . '/forum/[A-Za-z0-9-]{3,25}' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'forum-cat-topic'
     =>
     array(
-        'route' => '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}' . $routeGET,
+        'route' => $routeLang . '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'forum-cat-topic-page'
     =>
     array(
-        'route' => '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}/page/[1-9][0-9]{0,3}' . $routeGET,
+        'route' => $routeLang . '/forum/[A-Za-z0-9-]{3,25}/[A-Za-z0-9-]{3,100}/page/[1-9][0-9]{0,3}' . $routeGET,
         'controller' => 'forum.php'
     ),
     
     'privacy-policy'
     =>
     array(
-        'route' => '/privacy-policy' . $routeGET,
+        'route' => $routeLang . '/privacy-policy' . $routeGET,
         'controller' => 'privacy-policy.php'
     ),
     
     'terms-and-conditions'
     =>
     array(
-        'route' => '/terms-and-conditions' . $routeGET,
+        'route' => $routeLang . '/terms-and-conditions' . $routeGET,
         'controller' => 'terms-and-conditions.php'
     ),
     
     'get-the-app'
     =>
     array(
-        'route' => '/download-app' . $routeGET,
+        'route' => $routeLang . '/download-app' . $routeGET,
         'controller' => 'get-app.php'
     ),
     
     'link-partners'
     =>
     array(
-        'route' => '/link-partners' . $routeGET,
+        'route' => $routeLang . '/link-partners' . $routeGET,
         'controller' => 'link-partners.php'
     ),
     
     '_offline'
     =>
     array(
-        'route' => '/offline.html',
+        'route' => $routeLang . '/offline.html',
         'controller' => 'offline.php'
     ),
     

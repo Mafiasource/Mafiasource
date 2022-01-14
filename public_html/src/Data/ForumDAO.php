@@ -23,11 +23,12 @@ class ForumDAO extends DBConfig
     
     public function __construct($familyID = false, $categoryID = false, $topicID = false, $reactionID = false)
     {
+        global $lang;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
         if($familyID != false) $this->familyID = $familyID;
         if($categoryID != false) $this->categoryID = $categoryID;

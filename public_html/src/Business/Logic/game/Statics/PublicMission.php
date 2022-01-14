@@ -11,10 +11,8 @@ class PublicMission
         "Animal Smuggler", /* "Dice Gambler", */ 12 => "Prison Breaker", /* "Horse Better", **/ 14 => "Credit Scavenger", /* "Roll the Ball", */
         16 => "Stamina Striver", /* "Fruit Spinner", */ 18 => "Hoes for Bro's", /* "Card Counter", */
     );
-    public $missionRewardDbFields = array(1 => "bank", "whoresStreet", "honorPoints", "score");
-    // Additional rewards reward2* in public_mission table. 4 credits = small chance ratio,
-    // 1 rankpoints handy for prestige ranks that bought all residences already and will need rp.
-    public $additionalRewardDbFields = array(1 => "rankpoints", "score", "luckybox", "credits");
+    public $missionRewardDbFields = array(1 => "bank", "whoresStreet", "honorPoints", "score"); // Big Score = rare
+    public $additionalRewardDbFields = array(1 => "rankpoints", "score", "luckybox", "credits"); // Credits = rare
     
     public function getPrizesByRank($prizes, $rank)
     {

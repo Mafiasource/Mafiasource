@@ -515,14 +515,14 @@ if(isset($publicMission['id']) && $publicMission['id'] > 0)
         $m = 100;
     elseif($mission == 5 || $mission == 18) // Pimp, pimp others
         $m = 2;
-    elseif($mission == 7 || $mission == 12 || $mission == 16 || $mission == 16) // Power trainer, prison breaker, stamina striver
+    elseif($mission == 7 || $mission == 14 || $mission == 16) // Power trainer, Credits scavenger, stamina striver
+        $d = 4;
+    elseif($mission == 12) // Prison breaker
         $d = 3;
     elseif($mission == 11 || $mission == 13 || $mission == 15 || $mission == 17 || $mission == 19) // Dobbling, racetrack, roulette, sotmachine, blackjack
-        $m = 10000;
+        $m = 10000; // Would apply if mission is based on money gambled instead of won. | Unused
     elseif($mission == 9) // Beat gym (score)
         $m = 3;
-    elseif($mission == 14) // Credits scavenger
-        $d = 4;
         
     if(is_int($d) && $d !== false)
     {
@@ -548,16 +548,7 @@ if(isset($publicMission['id']) && $publicMission['id'] > 0)
             $easyPrizes = array(55, 60, 65, 70, 75, 80, 85, 90, 95);
             break;
         case 3:
-            $easyPrizes = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
-            $prizeAmnt = array(
-                'easy' => $easyPrizes,
-                'medium' => array(round($easyPrizes[0] * 2), round($easyPrizes[1] * 2), round($easyPrizes[2] * 2), round($easyPrizes[3] * 2), round($easyPrizes[4] * 2),
-                    round($easyPrizes[5] * 2), round($easyPrizes[6] * 2), round($easyPrizes[7] * 2), round($easyPrizes[8] * 2)),
-                'hard' => array(round($easyPrizes[0] * 3), round($easyPrizes[1] * 3), round($easyPrizes[2] * 3), round($easyPrizes[3] * 3), round($easyPrizes[4] * 3),
-                    round($easyPrizes[5] * 3), round($easyPrizes[6] * 3), round($easyPrizes[7] * 3), round($easyPrizes[8] * 3)),
-                'extra-hard' => array(round($easyPrizes[0] * 5), round($easyPrizes[1] * 5), round($easyPrizes[2] * 5), round($easyPrizes[3] * 5), round($easyPrizes[4] * 5),
-                    round($easyPrizes[5] * 5), round($easyPrizes[6] * 5), round($easyPrizes[7] * 5), round($easyPrizes[8] * 5)),
-            );
+            $easyPrizes = array(4, 5, 6, 7, 8, 9, 10, 11, 12);
             break;
         case 4:
             $easyPrizes = array(88000, 91000, 94000, 97000, 100000, 103000, 106000, 109000, 112000);

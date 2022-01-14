@@ -44,8 +44,9 @@ class Routing
         if(DEVELOPMENT == true) $this->settings['twigCache'] = FALSE;
         
         $this->routeRegex[] = $routeGET = "(?:\?.*)?";
-        require_once __DIR__.'/routes/routes.php';
-        $routeGET = null;
+        $this->routeRegex[] = $routeLang = "(?:\/(nl|en))?";
+        include_once __DIR__.'/routes/routes.php';
+        $routeGET = $routeLang = null;
         
         $this->routeMap = $routeMap = $applicationRoutes;
         $routeMap = $applicationRoutes = null;
@@ -134,9 +135,8 @@ class Routing
     private function replaceRouteRegex($route)
     {
         foreach($this->routeRegex AS $regex)
-        {
             $route = preg_replace('/' . $regex . '/', '', $route);
-        }
+        
         return $route;
     }
     
@@ -246,21 +246,47 @@ class Routing
     private function getFirstVisitLang()
     {
         $language = $this->getLanguageByIp();
-        if($language == "English")
-        {
-            setcookie('lang', 'en', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
-            return "en";
-        }
+        $lang = "en";
+        
         if($language == "Dutch")
-        {
-            setcookie('lang', 'nl', time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
-            return "nl";
-        }
+            $lang = "nl";
+        
+        setcookie('lang', $lang, time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
+        return $lang;
+    }
+    
+    public function setLang($lang)
+    {
+        if(in_array($lang, $this->allowedLangs))
+            setcookie('lang', $lang, time()+9999999, '/', $this->settings['domain'], SSL_ENABLED, true);
     }
     
     public function getLang()
     {
         return isset($_COOKIE['lang']) && in_array($_COOKIE['lang'], $this->allowedLangs) ? $_COOKIE['lang'] : $this->getFirstVisitLang();
+    }
+    
+    public function adjustLang($lang)
+    {
+        global $userData;
+        global $uriLang;
+        
+        $loggedInLang = is_object($userData) && $userData->getLang() != $lang && in_array($userData->getLang(), $this->allowedLangs) && !isset($_SESSION['lang']['setAfterLogin']);
+        if(in_array($uriLang, $this->allowedLangs) && $this->requestGetParam(2) != "game")
+        { // Outgame multilingual SEO purposes
+            $lang = $uriLang;
+            $this->setLang($uriLang);
+        }
+        elseif($loggedInLang)
+        { // Re-set lang for logged in game user
+            $lang = $userData->getLang();
+            $this->setLang($lang);
+        }
+        
+        if($loggedInLang || (is_object($userData) && $userData->getLang() == $lang && in_array($lang, $this->allowedLangs) && !isset($_SESSION['lang']['setAfterLogin'])))
+            $_SESSION['lang']['setAfterLogin'] = true;
+        
+        return $lang;
     }
     
     public function getLangRaw()

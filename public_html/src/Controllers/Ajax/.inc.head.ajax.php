@@ -1,7 +1,7 @@
 <?PHP
 
 $loggedSession = $user->checkLoggedSession(false) ? true : false;
-if(!$userSession || !$userData)
+if(!isset($_SESSION['UID']) || !$userData)
 {
     if($loggedSession) $userData = $user->getUserData();
 }

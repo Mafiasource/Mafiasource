@@ -23,13 +23,17 @@ class FamilyDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
-        if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
-        if($this->lang == "en") $this->phpDateFormat = "m-d-Y g:i:s A";
+        $this->lang = $lang;
+        if($this->lang == 'en')
+        {
+            $this->dateFormat = "%m-%d-%Y %r";
+            $this->phpDateFormat = "m-d-Y g:i:s A";
+        }
     }
     
     public function __destruct()

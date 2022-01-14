@@ -77,7 +77,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
     // Security class (Anti CSRF, XSS attacks & more)
     require_once __DIR__.'/../app/config/security.php';
     $security = new Security();
-    $userSession = isset($_SESSION['UID']) ? true : false;
+        
     // Routing fetched a valid controller?
     if($route->getController() != FALSE)
     {
@@ -96,20 +96,13 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         $connection = new DBConfig();
         
         /// UserCoreService class requires above $connection for it's underlying UserDAO class, $user obj immediately used first in GetLanguageContent class
+        $lang = $route->getLang(); // Default, used first in UserCoreDAO constructor
         $user = new UserCoreService();
         $userData = $user->getUserData();
         
-        // Get preferred language class & contents, but (re)set a logged in users language first
-        $lang = $route->getLang();
-        if(is_object($userData) && $userData->getLang() != $lang && in_array($userData->getLang(), $route->allowedLangs) && !isset($_SESSION['lang']['setAfterLogin']))
-        {
-            $lang = $userData->getLang();
-            setcookie('lang', $userData->getLang(), time()+9999999, '/', $route->settings['domain'], SSL_ENABLED, true);
-            $_SESSION['lang']['setAfterLogin'] = true;
-        }
-        elseif(is_object($userData) && $userData->getLang() == $lang && in_array($lang, $route->allowedLangs) &&  !isset($_SESSION['lang']['setAfterLogin']))
-            $_SESSION['lang']['setAfterLogin'] = true;
-        
+        // Get preferred language class & contents
+        $uriLang = str_replace('/','', $route->requestGetParam(1));
+        $lang = $route->adjustLang($lang); // Preferred
         require_once DOC_ROOT.'/src/Languages/lang.' . $lang . '.php'; // Require user's preferred language
         $language = new GetLanguageContent(); // Class mostly used in all service classes (Business layer)
         $langs = $language->langMap; // Base langs available on every page, contents depend on a player in- or out-game

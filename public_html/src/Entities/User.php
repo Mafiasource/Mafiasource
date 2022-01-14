@@ -113,6 +113,7 @@ class User
     private $smugglingSFRatio;
     private $lastReadShoutboxID;
     private $lastReadFamilyShoutboxID;
+    private $smugglingCapacity;
     private $cHalvingTimes;
     private $cBribingPolice;
     private $cCrimes;
@@ -997,6 +998,14 @@ class User
 
 	public function setLastReadFamilyShoutboxID($lastReadFamilyShoutboxID){
 		$this->lastReadFamilyShoutboxID = $lastReadFamilyShoutboxID;
+	}
+    
+    public function getSmugglingCapacity(){
+		return $this->smugglingCapacity;
+	}
+
+	public function setSmugglingCapacity($smugglingCapacity){
+		$this->smugglingCapacity = $smugglingCapacity;
 	}
     
     public function getCHalvingTimes(){

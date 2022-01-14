@@ -5,7 +5,7 @@ use src\Business\SeoService;
 
 if($security->checkSSL() === false) exit(0);
 
-if(!$userSession || !$userData)
+if(!isset($_SESSION['UID']) || !$userData)
 {
     $loggedSession = $user->checkLoggedSession(false) ? true : false;
     if($loggedSession) $userData = $user->getUserData();

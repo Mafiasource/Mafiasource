@@ -55,6 +55,9 @@ class DonatorService extends DonatorStatics
         $luckybox = isset($post['luckybox']) ? true : null;
         $halvingTimes = isset($post['halving-times']) ? true : null;
         $bribingPolice = isset($post['bribing-police']) ? true : null;
+        $ground = isset($post['ground']) ? true : null;
+        $smuggling = isset($post['smuggling-capacity']) ? true : null;
+        $profession = isset($post['new-profession']) ? true : null;
         
         $familyData = $family->getFamilyDataByName($userData->getFamily());
         if(is_object($familyData)) $familyVip = $familyData->getVip();
@@ -84,7 +87,14 @@ class DonatorService extends DonatorStatics
             $creditsNeeded = 28;
         elseif(isset($bribingPolice) && $userData->getCharType() != 6)
             $creditsNeeded = 38;
+        elseif(isset($ground))
+            $creditsNeeded = 100;
+        elseif(isset($smuggling))
+            $creditsNeeded = 100;
+        elseif(isset($profession))
+            $creditsNeeded = 50;
         
+        $donationShopData = $this->data->getDonationShopData();
         if(isset($donator) || isset($vip) || isset($goldMember) || isset($vipFamily))
         {
             switch($userData->getDonatorID())
@@ -109,7 +119,12 @@ class DonatorService extends DonatorStatics
             }
             $hasFamilyStatus = isset($familyVip) && $familyVip == true && isset($vipFamily) ? true : false;
         }
-        elseif((isset($halvingTimes) && $userData->getCHalvingTimes() > time()) || (isset($bribingPolice) && $userData->getCBribingPolice() > time()))
+        elseif(
+            (isset($halvingTimes) && $userData->getCHalvingTimes() > time()) ||
+            (isset($bribingPolice) && $userData->getCBribingPolice() > time()) ||
+            (isset($ground) && $donationShopData['ground'] == 5) ||
+            (isset($smuggling) && $donationShopData['smugglingCapacity'] == 20)
+        )
             $hasStatus = true;
 
         if($security->checkToken($post['security-token']) == FALSE)
@@ -132,6 +147,9 @@ class DonatorService extends DonatorStatics
         {
             $error = $l['NO_FAMILY'];
         }
+        if(isset($profession) && ($post['profession'] < 1 || $post['profession'] > 6))
+            $error = $l['INVALID_PROFESSION'];
+        
         if(isset($error))
         {
             return Routing::errorMessage($error);
@@ -152,7 +170,6 @@ class DonatorService extends DonatorStatics
             elseif($vipFamily)
             {
                 $this->data->buyFamilyVip($familyData->getId(), $creditsNeeded);
-                
                 $replacedMessage = $l['BOUGHT_FAMILY_VIP_SUCCESS'];
             }
             elseif($luckybox)
@@ -168,14 +185,29 @@ class DonatorService extends DonatorStatics
             elseif($halvingTimes)
             {
                 $this->data->buyHalvingTimes($creditsNeeded);
-                
                 $replacedMessage = $l['BOUGHT_HALVING_TIMES_SUCCESS'];
             }
             elseif($bribingPolice)
             {
                 $this->data->buyBribingPolice($creditsNeeded);
-                
                 $replacedMessage = $route->replaceMessagePart(number_format($creditsNeeded, 0, '', ','), $l['BOUGHT_BRIBING_POLICE_SUCCESS'], '/{credits}/');
+            }
+            elseif($ground)
+            {
+                $this->data->buyGround($creditsNeeded);
+                $replacedMessage = $l['BOUGHT_GROUND_SUCCESS'];
+            }
+            elseif($smuggling)
+            {
+                $this->data->buySmugglingCapacity($creditsNeeded);
+                $replacedMessage = $l['BOUGHT_SMUGGLING_CAPACITY_SUCCESS'];
+            }
+            elseif($profession)
+            {
+                global $user;
+                $this->data->buyNewProfession($creditsNeeded, $post['profession']);
+                $userData = $user->getUserData();
+                $replacedMessage = $route->replaceMessagePart($userData->getProfession(), $l['BOUGHT_NEW_PROFESSION_SUCCESS'], '/{profession}/');
             }
             
             return $route->successMessage($replacedMessage);
@@ -301,5 +333,10 @@ class DonatorService extends DonatorStatics
     public function getDonationData()
     {
         return $this->data->getDonationData();
+    }
+    
+    public function getDonationShopData()
+    {
+        return $this->data->getDonationShopData();
     }
 }

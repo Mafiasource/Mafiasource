@@ -17,14 +17,15 @@ class FiftyGameDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
+        global $langs;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
         
-        global $langs;
         $this->types[0] = $langs['CASH'];
         $this->types[1] = $langs['WHORES'];
         $this->types[2] = $langs['HONOR_POINTS'];

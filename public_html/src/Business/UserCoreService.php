@@ -14,9 +14,9 @@ class UserCoreService
     
     public function __construct()
     {
+        global $lang;
+        
         $this->data = new UserCoreDAO();
-        global $route;
-        $lang = $route->getLang();
         if($lang == 'en') $this->dateFormat = "M j, g:i:s A"; // PHP format
     }
 
@@ -43,16 +43,12 @@ class UserCoreService
     
     public function checkLoggedSession($update = true)
     {
-        if(isset($_SESSION['UID']))
-        {
-            if($this->data->checkUser($_SESSION['UID'], $update))
-                return TRUE;
-        }
-        elseif(isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
-        {
-            if($this->data->checkCookieHash($_COOKIE['remember'], $_COOKIE['UID']))
-                return TRUE;
-        }
+        if(!isset($_SESSION['UID']) && isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
+            $this->data->checkCookieHash($_COOKIE['remember'], $_COOKIE['UID']); // Sets SESSION UID when valid (checked underneath)
+        
+        if(isset($_SESSION['UID']) && $this->data->checkUser($_SESSION['UID'], $update))
+            return TRUE;
+        
         return FALSE;
     }
     

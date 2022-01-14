@@ -7,7 +7,8 @@ require_once __DIR__ . '/.inc.head.php';
 include_once __DIR__ . '/.inc.statistics.php';
 
 $userService = new UserService();
-$key = $route->requestGetParam(3);
+$reqPar3 = $route->requestGetParam(3);
+$key = $reqPar3 == "key" ? $route->requestGetParam(4) : $reqPar3;
 $changeEmailData = $userService->getChangeEmailDataByKey($key);
 
 if($changeEmailData == FALSE) $route->headTo('not_found');
@@ -19,7 +20,6 @@ $langs = array_merge($langs, $language->changeEmailLangs());
 if(isset($_POST) && !empty($_POST) && isset($_POST['password']))
 {
     $response = $userService->validateEmailChange($_POST, $changeEmailData);
-    //var_dump($response);
     if(is_bool($response) && $response === TRUE)
     {
         $route->createActionMessage($route->successMessage($langs['CHANGE_EMAIL_SUCCESS']));
@@ -36,7 +36,6 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['password']))
 
 require_once __DIR__ . '/.inc.foot.php';
 
-//$twigVars['langs'] = array_merge($twigVars['langs'], $language->changeEmailLangs()); // Done above already
 $twigVars['changeEmailData'] = $changeEmailData;
 
 // Render view

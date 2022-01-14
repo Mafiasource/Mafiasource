@@ -13,11 +13,12 @@ class DonatorDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
         if($this->lang == 'en')
         {
             $this->dateFormat = "%m-%d-%Y %r"; // SQL Format
@@ -86,6 +87,34 @@ class DonatorDAO extends DBConfig
         $this->con->setData("
             UPDATE `user` SET `credits`=`credits`- :cr, `cBribingPolice`= :time WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
         ", array(':cr' => $credits, ':time' => $bribingTime, ':uid' => $_SESSION['UID']));
+    }
+    
+    public function getDonationShopData()
+    {
+        return $this->con->getDataSR("
+            SELECT `ground`, `smugglingCapacity` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':uid' => $_SESSION['UID']));
+    }
+    
+    public function buyGround($credits)
+    {
+        $this->con->setData("
+            UPDATE `user` SET `credits`=`credits`- :cr, `ground`=`ground`+1 WHERE `id`= :uid AND `ground`<'5' AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':cr' => $credits, ':uid' => $_SESSION['UID']));
+    }
+    
+    public function buySmugglingCapacity($credits)
+    {
+        $this->con->setData("
+            UPDATE `user` SET `credits`=`credits`- :cr, `smugglingCapacity`=`smugglingCapacity`+1 WHERE `id`= :uid AND `smugglingCapacity`<'20' AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':cr' => $credits, ':uid' => $_SESSION['UID']));
+    }
+    
+    public function buyNewProfession($credits, $profession)
+    {
+        $this->con->setData("
+            UPDATE `user` SET `credits`=`credits`- :cr, `charType`= :p WHERE `id`= :uid AND `smugglingCapacity`<'20' AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':cr' => $credits, ':p' => $profession, ':uid' => $_SESSION['UID']));
     }
     
     public function donationExistsByTxID($txID)

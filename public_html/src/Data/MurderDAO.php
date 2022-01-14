@@ -22,11 +22,12 @@ class MurderDAO extends DBConfig
 
     public function __construct()
     {
+        global $lang;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r"; // SQL Format
     }
 

@@ -18,11 +18,12 @@ class UserCoreDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
     }
 
     public function __destruct()
@@ -42,6 +43,7 @@ class UserCoreDAO extends DBConfig
                 global $route;
                 global $security;
                 global $denyPrevRouteSaves;
+                
                 $captchaService = new CaptchaService();
                 $userCaptcha = $captchaService->getUserCaptcha();
                 
@@ -88,7 +90,7 @@ class UserCoreDAO extends DBConfig
         if(!isset($_SESSION['UID']))
         {
             $id = (int)$id;
-            $statement = $this->dbh->prepare("SELECT u.`id`, u.`email`, u.`password` FROM `user` AS u LEFT JOIN `status` AS s ON (u.statusID=s.id) WHERE u.`id` = :id AND u.`active`='1' AND u.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 0,1");
+            $statement = $this->dbh->prepare("SELECT u.`id`, u.`email`, u.`password` FROM `user` AS u LEFT JOIN `status` AS s ON (u.statusID=s.id) WHERE u.`id` = :id AND u.`active`='1' AND u.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 1");
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
             $saltFile = DOC_ROOT . "/app/Resources/userSalts/".$id.".txt";
@@ -124,9 +126,10 @@ class UserCoreDAO extends DBConfig
                         f.`bankmanagerUID`, f.`forummodUID`, u.`stateID`, s.`name` AS `state`, u.`cityID`, u.`rankpoints`, u.`cash`, u.`bank`, u.`health`, u.`luckybox`,
                         u.`cHalvingTimes`, u.`cBribingPolice`, u.`cCrimes`, u.`cWeaponTraining`, u.`cGymTraining`, u.`cStealVehicles`, u.`cPimpWhores`, u.`cFamilyRaid`,
                         u.`cFamilyCrimes`, u.`cBombardement`, u.`cTravelTime`, u.`avatar`, u.`lang`, u.`kills`, u.`whoresStreet`, u.`restartDate`, u.`isProtected`,
-                        c.`name` AS `city`, u.`cPimpWhoresFor`, u.`lrsID_".$this->lang."` AS `lrsID`, u.`lrfsID_".$this->lang."` AS `lrfsID`,
+                        c.`name` AS `city`, u.`cPimpWhoresFor`, u.`lrsID_".$this->lang."` AS `lrsID`, u.`lrfsID_".$this->lang."` AS `lrfsID`, u.`weaponTraining`,
+                        u.`smugglingCapacity`,
                         (SELECT COUNT(id) FROM `message` WHERE `receiverID`=u.`id` AND `read`= '0' AND `active`='1' AND `deleted`='0') AS `messagesCount`,
-                        (SELECT COUNT(id) FROM `notification` WHERE `userID`=u.`id` AND `read`= '0') AS `notificationsCount`, u.`weaponTraining`,
+                        (SELECT COUNT(id) FROM `notification` WHERE `userID`=u.`id` AND `read`= '0') AS `notificationsCount`,
                         (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, (SELECT `time` FROM `prison` WHERE `userID`= u.`id`) AS `prisonTime`
                 FROM `user` AS u
                 LEFT JOIN `state` AS s
@@ -210,6 +213,7 @@ class UserCoreDAO extends DBConfig
                 $userObj->setLuckybox($row['luckybox']);
                 $userObj->setLastReadShoutboxID($row['lrsID']);
                 $userObj->setLastReadFamilyShoutboxID($row['lrfsID']);
+                $userObj->setSmugglingCapacity($row['smugglingCapacity']);
                 $userObj->setCHalvingTimes($row['cHalvingTimes']);
                 $userObj->setCBribingPolice($row['cBribingPolice']);
                 $userObj->setCCrimes($row['cCrimes']);

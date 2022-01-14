@@ -20,16 +20,15 @@ class FamilyPropertyDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
+        global $userData;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        
-        global $route;
-        $this->lang = $route->getLang();
-        if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
-        
-        global $userData;
         $this->familyID = $userData->getFamilyID();
+        $this->lang = $lang;
+        if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
     }
     
     public function __destruct()

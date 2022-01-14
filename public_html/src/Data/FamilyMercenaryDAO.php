@@ -23,14 +23,13 @@ class FamilyMercenaryDAO extends DBConfig
     
     public function __construct()
     {
-        global $connection;
-        $this->con = $connection;
-        
+        global $lang;
         global $userData;
-        $this->familyID = (int)$userData->getFamilyID();
+        global $connection;
         
-        global $route;
-        $this->lang = $route->getLang();
+        $this->con = $connection;
+        $this->familyID = (int)$userData->getFamilyID();
+        $this->lang = $lang;
         if($this->lang == 'en') $this->dateFormat = "%m-%d-%Y %r";
         
     }

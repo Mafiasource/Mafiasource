@@ -8,9 +8,15 @@ require_once __DIR__ . '/.inc.head.php';
 /* Out-game controller forum */
 
 $famID = 0;
+$reqPar3 = $route->requestGetParam(3);
 $category = $route->requestGetParam(2);
+$topic = $reqPar3;
+if(in_array($uriLang, $route->allowedLangs)) // uriLang front-controller global
+{
+    $category = $reqPar3;
+    $topic = $route->requestGetParam(4);
+}
 if(isset($userData) && ($category == "familie-forum" || $category == "family-forum")) $famID = $userData->getFamilyID();
-$topic = $route->requestGetParam(3);
 
 $forumTitle = $route->settings['gamename']." Forum";
 switch($route->getRouteName())

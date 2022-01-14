@@ -5,6 +5,7 @@ namespace src\Business;
 use app\config\Routing;
 use src\Business\StateService;
 use src\Business\NotificationService;
+use src\Business\DonatorService;
 use src\Business\Logic\game\Ground\Coords AS GroundCoordsData; // Class full of coordinates data for each state
 use src\Business\Logic\game\Ground\IncomeCalculation AS IncomeCalculation;
 use src\Data\GroundDAO;
@@ -26,6 +27,10 @@ class GroundService extends GroundCoordsData
             $this->groundCoords = $this->groundCoords; // From parant class
             $this->hometown = $this->data->getHometownFamilyByStateID($stateID);
         }
+        $donator = new DonatorService();
+        $shopData = $donator->getDonationShopData();
+        if($shopData['ground'] > 0 && $shopData['ground'] <= 5)
+            $this->limit += (int)$shopData['ground'];
     }
 
     public function __destruct()

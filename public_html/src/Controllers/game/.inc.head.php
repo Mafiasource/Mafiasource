@@ -6,9 +6,10 @@ use src\Business\PollService;
 if($security->checkSSL() === false) exit(0);
 
 $loggedSession = $user->checkLoggedSession() ? true : false;
-if(!$userSession || !$userData)
+if(!isset($_SESSION['UID']) || !$userData)
 {
-    if($loggedSession) $userData = $user->getUserData();
+    if($loggedSession)
+        $userData = $user->getUserData();
 }
 if(!$loggedSession || !is_object($userData))
 {

@@ -13,11 +13,12 @@ class NewsDAO extends DBConfig
     
     public function __construct()
     {
+        global $lang;
         global $connection;
+        
         $this->con = $connection;
         $this->dbh = $connection->con;
-        global $route;
-        $this->lang = $route->getLang();
+        $this->lang = $lang;
     }
     
     public function __destruct()

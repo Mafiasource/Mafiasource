@@ -540,7 +540,7 @@ class StateService
         elseif($type == "vehicle")
             $catchRand = $security->randInt(9, $randMaxes[3]);
             
-        $max = (($userData->getRankID() + '1' ) * 100);
+        $max = (int)(($userData->getRankID() + '1' ) * 100) + ($userData->getSmugglingCapacity() * 100);
         if($userData->getCBribingPolice() < time() && (
           $catchRand < 20 && count($units) > 0 ||
             ($sPossess[1] > $max || $sPossess[1] < 0) || ($sPossess[2] > $max || $sPossess[2] < 0) || ($sPossess[3] > $max || $sPossess[3] < 0) ||

@@ -9,26 +9,32 @@
 if($route->getRoute() == "/set/language/nl")
 {
     if(isset($_COOKIE['lang']) && $_COOKIE['lang'] != 'nl')
-    {
-        $route->createActionMessage($route->successMessage($langs['CHANGE_LANG_SUCCESS']));
-        setcookie('lang', 'nl', time()+60*60*24*365, '/', $route->settings['domain'], SSL_ENABLED, true);
-    }
+        $langSet = "nl";
 }
 elseif($route->getRoute() == "/set/language/en")
 {
     if(isset($_COOKIE['lang']) && $_COOKIE['lang'] != 'en')
-    {
-        $route->createActionMessage($route->successMessage($langs['CHANGE_LANG_SUCCESS']));
-        setcookie('lang', 'en', time()+60*60*24*365, '/', $route->settings['domain'], SSL_ENABLED, true);
-    }
+        $langSet = "en";
 }
 else
-{
     $route->headTo('not_found');
-}
 
-/* Redirect to previous route */
-$prevRoute = $route->getPrevRoute();
-header("HTTP/2 302 Found");
-header('Location: ' . $prevRoute);
-exit(0);
+if(isset($langSet))
+{
+    $route->createActionMessage($route->successMessage($langs['CHANGE_LANG_SUCCESS']));
+    setcookie('lang', $langSet, time()+60*60*24*365, '/', $route->settings['domain'], SSL_ENABLED, true);
+    
+    /* Redirect to previous route */
+    $allowedLangs = $route->allowedLangs;
+    $prevRoute = $route->getPrevRoute();
+    if(($key = array_search($langSet, $allowedLangs)) !== false)
+    {
+        // Outgame multilingual SEO purposes
+        unset($allowedLangs[$key]);
+        $searchLang = isset($allowedLangs[1]) ? $allowedLangs[1] : $allowedLangs[0];
+    }
+    $prevRoute = isset($searchLang) ? str_replace($searchLang, $langSet, $prevRoute) : $prevRoute;
+    header("HTTP/2 302 Found");
+    header('Location: ' . $prevRoute);
+    exit(0);
+}

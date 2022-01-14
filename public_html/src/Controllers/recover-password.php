@@ -10,7 +10,8 @@ if(isset($userData) && !empty($userData)) $route->headTo('game');
 if(OFFLINE && !in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS)) $route->headTo('not_found');
 
 $userService = new UserService();
-$key = $route->requestGetParam(3);
+$reqPar3 = $route->requestGetParam(3);
+$key = $reqPar3 == "key" ? $route->requestGetParam(4) : $reqPar3;
 if($key != FALSE) $recoverPasswordData = $userService->getRecoverPasswordDataByKey($key);
 
 if(isset($recoverPasswordData) && $recoverPasswordData == FALSE) $route->headTo('not_found');

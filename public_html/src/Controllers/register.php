@@ -11,14 +11,13 @@ if(isset($userData) && !empty($userData)) $route->headTo('game');
 if(OFFLINE && !in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS)) $route->headTo('not_found');
 
 $userService = new UserService();
-$referraLlink = $route->requestGetParam(3);
+$reqPar3 = $route->requestGetParam(3);
+$referraLlink = $reqPar3 == "referral" ? $route->requestGetParam(4) : $reqPar3;
 $referral = isset($_SESSION['register']['referral']) ? $_SESSION['register']['referral'] : $referraLlink;
 if(isset($_SESSION['register']['referral']) && $referraLlink != false && $_SESSION['register']['referral'] != $referraLlink) $referral = $referraLlink;
 if(strpos($referral, '?')) $referral = substr($referral, 0, strpos($referral, "?"));
 if($userService->checkUsernameExists($referral) !== TRUE) $referral = false;
 if($referral != false) $_SESSION['register']['referral'] = $referral;
-
-if($route->getRouteName() == 'register-referral') $route->headTo('register');
 
 // Honeypotted
 $blockPost = false;

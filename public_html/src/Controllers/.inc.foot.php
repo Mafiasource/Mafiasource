@@ -8,6 +8,7 @@ $twigVars = array(
     'securityToken' => $security->getToken(),
     'langs' => $langs,
     'lang' => $lang,
+    'langRaw' => $route->getLangRaw(),
     'message' => $message,
     'cookiesAccept' => $cookie,
     'username' => $username,

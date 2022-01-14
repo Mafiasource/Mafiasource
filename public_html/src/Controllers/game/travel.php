@@ -38,7 +38,7 @@ switch($route->getRouteName())
 
 $state = new StateService();
 $states = $state->getStates();
-$cities = $states[0]->getCities(); //$state->getCitiesButHomeCity($userData->getCityID());
+$cities = $states[0]->getCities();
 $arrayKeys = array_keys($cities);
 $cityTo = $cities[$arrayKeys[0]];
 $price = $state->calculatePrice($userData->getCityID(), $cityTo->getId(), $tab);

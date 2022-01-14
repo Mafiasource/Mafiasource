@@ -203,7 +203,7 @@ foreach($dailies AS $k => $id)
             $easyPrizes = array(2500000, 2750000, 3000000, 3250000, 3500000, 3750000, 4000000, 4250000, 4500000);
             break;
         case 2:
-            $easyPrizes = array(50, 55, 60, 65, 70, 75, 80, 85, 90);
+            $easyPrizes = array(70, 75, 80, 85, 90, 105, 120, 135, 150);
             break;
         case 3:
             $easyPrizes = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -218,10 +218,10 @@ foreach($dailies AS $k => $id)
             );
             break;
         case 4:
-            $easyPrizes = array(3, 5, 7, 9, 11, 13, 15, 17, 19);
+            $easyPrizes = array(9, 11, 13, 15, 17, 19, 21, 23, 25);
             break;
         case 5:
-            $easyPrizes = array(88000, 91000, 9400, 97000, 100000, 103000, 106000, 109000, 112000);
+            $easyPrizes = array(88000, 91000, 94000, 97000, 100000, 103000, 106000, 109000, 112000);
             break;
         case 6:
             $easyPrizes = array(1, 2);
