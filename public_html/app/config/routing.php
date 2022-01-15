@@ -107,6 +107,11 @@ class Routing
         $this->ajaxRouteMap = null;
     }
     
+    public function getReplacedRoute()
+    {
+        return $this->replaceRouteRegex($this->route);
+    }
+    
     public function getRoute()
     {
         return $this->route;

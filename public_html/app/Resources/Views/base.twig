@@ -53,8 +53,8 @@
         {% set altLang = "en" %}
         {% set altLangRaw = "en-US" %}
     {% endif %}
-    <link rel="alternate" href="{{ docRoot }}{{ routing.getRoute }}" hreflang="{{ langRaw }}" />
-    <link rel="alternate" href="{{ docRoot }}/{{ altLang }}{{ routing.getRoute }}" hreflang="{{ altLangRaw }}" />
+    <link rel="alternate" href="{{ docRoot }}{{ routing.getReplacedRoute }}" hreflang="{{ langRaw }}" />
+    <link rel="alternate" href="{{ docRoot }}/{{ altLang }}{{ routing.getReplacedRoute }}" hreflang="{{ altLangRaw }}" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-touch-fullscreen" content="yes" />
     <meta name="apple-mobile-web-app-title" content="{{ PAGE_TITLE }}" />
