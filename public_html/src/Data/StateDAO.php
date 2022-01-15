@@ -38,7 +38,13 @@ class StateDAO extends DBConfig
             $state->setName($row['name']);
             if(isset($_SESSION['UID']))
             {
+                global $user;
                 global $userData;
+                
+                //When new registered acc calls this func
+                if(!isset($userData))
+                    $userData = $user->getUserData();
+                
                 $cities = $this->getCitiesInStateButHomeCity($state->getId(), $userData->getCityID());
                 $state->setCities($cities);
             }
