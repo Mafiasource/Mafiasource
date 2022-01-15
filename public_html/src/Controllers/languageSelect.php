@@ -33,7 +33,8 @@ if(isset($langSet))
         unset($allowedLangs[$key]);
         $searchLang = isset($allowedLangs[1]) ? $allowedLangs[1] : $allowedLangs[0];
     }
-    $prevRoute = isset($searchLang) ? str_replace($searchLang, $langSet, $prevRoute) : $prevRoute;
+    $prevRoute = isset($searchLang) && substr($prevRoute, 0, 3) == "/" . $searchLang ? preg_replace("/" . $searchLang . "/", $langSet, $prevRoute, 1) : $prevRoute;
+    
     header("HTTP/2 302 Found");
     header('Location: ' . $prevRoute);
     exit(0);

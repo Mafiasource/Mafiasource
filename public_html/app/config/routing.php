@@ -21,6 +21,8 @@ class Routing
     private $routeName;
     private $controller;
     private $routeRegex = array();
+    private $routeLang;
+    private $routeGet;
     
     public $settings = array(
         'domainBase' => BASE_DOMAIN, // see config.php
@@ -43,8 +45,10 @@ class Routing
         $this->settings['twigCache'] = DOC_ROOT . '/app/cache/TwigCompilation/';
         if(DEVELOPMENT == true) $this->settings['twigCache'] = FALSE;
         
-        $this->routeRegex[] = $routeGET = "(?:\?.*)?";
-        $this->routeRegex[] = $routeLang = "(?:\/(nl|en))?";
+        $this->routeGet = "(?:\?.*)?";
+        $this->routeLang = "(?:\/(" . $this->allowedLangs[0] . "|" . $this->allowedLangs[1] . "))?";;
+        $this->routeRegex[] = $routeGET = $this->routeGet;
+        $this->routeRegex[] = $routeLang = $this->routeLang;
         include_once __DIR__.'/routes/routes.php';
         $routeGET = $routeLang = null;
         
@@ -139,10 +143,20 @@ class Routing
     
     private function replaceRouteRegex($route)
     {
+        $routeLang = substr($route, 1, 2);
+        $expl = explode('/', $route);
+        $lastPar = end($expl);
         foreach($this->routeRegex AS $regex)
-            $route = preg_replace('/' . $regex . '/', '', $route);
-        
-        return $route;
+        {
+            if($regex == $this->routeLang && in_array($routeLang, $this->allowedLangs))
+                $return = preg_replace('/' . $regex . '/', '', $route, 1);
+            
+            if($regex == $this->routeGet && preg_match("/" . $regex . "/", $lastPar))
+                $return = str_replace($lastPar, preg_replace('/' . $regex . '/', '', $lastPar), $route);
+            
+            $return = isset($return) ? $return : $route; //preg_replace('/' . $regex . '/', '', $route);
+        }
+        return $return;
     }
     
     public function getRouteByRouteName($routeName)
@@ -225,13 +239,12 @@ class Routing
         }
         if(isset($parameters[$param]))
         {
-            $what = $parameters[$param];
+            $what = $what = $this->replaceRouteRegex($parameters[$param]);
             if($range !== FALSE && is_array($range) && array_key_exists('min', $range) && array_key_exists('max', $range))
             {
                 if($what < $range['min'] || $what > $range['max'])
                     $this->headTo('not_found');
             }
-            $what = $this->replaceRouteRegex($what);
             
             return $what;
         }
