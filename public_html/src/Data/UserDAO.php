@@ -102,12 +102,37 @@ class UserDAO extends DBConfig
             fclose($file);
             
             $hash = hash('sha256', $salt . hash('sha256', $pass));
-
-            $statement = $this->dbh->prepare("SELECT `id`, `email`, `password` FROM `user` WHERE `username` = :username AND `password` = :password  AND `active`='1' AND `deleted`='0' LIMIT 1");
-            $statement->execute(array(':username' => $username, ':password' => $hash));
+            
+            $qry = "SELECT `id`, `email`, `password` FROM `user` WHERE `username` = :username AND `password` = :password  AND `active`='1' AND `deleted`='0' LIMIT 1";
+            $prms = array(':username' => $username, ':password' => $hash);
+            $statement = $this->dbh->prepare($qry);
+            $statement->execute($prms);
             $row = $statement->fetch();
             if(isset($row['id']) && $row['id'] == $id)
             {
+                // 25% Chance on successful login at generating a new password hash for the same password
+                // Immediately re-fetch details for remember cookie
+                // Branch will logout user on all previously logged in devices
+                // User will stay logged in on current device for as long he does not login atleast once again
+                // Ideal scenario loggs out user on all devices every 4th login
+                // Temporarily increased login security? | Atleast untill outgame IP based captchas are developed
+                global $security;
+                
+                if($security->randInt(0, 100) <= 25) // >= 75)
+                {
+                    $this->changePasswordByUsername($pass, $username, $id);
+                    
+                    $file = fopen($saltFile, "r");
+                    $salt = fgets($file);
+                    fclose($file);
+                    
+                    $hash = hash('sha256', $salt . hash('sha256', $pass));
+                    
+                    $prms[':password'] = $hash; // Re-set pass hash required for successful re-fetch
+                    $row = $this->con->getDataSR($qry, $prms); // Re-fetch
+                }
+                // /End temporarily increased login security?
+                
                 global $route;
                 $hash2 = hash('sha256',$salt.$row['email'].$row['password'].$salt);
                 setcookie('remember', $hash2, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
