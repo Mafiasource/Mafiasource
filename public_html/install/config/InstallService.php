@@ -228,6 +228,8 @@ class InstallService
                 else
                 {
                     $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       "www.".BASE_DOMAIN);     // Application runs on www. variant';
+                    $htaccessReplacesMap[95] = '    ## Non www to www redirect';
+                    $htaccessReplacesMap[98] = '    RewriteRule ^(.*)$ http%1://www.%{HTTP_HOST}/$1 [R=301,L]';
                 }
                 if(strpos(PROTOCOL . $_SERVER['HTTP_HOST'], $replacedDomain) !== false)
                 {
