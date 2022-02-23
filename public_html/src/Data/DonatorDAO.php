@@ -113,7 +113,7 @@ class DonatorDAO extends DBConfig
     public function buyNewProfession($credits, $profession)
     {
         $this->con->setData("
-            UPDATE `user` SET `credits`=`credits`- :cr, `charType`= :p WHERE `id`= :uid AND `smugglingCapacity`<'20' AND `active`='1' AND `deleted`='0' LIMIT 1
+            UPDATE `user` SET `credits`=`credits`- :cr, `charType`= :p WHERE `id`= :uid AND `charType`!= :p AND `active`='1' AND `deleted`='0' LIMIT 1
         ", array(':cr' => $credits, ':p' => $profession, ':uid' => $_SESSION['UID']));
     }
     
@@ -156,7 +156,8 @@ class DonatorDAO extends DBConfig
     {
         global $userData;
         
-        $credits = (int)$ppJson->amount->value * 100;
+        $cr = (int)$ppJson->amount->value * 100;
+        $credits = $cr > 5000 ? 5000 : $cr;
         if($this->con->setData("
             INSERT INTO `donate` (`userID`, `sandbox`, `tx`, `currency`, `amount`, `net_amount`, `credits`, `date`) VALUES (:uid, :sb, :tx, :cc, :amt, :namt, :cr, NOW())
         ", array(

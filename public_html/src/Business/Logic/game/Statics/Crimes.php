@@ -18,7 +18,7 @@ class Crimes
             $xpGained = 100 / $userLv * 1;
         }
         
-        if(strtotime("2021-12-03 14:00:00") < strtotime('now') && strtotime("2021-12-06 14:00:00") > strtotime('now'))
+        if(strtotime("2022-01-28 14:00:00") < strtotime('now') && strtotime("2022-02-01 14:00:00") > strtotime('now'))
             $xpGained *= 2;
         
         $newXp = $userXp + $xpGained;

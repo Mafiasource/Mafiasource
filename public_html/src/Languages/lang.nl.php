@@ -415,14 +415,14 @@ class GetLanguageContent
     
     public function travelLangs()
     {
+        global $route;
         $langs = array(
-            'LEGAL' => "Legaal",
-            'ILLEGAL' => "Illegaal",
             'TRAIN' => "Trein",
             'AIRPLANE_INFO' => "Reizen met het vliegtuig gaat het snelst maar is niet altijd veilig tijdens het smokkelen.",
             'TRAIN_INFO' => "Reizen met de trein gaat relatief snel en veilig.",
             'BUS_INFO' => "Reizen met de bus gaat traag maar is wel vrij veilig tijdens het smokkelen.",
             'VEHICLE_INFO' => "Reis met een voertuig, de veiligste maar traagste manier om te smokkelen en je betaald enkel je benzine.",
+            'BORDER_PATROL_INFO' => "In de <a href='".$route->getRouteByRouteName('donation-shop')."'><strong>Donatieshop</strong></a> kan je de douane omkopen.",
             'BOOK_TICKET' => "Ticket kopen",
             'COSTS' => "Kosten",
             'ROUTE_NOT_POSSIBLE' => "Route <strong>niet mogelijk</strong> door reis optie, overweeg het vliegtuig.",
@@ -942,12 +942,12 @@ class GetLanguageContent
             'CAN_RECEIVE' => "Je kunt nog tot {credits} credits ontvangen als donatie beloning.",
             'LIMIT_RESET' => "Op {date} word je limiet terug op 5,000 gezet.",
             'DONATE_BTN_HEAD' => "<h4>Even je aandacht</h4><p>Ontvang onmiddellijk credits na een donatie van een willekeurig bedrag tussen &euro;1,00 en &euro;50,00 tot aan je limiet.</p><h4>Doneer veilig via PayPal</h4>",
-            'DONATE_BTN_FOOT' => "<h4>Problemen?</h4><p>Contacteer een Administrator of <a href='mailto:info@mafiasource.nl?subject=Mafiasource donatieshop probleem'><strong>stuur ons een email</strong></a> voor hulp.</p>",
+            'DONATE_BTN_FOOT' => "<small>Alle transacties zijn beveiligd en versleuteld voordat ze worden verzonden.</small><h4>Problemen?</h4><p>Contacteer een Administrator of <span style='color:#3498db'><a href='mailto:info@mafiasource.nl?subject=Mafiasource donatieshop probleem'><strong>stuur ons een email</strong></a></span> voor hulp.</p>",
             'DONATE_REWARDED_ALREADY' => "Deze donatiebonus is al geclaimd!",
             'DONATE_ERROR' => "Er is een probleem opgetreden met je donatie, contacteer een Administrator voor hulp.",
-            'DONATE_SUCCESS' => "Je donatie werd ontvangen en {credits} credits werden aan je account toegevoegd als beloning.",
+            'DONATE_SUCCESS' => "Je donatie werd ontvangen en {credits} credits werden aan je account toegevoegd als beloning. Bedankt!",
             'DONATE_SUCCESS_HIT_LIMIT' => "Je hebt wel je limiet bereikt die zal resetten binnen 31 dagen.",
-            'DONATE_SUCCESS_LIMIT' => "Je donatie werd ontvangen maar door je limiet heb je geen credits ontvangen!",
+            'DONATE_SUCCESS_LIMIT' => "Je donatie werd ontvangen maar door jouw limiet heb je geen credits ontvangen! Bedankt!",
         );
         return $langs;
     }
@@ -1104,7 +1104,8 @@ class GetLanguageContent
             'CARDS' => "Kaarten",
             'PLAY_BLACKJACK_SUCCESS_BROKE_EVEN' => "Je hebt je inzet terug verdient!",
             'PLAY_BLACKJACK_SUCCESS_WON' => "Je hebt $&#8203;{profits} gewonnen!",
-            'PLAY_BLACKJACK_SUCCESS_LOST' => "Je hebt $&#8203;{losses} verloren!"
+            'PLAY_BLACKJACK_SUCCESS_LOST' => "Je hebt $&#8203;{losses} verloren!",
+            'FRESH_DECK_INFO' => "Om het tellen van kaarten tegen te gaan, begint elk spel met een nieuw geschud kaartspel."
         );
         return $langs;
     }
@@ -1343,6 +1344,7 @@ class GetLanguageContent
             'EXHAUST' => "Uitlaat",
             'SHOCK_ABSORBERS' => "Schokbrekers",
             'OVERVIEW' => $this->possessionsLangs()['OVERVIEW'],
+            'TUNE_VEHICLE_DAMAGED' => "Repareer a.u.b. eerst uw voertuig voor je deze gaat afstemmen.",
             'CANNOT_SELL_TUNED_VEHICLE' => "Je kan geen afgestemd voertuig verkopen, verkoop eerst je afstemmingen!",
             'TUNE_ITEM_IN_POSSESSION' => "Je hebt deze afstemmingen al ge&Iuml;nstalleerd! Verkoop eerst je actieve afstemming.",
             'TUNE_ITEM_NOT_IN_POSSESSION' => "Je hebt deze afstemmingen niet in je bezit.",
@@ -1696,7 +1698,8 @@ class GetLanguageContent
             'CURRENT' => $this->murderLangs()['CURRENT'],
             'ROUND_PLAYED_FROM' => "Deze ronde werd gepeeld van",
             'NOW' => "Nu", // Override
-            'TO' => "T.e.m." // Override
+            'TO' => "T.e.m.", // Override
+            'OF_WHICH_ARE_BANNED' => "Ervan zijn verbannen"
         );
         return $langs;
     }

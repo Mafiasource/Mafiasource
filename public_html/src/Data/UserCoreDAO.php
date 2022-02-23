@@ -49,6 +49,7 @@ class UserCoreDAO extends DBConfig
                 
                 if($row['statusID'] == 8 && $route->getRouteName() != "home")
                 { // Banned
+                    unset($_SESSION['UID']);
                     $route->headTo('logout');
                     exit(0);
                 }

@@ -25,7 +25,7 @@ $pageUrl = PROTOCOL.$_SERVER['HTTP_HOST'].$route->getRoute();
 $pageDescription = $route->settings['gamename'] . " is a free to play text-based online mafia RPG. Conquer the states and cities of America together with friends and family.";
 $pageKeywords = $route->settings['gamename'] . ",online,mafia,rpg,crimclub,criminal,gangster,maffia,mafia rpg,mob boss,maffiabaas,online mafia rpg";
 $pageAuthor = "@Mafiasource";
-if(isset($seoData) && !empty($seoData))
+if(isset($seoData) && is_object($seoData))
 {
     if($seoData->getTitle()) $pageTitle = $seoData->getTitle();
     if($seoData->getSubject()) $pageSubject = $seoData->getSubject();

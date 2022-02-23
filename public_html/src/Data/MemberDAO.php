@@ -25,10 +25,8 @@ class MemberDAO extends DBConfig
     {
         $id = $this->getIdByEmail($email);
         if(!$id)
-        {
             return FALSE;
-            exit(0);
-        }
+        
         $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/'.$id.'.txt','r');
         $salt = fgets($file);
         fclose($file);
@@ -58,7 +56,6 @@ class MemberDAO extends DBConfig
                 setcookie('email', $email, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
             }
             return TRUE;
-            exit(0);
         }
     }
     
@@ -142,7 +139,7 @@ class MemberDAO extends DBConfig
     {
         if(!isset($_SESSION['cp-logon']['cookiehash']))
         {
-            $statement = $this->dbh->prepare("SELECT m.`id`,m.`naam`,m.`voornaam`,m.`email`,m.`password`, s.`status_nl` FROM `member` AS m LEFT JOIN `status` AS s ON (m.status=s.id) WHERE m.`id` = :id AND m.`active`='1' AND m.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 0,1");
+            $statement = $this->dbh->prepare("SELECT m.`id`,m.`naam`,m.`voornaam`,m.`email`,m.`password`, s.`status_nl` FROM `member` AS m LEFT JOIN `status` AS s ON (m.status=s.id) WHERE m.`id` = :id AND m.`active`='1' AND m.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 1");
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
             $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/'.$id.'.txt','r');
@@ -151,13 +148,10 @@ class MemberDAO extends DBConfig
             
             if(hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
             {
-                if(!isset($_SESSION['cp-logon']))
-                {
-                    $_SESSION['cp-logon']['naam'] = $row['naam'];
-                    $_SESSION['cp-logon']['voornaam'] = $row['voornaam'];
-                    $_SESSION['cp-logon']['MID'] = $row['id'];
-                    $_SESSION['cp-logon']['status'] = $row['status_nl'];
-                }
+                $_SESSION['cp-logon']['naam'] = $row['naam'];
+                $_SESSION['cp-logon']['voornaam'] = $row['voornaam'];
+                $_SESSION['cp-logon']['MID'] = $row['id'];
+                $_SESSION['cp-logon']['status'] = $row['status_nl'];
                 $_SESSION['cp-logon']['cookiehash'] = $hash;
                 return TRUE;
             }

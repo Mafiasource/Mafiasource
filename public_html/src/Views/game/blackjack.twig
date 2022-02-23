@@ -1,5 +1,7 @@
 {% extends "/app/Resources/Views/gamebase.twig" %}
 
+{% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+
 {% block stylesheets %}
     <style type="text/css">
         input.blackjack-field {display:inline-block;max-width:60px;margin:0;}
@@ -27,6 +29,8 @@
             <br class="clear"/>
         </div>
     </div>
+    <br class="clear"/>
+    {{ alert.build('Info', 'alert-info', 'help', langs.FRESH_DECK_INFO) }}
 </div>
 {% endblock content %}
 

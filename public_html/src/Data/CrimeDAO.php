@@ -68,8 +68,6 @@ class CrimeDAO extends DBConfig
                 $userObj->setCrimesSuccess($row['crimesSuccess']);
                 $userObj->setCrimesFail($row['crimesFail']);
                 $userObj->setCrimesRankpoints($row['crimesRankpoints']);
-                $userObj->setBullets($row['bullets']);
-                $userObj->setWeapon($row['weapon']);
                 $sfRatio = self::gcd($row['crimesSuccess'],$row['crimesFail']);
                 if($sfRatio != 0)
                 {
@@ -79,6 +77,8 @@ class CrimeDAO extends DBConfig
                 {
                     $userObj->setCrimesSFRatio($row['crimesSuccess'].':'.$row['crimesFail']);
                 }
+                $userObj->setBullets($row['bullets']);
+                $userObj->setWeapon($row['weapon']);
                 
                 if(!isset($organized))
                 {

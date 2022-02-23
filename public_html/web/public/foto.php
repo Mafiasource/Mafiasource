@@ -21,18 +21,12 @@ define ('VERSION', '1.24');					// version number (to force a cache refresh)
 define ('DIRECTORY_CACHE', './cache');		// cache directory
 define ('MAX_WIDTH', 2000);					// maximum image width
 define ('MAX_HEIGHT', 2000);				// maximum image height
-define ('ALLOW_EXTERNAL', TRUE);			// allow external website (override security precaution - not advised!)
+define ('ALLOW_EXTERNAL', FALSE);			// allow external website (override security precaution - not advised!)
 define ('MEMORY_LIMIT', '150M');			// set PHP memory limit
 define ('MAX_FILE_SIZE', 4500000);			// file size limit to prevent possible DOS attacks (roughly 1.5 megabytes)
 
 // external domains that are allowed to be displayed on your website
-// None of these are allowed anymore
 $allowedSites = array (
-	'flickr.com',
-	'picasa.com',
-	'blogger.com',
-	'wordpress.com',
-	'img.youtube.com',
 );
 
 // STOP MODIFYING HERE!
@@ -70,22 +64,6 @@ if (!function_exists ('imagecreatetruecolor')) {
     display_error ('GD Library Error: imagecreatetruecolor does not exist - please contact your webhost and ask them to install the GD library');
 }
 
-if (function_exists ('imagefilter') && defined ('IMG_FILTER_NEGATE')) {
-	$imageFilters = array (
-		1 => array (IMG_FILTER_NEGATE, 0),
-		2 => array (IMG_FILTER_GRAYSCALE, 0),
-		3 => array (IMG_FILTER_BRIGHTNESS, 1),
-		4 => array (IMG_FILTER_CONTRAST, 1),
-		5 => array (IMG_FILTER_COLORIZE, 4),
-		6 => array (IMG_FILTER_EDGEDETECT, 0),
-		7 => array (IMG_FILTER_EMBOSS, 0),
-		8 => array (IMG_FILTER_GAUSSIAN_BLUR, 0),
-		9 => array (IMG_FILTER_SELECTIVE_BLUR, 0),
-		10 => array (IMG_FILTER_MEAN_REMOVAL, 0),
-		11 => array (IMG_FILTER_SMOOTH, 0),
-	);
-}
-
 // get standard input properties
 $new_width =  (int) abs (get_request ('w', 0));
 $new_height = (int) abs (get_request ('h', 0));
@@ -95,18 +73,11 @@ $align = "c"; //get_request ('a', 'c');
 $filters = ""; //get_request ('f', '');
 $sharpen = 0; //(bool) get_request ('s', 0);
 
-/*echo $src;
-echo "<h1>elel</h1>";
-print_r($item);
-echo "leel";
-*/
-
 // set default width and height if neither are set already
 if ($new_width == 0 && $new_height == 0) {
 
 	if(file_exists($src)) {
 		list($width, $height, $type, $attr) = getimagesize($src);
-	//	echo "$width - $height";
 
 		if($width > 400) {
 			$ratio = $width/$height;
@@ -134,22 +105,14 @@ $sizes["height"] = round($new_height);
 // set memory limit to be able to have enough space to resize larger images
 ini_set ('memory_limit', MEMORY_LIMIT);
 
-//echo $src;
 if (file_exists ($src)) {
-	
-	
+    
     // open the existing image
     $image = open_image ($mime_type, $src);
 	
-	
-	//var_dump($image);
-	
-//	print_r($image);
-	
-	
     if ($image === false) {
 		showPlaceholder();		
-        //display_error ('Unable to open image : ' . $src);
+        display_error ('Unable to load image.');
     }
 
     // Get original width and height
@@ -165,12 +128,8 @@ if (file_exists ($src)) {
         $new_width = floor ($width * ($new_height / $height));
     }
 
-//	echo $new_width;
-
-//	if($new_width > $width) $new_width = $width;
-
 	// create a new true color image
-	$canvas = imagecreatetruecolor ($new_width, $new_height);
+	$canvas = imagecreatetruecolor ((int)$new_width, (int)$new_height);
 	imagealphablending ($canvas, false);
 
 	// Create a new transparent color for image
@@ -186,7 +145,6 @@ if (file_exists ($src)) {
 		if($new_width > $width) {
 		
 			$origin_y = round(($new_height/2) - ($height/2));
-			//echo "-";
 			$origin_x = round(($new_width/2) - ($width/2));
 
 			$new_width = $width;
@@ -276,95 +234,15 @@ if (file_exists ($src)) {
 				break;
 		}
 
-		imagecopyresampled ($canvas, $image, $origin_x, $origin_y, $src_x, $src_y, $new_width, $new_height, $src_w, $src_h);
+		imagecopyresampled ($canvas, $image, $origin_x, $origin_y, $src_x, $src_y, (int)$new_width, (int)$new_height, $src_w, $src_h);
 
     } else {
 
         // copy and resize part of an image with resampling
-        imagecopyresampled ($canvas, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+        imagecopyresampled ($canvas, $image, 0, 0, 0, 0, (int)$new_width, (int)$new_height, $width, $height);
 
     }
-
-    if ($filters != '' && function_exists ('imagefilter') && defined ('IMG_FILTER_NEGATE')) {
-        // apply filters to image
-        $filterList = explode ('|', $filters);
-        foreach ($filterList as $fl) {
-
-            $filterSettings = explode (',', $fl);
-            if (isset ($imageFilters[$filterSettings[0]])) {
-
-                for ($i = 0; $i < 4; $i ++) {
-                    if (!isset ($filterSettings[$i])) {
-						$filterSettings[$i] = null;
-                    } else {
-						$filterSettings[$i] = (int) $filterSettings[$i];
-					}
-                }
-
-                switch ($imageFilters[$filterSettings[0]][1]) {
-
-                    case 1:
-
-                        imagefilter ($canvas, $imageFilters[$filterSettings[0]][0], $filterSettings[1]);
-                        break;
-
-                    case 2:
-
-                        imagefilter ($canvas, $imageFilters[$filterSettings[0]][0], $filterSettings[1], $filterSettings[2]);
-                        break;
-
-                    case 3:
-
-                        imagefilter ($canvas, $imageFilters[$filterSettings[0]][0], $filterSettings[1], $filterSettings[2], $filterSettings[3]);
-                        break;
-
-                    case 4:
-
-                        imagefilter ($canvas, $imageFilters[$filterSettings[0]][0], $filterSettings[1], $filterSettings[2], $filterSettings[3], $filterSettings[4]);
-                        break;
-
-                    default:
-
-                        imagefilter ($canvas, $imageFilters[$filterSettings[0]][0]);
-                        break;
-
-                }
-            }
-        }
-    }
-
-	// sharpen image
-	if ($sharpen && function_exists ('imageconvolution')) {
-
-		$sharpenMatrix = array (
-			array (-1,-1,-1),
-			array (-1,16,-1),
-			array (-1,-1,-1),
-		);
-
-		$divisor = 8;
-		$offset = 0;
-
-		imageconvolution ($canvas, $sharpenMatrix, $divisor, $offset);
-
-	}
-	
-	$showwatermark = false;
-	
-	if(!empty($_GET["wm"])) $showwatermark = true;
-	if($showwatermark) {
-		$watermark = imagecreatefrompng('images/watermark.png');
-		$watermark_width = imagesx($watermark);
-		$watermark_height = imagesy($watermark);
-		$image = imagecreatetruecolor($watermark_width, $watermark_height);
-		$image = $canvas;
-		$dest_x = 2; //$new_width - $watermark_width - 5; 
-		$h = (int) $_GET["h"];
-		if($h == 0) $h = $new_height;
-		$dest_y = $h - $watermark_height - 2;
-		imagecopymerge($image, $watermark, $dest_x, $dest_y, 0, 0, $watermark_width, $watermark_height, 100);
-	}
-
+    
     // output image to browser based on mime type
     show_image ($mime_type, $canvas);
 

@@ -181,7 +181,7 @@ class UserService
     	}
         
         $ipAddr = self::getIP();
-        $ipValid = filter_var($ipAddr, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        $ipValid = filter_var($ipAddr, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE);
         
         if(!$ipValid)
         {
@@ -417,8 +417,10 @@ class UserService
         global $langs;
         $l = $language->onlineToplistLangs();
         $keyword = $security->xssEscape($post['search']);
-
-        $searchData = $this->data->getToplist(0, 25, $keyword);
+        
+        $searchData = false;
+        if(strlen($keyword))
+            $searchData = $this->data->getToplist(0, 25, $keyword);
 
         if($security->checkToken($post['security-token']) ==  FALSE)
         {
@@ -447,20 +449,21 @@ class UserService
         global $langs;
         $l = $language->onlineToplistLangs();
         
+        $whoresQry = "(SELECT u.`whoresStreet` + (SELECT COALESCE(SUM(`whores`), 0) FROM `rld_whore` WHERE `userID`=u.`id`))";
         $rank = $security->xssEscape($post['search-rank']);
         $ranks = array(
             'Scum' =>                "u.`rankpoints`<'5'",
             'Pee Wee' =>             "u.`rankpoints`>='5' AND u.`rankpoints`<'12'",
             'Thug' =>                "u.`rankpoints`>='12' AND u.`rankpoints`<'22'",
-        	'Gangster' =>            "u.`rankpoints`>='22' AND u.`rankpoints`<'48'",
-        	'Hitman' =>              "u.`rankpoints`>='48' AND u.`rankpoints`<'79'",
-        	'Assassin' =>            "u.`rankpoints`>='79' AND u.`rankpoints`<'111'",
-        	'Boss' =>                "u.`rankpoints`>='111' AND u.`rankpoints`<'161'",
-        	'Godfather' =>           "u.`rankpoints`>='161' AND u.`rankpoints`<'261'",
-        	'Legendary Godfather' => "u.`rankpoints`>='261' AND u.`rankpoints`<'511'",
-        	'Don' =>                 "u.`rankpoints`>='511' AND u.`rankpoints`<'861'",
-        	'Respectable Don' =>     "u.`rankpoints`>='861' AND u.`rankpoints`<'1311'",
-        	'Legendary Don' =>       "u.`rankpoints`>='1311'"
+       	    'Gangster' =>            "u.`rankpoints`>='22' AND u.`rankpoints`<'48'",
+       	    'Hitman' =>              "u.`rankpoints`>='48' AND u.`rankpoints`<'79'",
+       	    'Assassin' =>            "u.`rankpoints`>='79' AND u.`rankpoints`<'111'",
+            'Boss' =>                "u.`rankpoints`>='111' AND u.`rankpoints`<'161'",
+       	    'Godfather' =>           "u.`rankpoints`>='161' AND u.`rankpoints`<'261'",
+       	    'Legendary Godfather' => "u.`rankpoints`>='261' AND (u.`rankpoints`<'511' OR u.`kills`<'2' OR u.`honorPoints`<'200' OR $whoresQry<'2000')",
+            'Don' =>                 "u.`rankpoints`>='511' AND (u.`rankpoints`<'861' OR u.`kills`<'5' OR u.`honorPoints`<'500' OR $whoresQry<'5000') AND u.`kills`>='2' AND u.`honorPoints`>='200' AND $whoresQry>='2000'",
+       	    'Respectable Don' =>     "u.`rankpoints`>='861' AND (u.`rankpoints`<'1311' OR u.`kills`<'15' OR u.`honorPoints`<'1500' OR $whoresQry<'10000') AND u.`kills`>='5' AND u.`honorPoints`>='500' AND $whoresQry>='5000'",
+       	    'Legendary Don' =>       "u.`rankpoints`>='1311' AND u.`kills`>='15' AND u.`honorPoints`>='1500' AND $whoresQry>='10000'"
         );
         if(array_key_exists($rank, $ranks))
             $searchData = $this->data->getToplist(0, 25, false, $ranks[$rank]);

@@ -6,7 +6,7 @@ use src\Business\SeoService;
 $twig->addGlobal('docRoot', PROTOCOL . $_SERVER['HTTP_HOST']);
 $twig->addGlobal('staticRoot', PROTOCOL . STATIC_SUBDOMAIN . "." . $route->settings['domainBase']);
 
-/* Twig filter functions (Can be used in the entire application by their PHP func name too, set in front-controller) */
+/* Twig filter functions (Can be used in the entire application by their PHP func name too, required in front-controller) */
 function isstr($str)
 {
     return is_string($str);
@@ -14,27 +14,27 @@ function isstr($str)
 
 function implodeComma($arr)
 {
-    return implode(',', $arr);
+    return implode(',', (array)$arr);
 }
 
 function moneyFormat($str)
 {
-    return "$" . number_format($str,0,'',',');
+    return "$" . number_format((int)$str,0,'',',');
 }
 
 function valueFormat($str)
 {
-    return number_format($str,0,'',',');
+    return number_format((int)$str, 0, '', ',');
 }
 
 function strip($in)
 {
-    return trim(html_entity_decode(preg_replace("/&nbsp;/", "", strip_tags($in))));
+    return trim(html_entity_decode(preg_replace("/&nbsp;/", "", (string)strip_tags((string)$in))));
 }
 
 function removeBreaks($output)
 {
-    $output = str_replace(array("\r\n", "\r"), "\n", $output);
+    $output = str_replace(array("\r\n", "\r"), "\n", (string)$output);
     $lines = explode("\n", $output);
     $new_lines = array();
     
@@ -46,22 +46,6 @@ function removeBreaks($output)
     return implode($new_lines);
 }
 
-function ucfirstt($string)
-{
-    return ucfirst(strtolower($string));
-}
-
-function DOMinnerHTML(DOMNode $element) 
-{ 
-    $innerHTML = ""; 
-    $children  = $element->childNodes;
-
-    foreach ($children as $child)
-        $innerHTML .= $element->ownerDocument->saveHTML($child);
-
-    return $innerHTML; 
-} 
-
 function xssEscapeAndHtml($input)
 {
     global $security;
@@ -70,10 +54,11 @@ function xssEscapeAndHtml($input)
 
 function secondsToPlaytime($s)
 {
-    $days = floor($s / 86400);
-    $hours = floor(($s / 3600) % 24);
-    $minutes = floor(($s / 60) % 60);
-    $seconds = $s % 60;
+    $s = (int)$s;
+    $days = round(floor((int)($s / 86400)));
+    $hours = round(floor((int)($s / 3600) % 24));
+    $minutes = round(floor((int)($s / 60) % 60));
+    $seconds = (int)($s % 60);
     if(isset($_COOKIE['lang']) && $_COOKIE['lang'] == "en")
         return 'Online playtime: '.$days.' Days '.$hours.' Hours '.$minutes.' Minutes '.$seconds.' Seconds';
     
@@ -82,26 +67,19 @@ function secondsToPlaytime($s)
 
 function pureHtml($in)
 {
-    return htmlentities($in);
+    return htmlentities((string)$in);
 }
 
-function uniqueString($in, $l = 4)
+function intToString($int, $l = 4)
 {
     if($l < 4) $l = 4;
     if($l > 32) $l = 32;
-    return substr(md5(uniqid($in, true)), 0, $l);
+    return substr(md5((string)$int), 1, $l);
 }
 
-function intToString($i, $l = 4)
+function lotteryTicket($int)
 {
-    if($l < 4) $l = 4;
-    if($l > 32) $l = 32;
-    return substr(md5($i), 1, $l);
-}
-
-function lotteryTicket($in)
-{
-    return intToString($in, 5);
+    return intToString((int)$int, 5);
 }
 
 function isJson($string){
@@ -214,11 +192,10 @@ function countdownHmsTime($i, $fetchedTime)
 $twig->addFilter(new \Twig\TwigFilter('var_dump', function ($in) { return var_dump($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('isstr', function ($in) { return isstr($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('implode', function ($in) { return implodeComma($in); } ));
-$twig->addFilter(new \Twig\TwigFilter('lower', function ($in) { return strtolower($in); } ));
+$twig->addFilter(new \Twig\TwigFilter('lower', function ($in) { return strtolower((string)$in); } ));
 $twig->addFilter(new \Twig\TwigFilter('moneyFormat', function ($in) { return moneyFormat($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('valueFormat', function ($in) { return valueFormat($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('strip', function ($in) { return strip($in); } ));
-$twig->addFilter(new \Twig\TwigFilter('strip_tags', function ($in) { return strip_tags($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('htmlEsc', function ($in) { return xssEscapeAndHtml($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('secondsToPlaytime', function ($in) { return secondsToPlaytime($in); } ));
 $twig->addFilter(new \Twig\TwigFilter('pureHtml', function ($in) { return pureHtml($in); } ));

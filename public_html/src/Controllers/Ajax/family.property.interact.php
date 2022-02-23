@@ -50,7 +50,7 @@ if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
     $propertyAction = $buyCheck || $upgradeCheck || $produceCheck ? true : null;
     if($propertyAction)
     {
-        if(!isset($_POST['property'])) $_POST['property'] = 'bullet-factory';
+        if($produceCheck) $_POST['property'] = 'bullet-factory';
         switch($_POST['property'])
         {
             default:

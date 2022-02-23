@@ -129,12 +129,12 @@
                             {{ langs.NEW_PROFESSION }}:&nbsp;
                             <select name="profession">
                                 <option value="0">{{ langs.SELECT_TAG_CHOOSE }}</option>
-                                <option value="1"{% if profession == 1 %} selected="selected"{% endif %}>{{ langs.CARJACKER }}</option>
-                                <option value="2"{% if profession == 2 %}selected="selected"{% endif %}>{{ langs.PRISON_BREAKER }}</option>
-                                <option value="3"{% if profession == 3 %}selected="selected"{% endif %}>{{ langs.THIEF }}</option>
-                                <option value="4"{% if profession == 4 %}selected="selected"{% endif %}>{{ langs.PIMP }}</option>
-                                <option value="5"{% if profession == 5 %}selected="selected"{% endif %}>{{ langs.BANKER }}</option>
-                                <option value="6"{% if profession == 6 %}selected="selected"{% endif %}>{{ langs.SMUGGLER }}</option>
+                                {% if userData.getCharType != 1 %}<option value="1">{{ langs.CARJACKER }}</option>{% endif %}
+                                {% if userData.getCharType != 2 %}<option value="2">{{ langs.PRISON_BREAKER }}</option>{% endif %}
+                                {% if userData.getCharType != 3 %}<option value="3">{{ langs.THIEF }}</option>{% endif %}
+                                {% if userData.getCharType != 4 %}<option value="4">{{ langs.PIMP }}</option>{% endif %}
+                                {% if userData.getCharType != 5 %}<option value="5">{{ langs.BANKER }}</option>{% endif %}
+                                {% if userData.getCharType != 6 %}<option value="6">{{ langs.SMUGGLER }}</option>{% endif %}
                             </select>
                           </td>
                           <td class="center">{{ crIcon|raw }} 50</td>

@@ -294,7 +294,10 @@ foreach($crimes AS $oc)
             {
                 $arrestedList[] = $m;
                 $arrestedUsersArr[] = $m['username'];
-                $con->setData("INSERT INTO `prison` (`userID`, `time`) VALUES (:uid, :time)", array(':uid' => $m['id'], ':time' => (time() + $oc['prisonTimeBusted'])));
+                $con->setData("
+                    DELETE FROM `prison` WHERE `userID`= :uid;
+                    INSERT INTO `prison` (`userID`, `time`) VALUES (:uid, :time)
+                ", array(':uid' => $m['id'], ':time' => (time() + $oc['prisonTimeBusted'])));
             }
             else
                 $othersArrestedList[] = $m;
@@ -340,6 +343,9 @@ if(isset($user['id']) && $user['id'] > 0)
     if($prison['total'] == 0)
     {
         foreach($inactivePlayers AS $p) // Insert each user
-            $con->setData("INSERT INTO `prison` (`userID`, `time`) VALUES (:uid, :pTime)", array(':uid' => $p['id'], ':pTime' => time() + $security->randInt(60, 120)));
+            $con->setData("
+                DELETE FROM `prison` WHERE `userID`= :uid;
+                INSERT INTO `prison` (`userID`, `time`) VALUES (:uid, :pTime)
+            ", array(':uid' => $p['id'], ':pTime' => time() + $security->randInt(60, 120)));
     }
 } // /CHECKED & OK

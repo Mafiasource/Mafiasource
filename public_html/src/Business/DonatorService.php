@@ -147,8 +147,10 @@ class DonatorService extends DonatorStatics
         {
             $error = $l['NO_FAMILY'];
         }
-        if(isset($profession) && ($post['profession'] < 1 || $post['profession'] > 6))
+        if(isset($profession) && ($post['profession'] < 1 || $post['profession'] > 6 || $post['profession'] == $userData->getCharType()))
+        {
             $error = $l['INVALID_PROFESSION'];
+        }
         
         if(isset($error))
         {

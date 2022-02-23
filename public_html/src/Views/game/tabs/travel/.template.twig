@@ -6,7 +6,7 @@
     <div class="c-row-30 col">
         <div class="inner-c-container">
             <div class="subtop">
-                {{ langs.TRAVEL }} {{ langs.WITH|lower }} {% if lang == 'nl' %}het {% else %}a {% endif %}{{ langs.AIRPLANE|lower }}
+                {{ langs.TRAVEL }} {{ langs.WITH|lower }} {% if lang == 'nl' %}het {% else %}a {% endif %}{{ medium|lower }}
             </div>
             <div class="content-container">
                 <br />
@@ -84,5 +84,9 @@
     </div>
 </div>
 <div class="rowMsg row">
-    {{ alert.build('Info', 'alert-info', 'help', travelInfo) }}
+    {% set infoAdd = "" %}
+    {% if userData.getCBribingPolice < date().timestamp %}
+        {% set infoAdd = " " ~ langs.BORDER_PATROL_INFO %}
+    {% endif %}
+    {{ alert.build('Info', 'alert-info', 'help', travelInfo ~ infoAdd) }}
 </div>

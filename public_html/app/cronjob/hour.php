@@ -432,7 +432,7 @@ if(isset($publicMission['id']) && $publicMission['id'] > 0)
 {
     $r1Field = $publicMissionStatics->missionRewardDbFields[$publicMission['rewardType']];
     $r2Field = $publicMissionStatics->additionalRewardDbFields[$publicMission['reward2Type']];
-    $ranking = $con->getData("SELECT `id`, `lang`, `publicMission` FROM `user` WHERE `statusID`<='7' AND `health`>'0' AND `active`='1' AND `deleted`='0' ORDER BY `publicMission` DESC, `id` DESC LIMIT 9");
+    $ranking = $con->getData("SELECT `id`, `lang`, `publicMission`, `donatorID`, `luckybox` FROM `user` WHERE `statusID`<='7' AND `health`>'0' AND `active`='1' AND `deleted`='0' ORDER BY `publicMission` DESC, `id` DESC LIMIT 9");
     $i = 1;
     foreach($ranking AS $rank)
     {
@@ -441,28 +441,43 @@ if(isset($publicMission['id']) && $publicMission['id'] > 0)
         {
             $prizes = array('rewardAmount' => $publicMission['rewardAmount'], 'reward2Amount' => $publicMission['reward2Amount']);
             $prizes = $publicMissionStatics->getPrizesByRank($prizes, $i);
-            $publicMission['rewardAmount'] = $prizes['rewardAmount'];
-            $publicMission['reward2Amount'] = $prizes['reward2Amount'];
-            $prizes = null;
             
             $setAdd = "";
             if($r2Field == "credits")
                 $setAdd = ", `creditsWon`=`creditsWon`+ :r2";
             
+            $whereAdd = "";
+            if($r2Field == "luckybox")
+            {
+                $luckyMax = 15;
+                if($rank['donatorID'] == 5)
+                    $luckyMax = 10;
+                elseif($rank['donatorID'] == 1)
+                    $luckyMax = 7;
+                elseif($rank['donatorID'] == 0)
+                    $luckyMax = 5;
+                
+                $upToLuckies = $prizes['reward2Amount'];
+                if($rank['luckybox'] + $prizes['reward2Amount'] > $luckyMax)
+                    $upToLuckies = $luckyMax - $rank['luckybox'];
+                
+                $prizes['reward2Amount'] = $upToLuckies > 0 ? $upToLuckies : 0;
+                $whereAdd = " AND `donatorID`='" . $rank['donatorID'] . "' AND `luckybox`<'" . $luckyMax . "' AND `health`>'0'";
+            }
             $con->setData("
-                UPDATE `user` SET `".$r1Field."`=`".$r1Field."`+ :r1, `".$r2Field."`=`".$r2Field."`+ :r2 ".$setAdd." WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
-            ", array(':r1' => $publicMission['rewardAmount'], ':r2' => $publicMission['reward2Amount'], ':uid' => $rank['id']));
+                UPDATE `user` SET `".$r1Field."`=`".$r1Field."`+ :r1, `".$r2Field."`=`".$r2Field."`+ :r2 ".$setAdd." WHERE `id`= :uid AND `active`='1' AND `deleted`='0' ".$whereAdd." LIMIT 1
+            ", array(':r1' => $prizes['rewardAmount'], ':r2' => $prizes['reward2Amount'], ':uid' => $rank['id']));
             
             $missionRewards = array(1 => "Bank geld", "Hoeren", "Eerpunten", "Score");
-            $additionalMissionRewards = array(1 => "Rankpunten", "Score", "Lucky boxen", "Credits"); // Credits low chance ratio
+            $additionalMissionRewards = array(1 => "Rankpunten", "Score", "Lucky boxen", "Credits");
             if($rank['lang'] == "en")
             {
                 $missionRewards = array(1 => "Bank money", "Hoes", "Honor points", "Score");
-                $additionalMissionRewards = array(1 => "Rank points", "Score", "Lucky boxes", "Credits"); // Credits low chance ratio
+                $additionalMissionRewards = array(1 => "Rank points", "Score", "Lucky boxes", "Credits");
             }
             
             //User won prize notification
-            $params = "prizeAmount=" . number_format($publicMission['rewardAmount'], 0, '', ',') . "&prize2Amount=" . number_format($publicMission['reward2Amount'], 0, '', ',');
+            $params = "prizeAmount=" . number_format($prizes['rewardAmount'], 0, '', ',') . "&prize2Amount=" . number_format($prizes['reward2Amount'], 0, '', ',');
             $params .= "&prize=" . $missionRewards[$publicMission['rewardType']] . "&prize2=" . $additionalMissionRewards[$publicMission['reward2Type']];
             $params .= "&place=" . $i;
             $con->setData("
@@ -477,7 +492,7 @@ if(isset($publicMission['id']) && $publicMission['id'] > 0)
     $additionalRewardDbFields = $publicMissionStatics->additionalRewardDbFields;
     if($security->randInt(1, 12) == 1)
         $prizeDifficulties[] = "extra-hard";
-    else
+    else // When extra-hard is not available, premium prizes are removed
     {
         $prizeDbRemoved = array_pop($missionRewardDbFields);
         $additionalPrizeDbRemoved = array_pop($additionalRewardDbFields);

@@ -365,7 +365,7 @@ class FamilyDAO extends DBConfig
                 $family->setJoin(false);
                 if($row['join'] == 1) $family->setJoin(true);
                 $family->setLeaveCosts($row['leaveCosts']);
-                $family->setProfile(stripslashes($row['profile']));
+                $family->setProfile(stripslashes((string)$row['profile']));
                 $family->setTotalMembers($row['totalMembers']);
                 $family->setTotalScore($row['totalScore']);
                 $averageRankInfo = UserCoreService::getRankInfoByRankpoints($row['totalRank'] / $row['totalMembers']);

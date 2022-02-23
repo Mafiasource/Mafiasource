@@ -760,7 +760,7 @@ class CasinoService
                 $profitsLosses = 0;
                 if($score == 21 && count($_SESSION['blackjack']['cards']) == 2) // You had a BLACKJACK!
                 {
-                    $profitsLosses += $stake * 3;
+                    $profitsLosses += $stake * 4;
                     $blackjack = true;
                 }
                 elseif($scoreComputer == 21 && count($_SESSION['blackjack']['computer_cards']) == 2) // Owner had a BLACKJACK!

@@ -9,6 +9,10 @@ $(document).ajaxStart( function() {
     ajaxBusy = false;
 });
 
+function scrollTop() {
+    window.scroll({top: 0, left: 0, behavior: 'smooth'});
+}
+
 function number_format(number, decimals, dec_point, thousands_sep) {
   number = (number + "")
     .replace(/[^0-9+\-Ee.]/g, "");
@@ -189,7 +193,7 @@ function swipeMobileMenus()
                         $(".left-menu-swipe-area").addClass("open");
                         $("#left-menu").show("fast");
                         var body = $("html, body");
-                        body.stop().animate({scrollTop:0}, "100", "swing");
+                        scrollTop();
                     }
                     return false;
                 }
@@ -204,7 +208,7 @@ function swipeMobileMenus()
                         $(".right-menu-swipe-area").addClass("open");
                         $("#right-menu").show("fast");
                         var body = $("html, body");
-                        body.stop().animate({scrollTop:0}, "100", "swing");
+                        scrollTop();
                     }
                     return false;
                 }
@@ -218,13 +222,13 @@ $(document).ready(function(){
         $("#left-menu").toggle("fast");
         $(".left-menu-swipe-area").toggleClass("open");
         var body = $("html, body");
-        body.stop().animate({scrollTop:0}, "100", "swing");
+        scrollTop();
     });
     $("button[name=right-menu]").click(function (e) {
         $("#right-menu").toggle("fast");
         $(".right-menu-swipe-area").toggleClass("open");
         var body = $("html, body");
-        body.stop().animate({scrollTop:0}, "100", "swing");
+        scrollTop();
     });
     swipeMobileMenus();
     setInterval("updateTime()",1000);

@@ -37,10 +37,7 @@ class ResidenceService
         $id = (int)$post['id'];
         $residencePage = $this->data->getResidencePage();
         
-        if(array_key_exists($id-1, $residencePage))
-        {
-            $residence = $residencePage[$id-1];
-        }
+        $residence = array_key_exists($id-1, $residencePage) ? $residencePage[$id-1] : null;
         
         if($security->checkToken($post['security-token']) == FALSE)
         {
@@ -54,17 +51,20 @@ class ResidenceService
         {
             $error = $langs['CANT_DO_THAT_TRAVELLING'];
         }
-        if(!isset($residence) || $id == 0)
+        if(!isset($residence) || !isset($id) || $id == 0)
         {
             $error = $l['RESIDENCE_DOESNT_EXIST'];
         }
-        if(is_object($residence) && $residence->getPrice() > $userData->getCash())
+        if(isset($residence))
         {
-            $error = $langs['NOT_ENOUGH_MONEY_CASH'];
-        }
-        if(is_object($residence) && $residence->getInPossession() == true)
-        {
-            $error = $l['ALREADY_OWN_RESIDENCE'];
+            if(is_object($residence) && $residence->getPrice() > $userData->getCash())
+            {
+                $error = $langs['NOT_ENOUGH_MONEY_CASH'];
+            }
+            if(is_object($residence) && $residence->getInPossession() == true)
+            {
+                $error = $l['ALREADY_OWN_RESIDENCE'];
+            }
         }
         
         if(isset($error))

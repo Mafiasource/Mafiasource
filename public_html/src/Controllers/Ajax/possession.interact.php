@@ -5,7 +5,8 @@ use src\Business\PossessionService;
 
 require_once __DIR__ . '/.inc.head.ajax.php';
 
-if( isset($_POST['id']) && isset($_POST['security-token']) &&
+$id = isset($_POST['id']) ? (int)$_POST['id'] : null;
+if( isset($id) && isset($_POST['security-token']) &&
     (
       (isset($_POST['buy'])) || (isset($_POST['drop'])) || (isset($_POST['transfer']) && isset($_POST['username'])) ||
       (isset($_POST['change-bullet-price']) && isset($_POST['bullet-price'])) || (isset($_POST['produce'])) ||
@@ -34,7 +35,10 @@ if( isset($_POST['id']) && isset($_POST['security-token']) &&
     $twigVars['response'] = $response;
     
     if(isset($_POST['drop']) && $_POST['drop'] != 'false')
-        echo '<div id="dropPossessionResponse'.(int)$_POST['id'].'">' . $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars) . '</div>';
+    {
+        $twigVars['id'] = $id;
+        echo $twig->render('/src/Views/game/Ajax/possession.drop.twig', $twigVars);
+    }
     else
         echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
 }

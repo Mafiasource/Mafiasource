@@ -1,10 +1,15 @@
 <?PHP
 
 /**
- *  - $routeGET: Outgame social media sharing, allow any and all GET parameters in request URI
- *  - $routeLang: Outgame multilingual SEO purposes
+ * Routes - file included in / extension of Routing constructor. Below AjaxRoutes are included.
+ * - $routeGET: Outgame social media sharing, allow any and all GET parameters in request URI (See Routing)
+ * - $routeLang: Outgame multilingual SEO purposes
  **/
-         
+
+$this->routeLang = "(?:\/(" . $this->allowedLangs[0] . "|" . $this->allowedLangs[1] . "))?"; // Duplicate, but with allowedLangs values
+$this->routeRegex[] = $routeGET = $this->routeGet;
+$this->routeRegex[] = $routeLang = $this->routeLang;
+
 $applicationRoutes =
 array(
     /**
@@ -150,14 +155,12 @@ array(
         'controller' => 'offline.php'
     ),
     
-    /*
     'php-info'
     =>
     array(
         'route' => '/php-info',
         'controller' => 'php.info.php'
     ),
-    */
     
     /** Vanaf hier alle game routes **/
     'game'
@@ -251,7 +254,7 @@ array(
         'controller' => 'game/prison.php'
     ),
     
-    'in-prison-page'
+    'in_prison-page'
     =>
     array(
         'route' => '/game/in-prison/unable-to/page/[1-9][0-9]{0,3}',
@@ -2025,3 +2028,8 @@ array(
 
 /** Next! Fetch AJAX Routes, also needed with it's plain $ajaxRoutes variable name in the routing class! **/
 require_once __DIR__.'/ajax.routes.php';
+
+/** Finally save both route maps in Routing properties **/
+$this->routeMap = $applicationRoutes;
+$this->ajaxRouteMap = $ajaxRoutes;
+$routeGET = $routeLang = $applicationRoutes = $ajaxRoutes = null;

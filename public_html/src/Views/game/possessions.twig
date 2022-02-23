@@ -2,6 +2,7 @@
 
 {% block stylesheets %}
 <style type="text/css">
+form.ajaxForm[action='/game/possession/interact']:not(form.ajaxForm[data-response='#interactPossessionResponse']) {position: absolute;max-height: 269px;height: 100%;width: 100%;margin-top: 0rem;background: rgba(0,0,0, .3);}
 .carousel {height:269px;width:100%;}
 .carousel-inner > .carousel-item > div > form > h2 {display:block;background:rgba(10, 10, 10, 0.5);padding:0.5em;}
 .carousel-inner > .carousel-item > div > form > .possess-info{display:block;max-width:100%;width:300px;background:rgba(10,10,10,0.75);margin:0 auto;padding:15px;box-sizing: border-box;border-radius:10px;text-align:left;}

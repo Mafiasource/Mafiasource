@@ -5,21 +5,24 @@ use src\Business\MessageService;
 
 require_once __DIR__ . '/.inc.head.ajax.php';
 
-$userService = new UserService();
-$msg = new MessageService();
-$response = $msg->replyToMessage($_POST);
-if($response !== TRUE)
+if(isset($_POST['security-token']) && isset($_POST['sendMessage']) && isset($_POST['receiver']) && isset($_POST['message']))
 {
-    require_once __DIR__ . '/.inc.foot.ajax.php';
-    $twigVars['response'] = $response;
-    
-    echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
-}
-else
-{
-    ?>
-    <script>
-    reloadMessages("<?=$_POST['receiver'];?>");
-    </script>
-    <?PHP
+    $userService = new UserService();
+    $msg = new MessageService();
+    $response = $msg->replyToMessage($_POST);
+    if($response !== TRUE)
+    {
+        require_once __DIR__ . '/.inc.foot.ajax.php';
+        $twigVars['response'] = $response;
+        
+        echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+    }
+    else
+    {
+        ?>
+        <script type="text/javascript">
+        reloadMessages("<?=$_POST['receiver'];?>");
+        </script>
+        <?PHP
+    }
 }

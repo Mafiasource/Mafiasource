@@ -378,25 +378,25 @@ class MemberService
     public function redirectIfLoggedOut()
     {
         global $route;
-        if(isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
+        if(!isset($_SESSION['cp-logon']) && isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
         {
             if(!$this->checkCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
                 $route->headTo('admin-login');
         }
-        if(!isset($_SESSION['cp-logon']))
+        if(!isset($_SESSION['cp-logon'])) // Re-check could be set in checkCookieHash on success.
             $route->headTo('admin-login');
     }
     
     public function redirectIfLoggedIn()
     {
         global $route;
-        if(isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
+        if(!isset($_SESSION['cp-logon']) && isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
         {
             if($this->checkCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
-                $route->headTo('admin');
+                return $route->headTo('admin');
         }
         if(isset($_SESSION['cp-logon']))
-            $route->headTo('admin');
+            return $route->headTo('admin');
     }
     
     public function getStatus($id = "")

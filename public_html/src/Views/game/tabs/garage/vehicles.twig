@@ -40,7 +40,9 @@
                                 <a href="javascript:void(0);" class="button action repair" data-id="{{ v.getId }}" data-action="repair">{{ langs.REPAIR }}</a>&nbsp;
                             {% endif %}
                             <a href="javascript:void(0);" class="button action sell" data-id="{{ v.getId }}" data-action="sell">{{ langs.SELL }} {{ v.getValue|moneyFormat }}</a>&nbsp;
-                            <a href="javascript:void(0);" class="ajaxTab button tune" data-tab="vehicle.tune" data-id="{{ v.getId }}">{{ langs.TUNE }}</a>&nbsp;
+                            {% if v.getDamage == 0 %}
+                                <a href="javascript:void(0);" class="ajaxTab button tune" data-tab="vehicle.tune" data-id="{{ v.getId }}">{{ langs.TUNE }}</a>&nbsp;
+                            {% endif %}
                             <a href="{{ routing.getRouteByRouteName('travel-vehicle') }}/{{ v.getId }}" class="button">{{ langs.TRAVEL }}</a>
                         </div>
                     </div>

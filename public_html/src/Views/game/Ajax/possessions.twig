@@ -38,7 +38,7 @@
         <div class="carousel-inner center" role="listbox">
             {% for item in possessions.cityPossessions %}
                 <div class="carousel-item{% if loop.first %} active{% endif %}" style="top:-12px;">
-                    <div style="{% if item.getPicture is not empty %}height:269px;margin:-4px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}{#&w=1280&h=279&zc=1#}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
+                    <div style="{% if item.getPicture is not empty %}height:269px;margin:12px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}{#&w=1280&h=279&zc=1#}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
                         <form id="possess_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#interactCityPossessResponse">
                           <h2>{{ item.getName }}</h2>
                           <div class="possess-info">
@@ -111,7 +111,7 @@
         <div class="carousel-inner center">
             {% for item in possessions.statePossessions %}
                 <div class="carousel-item{% if loop.first %} active{% endif %}" style="top:-12px;">
-                    <div style="{% if item.getPicture is not empty %}height:269px;margin:-4px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
+                    <div style="{% if item.getPicture is not empty %}height:269px;margin:12px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
                         <form id="possess_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#interactStatePossessResponse">
                           <h2>{{ item.getName }}</h2>
                           <div class="possess-info">
@@ -184,7 +184,7 @@
         <div class="carousel-inner center">
             {% for item in possessions.positionlessPossessions %}
                 <div class="carousel-item{% if loop.first %} active{% endif %}" style="top:-12px;">
-                    <div style="{% if item.getPicture is not empty %}height:269px;margin:-4px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
+                    <div style="{% if item.getPicture is not empty %}height:269px;margin:12px auto;background: url({{ staticRoot }}/foto/web/public/images/possession/{{ item.getPicture }}) no-repeat center center;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;{% endif %}">
                         <form id="possess_{{ item.getId }}" class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" data-response="#interactPositionlessPossessResponse">
                           <h2>{{ item.getName }}</h2>
                           <div class="possess-info">

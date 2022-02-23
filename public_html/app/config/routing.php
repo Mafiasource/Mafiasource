@@ -4,25 +4,18 @@ namespace app\config;
  
 require_once __DIR__.'/config.php';
 
-if(extension_loaded('opcache'))
-{
-    ini_set('opcache.memory_consumption', 128);
-    ini_set('opcache.interned_strings_buffer', 8);
-    ini_set('opcache.max_accelerated_files', 4000);
-    ini_set('opcache.revalidate_freq', 60);
-    ini_set('opcache.fast_shutdown', 1);
-    ini_set('opcache.enable_cli', 1);
-    ##ini_set('opcache.file_cache', __DIR__ . '/../app/cache/opcache');
-}
-
 class Routing
 {
     private $route;
-    private $routeName;
-    private $controller;
+    private $routeName = "not_found";
+    private $controller = "notfound.php";
     private $routeRegex = array();
-    private $routeLang;
-    private $routeGet;
+    private $routeLang = "(?:\/(nl|en))?";
+    private $routeGet = "(?:\?.*)?";
+    
+    public $routeMap = array();
+    public $ajaxRouteMap = array();
+    public $allowedLangs = array("nl", "en");
     
     public $settings = array(
         'domainBase' => BASE_DOMAIN, // see config.php
@@ -36,84 +29,33 @@ class Routing
         'ssl' => SSL_ENABLED, // see config.php
         'twigCache' => FALSE, // Init, DO NOT CHANGE see config.php 'DEVELOPMENT'
     );
-    public $routeMap = array();
-    public $ajaxRouteMap = array();
-    public $allowedLangs = array("nl", "en");
     
     public function __construct()
     {
-        $this->settings['twigCache'] = DOC_ROOT . '/app/cache/TwigCompilation/';
-        if(DEVELOPMENT == true) $this->settings['twigCache'] = FALSE;
+        $this->settings['twigCache'] = DEVELOPMENT === false ? DOC_ROOT . '/app/cache/TwigCompilation/' : FALSE;
         
-        $this->routeGet = "(?:\?.*)?";
-        $this->routeLang = "(?:\/(" . $this->allowedLangs[0] . "|" . $this->allowedLangs[1] . "))?";;
-        $this->routeRegex[] = $routeGET = $this->routeGet;
-        $this->routeRegex[] = $routeLang = $this->routeLang;
-        include_once __DIR__.'/routes/routes.php';
-        $routeGET = $routeLang = null;
+        require_once __DIR__.'/routes/routes.php';
         
-        $this->routeMap = $routeMap = $applicationRoutes;
-        $routeMap = $applicationRoutes = null;
-        
-        $this->ajaxRouteMap = $ajaxRouteMap = $ajaxRoutes;
-        $ajaxRouteMap = $ajaxRoutes = null;
-        
-        $requestURI = explode('/', $_SERVER['REQUEST_URI']);
-        $routeParams = array();
-        for($i = 1; $i < count($requestURI); $i++)
-        {
-            $val = $requestURI[$i];
-            array_push($routeParams, $val);
-        }
-        
-        $endRoute = "";
-        foreach($routeParams AS $value)
-            $endRoute .= '/'.$value;
-        
-        $controller = $routeName = FALSE;
-        foreach($this->routeMap AS $key => $value)
-        {
-            if(preg_match('{^'.$value['route'].'$}', $endRoute))
-            {
-                $controller = $value['controller'];
-                $routeName = $key;
-                break;
-            }
-        }
-        if($controller == FALSE && $routeName == FALSE)
-        {
-            foreach($this->ajaxRouteMap AS $key => $value)
-            {
-                if(preg_match('{^'.$value['route'].'$}', $endRoute))
-                {
-                    $controller = $value['controller'];
-                    $routeName = $key;
-                    break;
-                }
-            }
-        }
-        
-        $this->route =  $endRoute;
-        $this->controller = "notfound.php";
-        $this->routeName = "not_found";
-        
-        if($controller != false)
-        {
-            $this->route = $endRoute;
-            $this->controller = $controller;
-            $this->routeName = $routeName;
-        }
+        $endRoute = $_SERVER['REQUEST_URI'];
+        $this->setRoute($endRoute, $this->routeMap);
+        if($this->routeName == "not_found")
+            $this->setRoute($endRoute, $this->ajaxRouteMap, true);
     }
     
     public function __destruct()
     {
-        $this->routeMap = null;
-        $this->ajaxRouteMap = null;
+        $this->routeLang = $this->routeGet = $this->routeMap = $this->ajaxRouteMap = null;
     }
     
-    public function getReplacedRoute()
+    private function setRoute($route, $routeMap, $ajaxRoute = false)
     {
-        return $this->replaceRouteRegex($this->route);
+        $this->route = $route;
+        $routeName = $ajaxRoute === false ? $this->getRouteNameByRoute($route) : $this->getAjaxRouteNameByRoute($route);
+        if(isset($routeName) && strlen($routeName))
+        {
+            $this->controller = $routeMap[$routeName]['controller'];
+            $this->routeName = $routeName;
+        }
     }
     
     public function getRoute()
@@ -129,6 +71,11 @@ class Routing
     public function getController()
     {
         return $this->controller;
+    }
+    
+    public function getReplacedRoute()
+    {
+        return $this->replaceRouteRegex($this->route);
     }
     
     private function removeRouteRegex($route)
@@ -154,7 +101,7 @@ class Routing
             if($regex == $this->routeGet && preg_match("/" . $regex . "/", $lastPar))
                 $return = str_replace($lastPar, preg_replace('/' . $regex . '/', '', $lastPar), $route);
             
-            $return = isset($return) ? $return : $route; //preg_replace('/' . $regex . '/', '', $route);
+            $return = isset($return) ? $return : $route;
         }
         return $return;
     }
@@ -163,9 +110,8 @@ class Routing
     {
         $result = isset($this->routeMap[$routeName]) ? $this->routeMap[$routeName]['route'] : null;
         if(isset($result))
-        {
             $result = $this->removeRouteRegex($result);
-        }
+        
         return $result;
     }
     
@@ -181,6 +127,15 @@ class Routing
     public function getAjaxRouteByRouteName($routeName)
     {
         return isset($this->ajaxRouteMap[$routeName]) ? $this->ajaxRouteMap[$routeName]['route'] : null;
+    }
+    
+    public function getAjaxRouteNameByRoute($route)
+    {
+        foreach($this->ajaxRouteMap AS $key => $value)
+        {
+            if(preg_match('{^'.$value['route'].'$}', $route))
+                return $key;
+        }
     }
     
     public function getPrevRouteName()
@@ -213,17 +168,15 @@ class Routing
         return TRUE;
     }
     
-    public function headTo($routeName, $addOnRoute = false)
+    public function headTo($routeName, $addAfterRoute = "")
     {
-        $addToHeader = "";
-        if(isset($addOnRoute) && $addOnRoute != false) $addToHeader = $addOnRoute;
         $result = isset($this->routeMap[$routeName]) ? $this->routeMap[$routeName]['route'] : null;
         if($result != null)
         {
             $result = $this->removeRouteRegex($result);
             
             header("HTTP/2 301 Moved Permanently");
-            header('Location: ' . $result . $addToHeader, TRUE, 301);
+            header('Location: ' . $result . $addAfterRoute, TRUE, 301);
             exit(0);
         }
     }
@@ -286,24 +239,31 @@ class Routing
     
     public function adjustLang($lang)
     {
-        global $userData;
         global $uriLang;
         
-        $loggedInLang = is_object($userData) && $userData->getLang() != $lang && in_array($userData->getLang(), $this->allowedLangs) && !isset($_SESSION['lang']['setAfterLogin']);
-        if(in_array($uriLang, $this->allowedLangs) && $this->requestGetParam(2) != "game")
+        if(in_array($uriLang, $this->allowedLangs) && $this->requestGetParam(1) != "game")
         { // Outgame multilingual SEO purposes
             $lang = $uriLang;
             $this->setLang($uriLang);
         }
-        elseif($loggedInLang)
-        { // Re-set lang for logged in game user
-            $lang = $userData->getLang();
-            $this->setLang($lang);
+        $lang = $this->adjustUserLang($lang);
+        return $lang;
+    }
+    
+    private function adjustUserLang($lang)
+    {
+        global $userData;
+        
+        if(!isset($_SESSION['lang']['setAfterLogin']) && is_object($userData))
+        {
+            if($loggedInLang = $userData->getLang() != $lang && in_array($userData->getLang(), $this->allowedLangs))
+            { // Re-set preferred lang for logged in game user
+                $lang = $userData->getLang();
+                $this->setLang($lang);
+            }
+            if($loggedInLang || ($userData->getLang() == $lang && in_array($lang, $this->allowedLangs)))
+                $_SESSION['lang']['setAfterLogin'] = true;
         }
-        
-        if($loggedInLang || (is_object($userData) && $userData->getLang() == $lang && in_array($lang, $this->allowedLangs) && !isset($_SESSION['lang']['setAfterLogin'])))
-            $_SESSION['lang']['setAfterLogin'] = true;
-        
         return $lang;
     }
     
@@ -335,10 +295,10 @@ class Routing
         foreach($message AS $part)
         {
             if(isset($replaced))
-                $replaced = preg_replace($part['pattern'], $part['part'], $replaced);
+                $replaced = preg_replace((string)$part['pattern'], (string)$part['part'], (string)$replaced);
             
             if(!isset($replaced))
-                $replaced = preg_replace($part['pattern'], $part['part'], $part['message']);
+                $replaced = preg_replace((string)$part['pattern'], (string)$part['part'], (string)$part['message']);
         }
         return $replaced;
     }

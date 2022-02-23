@@ -123,10 +123,10 @@ class UserDAO extends DBConfig
                     $this->changePasswordByUsername($pass, $username, $id);
                     
                     $file = fopen($saltFile, "r");
-                    $salt = fgets($file);
+                    $salt = fgets($file); //Re-set
                     fclose($file);
                     
-                    $hash = hash('sha256', $salt . hash('sha256', $pass));
+                    $hash = hash('sha256', $salt . hash('sha256', $pass)); //Re-set
                     
                     $prms[':password'] = $hash; // Re-set pass hash required for successful re-fetch
                     $row = $this->con->getDataSR($qry, $prms); // Re-fetch
@@ -255,6 +255,7 @@ class UserDAO extends DBConfig
             }
             
             $ourFileName = DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt";
+            if(file_exists($ourFileName)) unlink($ourFileName);
             $ourFileHandle = fopen($ourFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL: ".$_SERVER['REQUEST_URI'].".");
             $stringData = $salt;
             fwrite($ourFileHandle, $stringData);
@@ -669,7 +670,7 @@ class UserDAO extends DBConfig
         $row = $this->con->getDataSR("
             SELECT re.`id`, u.`username` FROM `recover_password` AS re LEFT JOIN `user` AS u ON (re.`userID`=u.`id`) WHERE re.`key`= :key
         ", array(':key' => $key));
-        if($row['id'] > 0)
+        if(isset($row['id']) && $row['id'] > 0)
         {
             $userObj = new User();
             $userObj->setUsername($row['username']);
@@ -805,7 +806,7 @@ class UserDAO extends DBConfig
                 ON (u.`statusID`=st.`id`)
                 LEFT JOIN `donator` AS d
                 ON (u.`donatorID`=d.`id`)
-                $cond u.`active`='1' AND u.`deleted`='0'
+                $cond `statusID`<='7' AND u.`active`='1' AND u.`deleted`='0'
                 ORDER BY u.`score` DESC, u.`honorPoints` DESC, u.`whoresStreet` DESC, u.`rankpoints` DESC, u.`power` DESC, u.`cardio` DESC, u.`crimesLv` DESC,
                     u.`vehiclesLv` DESC, u.`pimpLv` DESC, u.`smugglingLv` DESC, u.`id` ASC
                 LIMIT $from, $to
@@ -1194,7 +1195,7 @@ class UserDAO extends DBConfig
                 $userObj->setVehiclesLv($row['vehiclesLv']);
                 $userObj->setPimpLv($row['pimpLv']);
                 $userObj->setSmugglingLv($row['smugglingLv']);
-                $userObj->setProfile(stripslashes($row['profile']));
+                $userObj->setProfile(stripslashes((string)$row['profile']));
                 
                 return $userObj;
             }

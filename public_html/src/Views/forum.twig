@@ -1,6 +1,6 @@
 {% extends "/app/Resources/Views/base.twig" %}
 
-{% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+{% import "app/Resources/Views/macros/auth.user.tag.macro.twig" as authUserTagManager %}
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ staticRoot }}/web/vendor/ckeditorgame/plugins/spoiler/css/spoiler.css"/>
@@ -109,14 +109,14 @@ section#content section#forum .dateActions {position: relative;top:.25em;margin-
                 {% else %}
                     <div class="row forum-message-row">
                         <div class="col-2 d-none d-md-block">
-                            {{ userTagManager.write('topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
+                            {{ authUserTagManager.write(userData, 'topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
                             <br />
                             <img src="{{ staticRoot }}/foto/web/public/images/users/{% if topicData.getStarterAvatar %}{{ topicData.getStarterUID }}/uploads/{{ topicData.getStarterAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ topicData.getStarter|strip }}" /><br />
                             <small>Posts: {{ topicData.getStarterPostsCnt }}</small>
                         </div>
                         <div class="col-sm-12 col-md-10">
                             <div class="d-block d-md-none">
-                                {{ userTagManager.write('topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
+                                {{ authUserTagManager.write(userData, 'topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
                                 <small>Posts: {{ topicData.getStarterPostsCnt }}</small><br />
                             </div>
                             <small class="float-right darkgray dateActions">{{ topicData.getDate }}<br />
@@ -138,14 +138,14 @@ section#content section#forum .dateActions {position: relative;top:.25em;margin-
                     {% for reaction in topicData.getReactions %}
                         <div class="row forum-message-row {{ cycle(['odd', 'even'], loop.index) }}">
                             <div class="col-2 d-none d-md-block">
-                                {{ userTagManager.write('topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
+                                {{ authUserTagManager.write(userData, 'topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
                                 <br />
                                 <img src="{{ staticRoot }}/foto/web/public/images/users/{% if reaction.getReactorAvatar %}{{ reaction.getReactorUID }}/uploads/{{ reaction.getReactorAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ reaction.getReactor|strip }}" /><br />
                                 <small>Posts: {{ reaction.getReactorPostsCnt }}</small>
                             </div>
                             <div class="col-sm-12 col-md-10">
                                 <div class="d-block d-md-none">
-                                    {{ userTagManager.write('topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
+                                    {{ authUserTagManager.write(userData, 'topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
                                     <small>Posts: {{ reaction.getReactorPostsCnt }}</small><br />
                                 </div>
                                 <small class="float-right darkgray dateActions">

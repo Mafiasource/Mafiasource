@@ -43,8 +43,8 @@ AddDefaultCharset UTF-8
 <ifModule mod_php4.c>
     php_value zlib.output_compression 16386
 </ifModule>
-php_value upload_max_filesize 6M
-php_value post_max_size 10M
+php_value upload_max_filesize 8M
+php_value post_max_size 16M
 php_value max_execution_time 200
 php_value max_input_time 200
 php_value allow_url_fopen Off
@@ -84,15 +84,19 @@ IndexIgnore *
     RewriteCond %{REQUEST_METHOD} (CONNECT|DEBUG|DELETE|MOVE|PUT|TRACE|TRACK)
     RewriteRule .* - [F]
     
-    ## Non www to www redirect and vice versa for subdomains
-    #RewriteCond %{HTTPS} off [OR]
-    RewriteCond %{HTTP_HOST} !^static\. [NC]
-    RewriteCond %{HTTP_HOST} !^www\. [NC]
-    RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
-    #RewriteCond %{HTTPS} off [OR]
-    RewriteCond %{HTTP_HOST} ^static\. [NC]
-    RewriteCond %{HTTP_HOST} ^www\. [NC]
-    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+    <IfModule mod_ssl.c>
+        ## Set HSTS env variable
+        RewriteCond %{HTTPS} on
+        RewriteRule ^ - [E=HSTS:1]
+    
+        ## HTTPS redirect
+        #RewriteCond %{HTTPS} off
+        #RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+    </IfModule>
+    ## Non www to www redirect
+    RewriteCond %{HTTPS}s ^on(s)|off [NC]
+    RewriteCond %{HTTP_HOST} !^(static|download|www)\.(.*)$ [NC]
+    RewriteRule ^(.*)$ http%1://www.%{HTTP_HOST}/$1 [R=301,L]
     
     ## Rewrite foto.php without query str
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -108,8 +112,14 @@ IndexIgnore *
     RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4 [L,B,NC,QSA]
     
     ## Rewrite default favicon force https
+    <IfModule mod_ssl.c>
+        #RewriteCond %{REQUEST_URI} /favicon.ico [NC]
+        #RewriteRule (.*) https://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]
+    </IfModule>
+    ## Rewrite default favicon
+    RewriteCond %{HTTPS}s ^on(s)|off [NC]
     RewriteCond %{REQUEST_URI} /favicon.ico [NC]
-    RewriteRule (.*) https://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]
+    RewriteRule (.*) http%1://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]
     
     ## Redirect all requests to front-controller (/web/index.php) but ignore following URIs:
     RewriteCond %{REQUEST_URI} /google29f33f42f4b5ccd8.html [or]
@@ -133,8 +143,8 @@ IndexIgnore *
 ## Mod headers
 <IfModule mod_headers.c>
     Header set Connection keep-alive
-    Header always set Content-Security-Policy "script-src 'self' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com https://static.mafiasource.nl 'unsafe-inline' 'unsafe-eval'"
-    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set Content-Security-Policy "object-src 'none'; script-src 'self' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com https://static.mafiasource.nl 'unsafe-inline' 'unsafe-eval'"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HSTS
     Header always set X-Frame-Options "deny"
     Header always set X-Content-Type-Options "nosniff"
     Header always edit Set-Cookie (.*) "$1; SameSite=Strict"

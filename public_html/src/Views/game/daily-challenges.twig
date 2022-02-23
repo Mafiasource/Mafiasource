@@ -35,8 +35,14 @@
     {% endfor %}
   </tbody>
 </table>
+<br class="clear"/>
 {% if challenges[0].getProgress < challenges[0].getAmount or challenges[1].getProgress < challenges[1].getAmount or challenges[2].getProgress < challenges[2].getAmount %}
-    <br class="clear"/>
     {{ alert.build('Info', 'alert-info', 'help', langs.DAILY_INFO) }}
+{% else %}
+    {% set suggestion = 'Looking for more challenges? Visit the current <a href="' ~ routing.getRouteByRouteName('missions-public-mission') ~ '"><strong>public mission</strong></a> and compete for more prizes.' %}
+    {% if lang == 'nl' %}
+        {% set suggestion = 'Opzoek naar meer uitdagingen? Bezoek de huidige <a href="' ~ routing.getRouteByRouteName('missions-public-mission') ~ '"><strong>publieke missie</strong></a> en strijd voor voor meer prijzen.' %}
+    {% endif %}
+    {{ alert.build('Info', 'alert-info', 'help', suggestion) }}
 {% endif %}
 {% endblock content %}

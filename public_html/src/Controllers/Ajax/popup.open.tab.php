@@ -27,6 +27,21 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
     if($tab == "help")
     {
         $routeName = $route->getRouteNameByRoute($_SESSION['PREV_ROUTE']);
+        $routeName = preg_replace('/-do$/', '', $routeName);
+        if($routeName != 'family-page')
+            $routeName = preg_replace('/-page$/', '', $routeName);
+        
+        if(in_array($routeName, array('in_prison', 'in_prison_raw_paging', '')))
+            $routeName = 'prison';
+        elseif($routeName == 'travel-vehicle-id')
+            $routeName = 'travel-vehicle';
+        elseif($routeName == 'murder-user')
+            $routeName = 'murder';
+        elseif($routeName == 'smuggling-profit-index-unit')
+            $routeName = 'smuggling-profit-index';
+        elseif($routeName == 'garage-shop-vehicle-raw')
+            $routeName = 'garage-shop-vehicle';
+        
         if(strlen($routeName) > 0)
         {
             $helpsystem = new HelpsystemService();
@@ -37,15 +52,15 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
             }
         }
         $twigVars['prevRoute'] = $_SESSION['PREV_ROUTE'];
-        $string = str_replace(' ', '_', $route->getRouteNameByRoute($_SESSION['PREV_ROUTE']));
+        $string = str_replace(' ', '_', $routeName);
         $string = str_replace('-', '_', $string);
         if(isset($langs[strtoupper($string)]))
         {
-            $twigVars['prevPagename'] = $langs[strtoupper(str_replace('-', '_', $route->getRouteNameByRoute($_SESSION['PREV_ROUTE'])))];
+            $twigVars['prevPagename'] = $langs[strtoupper(str_replace('-', '_', $routeName))];
         }
         else
         {
-            $twigVars['prevPagename'] = ucfirst(str_replace('-', ' ', $route->getRouteNameByRoute($_SESSION['PREV_ROUTE'])));
+            $twigVars['prevPagename'] = ucfirst(str_replace('-', ' ', $routeName));
         }
         $twigVars['helpContent'] = $content;
     }

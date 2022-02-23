@@ -196,7 +196,7 @@ class PrisonDAO extends DBConfig
             $statement = $this->dbh->prepare("DELETE FROM `prison` WHERE `time` < :time; DELETE FROM `prison` WHERE `userID`= :uid");
             $statement->execute(array(':time' => time(), ':uid' => $userID));
             
-            $statement = $this->dbh->prepare("INSERT INTO `prison` (`userID`,`time`) VALUES (:uid,:time)");
+            $statement = $this->dbh->prepare("INSERT INTO `prison` (`userID`,`time`) VALUES (:uid, :time)");
             $statement->execute(array(':uid' => $userID, ':time' => $time));
         }
     }

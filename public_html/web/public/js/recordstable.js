@@ -138,6 +138,7 @@ $(document).on("mousedown", "input.positionchange", function (e) {
     $("select[name='search-by']").val(0);
     $("#search-form-records").submit();
     e.preventDefault();
+    e.stopPropagation();
 });
 
 $("#search-form-records").submit(function (e) {

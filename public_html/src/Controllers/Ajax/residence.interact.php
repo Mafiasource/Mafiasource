@@ -5,7 +5,7 @@ use src\Business\ResidenceService;
 
 require_once __DIR__ . '/.inc.head.ajax.php';
 
-if(isset($_POST['security-token']) && (isset($_POST['buy']) || isset($_POST['sell']) || isset($_POST['equip'])))
+if(isset($_POST['security-token']) && (isset($_POST['id']) && isset($_POST['buy']) || isset($_POST['sell']) || isset($_POST['equip'])))
 {
     require_once __DIR__ . '/.valuesAnimation.php';
     
@@ -37,5 +37,5 @@ if(isset($_POST['security-token']) && (isset($_POST['buy']) || isset($_POST['sel
     require_once __DIR__ . '/.inc.foot.ajax.php';
     $twigVars['response'] = $response;
     
-    echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+    echo $twig->render('/src/Views/game/Ajax/scroll-top.twig', $twigVars);
 }

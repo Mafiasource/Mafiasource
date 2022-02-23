@@ -9,7 +9,7 @@ Admin fields that seem locked can be overwritten.
 This application runs stable on web servers with the following (min) requirements
 - Web server 128MB+ RAM - 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
 - Apache 2
-- PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, IMAP, SOCKETS, GD, CURL
+- PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, SOCKETS, GD, CURL
 - MySQL 8 or higher or MariaDB 10 or higher
 
 ## Dependencies
@@ -49,10 +49,11 @@ Customize your [ckeditor(game)](https://ckeditor.com/ckeditor-4/download/)
 Requires a web server, domainname, mysql credentials and a correct configured SSL/HTTPS certificate.
 No SSL support? Skip to [App wont work on a localhost environment without SSL support.](#p-app-wont-work-on-a-localhost-environment-without-ssl-support) first.
 1) Create a new subdomain 'static' for your domainname and link it to your public_html directory.
-2) Have a fresh database name, user and password ready create these new credentials if necessary.
-3) Upload /../security.php and public_html to your web server.
-4) After uploading browse to your website through following URI: https://www.domainname.ex/install
-5) Follow installation instructions on screen, finish with a successful installation.
+2) HTTPS? Make sure the static subdomain has a working certificate as well.
+3) Have a fresh database name, user and password ready create these new credentials if necessary.
+4) Upload /../security.php and public_html to your web server.
+5) After uploading browse to your website through following URI: https://www.domainname.ex/install
+6) Follow installation instructions on screen, finish with a successful installation.
 
 The following source code files should have been modified after a successful installation:
 - /../security.php
@@ -99,8 +100,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
     #127.0.0.1 www.static.domainname.ex
 ```
 3) Ready to install on a local non-secure environment at http://localhost/install or http://www.domainname.ex/install
-4) Server error persists? Edit /.htaccess and comment out all lines from 88 to 95 including, after installation.
-5) Still nothing? Maybe [500 or above server error persists](#p-500-or-above-server-error-persists) could help.
+4) Still nothing? Maybe [500 or above server error persists](#p-500-or-above-server-error-persists) could help.
 
 ###### P) Successful installation but still a blank application like initially.
 ###### A) Standard configurations should be replaced everywhere, permissions and or restrictions could have avoided this.
@@ -134,9 +134,9 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 - Missing resources can cause internal server error on strict configured web servers
 - Install any missing dependencies
 - Enable any missing extensions
-- Make sure PHP 8.0 or above is installed
+- Make sure PHP 8.0 or above is installed, any hints within php error_log?
 - Check if Apache2 is functioning correctly, any hints within apache error logs?
-- Remove /.htaccess to see if server error disappears if so test piece by piece to find error causing lines
+- Remove /.htaccess to see if server error disappears. If so test piece by piece to find error causing lines
 - DEVELOPMENT global set to true can enable live errors
 
 If all else failed please create an issue, describe your problem as best you can.

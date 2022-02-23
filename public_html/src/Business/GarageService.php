@@ -337,6 +337,10 @@ class GarageService
                 case 'tune':
                     $selectedTune = $this->getSelectedTune($post);
                     
+                    if($vehicleData->getDamage() != 0)
+                    {
+                        $error = $l['TUNE_VEHICLE_DAMAGED'];
+                    }
                     if(!is_array($selectedTune) || $selectedTune == false)
                     {
                         $error = $l['ITEM_DOESNT_EXIST'];

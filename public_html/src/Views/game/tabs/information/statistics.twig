@@ -12,7 +12,7 @@
                     {{ langs.AMOUNT_OF_MEMBERS }}
                 </div>
                 <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalMembers|valueFormat }}  <small class="red">(-{{ stats.getGameStatistic.getTotalBanned|valueFormat }})</small>
+                    {{ stats.getGameStatistic.getTotalMembers|valueFormat }}  <small class="red">({{ stats.getGameStatistic.getTotalBanned|valueFormat }} {{ langs.OF_WHICH_ARE_BANNED|lower }})</small>
                 </div>
             </div>
             <div class="row cols cf">

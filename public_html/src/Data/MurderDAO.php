@@ -59,7 +59,7 @@ class MurderDAO extends DBConfig
                     
                     $row = $this->con->getDataSR("
                         SELECT COUNT(`id`) AS `total` FROM `murder_log` WHERE (`attackerID` IN (".$ids.") OR `victimID` IN (".$ids.")) AND `active`='1' AND `deleted`='0' LIMIT 1
-                    ", array(':uid' => $_SESSION['UID']));
+                    ");
                     break;
             }
         }

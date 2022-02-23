@@ -96,7 +96,7 @@ foreach($backupTables as $table)
         {
             if(is_numeric($k)) // Only work with the numeric key values, ()avoids duplicates)
             {
-                $v = addslashes($v);
+                $v = addslashes((string)$v);
 				$v = preg_replace("/\n/", "\\n", $v);
 				if(isset($v))
                 {

@@ -3,7 +3,7 @@
 {% block stylesheets %}
 {% for s in screenshots %}
     <link rel="preload" href="{{ staticRoot }}/foto/1802x860/1/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.png" as="image" />
-    <link rel="preload" href="{{ staticRoot }}/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.mobile.png" as="image" />
+    <link rel="preload" href="{{ staticRoot }}/foto/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.mobile.png" as="image" />
 {% endfor %}
 <style type="text/css">
     section#content { padding-bottom:0;}
@@ -24,7 +24,7 @@
                 <div id="carousel_{{ loop.index }}" class="carousel-item{% if loop.first %} active{% endif %}">
                     <picture>
                         <source media="(min-width: 766px)" srcset="{{ staticRoot }}/foto/1802x860/1/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.png" />
-                        <img class="d-block w-100" src="{{ staticRoot }}/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.mobile.png" alt="{{ s.name }}" />
+                        <img class="d-block w-100" src="{{ staticRoot }}/foto/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.mobile.png" alt="{{ s.name }}" />
                     </picture>
                 </div>
             {% endfor %}

@@ -2,7 +2,7 @@
 <form id="search-form-records" method="POST" action="{{ docRoot }}/admin/search">
     <div class="row">
         <div class="col-5">
-            <input type="text" name="search" class="form-control" placeholder="Zoekterm.."/>
+            <input type="text" name="search" class="form-control" placeholder="Zoekterm.." required="required"/>
         </div>
         <div class="col-4">
             <select name="search-by" class="form-control searchBy">
@@ -37,7 +37,7 @@
     <br />
     <div class="row">
         <div class="col-md-3 offset-md-9">
-            <span class="right">Of alles ophalen en:</span> <input type="submit" name="submit-positionchange" class="form-control positionchange btn btn-light" value="Volgorde aanpassen"/>
+            <span class="right">Of alles ophalen en:</span> <input type="submit" name="submit-positionchange" class="form-control positionchange btn btn-light" value="Volgorde aanpassen"{% if pagination.tpages >= 50 %} disabled="disabled"{% endif %}/>
         </div>
     </div>
 </form>

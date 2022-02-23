@@ -415,14 +415,14 @@ class GetLanguageContent
     
     public function travelLangs()
     {
+        global $route;
         $langs = array(
-            'LEGAL' => "Legal",
-            'ILLEGAL' => "Illegal",
             'TRAIN' => "Train",
             'AIRPLANE_INFO' => "Travelling by plane is faster but not always safest while smuggling.",
             'TRAIN_INFO' => "Travelling by train is relatively fast and safe.",
             'BUS_INFO' => "Travelling by bus goes slow but is quite safe while smuggeling.",
             'VEHICLE_INFO' => "Travel with a vehicle, the safest but slowest way for smuggling and only pay for gas.",
+            'BORDER_PATROL_INFO' => "In the <a href='".$route->getRouteByRouteName('donation-shop')."'><strong>Donation Shop</strong></a> you can bribe the border patrol.",
             'BOOK_TICKET' => "Book ticket",
             'COSTS' => "Costs",
             'ROUTE_NOT_POSSIBLE' => "Route <strong>not possible</strong> by travel medium, consider taking an airplane.",
@@ -925,7 +925,7 @@ class GetLanguageContent
             'BRIBING_BORDER_PATROL' => "Bribe border patrol for 8 hours",
             'BOUGHT_BRIBING_POLICE_SUCCESS' => "You handed over {credits} credits to the border patrol to be able to smuggle for 8 hours without being caught.",
             'GROUND' => "Extra ground area",
-            'BOUGHT_GROUND_SUCCESS' => "You traded 100 credits for an extra holding space on the ground map.",
+            'BOUGHT_GROUND_SUCCESS' => "You traded 100 credits for an extra area on the ground map.",
             'SMUGGLING_CAPACITY' => "100 extra smuggle capacity",
             'BOUGHT_SMUGGLING_CAPACITY_SUCCESS' => "You bought 100 extra smuggling capacity for 100 credits!",
             'NEW_PROFESSION' => "New profession",
@@ -942,12 +942,12 @@ class GetLanguageContent
             'CAN_RECEIVE' => "You can receive up to {credits} more credits as a donation reward.",
             'LIMIT_RESET' => "On {date} your limit will be reset to 5,000.",
             'DONATE_BTN_HEAD' => "<h4>First this</h4><p>Receive instant credits after a donation of any amount between &euro;1,00 and &euro;50,00 up to your limit.</p><h4>Safely donate through PayPal</h4>",
-            'DONATE_BTN_FOOT' => "<h4>Trouble?</h4><p>Contact an Administrator or <a href='mailto:info@mafiasource.nl?subject=Mafiasource donation shop trouble'><strong>send us an email</strong></a> for help.</p>",
+            'DONATE_BTN_FOOT' => "<small>All transactions are secured and encrypted before transit.</small><h4>Trouble?</h4><p>Contact an Administrator or <span style='color:#3498db'><a href='mailto:info@mafiasource.nl?subject=Mafiasource donation shop trouble'><strong>send us an email</strong></a></span> for help.</p>",
             'DONATE_REWARDED_ALREADY' => "This donation bonus has already been claimed!",
             'DONATE_ERROR' => "An error occured with your donation, contact an Administrator for asistance.",
-            'DONATE_SUCCESS' => "Your donation was received and {credits} credits have been added to your account as a reward.",
+            'DONATE_SUCCESS' => "Your donation was received and {credits} credits have been added to your account as a reward. Thank you!",
             'DONATE_SUCCESS_HIT_LIMIT' => "You have reached your limit which will reset within 31 days.",
-            'DONATE_SUCCESS_LIMIT' => "Your donation was received but because of your limit you didn't receive any credits!",
+            'DONATE_SUCCESS_LIMIT' => "Your donation was received but because of your limit you didn't receive any credits! Thank you!",
         );
         return $langs;
     }
@@ -1104,7 +1104,8 @@ class GetLanguageContent
             'CARDS' => "Cards",
             'PLAY_BLACKJACK_SUCCESS_BROKE_EVEN' => "You broke even and got your stake back!",
             'PLAY_BLACKJACK_SUCCESS_WON' => "You won $&#8203;{profits}!",
-            'PLAY_BLACKJACK_SUCCESS_LOST' => "You lost $&#8203;{losses}!"
+            'PLAY_BLACKJACK_SUCCESS_LOST' => "You lost $&#8203;{losses}!",
+            'FRESH_DECK_INFO' => "To combat card counting every game starts with a fresh shuffled deck of cards."
         );
         return $langs;
     }
@@ -1343,6 +1344,7 @@ class GetLanguageContent
             'EXHAUST' => "Exhaust",
             'SHOCK_ABSORBERS' => "Shock absorbers",
             'OVERVIEW' => $this->possessionsLangs()['OVERVIEW'],
+            'TUNE_VEHICLE_DAMAGED' => "Please repair your vehicle first before you perform tune upgrades.",
             'CANNOT_SELL_TUNED_VEHICLE' => "You cannot sell this tuned vehicle, sell your tune upgrades first!",
             'TUNE_ITEM_IN_POSSESSION' => "You already have these tune upgrades installed! Sell your active upgrade first.",
             'TUNE_ITEM_NOT_IN_POSSESSION' => "You don't have these tune upgrades in possession.",
@@ -1696,7 +1698,8 @@ class GetLanguageContent
             'CURRENT' => $this->murderLangs()['CURRENT'],
             'ROUND_PLAYED_FROM' => "This round was played from",
             'NOW' => "Now", // Override
-            'TO' => "Up to" // Override
+            'TO' => "Up to", // Override
+            'OF_WHICH_ARE_BANNED' => "Of which are banned"
         );
         return $langs;
     }

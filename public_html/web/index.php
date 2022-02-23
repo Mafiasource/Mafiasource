@@ -77,7 +77,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
     // Security class (Anti CSRF, XSS attacks & more)
     require_once __DIR__.'/../app/config/security.php';
     $security = new Security();
-        
+    
     // Routing fetched a valid controller?
     if($route->getController() != FALSE)
     {
@@ -110,9 +110,31 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         // Check if controller actually exists and include it
         if(file_exists(__DIR__.'/../src/Controllers/'.$route->getController()))
         {
-            $denyPrevRouteSaves = array("notfound.php", "languageSelect.php", "game/captcha.test.php", "game/rest.in.peace.php");
-            include_once __DIR__.'/../src/Controllers/'.$route->getController();
-            if(!in_array($route->getController(), $denyPrevRouteSaves)) $route->setPrevRoute(); // Save previous route
+            set_error_handler(function ($severity, $message, $file, $line) {
+                $errorsEnabled = (bool)(error_reporting() & $severity);
+                $errorsEnabled = (bool)($errorsEnabled & DEVELOPMENT);
+                if(in_array($severity, array(E_USER_ERROR, E_RECOVERABLE_ERROR)) && $errorsEnabled)
+                    throw new \ErrorException($message, 0, $severity, $file, $line);
+                
+                throw new \Exception($message);
+            }, E_ALL);
+            
+            try
+            {
+                $denyPrevRouteSaves = array("notfound.php", "languageSelect.php", "game/captcha.test.php", "game/rest.in.peace.php");
+                include_once __DIR__.'/../src/Controllers/'.$route->getController();
+                if(!in_array($route->getController(), $denyPrevRouteSaves)) $route->setPrevRoute(); // Save previous route
+            }
+            catch(Exception $exc)
+            {
+                error_log($exc);
+                $errMsg = "An unexpected error occurred. Please accept our apologies as we will resolve this issue asap.";
+                if($lang === "nl")
+                    $errMsg = "Er is een onverwachte fout opgetreden. Onze excuses, we zullen dit probleem zo snel mogelijk oplossen.";
+                
+                die($errMsg);
+            }
+            restore_error_handler();
         }
         // Session lockdown after controller did its job
         SessionManager::sessionWriteClose();
