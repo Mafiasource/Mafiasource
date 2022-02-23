@@ -35,7 +35,7 @@
         </div>
         <div class="content-container">
             <div class="row">
-                <img src="{{ staticRoor }}/foto/web/public/images/icons/monitor_go.png" class="icon" alt="{{ langs.VIEW }}"/>&nbsp;<a href="{{ routing.getRouteByRouteName('poll-history') }}">{{ langs.CLICK_TO_VIEW_HISTORY|raw }}</a>!
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" class="icon" alt="{{ langs.VIEW }}"/>&nbsp;<a href="{{ routing.getRouteByRouteName('poll-history') }}">{{ langs.CLICK_TO_VIEW_HISTORY|raw }}</a>!
             </div>
         </div>
     {% elseif tab == 'poll-history' %}
@@ -77,7 +77,7 @@
                 {% endfor %}
             {% else %}
                 <div class="row">
-                    <img src="{{ staticRoor }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_HISTORY_TO_VIEW }}
+                    <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" class="icon" alt="{{ langs.NONE }}"/> {{ langs.NO_HISTORY_TO_VIEW }}
                 </div>
             {% endif %}
         </div>
@@ -87,7 +87,7 @@
         </div>
         <div class="content-container">
             <div class="row">
-                <img src="{{ staticRoor }}/foto/web/public/images/icons/flag_green.png" class="icon" alt="{{ langs.VIEW }}"/>&nbsp;<a href="{{ routing.getRouteByRouteName('poll') }}"><strong>{{ langs.BACK }} {{ langs.TO|lower }}</strong> Poll {{ langs.PAGE|lower }}</a>!
+                <img src="{{ staticRoot }}/foto/web/public/images/icons/flag_green.png" class="icon" alt="{{ langs.VIEW }}"/>&nbsp;<a href="{{ routing.getRouteByRouteName('poll') }}"><strong>{{ langs.BACK }} {{ langs.TO|lower }}</strong> Poll {{ langs.PAGE|lower }}</a>!
             </div>
         </div>
     {% endif %}
