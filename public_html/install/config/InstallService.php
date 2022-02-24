@@ -73,7 +73,7 @@ class InstallService
             return $cronjobExists;
         }
         
-        $phpPath = '/usr/local/bin/php';
+        $phpPath = PHP_BINARY;
         $hourFile = realpath(DOC_ROOT . '/app/cronjob/hour.php');
         $fiveMuntesFile = realpath(DOC_ROOT . '/app/cronjob/five_minutes.php');
         $oneMunteFile = realpath(DOC_ROOT . '/app/cronjob/one_minute.php');
@@ -223,12 +223,16 @@ class InstallService
                 {
                     $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       BASE_DOMAIN);     // Application runs without www.';
                     $htaccessReplacesMap[95] = '    ## www to non www redirect';
-                    $htaccessReplacesMap[98] = '    RewriteRule ^(.*)$ http%1://%{HTTP_HOST}/$1 [R=301,L]';
+                    $htaccessReplacesMap[96] = '    #RewriteCond %{HTTPS}s ^on(s)|off [NC]';
+                    $htaccessReplacesMap[97] = '    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]';
+                    $htaccessReplacesMap[98] = '    RewriteRule ^(.*)$ http%{ENV:ADDSSL}://%1/$1 [R=301,L]';
                 }
                 else
                 {
                     $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       "www.".BASE_DOMAIN);     // Application runs on www. variant';
                     $htaccessReplacesMap[95] = '    ## Non www to www redirect';
+                    $htaccessReplacesMap[96] = '    RewriteCond %{HTTPS}s ^on(s)|off [NC]';
+                    $htaccessReplacesMap[97] = '    RewriteCond %{HTTP_HOST} !^(static|www)\.(.*)$ [NC]';
                     $htaccessReplacesMap[98] = '    RewriteRule ^(.*)$ http%1://www.%{HTTP_HOST}/$1 [R=301,L]';
                 }
                 if(strpos(PROTOCOL . $_SERVER['HTTP_HOST'], $replacedDomain) !== false)

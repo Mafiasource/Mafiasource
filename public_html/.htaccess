@@ -85,9 +85,9 @@ IndexIgnore *
     RewriteRule .* - [F]
     
     <IfModule mod_ssl.c>
-        ## Set HSTS env variable
+        ## Set HSTS, ADDSSL env variable
         RewriteCond %{HTTPS} on
-        RewriteRule ^ - [E=HSTS:1]
+        RewriteRule ^ - [E=HSTS:1,E=ADDSSL:s]
     
         ## HTTPS redirect
         #RewriteCond %{HTTPS} off
@@ -95,7 +95,7 @@ IndexIgnore *
     </IfModule>
     ## Non www to www redirect
     RewriteCond %{HTTPS}s ^on(s)|off [NC]
-    RewriteCond %{HTTP_HOST} !^(static|download|www)\.(.*)$ [NC]
+    RewriteCond %{HTTP_HOST} !^(static|www)\.(.*)$ [NC]
     RewriteRule ^(.*)$ http%1://www.%{HTTP_HOST}/$1 [R=301,L]
     
     ## Rewrite foto.php without query str
@@ -111,7 +111,7 @@ IndexIgnore *
     RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4/$5 [L,B,NC,QSA]
     RewriteRule ^foto/([^/]+)/([^/]+)/([^/]+)/(.*)$ /web/public/foto.php?src=$1/$2/$3/$4 [L,B,NC,QSA]
     
-    ## Rewrite default favicon force https
+    ## Rewrite default favicon force https if available
     <IfModule mod_ssl.c>
         #RewriteCond %{REQUEST_URI} /favicon.ico [NC]
         #RewriteRule (.*) https://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]
