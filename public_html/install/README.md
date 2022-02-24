@@ -48,12 +48,12 @@ Customize your [ckeditor(game)](https://ckeditor.com/ckeditor-4/download/)
 ## Built in simplified installation process
 Requires a web server, domainname, mysql credentials and a correct configured SSL/HTTPS certificate.
 No SSL support? Skip to [App wont work on a localhost environment without SSL support.](#p-app-wont-work-on-a-localhost-environment-without-ssl-support) first.
-1) Choose to - create a new subdomain - OR - DNS record, skip to 1.2
-  1.1) Create a new subdomain
-    1.1.1) Create a new subdomain 'static' for your domainname and link it to your public_html directory.
-    1.1.2) HTTPS? Make sure the static subdomain has a working certificate as well.
-  1.2) OR insert a new DNS CNAME record
-    1.2.1) Insert a new DNS CNAME record with name static pointing to domainname.ex in your domainname.ex DNS settings
+1) Choose to - create a new subdomain - OR - DNS record
+  * Create a new subdomain
+    - Create a new subdomain 'static' for your domainname and link it to your public_html directory.
+    - HTTPS? Make sure the static subdomain has a working certificate as well.
+  * OR insert a new DNS CNAME record
+    - Insert a new DNS CNAME record with name static pointing to domainname.ex in your domainname.ex DNS settings
 2) Have a fresh database name, user and password ready create these new credentials if necessary.
 3) Upload /../security.php and public_html to your web server.
 4) After uploading browse to your website through following URI: https://www.domainname.ex/install (https:// in front is important if applicable)
