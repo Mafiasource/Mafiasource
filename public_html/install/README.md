@@ -52,7 +52,7 @@ No SSL support? Skip to [App wont work on a localhost environment without SSL su
 2) HTTPS? Make sure the static subdomain has a working certificate as well.
 3) Have a fresh database name, user and password ready create these new credentials if necessary.
 4) Upload /../security.php and public_html to your web server.
-5) After uploading browse to your website through following URI: https://www.domainname.ex/install
+5) After uploading browse to your website through following URI: https://www.domainname.ex/install (https:// in front is important if applicable)
 6) Follow installation instructions on screen, finish with a successful installation.
 
 The following source code files should have been modified after a successful installation:
