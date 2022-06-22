@@ -48,12 +48,9 @@ Customize your [ckeditor(game)](https://ckeditor.com/ckeditor-4/download/)
 ## Built in simplified installation process
 Requires a web server, domainname, mysql credentials and a correct configured SSL/HTTPS certificate.
 No SSL support? Skip to [App wont work on a localhost environment without SSL support.](#p-app-wont-work-on-a-localhost-environment-without-ssl-support) first.
-1) Choose to - create a new subdomain - OR - DNS record
-  * Create a new subdomain
-    - Create a new subdomain 'static' for your domainname and link it to your public_html directory.
-    - HTTPS? Make sure the static subdomain has a working certificate as well.
-  * OR insert a new DNS CNAME record
-    - Insert a new DNS CNAME record with name static pointing to domainname.ex in your domainname.ex DNS settings
+1) Configure static subdomain, localhost? see hosts file.
+  * Create a new subdomain 'static' for your domainname and link it to your public_html directory.
+  * HTTPS? Make sure the static subdomain has a working certificate as well.
 2) Have a fresh database name, user and password ready create these new credentials if necessary.
 3) Upload /../security.php and public_html to your web server.
 4) After uploading browse to your website through following URI: https://www.domainname.ex/install (https:// in front is important if applicable)
@@ -97,11 +94,11 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
     #C:/Windows/system32/drivers/etc/hosts (Windows) or /etc/hosts (Linux)
     127.0.0.1 localhost
     127.0.0.1 static.localhost
+    127.0.0.1 www.localhost
     ## Optional! Test your own ficticious domain locally: (http://www.domainname.ex)
     #127.0.0.1 domainname.ex
     #127.0.0.1 static.domainname.ex
     #127.0.0.1 www.domainname.ex
-    #127.0.0.1 www.static.domainname.ex
 ```
 3) Ready to install on a local non-secure environment at http://localhost/install or http://www.domainname.ex/install
 4) Still nothing? Maybe [500 or above server error persists](#p-500-or-above-server-error-persists) could help.

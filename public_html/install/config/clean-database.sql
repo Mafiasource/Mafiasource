@@ -2782,6 +2782,7 @@ CREATE TABLE `user`  (
   `testamentHolder` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
   `avatar` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `profile` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
+  `privateID` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=disabled',
   `forumPosts` int NOT NULL DEFAULT 0,
   `statusID` smallint NOT NULL DEFAULT 7 COMMENT 'couple=status&factor=id&show=status_nl',
   `donatorID` smallint NOT NULL DEFAULT 0 COMMENT 'couple=donator&factor=id&show=donator_nl',
