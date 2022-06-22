@@ -135,7 +135,7 @@ class MemberDAO extends DBConfig
         }
     }
     
-    public function checkCookieHash($hash, $id)
+    public function verifyCookieHash($hash, $id)
     {
         if(!isset($_SESSION['cp-logon']['cookiehash']))
         {
@@ -205,7 +205,7 @@ class MemberDAO extends DBConfig
         }
     }
     
-    public function checkPassword($password)
+    public function verifyPassword($password)
     {
         if(isset($_SESSION['cp-logon']['MID']))
         {

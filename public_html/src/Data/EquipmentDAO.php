@@ -69,6 +69,7 @@ class EquipmentDAO extends DBConfig
             
             $list = array();
             global $userData;
+            global $lang;
             foreach($rows AS $row)
             {
                 if($userData->getDonatorID() >= 5)
@@ -103,6 +104,7 @@ class EquipmentDAO extends DBConfig
                 }
                 $equipment->setId($row['id']);
                 $equipment->setName($row['name']);
+                if($lang == "en" && $row['name'] == "Mes") $equipment->setName("Knife");
                 $equipment->setPicture($row['picture']);
                 $equipment->setPrice($row['price']);
                 $equipment->setInPossession(false);

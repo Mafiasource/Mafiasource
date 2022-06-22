@@ -11,14 +11,14 @@ require_once __DIR__ . '/.inc.head.php';
 $username = $route->requestGetParam(3);
 
 $userService = new UserService();
-if($userService->checkUsernameExists($username) !== TRUE)
+$profileData = $userService->getUserProfile($username);
+if(!is_object($profileData))
 {
     $route->headTo("not_found");
     exit(0);
 }
 else
 {
-    $profileData = $userService->getUserProfile($username);
     $friends = $userService->getFriendsBlock($username, TRUE);
     $residenceService = new ResidenceService();
     $residenceData = $residenceService->getResidenceDataByUserID($profileData->getId());

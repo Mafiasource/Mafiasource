@@ -1,8 +1,6 @@
-{# Beware! user.tag.macro only to be used in-game!
-   User tag is authenticated with a fake userData.getId
-   Authentication now used to remove profile URL on the outgame pages for non authenticated users
-   Auth version should be used for any (future) outgame page including atleast one user tag
-   Auth usage: see /src/Views/forum.twig (authUserTagManager) #}
+{# Beware! user.tag.macro only to be used in-game (always autheticated)
+   User tag macro is 'authenticated' with a fake userData.getId = 1 (always authenticated)
+   Authentication is only used to remove profile URL on outgame pages for non-authenticated users #}
 
 {% macro write(name, id, userID, username, donatorID, userClass, avatar='Avatarless', imgMobileHide='False', largeImg='False') %}
     {# setting fake userData with ID of admin shouldn't hurt inside macro #}

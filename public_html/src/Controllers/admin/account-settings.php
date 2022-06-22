@@ -21,7 +21,7 @@ if(isset($_POST) && !empty($_POST))
     }
     elseif(isset($_POST['submit-passchange']) && $security->checkToken($_POST['submit-passchange']))
     {
-        if(isset($_POST['password_old']) && $member->checkPassword($_POST['password_old']))
+        if(isset($_POST['password_old']) && $member->verifyPassword($_POST['password_old']))
         {
             if(isset($_POST['password']) && isset($_POST['password_repeat']) && $_POST['password'] === $_POST['password_repeat'])
             {

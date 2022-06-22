@@ -148,9 +148,11 @@ if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
     x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
     document.getElementsByTagName("body")[0].appendChild(x);
 }
-$('#writeMessage').keydown(function(event) {
+$(document).on("keydown", '#writeMessage', function(event) {
  if(event.keyCode === 13 && (!event.ctrlKey && !event.metaKey) && $(document).width() > 1074) {
+    $("input[name=sendMessage]").attr('type', "hidden"); // Hack jQuery to include input type, before submit
     $(this.form).submit();
+    $("input[name=sendMessage]").attr('type', "submit"); // Reset input type, after submit
     return false;
  }
  if(event.keyCode === 13 && (event.ctrlKey || event.metaKey) && $(document).width() > 1074) {
@@ -160,7 +162,7 @@ $('#writeMessage').keydown(function(event) {
  }
 });
 {% if receiver != '' %}
-    var interval = setInterval("checkMessages('{{ receiver }}')", 1500);
+    var interval = setInterval("checkMessages('{{ receiver }}')", 3000);
 {% endif %}
 function addSmileyToPersonalMessage(short)
 {
@@ -169,7 +171,6 @@ function addSmileyToPersonalMessage(short)
 	document.forms[frmPersonalMessage].elements[fldPersonalMessage].value += short + " ";
 	document.forms[frmPersonalMessage].elements[fldPersonalMessage].focus();
 }
-{#$(".open a.visitUser").click(function(e) { e.stopPropagation(); });#}
 $(document).on('click', '.open', function (e) {
     receiver = $(this).attr('data-receiver');
     checkMessages(receiver);
@@ -180,7 +181,7 @@ $(document).on('click', '.open', function (e) {
     {% if receiver != '' %}
         clearInterval(interval);
         reloadMessages(receiver);
-        interval = setInterval("checkMessages('"+receiver+"')", 1500);
+        interval = setInterval("checkMessages('"+receiver+"')", 3000);
     {% endif %}
 });
 $(document).ready(function(){

@@ -21,6 +21,7 @@ class UserService
     public $creditsChanceRand = 100; // rand 1, [100]
     public $creditsWon = 0; // Init
     public $tryAgainMessage = ""; // Init
+    public $unavailableUsernames = array("Guest", "Gast", "Webmaster", "Admin", "Moderator", "Helpdesk", "None", "Geen");
 
     public function __construct()
     {
@@ -51,20 +52,21 @@ class UserService
     static function is_name($i){
         if(!preg_match("#^[A-Za-z0-9-]{3,15}$#s", $i))
             return FALSE;
-        else
-            return TRUE;
+        
+        return TRUE;
     }
 
     static function is_email($em){
     	$ema = filter_var($em, FILTER_VALIDATE_EMAIL);
     	if(!$ema)
     		return FALSE;
-    	else
-    		return TRUE;
+    	
+   		return TRUE;
     }
 
     static function getIP()
     {
+        $ip = "Undefined";
         if (!empty($_SERVER['HTTP_CLIENT_IP']))
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
@@ -77,13 +79,10 @@ class UserService
     public function checkUsernameExists($username)
     {
         $nameSet = $this->data->checkUsername($username);
-    	if($nameSet->rowCount() == 0)
-    		$error = "404";
-
-        if(isset($error))
-            return $error;
-        else
-            return TRUE;
+        if($nameSet->rowCount() == 0 && $this->data->getIdByPrivateID($username) == FALSE)
+            return "404";
+        
+        return TRUE;
     }
 
     public function validateLogin($post, $captcha = false)
@@ -96,7 +95,7 @@ class UserService
         $pass = $post['password'];
         if(isset($post['captcha_code'])) $code     = (int)$post['captcha_code'];
         
-        $id = $this->data->checkLoginGetIdOnSuccess($username, $pass);
+        $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
         if($id == FALSE)
         {
             $error = $l['WRONG_USERNAME_OR_PASS'];
@@ -122,11 +121,8 @@ class UserService
             }
             return $error;
         }
-        else
-        {
-            $this->data->loginUser($username, $id);
-            return TRUE;
-        }
+        $this->data->loginUser($username, $id);
+        return TRUE;
     }
 
     public function validateRegister($post)
@@ -140,7 +136,7 @@ class UserService
     	$pass = $post['password'];
     	$pass_check = $post['password_check'];
     	$code = (int)$post['captcha_code'];
-        $soort = (int)$post['type'];
+        $profession = (int)$post['type'];
 
     	if(!self::is_name($username))
         {
@@ -158,7 +154,7 @@ class UserService
         {
     		$error = $l['PASSES_DONT_MATCH'];
     	}
-        if($soort < 1 || $soort > 6)
+        if($profession < 1 || $profession > 6)
         {
     		$error = $l['INVALID_PROFESSION'];
     	}
@@ -167,11 +163,9 @@ class UserService
             $error = $l['ALREADY_REGISTERED'];
         }
         
-    	$nameSet = $this->data->checkUsername($username);
+    	$nameExists = $this->checkUsernameExists($username);
     	$emailSet = $this->data->checkEmail($mailadres);
-        
-        $inUse = array("Guest", "Gast", "Webmaster", "Admin", "Moderator", "Helpdesk", "None", "Geen");
-    	if($nameSet->rowCount() == 1 || in_array(ucfirst(strtolower($username)), $inUse))
+    	if($nameExists === TRUE || in_array(ucfirst(strtolower($username)), $this->unavailableUsernames))
         {
     		$error = $l['USERNAME_TAKEN'];
     	}
@@ -182,7 +176,6 @@ class UserService
         
         $ipAddr = self::getIP();
         $ipValid = filter_var($ipAddr, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE);
-        
         if(!$ipValid)
         {
             $error = $langs['INVALID_SECURITY_TOKEN']; 
@@ -190,7 +183,6 @@ class UserService
         
         $isRg      = $this->data->checkIPRegistered($ipAddr);
     	$isRegged  = is_object($isRg) ? $isRg->rowCount() : 0;
-        
     	if($isRegged >= 1)
         {
     		$error = $l['ALREADY_REGISTERED'];
@@ -216,14 +208,11 @@ class UserService
         {
             $_SESSION['register']['username'] = $username;
             $_SESSION['register']['email'] = $mailadres;
-            $_SESSION['register']['type'] = $soort;
+            $_SESSION['register']['type'] = $profession;
             return $error;
         }
-        else
-        {
-            $this->createUser($username, $pass, $mailadres, $soort);
-            return TRUE;
-        }
+        $this->createUser($username, $pass, $mailadres, $profession);
+        return TRUE;
     }
     
     public function validateRestInPeace($post)
@@ -245,10 +234,9 @@ class UserService
     		$error = $l['INVALID_PROFESSION'];
     	}
         
-    	$nameSet = $username != $userData->getUsername() ? $this->data->checkUsername($username) : null;
+    	$nameExists = $username != $userData->getUsername() ? $this->checkUsernameExists($username) : null;
         
-        $inUse = array("Guest", "guest", "Gast", "gast", "Webmaster", "webmaster", "Admin", "admin", "Moderator", "moderator", "Helpdesk", "helpdesk", "None", "Geen");
-    	if((isset($nameSet) && $nameSet->rowCount() == 1) || in_array($username, $inUse))
+    	if($nameExists === TRUE  || in_array(ucfirst(strtolower($username)), $this->unavailableUsernames))
         {
     		$error = $l['USERNAME_TAKEN'];
     	}
@@ -263,11 +251,8 @@ class UserService
             $_SESSION['rip']['profession'] = $profession;
             return $error;
         }
-        else
-        {
-            $this->data->resetDeadUser($username, $profession);
-            return TRUE;
-        }
+        $this->data->resetDeadUser($username, $profession);
+        return TRUE;
     }
 
     public function validateRecoverPassword($post)
@@ -308,25 +293,22 @@ class UserService
         {
             return $error;
         }
-        else
+        $n = isset($nameSet) ? $nameSet->fetch() : null;
+        $e = isset($emailSet) ? $emailSet->fetch() : null;
+        if((isset($n['id']) && $this->data->isPasswordInRecovery($n['id'])) || (isset($e['id']) && $this->data->isPasswordInRecovery($e['id'])))
+            return $this->tryAgainMessage;
+        
+        if(isset($username) && isset($n))
         {
-            $n = isset($nameSet) ? $nameSet->fetch() : null;
-            $e = isset($emailSet) ? $emailSet->fetch() : null;
-            if((isset($n['id']) && $this->data->isPasswordInRecovery($n['id'])) || (isset($e['id']) && $this->data->isPasswordInRecovery($e['id'])))
-                return $this->tryAgainMessage;
-            
-            if(isset($username) && isset($n))
-            {
-                if($this->data->recoverPassword($n['id'], $username, $n['email']))
-                    return TRUE;
-            }
-            elseif(isset($email) && isset($e))
-            {
-                if($this->data->recoverPassword($e['id'], $e['username'], $email))
-                    return TRUE;
-            }
-            return FALSE;
+            if($this->data->recoverPassword($n['id'], $username, $n['email']))
+                return TRUE;
         }
+        elseif(isset($email) && isset($e))
+        {
+            if($this->data->recoverPassword($e['id'], $e['username'], $email))
+                return TRUE;
+        }
+        return FALSE;
     }
     
     public function validateNewRecoveredPassword($post, $recoverPasswordData)
@@ -349,7 +331,7 @@ class UserService
         }
         if(is_object($recoverPasswordData) && !$recoverPasswordData->getUsername())
         {
-            $error = "We were unable  to fetch your user data, please contact a Moderator for assistance.";
+            $error = "We were unable to fetch your user data, please contact a Moderator for assistance.";
         }
         if(!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code)
         {
@@ -364,11 +346,14 @@ class UserService
         {
             return $error;
         }
-        else
-        {
-            $this->data->changePasswordByUsername($pass, $recoverPasswordData->getUsername());
-            return TRUE;
-        }
+        $this->data->changePasswordByUsername($pass, $recoverPasswordData->getUsername());
+        return TRUE;
+    }
+    
+    public function recoverPasswordDeactivatePrivateID($uid = false)
+    {
+        $this->data->removeRecoverPasswordByUserID($uid);
+        return $this->data->deactivatePrivateID($uid);
     }
 
     public function validateEmailChange($post, $changeEmailData, $captcha = false)
@@ -381,7 +366,7 @@ class UserService
         $pass     = $post['password'];
         if(isset($post['captcha_code'])) $code     = (int)$post['captcha_code'];
         
-        if($username) $id = $this->data->checkLoginGetIdOnSuccess($username, $pass);
+        if($username) $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
         if(!isset($id) || (isset($id) && $id == FALSE))
         {
             $error = $l['WRONG_USERNAME_OR_PASS'];
@@ -403,11 +388,8 @@ class UserService
         {
             return $error;
         }
-        else
-        {
-            $this->data->changeEmail($changeEmailData);
-            return TRUE;
-        }
+        $this->data->changeEmail($changeEmailData);
+        return TRUE;
     }
 
     public function searchPlayer($post)
@@ -418,15 +400,13 @@ class UserService
         $l = $language->onlineToplistLangs();
         $keyword = $security->xssEscape($post['search']);
         
-        $searchData = false;
-        if(strlen($keyword))
-            $searchData = $this->data->getToplist(0, 25, $keyword);
+        $searchData = $this->data->searchPlayersByKeyword($keyword);
 
         if($security->checkToken($post['security-token']) ==  FALSE)
         {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
-        if($searchData == FALSE)
+        if($searchData == FALSE || strlen($keyword) < 3 || strlen($keyword) > 15)
         {
             $error = $l['NO_PLAYERS_FOUND'];
         }
@@ -435,11 +415,8 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
-        {
-            $successMsg = Routing::successMessage($l['USER_SEARCH_SUCCESSFUL']);
-            return array('msg' => $successMsg, 'data' => $searchData);
-        }
+        $successMsg = Routing::successMessage($l['USER_SEARCH_SUCCESSFUL']);
+        return array('msg' => $successMsg, 'data' => $searchData);
     }
 
     public function searchPlayerByRank($post)
@@ -448,25 +425,9 @@ class UserService
         global $language;
         global $langs;
         $l = $language->onlineToplistLangs();
-        
-        $whoresQry = "(SELECT u.`whoresStreet` + (SELECT COALESCE(SUM(`whores`), 0) FROM `rld_whore` WHERE `userID`=u.`id`))";
         $rank = $security->xssEscape($post['search-rank']);
-        $ranks = array(
-            'Scum' =>                "u.`rankpoints`<'5'",
-            'Pee Wee' =>             "u.`rankpoints`>='5' AND u.`rankpoints`<'12'",
-            'Thug' =>                "u.`rankpoints`>='12' AND u.`rankpoints`<'22'",
-       	    'Gangster' =>            "u.`rankpoints`>='22' AND u.`rankpoints`<'48'",
-       	    'Hitman' =>              "u.`rankpoints`>='48' AND u.`rankpoints`<'79'",
-       	    'Assassin' =>            "u.`rankpoints`>='79' AND u.`rankpoints`<'111'",
-            'Boss' =>                "u.`rankpoints`>='111' AND u.`rankpoints`<'161'",
-       	    'Godfather' =>           "u.`rankpoints`>='161' AND u.`rankpoints`<'261'",
-       	    'Legendary Godfather' => "u.`rankpoints`>='261' AND (u.`rankpoints`<'511' OR u.`kills`<'2' OR u.`honorPoints`<'200' OR $whoresQry<'2000')",
-            'Don' =>                 "u.`rankpoints`>='511' AND (u.`rankpoints`<'861' OR u.`kills`<'5' OR u.`honorPoints`<'500' OR $whoresQry<'5000') AND u.`kills`>='2' AND u.`honorPoints`>='200' AND $whoresQry>='2000'",
-       	    'Respectable Don' =>     "u.`rankpoints`>='861' AND (u.`rankpoints`<'1311' OR u.`kills`<'15' OR u.`honorPoints`<'1500' OR $whoresQry<'10000') AND u.`kills`>='5' AND u.`honorPoints`>='500' AND $whoresQry>='5000'",
-       	    'Legendary Don' =>       "u.`rankpoints`>='1311' AND u.`kills`>='15' AND u.`honorPoints`>='1500' AND $whoresQry>='10000'"
-        );
-        if(array_key_exists($rank, $ranks))
-            $searchData = $this->data->getToplist(0, 25, false, $ranks[$rank]);
+        
+        $searchData = $this->data->searchPlayersByRank($rank);
 
         if($security->checkToken($post['security-token']) ==  FALSE)
         {
@@ -481,11 +442,8 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
-        {
-            $successMsg = Routing::successMessage($l['USER_SEARCH_SUCCESSFUL']);
-            return array('msg' => $successMsg, 'data' => $searchData);
-        }
+        $successMsg = Routing::successMessage($l['USER_SEARCH_SUCCESSFUL']);
+        return array('msg' => $successMsg, 'data' => $searchData);
     }
 
     public function donateMoneyToUser($post)
@@ -531,31 +489,28 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
-        {
-            global $route;
-            $possession = new PossessionService();
-            $possessionId = 3; //Mafiasource bank | Possession logic
-            $possessId = $possession->getPossessIdByPossessionId($possessionId, $userData->getStateID()); // Possess table record id
-            $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
-            
-            $transactionPercent = 5;
-            if($receiverProfile->getDonatorID() == 1)
-                $transactionPercent = 4;
-            elseif($receiverProfile->getDonatorID() == 5)
-                $transactionPercent = 3;
-            
-            $this->data->donateMoneyToUser($post['amount'], $transactionPercent, $post['receiver'], $post['message'], $pData);
-            
-            $replaces = array(
-                array('part' => number_format($post['amount'], 0, '', ','), 'message' => $l['DONATE_MONEY_TO_USER'], 'pattern' => '/{amount}/'),
-                array('part' => $receiverProfile->getUsername(), 'message' => FALSE, 'pattern' => '/{username}/'),
-                array('part' => $transactionPercent, 'message' => FALSE, 'pattern' => '/{transactionPercent}/')
-            );
-            
-            $replacedMessage = $route->replaceMessageParts($replaces);
-            return Routing::successMessage($replacedMessage);
-        }
+        global $route;
+        $possession = new PossessionService();
+        $possessionId = 3; //Mafiasource bank | Possession logic
+        $possessId = $possession->getPossessIdByPossessionId($possessionId, $userData->getStateID()); // Possess table record id
+        $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
+        
+        $transactionPercent = 5;
+        if($receiverProfile->getDonatorID() == 1)
+            $transactionPercent = 4;
+        elseif($receiverProfile->getDonatorID() == 5)
+            $transactionPercent = 3;
+        
+        $this->data->donateMoneyToUser($post['amount'], $transactionPercent, $post['receiver'], $post['message'], $pData);
+        
+        $replaces = array(
+            array('part' => number_format($post['amount'], 0, '', ','), 'message' => $l['DONATE_MONEY_TO_USER'], 'pattern' => '/{amount}/'),
+            array('part' => $receiverProfile->getUsername(), 'message' => FALSE, 'pattern' => '/{username}/'),
+            array('part' => $transactionPercent, 'message' => FALSE, 'pattern' => '/{transactionPercent}/')
+        );
+        
+        $replacedMessage = $route->replaceMessageParts($replaces);
+        return Routing::successMessage($replacedMessage);
     }
 
     public function transferMoney($post)
@@ -592,22 +547,19 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
+        $this->data->transferMoney($post['amount'], $post['action']);
+        global $route;
+        global $lang;
+        $to = "contant";
+        if($lang == 'en') $to = "pocket";
+        if($post['action'] == 'putMoney')
         {
-            $this->data->transferMoney($post['amount'], $post['action']);
-            global $route;
-            global $lang;
-            $to = "contant";
-            if($lang == 'en') $to = "pocket";
-            if($post['action'] == 'putMoney')
-            {
-                $to = "bank";
-                if($lang == 'en') $to .= " account";
-            }
-            $replacedMessage = $route->replaceMessagePart(number_format($post['amount'], 0, '', ','), $l['TRANSFER_MONEY_SUCCESS'], '/{amount}/');
-            $replacedMessage = $route->replaceMessagePart($to, $replacedMessage, '/{action}/');
-            return Routing::successMessage($replacedMessage);
+            $to = "bank";
+            if($lang == 'en') $to .= " account";
         }
+        $replacedMessage = $route->replaceMessagePart(number_format($post['amount'], 0, '', ','), $l['TRANSFER_MONEY_SUCCESS'], '/{amount}/');
+        $replacedMessage = $route->replaceMessagePart($to, $replacedMessage, '/{action}/');
+        return Routing::successMessage($replacedMessage);
     }
 
     public function transferSwissMoney($post)
@@ -648,32 +600,30 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
+        global $userData;
+        $possession = new PossessionService();
+        $possessionId = 3; //Mafiasource bank | Possession logic
+        $possessId = $possession->getPossessIdByPossessionId($possessionId, $userData->getStateID()); // Possess table record id
+        $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
+        
+        $this->data->transferSwissMoney($post['amount'], $post['action'], $pData);
+        global $route;
+        global $lang;
+        $to = "zwitserse bank";
+        if($lang == 'en') $to = "swiss bank";
+        if($post['action'] == 'getMoney')
         {
-            global $userData;
-            $possession = new PossessionService();
-            $possessionId = 3; //Mafiasource bank | Possession logic
-            $possessId = $possession->getPossessIdByPossessionId($possessionId, $userData->getStateID()); // Possess table record id
-            $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
-            
-            $this->data->transferSwissMoney($post['amount'], $post['action'], $pData);
-            global $route;
-            global $lang;
-            $to = "zwitserse bank";
-            if($lang == 'en') $to = "swiss bank";
-            if($post['action'] == 'getMoney')
-            {
-                $to = "bank";
-                if($lang == 'en') $to .= " account";
-            }
-            $replacedMessage = $route->replaceMessagePart(number_format($post['amount'], 0, '', ','), $l['TRANSFER_MONEY_SUCCESS'], '/{amount}/');
-            $replacedMessage = $route->replaceMessagePart($to, $replacedMessage, '/{action}/');
-            return Routing::successMessage($replacedMessage);
+            $to = "bank";
+            if($lang == 'en') $to .= " account";
         }
+        $replacedMessage = $route->replaceMessagePart(number_format($post['amount'], 0, '', ','), $l['TRANSFER_MONEY_SUCCESS'], '/{amount}/');
+        $replacedMessage = $route->replaceMessagePart($to, $replacedMessage, '/{action}/');
+        return Routing::successMessage($replacedMessage);
     }
 
-    public function changeAccountSettings($post,$files)
+    public function changeAccountSettings($post, $files)
     {
+        global $route;
         global $security;
         global $language;
         global $langs;
@@ -687,11 +637,11 @@ class UserService
         {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
-        elseif(isset($post['email-change']))
+        elseif(isset($post['email-change']) && isset($post['email']))
         {
             $emailSet = $this->data->checkEmail($post['email']);
             $check = $emailSet->fetch();
-            if($this->data->checkValidOwner() != TRUE)
+            if($this->data->verifyValidOwner() === FALSE)
             {
                 $error = $l ['EMAIL_UNKNOWN_IP_DETECTED'];
             }
@@ -707,6 +657,10 @@ class UserService
             {
         		$error = $r['EMAIL_TAKEN'];
         	}
+            elseif($this->data->isPrivateIDActive())
+            {
+                $error = $l['CHANGE_EMAIL_DEACTIVATE_PRIVATEID'];
+            }
             elseif($this->data->isEmailInChange($userData->getId()))
             {
                 $error = $this->tryAgainMessage;
@@ -723,15 +677,14 @@ class UserService
                 {
                     if($this->data->setNewEmailRequest($post['email']))
                     {
-                        global $route;
                         $coveredEmail = $this->getCoveredEmailByUsername($userData->getUsername());
-                        $replacedMessage = $route->replaceMessagePart($coveredEmail, $l['EMAIL_CHANGE_NEED_TO_VERIFY'], '/{coveredEmail}/');
+                        $replacedMessage = $route->replaceMessagePart($coveredEmail, $l['CHANGE_EMAIL_NEED_TO_VERIFY'], '/{coveredEmail}/');
                         $success = $replacedMessage;
                     }
                 }
             }
         }
-        elseif(isset($post['testament-change']))
+        elseif(isset($post['testament-change']) && isset($post['testament']))
         {
             $check = $this->data->checkUsername($post['testament'])->fetch();
             $fetchID = isset($check['id']) ? $check['id'] : null;
@@ -747,7 +700,6 @@ class UserService
                     {
                         if($this->data->changeTestament($post['testament']))
                         {
-                            global $route;
                             $replacedMessage = $route->replaceMessagePart($post['testament'], $l['CHANGE_TESTAMENT_SUCCESS'], '/{username}/');
                             $success = $replacedMessage;
                         }
@@ -792,10 +744,8 @@ class UserService
                 }
             }
         }
-        elseif(isset($post['profile-save']))
+        elseif(isset($post['profile-save']) && isset($post['profile']))
         {
-            global $route;
-            global $userData;
             $maxlength = 1000;
             if($userData->getDonatorID() == 1)
                 $maxlength = 1500;
@@ -814,18 +764,17 @@ class UserService
                 $success = $l['UPDATE_PROFILE_SUCCESS'];
             }
         }
-        elseif(isset($post['password-change']))
+        elseif(isset($post['password-change']) && isset($post['old_pass']) && isset($post['new_pass']) && isset($post['new_pass_confirm']))
         {
-            global $userData;
-            if($this->data->checkValidOwner() != TRUE)
+            if($this->data->verifyValidOwner() === FALSE)
             {
-                $error = $l ['PASSWORD_UNKNOWN_IP_DETECTED'];
+                $error = $l['PASSWORD_UNKNOWN_IP_DETECTED'];
             }
             elseif($post['new_pass'] !== $post['new_pass_confirm'])
             {
                 $error = $l['PASSWORDS_DONT_MATCH'];
             }
-            elseif($this->data->checkPassword($post['old_pass']) == FALSE)
+            elseif($this->data->verifyPassword($post['old_pass']) == FALSE)
             {
                 $error = $l['OLD_PASSWORD_INCORRECT'];
             }
@@ -839,12 +788,64 @@ class UserService
                 $success = $l['PASSWORD_CHANGE_SUCCESS'];
             }
         }
+        elseif( isset($post['activate-privateid']) && isset($post['privateid_pass']) && isset($post['privateid-grade']) &&
+            $post['privateid-grade'] >= 1 && $post['privateid-grade'] <= 3)
+        {
+            if($this->data->verifyValidOwner() === FALSE)
+            {
+                $error = $l['PRIVATEID_UNKNOWN_IP_DETECTED'];
+            }
+            elseif($this->data->verifyPassword($post['privateid_pass']) == FALSE)
+            {
+                $error = $l['OLD_PASSWORD_INCORRECT'];
+            }
+            elseif($this->data->isPrivateIDActive() === TRUE)
+            {
+                $error = $l['PRIVATEID_ALREADY_ACTIVE'];
+            }
+            else
+            {
+                global $twig;
+                $pid = $this->data->generatePrivateID((int)$post['privateid-grade']);
+                $success = $route->replaceMessagePart($pid, $l['ACTIVATE_PRIVATEID_SUCCESS'], '/{pid}/');
+                $success .= $twig->render("/src/Views/game/js/privateid.toggle.twig", array(
+                    'privateID' => "active",
+                    'deactivate' => $l['DEACTIVATE']
+                ));
+            }
+        }
+        elseif(isset($post['deactivate-privateid']) && isset($post['privateid']))
+        {
+            if($this->data->verifyValidOwner() === FALSE)
+            {
+                $error = $l['PRIVATEID_UNKNOWN_IP_DETECTED'];
+            }
+            elseif($this->data->verifyPrivateID($post['privateid']) === FALSE)
+            {
+                $error = $l['PRIVATEID_INCORRECT'];
+            }
+            elseif($this->data->isPrivateIDActive() === FALSE)
+            {
+                $error = $l['PRIVATEID_NOT_ACTIVE'];
+            }
+            else
+            {
+                global $twig;
+                $pid = $this->data->deactivatePrivateID();
+                $success = $l['DEACTIVATE_PRIVATEID_SUCCESS'];
+                $success .= $twig->render("/src/Views/game/js/privateid.toggle.twig", array(
+                    'privateID' => "inactive",
+                    'deactivate' => $l['DEACTIVATE'] . " (" . $l['NOT_ACTIVE'] . ")",
+                    'langs' => $l
+                ));
+            }
+        }
 
         if(isset($error))
         {
             return Routing::errorMessage($error);
         }
-        elseif(isset($success))
+        if(isset($success))
         {
             return Routing::successMessage($success);
         }
@@ -918,16 +919,13 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
-        {
-            global $route;
-            global $lang;
-            $this->data->exchangeHonorPoints($this->getExchangeListHP($lang)[$post['exchange-amount']]);
-            $replacedMessage = $route->replaceMessagePart(number_format($post['exchange-amount'], 0, '', ','), $l['EXCHANGE_HONOR_POINTS_SUCCESS'], '/{exchangeAmount}/');
-            $replacedMessage = $route->replaceMessagePart(number_format($this->getExchangeListHP($lang)[$post['exchange-amount']]['val'], 0, '', ','), $replacedMessage, '/{exchangedValue}/');
-            $replacedMessage = $route->replaceMessagePart($this->getExchangeListHP($lang)[$post['exchange-amount']]['what'], $replacedMessage, '/{exchangedWhat}/');
-            return Routing::successMessage($replacedMessage);
-        }
+        global $route;
+        global $lang;
+        $this->data->exchangeHonorPoints($this->getExchangeListHP($lang)[$post['exchange-amount']]);
+        $replacedMessage = $route->replaceMessagePart(number_format($post['exchange-amount'], 0, '', ','), $l['EXCHANGE_HONOR_POINTS_SUCCESS'], '/{exchangeAmount}/');
+        $replacedMessage = $route->replaceMessagePart(number_format($this->getExchangeListHP($lang)[$post['exchange-amount']]['val'], 0, '', ','), $replacedMessage, '/{exchangedValue}/');
+        $replacedMessage = $route->replaceMessagePart($this->getExchangeListHP($lang)[$post['exchange-amount']]['what'], $replacedMessage, '/{exchangedWhat}/');
+        return Routing::successMessage($replacedMessage);
     }
 
     public function sendHonorPoints($post)
@@ -969,17 +967,14 @@ class UserService
         if(isset($error))
         {
             return Routing::errorMessage($error);
-        }
-        else
-        {
-            $username = $receiverProfile->getUsername();
-            $message = $security->xssEscape($post['message']);
-            global $route;
-            $this->data->sendHonorPointsTo($receiverID, $post['amount'], $message);
-            $replacedMessage = $route->replaceMessagePart(number_format($post['amount'], 0, '', ','), $l['SEND_HONOR_POINTS_SUCCESS'], '/{amount}/');
-            $replacedMessage = $route->replaceMessagePart($username, $replacedMessage, '/{username}/');
-            return Routing::successMessage($replacedMessage);
-        }
+    }
+        $username = $receiverProfile->getUsername();
+        $message = $security->xssEscape($post['message']);
+        global $route;
+        $this->data->sendHonorPointsTo($receiverID, $post['amount'], $message);
+        $replacedMessage = $route->replaceMessagePart(number_format($post['amount'], 0, '', ','), $l['SEND_HONOR_POINTS_SUCCESS'], '/{amount}/');
+        $replacedMessage = $route->replaceMessagePart($username, $replacedMessage, '/{username}/');
+        return Routing::successMessage($replacedMessage);
     }
 
     public function healMember($post)
@@ -1032,24 +1027,21 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
-        {
-            global $route;
-            $possession = new PossessionService();
-            $possessionId = 7; // Hospital | Possession logic
-            $possessId = $possession->getPossessIdByPossessionId($possessionId, $userData->getStateID(), $userData->getCityID()); // Possess table record id
-            $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
-            
-            $this->data->healMember($costs, $memberProfile, $pData);
-            
-            $replaces = array(
-                array('part' => $memberProfile->getUsername(), 'message' => $l['HEAL_MEMBER_SUCCESS'], 'pattern' => '/{member}/'),
-                array('part' => number_format($costs, 0, '', ','), 'message' => FALSE, 'pattern' => '/{costs}/'),
-            );
-            
-            $replacedMessage = $route->replaceMessageParts($replaces);
-            return Routing::successMessage($replacedMessage);
-        }
+        global $route;
+        $possession = new PossessionService();
+        $possessionId = 7; // Hospital | Possession logic
+        $possessId = $possession->getPossessIdByPossessionId($possessionId, $userData->getStateID(), $userData->getCityID()); // Possess table record id
+        $pData = $possession->getPossessionByPossessId($possessId); // Possession table data + possess table data
+        
+        $this->data->healMember($costs, $memberProfile, $pData);
+        
+        $replaces = array(
+            array('part' => $memberProfile->getUsername(), 'message' => $l['HEAL_MEMBER_SUCCESS'], 'pattern' => '/{member}/'),
+            array('part' => number_format($costs, 0, '', ','), 'message' => FALSE, 'pattern' => '/{costs}/'),
+        );
+        
+        $replacedMessage = $route->replaceMessageParts($replaces);
+        return Routing::successMessage($replacedMessage);
     }
 
     public function getGymTrainingTimesByPercent($gymTraining)
@@ -1096,8 +1088,8 @@ class UserService
             return array('seconds' => array(1 => '85', '230', '675', '1505'), 'minutes' => array(1 => '1:25', '3:50', '11:15', '25:05'));
         elseif($gymTraining >= 100)
             return array('seconds' => array(1 => '80', '220', '660', '1480'), 'minutes' => array(1 => '1:20', '3:40', '11', '24:40'));
-        else
-            return FALSE;
+        
+        return FALSE;
     }
     
     public function getGymStatsGainedByTraining($training)
@@ -1121,8 +1113,8 @@ class UserService
         }
         if(isset($gymStats))
             return $gymStats;
-        else
-            return FALSE;
+        
+        return FALSE;
     }
 
     public function gymTraining($post)
@@ -1185,53 +1177,50 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
+        global $route;
+        $stats = $this->getGymStatsGainedByTraining($training);
+        
+        $dailyChallengeService = new DailyChallengeService();
+        $publicMissionService = new PublicMissionService();
+        if($stats['power'] > 0)
         {
-            global $route;
-            $stats = $this->getGymStatsGainedByTraining($training);
-            
-            $dailyChallengeService = new DailyChallengeService();
-            $publicMissionService = new PublicMissionService();
-            if($stats['power'] > 0)
-            {
-                $dailyChallengeService->addToDailiesIfActive(6, $stats['power']);
-                $publicMissionService->addToPublicMisionIfActive(7, $stats['power']);
-            }
-            if($stats['cardio'] > 0)
-            {
-                $dailyChallengeService->addToDailiesIfActive(9, $stats['cardio']);
-                $publicMissionService->addToPublicMisionIfActive(16, $stats['cardio']);
-            }
-            
-            $this->data->gymTraining($stats, $waitingTime);
-            
-            if($stats['power'] > 0 && $stats['cardio'] > 0)
-            {
-                $replaces = array(
-                    array('part' => $type, 'message' => $l['TRAIN_GYM_BOTH_STATS_SUCCESS'], 'pattern' => '/{type}/'),
-                    array('part' => $stats['power'], 'message' => FALSE, 'pattern' => '/{power}/'),
-                    array('part' => $stats['cardio'], 'message' => FALSE, 'pattern' => '/{cardio}/')
-                );
-            }
-            elseif($stats['power'] > 0 && $stats['cardio'] == 0)
-            {
-                $replaces = array(
-                    array('part' => $type, 'message' => $l['TRAIN_GYM_POWER_SUCCESS'], 'pattern' => '/{type}/'),
-                    array('part' => $stats['power'], 'message' => FALSE, 'pattern' => '/{power}/'),
-                );
-            }
-            elseif($stats['power'] == 0 && $stats['cardio'] > 0)
-            {
-                $replaces = array(
-                    array('part' => $type, 'message' => $l['TRAIN_GYM_CARDIO_SUCCESS'], 'pattern' => '/{type}/'),
-                    array('part' => $stats['cardio'], 'message' => FALSE, 'pattern' => '/{cardio}/'),
-                );
-            }
-            
-            $replacedMessage = $route->replaceMessageParts($replaces);
-            
-            return Routing::successMessage($replacedMessage);            
+            $dailyChallengeService->addToDailiesIfActive(6, $stats['power']);
+            $publicMissionService->addToPublicMisionIfActive(7, $stats['power']);
         }
+        if($stats['cardio'] > 0)
+        {
+            $dailyChallengeService->addToDailiesIfActive(9, $stats['cardio']);
+            $publicMissionService->addToPublicMisionIfActive(16, $stats['cardio']);
+        }
+        
+        $this->data->gymTraining($stats, $waitingTime);
+        
+        if($stats['power'] > 0 && $stats['cardio'] > 0)
+        {
+            $replaces = array(
+                array('part' => $type, 'message' => $l['TRAIN_GYM_BOTH_STATS_SUCCESS'], 'pattern' => '/{type}/'),
+                array('part' => $stats['power'], 'message' => FALSE, 'pattern' => '/{power}/'),
+                array('part' => $stats['cardio'], 'message' => FALSE, 'pattern' => '/{cardio}/')
+            );
+        }
+        elseif($stats['power'] > 0 && $stats['cardio'] == 0)
+        {
+            $replaces = array(
+                array('part' => $type, 'message' => $l['TRAIN_GYM_POWER_SUCCESS'], 'pattern' => '/{type}/'),
+                array('part' => $stats['power'], 'message' => FALSE, 'pattern' => '/{power}/'),
+            );
+        }
+        elseif($stats['power'] == 0 && $stats['cardio'] > 0)
+        {
+            $replaces = array(
+                array('part' => $type, 'message' => $l['TRAIN_GYM_CARDIO_SUCCESS'], 'pattern' => '/{type}/'),
+                array('part' => $stats['cardio'], 'message' => FALSE, 'pattern' => '/{cardio}/'),
+            );
+        }
+        
+        $replacedMessage = $route->replaceMessageParts($replaces);
+        
+        return Routing::successMessage($replacedMessage);
     }
     
     public function gymChangeFastAction($post)
@@ -1255,13 +1244,10 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
-        {
-            global $route;
-            $this->data->gymChangeFastAction($id);
-            $replacedMessage = $route->replaceMessagePart($fastAction, $l['GYM_FAST_ACTION_CHANGE_SUCCESS'], '/{type}/');
-            return Routing::successMessage($replacedMessage);            
-        }
+        global $route;
+        $this->data->gymChangeFastAction($id);
+        $replacedMessage = $route->replaceMessagePart($fastAction, $l['GYM_FAST_ACTION_CHANGE_SUCCESS'], '/{type}/');
+        return Routing::successMessage($replacedMessage);
     }
 
     public function handleFriendsBlock($post)
@@ -1325,24 +1311,21 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
+        if(isset($post['invite']))
         {
-            if(isset($post['invite']))
-            {
-                $this->data->inviteFriend($userID);
-                $replacedMessage = $route->replaceMessagePart($username, $l['INVITE_FRIEND_SUCCESS'], '/{user}/');
-                
-                $notification = new NotificationService();
-                $params = "user=".$userData->getUsername();
-                $notification->sendNotification($this->data->getIdByUsername($username), 'USER_INVITED_FRIEND', $params);
-            }
-            elseif(isset($post['block']))
-            {
-                $this->data->blockUser($userID);
-                $replacedMessage = $route->replaceMessagePart($username, $l['BLOCK_USER_SUCCESS'], '/{user}/');
-            }
-            return Routing::successMessage($replacedMessage);
+            $this->data->inviteFriend($userID);
+            $replacedMessage = $route->replaceMessagePart($username, $l['INVITE_FRIEND_SUCCESS'], '/{user}/');
+            
+            $notification = new NotificationService();
+            $params = "user=".$userData->getUsername();
+            $notification->sendNotification($this->data->getIdByUsername($username), 'USER_INVITED_FRIEND', $params);
         }
+        elseif(isset($post['block']))
+        {
+            $this->data->blockUser($userID);
+            $replacedMessage = $route->replaceMessagePart($username, $l['BLOCK_USER_SUCCESS'], '/{user}/');
+        }
+        return Routing::successMessage($replacedMessage);
     }
 
     public function interactFriendsList($post)
@@ -1365,18 +1348,14 @@ class UserService
         }
 
         $action = FALSE;
+        $allowedActions = array("accept", "deny", "delete", "delete-confirm", "delete-block");
         if(isset($post) && !empty($post))
         {
-            if(isset($post['accept']))
-                $action = "accept";
-            elseif(isset($post['deny']))
-                $action = "deny";
-            elseif(isset($post['delete']))
-                $action = "delete";
-            elseif(isset($post['delete-confirm']))
-                $action = "delete-confirm";
-            elseif(isset($post['delete-block']))
-                $action = "delete-block";
+            foreach($allowedActions AS $act)
+            {
+                if(isset($post[$act]))
+                    $action = $act;
+            }
         }
 
         if($security->checkToken($post['security-token']) == FALSE)
@@ -1409,46 +1388,43 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
+        switch($action)
         {
-            switch($action)
-            {
-                case 'accept':
-                    $this->data->acceptFriend($friendID);
-                    $replacedMessage = $route->replaceMessagePart($username, $l['FRIEND_REQUEST_ACCEPTED'], '/{username}/');
-                    
-                    $notification = new NotificationService();
-                    $params = "user=".$userData->getUsername();
-                    $notification->sendNotification($this->data->getIdByUsername($username), 'FRIEND_REQUEST_ACCEPTED', $params);
+            case 'accept':
+                $this->data->acceptFriend($friendID);
+                $replacedMessage = $route->replaceMessagePart($username, $l['FRIEND_REQUEST_ACCEPTED'], '/{username}/');
+                
+                $notification = new NotificationService();
+                $params = "user=".$userData->getUsername();
+                $notification->sendNotification($this->data->getIdByUsername($username), 'FRIEND_REQUEST_ACCEPTED', $params);
 
-                    return Routing::successMessage($replacedMessage);
-                    break;
-                case 'deny':
-                    $this->data->denyFriend($friendID);
-                    $replacedMessage = $route->replaceMessagePart($username, $l['FRIEND_REQUEST_DENIED'], '/{username}/');
-                    
-                    $notification = new NotificationService();
-                    $params = "user=".$userData->getUsername();
-                    $notification->sendNotification($this->data->getIdByUsername($username), 'FRIEND_REQUEST_DENIED', $params);
+                return Routing::successMessage($replacedMessage);
+                break;
+            case 'deny':
+                $this->data->denyFriend($friendID);
+                $replacedMessage = $route->replaceMessagePart($username, $l['FRIEND_REQUEST_DENIED'], '/{username}/');
+                
+                $notification = new NotificationService();
+                $params = "user=".$userData->getUsername();
+                $notification->sendNotification($this->data->getIdByUsername($username), 'FRIEND_REQUEST_DENIED', $params);
 
-                    return Routing::successMessage($replacedMessage);
-                    break;
-                case 'delete':
-                    $replacedMessage = $route->replaceMessagePart($username, $l['DELETE_FRIEND_CONFIRM'], '/{username}/');
-                    $replacedMessage = $route->replaceMessagePart($username, $replacedMessage, '/{fid}/');
-                    $replacedMessage = $route->replaceMessagePart($security->getToken(), $replacedMessage, '/{securityToken}/');
-                    return Routing::errorMessage($replacedMessage);
-                    break;
-                case 'delete-confirm':
-                    $this->data->deleteFriend($friendID);
-                    $replacedMessage = $route->replaceMessagePart($username, $l['FRIEND_DELETED'], '/{username}/');
-                    return Routing::successMessage($replacedMessage);
-                    break;
-                case 'delete-block':
-                    $this->data->deleteBlock($userID);
-                    $replacedMessage = $route->replaceMessagePart($username, $l['BLOCK_DELETED'], '/{username}/');
-                    return Routing::successMessage($replacedMessage);
-            }
+                return Routing::successMessage($replacedMessage);
+                break;
+            case 'delete':
+                $replacedMessage = $route->replaceMessagePart($username, $l['DELETE_FRIEND_CONFIRM'], '/{username}/');
+                $replacedMessage = $route->replaceMessagePart($username, $replacedMessage, '/{fid}/');
+                $replacedMessage = $route->replaceMessagePart($security->getToken(), $replacedMessage, '/{securityToken}/');
+                return Routing::errorMessage($replacedMessage);
+                break;
+            case 'delete-confirm':
+                $this->data->deleteFriend($friendID);
+                $replacedMessage = $route->replaceMessagePart($username, $l['FRIEND_DELETED'], '/{username}/');
+                return Routing::successMessage($replacedMessage);
+                break;
+            case 'delete-block':
+                $this->data->deleteBlock($userID);
+                $replacedMessage = $route->replaceMessagePart($username, $l['BLOCK_DELETED'], '/{username}/');
+                return Routing::successMessage($replacedMessage);
         }
     }
     
@@ -1595,38 +1571,35 @@ class UserService
         {
             return Routing::errorMessage($error);
         }
-        else
+        global $route;
+        $luck = $security->randInt(1, 1000000);
+        $chanceList = $this->getLuckyboxChanceList();
+        $previousChance = 0;
+        foreach($chanceList AS $prize)
         {
-            global $route;
-            $luck = $security->randInt(1, 1000000);
-            $chanceList = $this->getLuckyboxChanceList();
-            $previousChance = 0;
-            foreach($chanceList AS $prize)
-            {
-                if($luck > $previousChance && $luck <= ($previousChance + $prize['chanceInAMillion']))
-                    $prizeWon = $prize;
-                $previousChance += $prize['chanceInAMillion'];
-            }
-            unset($previousChance);
-            // Is prize a random between 2 values?
-            if(is_array($prizeWon['amount']))
-                $prizeWon['amount'] = $security->randInt($prizeWon['amount'][0], $prizeWon['amount'][1]);
-            
-            $csshSymbol = ""; // Init empty
-            if($prizeWon['prizeDb'] == 'bank')
-                $csshSymbol = "$&#8203;"; // User won money, set to show cash symbol
-            
-            $this->data->openedLuckybox($prizeWon);
-            
-            $replaces = array(
-                array('part' => $csshSymbol.number_format($prizeWon['amount'], 0, '', ','), 'message' => $l['OPEN_BOX_SUCCESS'], 'pattern' => '/{amount}/'),
-                array('part' => strtolower($prizeWon['prize']), 'message' => FALSE, 'pattern' => '/{prize}/'),
-            );
-            $replacedMessage = $route->replaceMessageParts($replaces);
-            
-            $_SESSION['luckybox']['opened'] = time();
-            return Routing::successMessage($replacedMessage);
+            if($luck > $previousChance && $luck <= ($previousChance + $prize['chanceInAMillion']))
+                $prizeWon = $prize;
+            $previousChance += $prize['chanceInAMillion'];
         }
+        unset($previousChance);
+        // Is prize a random between 2 values?
+        if(is_array($prizeWon['amount']))
+            $prizeWon['amount'] = $security->randInt($prizeWon['amount'][0], $prizeWon['amount'][1]);
+        
+        $csshSymbol = ""; // Init empty
+        if($prizeWon['prizeDb'] == 'bank')
+            $csshSymbol = "$&#8203;"; // User won money, set to show cash symbol
+        
+        $this->data->openedLuckybox($prizeWon);
+        
+        $replaces = array(
+            array('part' => $csshSymbol.number_format($prizeWon['amount'], 0, '', ','), 'message' => $l['OPEN_BOX_SUCCESS'], 'pattern' => '/{amount}/'),
+            array('part' => strtolower($prizeWon['prize']), 'message' => FALSE, 'pattern' => '/{prize}/'),
+        );
+        $replacedMessage = $route->replaceMessageParts($replaces);
+        
+        $_SESSION['luckybox']['opened'] = time();
+        return Routing::successMessage($replacedMessage);
     }
     
     public function searchCredits($action)
@@ -1674,10 +1647,7 @@ class UserService
         {
             return $this->data->getOnlineFamMembers();
         }
-        else
-        {
-            return FALSE;
-        }
+        return FALSE;
     }
 
     public function getOnlineTeamMembers()
@@ -1763,5 +1733,10 @@ class UserService
     public function addCreditsFound($credits)
     {
         return $this->data->addCreditsFound($credits);
+    }
+    
+    public function isPrivateIDActive()
+    {
+        return $this->data->isPrivateIDActive();
     }
 }

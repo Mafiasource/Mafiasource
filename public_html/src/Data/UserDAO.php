@@ -24,6 +24,7 @@ class UserDAO extends DBConfig
     private $lang = "en";
     private $dateFormat = "%d-%m-%Y %H:%i:%s"; // SQL Format
     private $phpDateFormat = "d-m-Y H:i:s";
+    private $privateSaltsFile = "/app/Resources/privateSalts/salts.txt";
     
     public function __construct()
     {
@@ -91,9 +92,11 @@ class UserDAO extends DBConfig
         if($statement->rowCount()) return $statement;
     }
 
-    public function checkLoginGetIdOnSuccess($username, $pass)
+    public function verifyLoginGetIdOnSuccess($username, $pass)
     {
-        $id = $this->getIdByUsername($username);
+        $id = $this->getIdByPrivateID($username);
+        $id = is_numeric($id) && $id > 0 ? (int)$id : $this->getIdByUsername($username);
+        
         $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/".$id.".txt" : null;
         if($id !== FALSE && isset($saltFile) && file_exists($saltFile))
         {
@@ -103,13 +106,22 @@ class UserDAO extends DBConfig
             
             $hash = hash('sha256', $salt . hash('sha256', $pass));
             
-            $qry = "SELECT `id`, `email`, `password` FROM `user` WHERE `username` = :username AND `password` = :password  AND `active`='1' AND `deleted`='0' LIMIT 1";
-            $prms = array(':username' => $username, ':password' => $hash);
-            $statement = $this->dbh->prepare($qry);
-            $statement->execute($prms);
-            $row = $statement->fetch();
+            if($this->verifyPrivateID($username, $pass, $id) == TRUE)
+            {
+                $qry = "SELECT `id`, `username`, `email`, `password` FROM `user` WHERE `id`= :uid AND `password`= :password AND `active`='1' AND `deleted`='0' LIMIT 1";
+                $prms = array(':uid' => $id, ':password' => $hash);
+            }
+            elseif(!$this->isPrivateIDActive($id))
+            {
+                $qry = "SELECT `id`, `email`, `password` FROM `user` WHERE `username`= :username AND `password`= :password AND `active`='1' AND `deleted`='0' LIMIT 1";
+                $prms = array(':username' => $username, ':password' => $hash);
+            }
+            $row = isset($qry) ? $this->con->getDataSR($qry, $prms) : null;
             if(isset($row['id']) && $row['id'] == $id)
             {
+                if(isset($row['username']) && $row['username'] != "")
+                    $username = $row['username']; // Dealing with privateID $username, replace with registered username for temp. branch below:
+                
                 // 25% Chance on successful login at generating a new password hash for the same password
                 // Immediately re-fetch details for remember cookie
                 // Branch will logout user on all previously logged in devices
@@ -145,33 +157,32 @@ class UserDAO extends DBConfig
     }
     
     public function loginUser($username, $id)
-    { // Beware! Only use loginUser function after correct validation! ie. checkLogin($username, $pass)
+    { // Beware! Only use loginUser function after correct validation! ie. verifyLoginGetIdOnSuccess($username, $pass)
         $tries = 0;
         if(isset($_SESSION['login-tries'])) $tries = $_SESSION['login-tries'];
         $_SESSION['UID'] = $id;
         global $route;
-        if(!isset($_COOKIE['username'])) setcookie('username', $username, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
+        if(!isset($_COOKIE['username']) && !$this->isPrivateIDActive()) setcookie('username', $username, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
         $statement = $this->dbh->prepare("INSERT INTO `login` (`userID`,`ip`,`date`,`time`,`tries`) VALUES (:id, :ip, :date, :time, :tries)");
-        $statement->execute(array(':id' => $_SESSION['UID'], ':ip' => $_SERVER['REMOTE_ADDR'], ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => $tries));
+        $statement->execute(array(':id' => $_SESSION['UID'], ':ip' => UserService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => $tries));
         return TRUE;
     }
 
-    public function checkValidOwner($id = false, $ip = false)
+    public function verifyValidOwner($id = false, $ip = false)
     {
         if(isset($_SESSION['UID']))
         {
-            if(!isset($id))
-            {
-                $id = $_SESSION['UID'];
-                $ip = $_SERVER['REMOTE_ADDR'];
-            }
-            $statement = $this->dbh->prepare("SELECT COUNT(*) FROM `login` WHERE `ip`= :ip AND `date` < :datePast AND `userID`= :uid ");
-            $statement->execute(array(':ip' => $ip, ':datePast' => date('Y-m-d H:i:s', strtotime('-24 years')), ':uid' => $id));
-            if($statement->rowCount() >= 1)
+            $id = $id ? $id : $_SESSION['UID'];
+            $ip = $ip ? $ip : UserService::getIP();
+            
+            $row = $this->con->getDataSR("
+                SELECT `id` FROM `login` WHERE `ip`= :ip AND `date`< :datePast AND `userID`= :uid ORDER BY `id` DESC LIMIT 1
+            ", array(':ip' => $ip, ':datePast' =>date('Y-m-d H:i:s', strtotime('-24 hours')), ':uid' => $id));
+            
+            if(isset($row['id']) && $row['id'] > 0)
                 return TRUE;
-            else
-                return FALSE;
         }
+        return FALSE;
     }
     
     public function getIdByUsername($username)
@@ -181,8 +192,25 @@ class UserDAO extends DBConfig
         $row = $statement->fetch();
         if(isset($row['id']) && $row['id'] > 0)
             return $row['id'];
-        else
-            return FALSE;
+        
+        return FALSE;
+    }
+
+    public function getIdByPrivateID($pid)
+    {
+        $salts = $this->getPrivateIdSalts();
+        foreach($salts AS $key => $salt)
+        {
+            if(!empty($salt) && $key > 0)
+            {
+                $hash = hash('sha256', $salt . hash('sha256', $pid));
+                
+                $row = $this->con->getDataSR("SELECT `id` FROM `user` WHERE `privateID`= :pid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':pid' => $hash));
+                if(isset($row['id']) && $row['id'] > 0)
+                    return $row['id'];
+            }
+        }
+        return FALSE;
     }
 
     public function getUsernameById($id)
@@ -194,9 +222,8 @@ class UserDAO extends DBConfig
             $row = $statement->fetch();
             if(isset($row['username']) && strlen($row['username']) > 0)
                 return $row['username'];
-            else
-                return FALSE;
         }
+        return FALSE;
     }
     
     public function createUser($username, $pass, $email, $profession)
@@ -218,7 +245,7 @@ class UserDAO extends DBConfig
             ':username' => $username,
             ':password' => $hash,
             ':email' => 'NULL',
-            ':ip' => $_SERVER['REMOTE_ADDR'],
+            ':ip' => UserService::getIP(),
             ':registerDate' => date('Y-m-d H:i:s'),
             ':restartDate' => date('Y-m-d H:i:s'),
             ':lang' => $this->lang,
@@ -256,7 +283,7 @@ class UserDAO extends DBConfig
             
             $ourFileName = DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt";
             if(file_exists($ourFileName)) unlink($ourFileName);
-            $ourFileHandle = fopen($ourFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL: ".$_SERVER['REQUEST_URI'].".");
+            $ourFileHandle = fopen($ourFileName, 'w');
             $stringData = $salt;
             fwrite($ourFileHandle, $stringData);
             fclose($ourFileHandle);
@@ -274,7 +301,7 @@ class UserDAO extends DBConfig
             $emails[$_SESSION['UID']] = $masterEncrypted;
             
             if(file_exists($ourFileName)) unlink($ourFileName);
-            $ourFileHandle = fopen($ourFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
+            $ourFileHandle = fopen($ourFileName, 'w');
             fwrite($ourFileHandle, serialize($emails));
             fclose($ourFileHandle);
             chmod($ourFileName, 0600);
@@ -369,6 +396,7 @@ class UserDAO extends DBConfig
             die("Email could not be sent. SMTP server not configured correctly, contact Administrator for help. Error: {$mail->ErrorInfo}");
             exit(0);
         }
+        return FALSE;
     }
 
     public function setNewEmailRequest($email)
@@ -418,10 +446,9 @@ class UserDAO extends DBConfig
                 $subject = $langs['CHANGE_EMAIL_SUBJECT'];
                 
                 if(self::email($sendFrom, $sendFromName, $message, $css, $sendTo, $subject)) return TRUE;
-                else return FALSE;
             }
-            else return FALSE;
         }
+        return FALSE;
     }
 
     public function getCoveredEmailByUsername($username)
@@ -432,19 +459,16 @@ class UserDAO extends DBConfig
         if(isset($row['email']) && $row['email'] != "")
         {
             if(UserService::is_email($row['email']))
-            {
                 return preg_replace('/(?<=.).(?=.*@)/u', '*', $row['email']);
-            }
-            else
-            {
-                global $security;
-                $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$row['id']."/user/email/";
-                $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
-                $decryptedEmail = $security->decrypt($row['email'], $cryptKeys['iv'], $cryptKeys['key']);
-                
-                return preg_replace('/(?<=.).(?=.*@)/u', '*', $decryptedEmail);
-            }
+            
+            global $security;
+            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$row['id']."/user/email/";
+            $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
+            $decryptedEmail = $security->decrypt($row['email'], $cryptKeys['iv'], $cryptKeys['key']);
+            
+            return preg_replace('/(?<=.).(?=.*@)/u', '*', $decryptedEmail);
         }
+        return FALSE;
     }
     
     public function getChangeEmailDataByKey($key)
@@ -469,8 +493,7 @@ class UserDAO extends DBConfig
             
             return $userObj;
         }
-        else
-            return FALSE;
+        return FALSE;
     }
     
     public function isEmailInChange($userID)
@@ -479,9 +502,9 @@ class UserDAO extends DBConfig
             SELECT `id` FROM `change_email` WHERE `userID`= :uid AND `date`> :datePast LIMIT 1
         ", array(':uid' => $userID, ':datePast' => date('Y-m-d H:i:s', strtotime('-2 hours'))));
         if(isset($row['id']) && $row['id'] > 0)
-            return true;
+            return TRUE;
         
-        return false;
+        return FALSE;
     }
     
     public function changeEmail($changeEmailData)
@@ -511,7 +534,7 @@ class UserDAO extends DBConfig
             $emails[$changeEmailData->getId()] = $masterEncrypted;
             
             if(file_exists($ourFileName)) unlink($ourFileName);
-            $ourFileHandle = fopen($ourFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
+            $ourFileHandle = fopen($ourFileName, 'w');
             fwrite($ourFileHandle, serialize($emails));
             fclose($ourFileHandle);
             chmod($ourFileName, 0600);
@@ -530,6 +553,7 @@ class UserDAO extends DBConfig
                     return TRUE;
             }
         }
+        return FALSE;
     }
 
     public function updateAvatar($avatar)
@@ -550,7 +574,7 @@ class UserDAO extends DBConfig
         }
     }
     
-    public function checkPassword($pass)
+    public function verifyPassword($pass)
     {
         $saltFile = isset($_SESSION['UID']) ? DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt" : null;
         if(isset($saltFile) && file_exists($saltFile))
@@ -561,16 +585,13 @@ class UserDAO extends DBConfig
 
             $hash = hash('sha256', $salt . hash('sha256', $pass));
 
-            $statement = $this->dbh->prepare("SELECT `id` FROM `user` WHERE `id` = :id AND `password` = :password  AND `active`='1' AND `deleted`='0'LIMIT 1");
+            $statement = $this->dbh->prepare("SELECT `id` FROM `user` WHERE `id`= :id AND `password`= :password  AND `active`='1' AND `deleted`='0' LIMIT 1");
             $statement->execute(array(':id' => $_SESSION['UID'], ':password' => $hash));
             $row = $statement->fetch();
             if(isset($row['id']) && $row['id'] > 0)
                 return TRUE;
-            else
-                return FALSE;
         }
-        else
-            return FALSE;
+        return FALSE;
     }
     
     public function changePassword($pass)
@@ -606,13 +627,13 @@ class UserDAO extends DBConfig
             $statement->execute(array(':hash' => $hash, ':uid' => $id));
     
             // Save new salt
-            $ourFileHandle = fopen($saltFile, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
+            $ourFileHandle = fopen($saltFile, 'w');
             $stringData = $salt;
             fwrite($ourFileHandle, $stringData);
             fclose($ourFileHandle);
             chmod($saltFile, 0600);
             
-            $this->con->setData("DELETE FROM `recover_password` WHERE `userID`= :uid", array(':uid' => $id));
+            $this->removeRecoverPasswordByUserID($id);
         }
     }
     
@@ -622,15 +643,16 @@ class UserDAO extends DBConfig
             SELECT `id` FROM `recover_password` WHERE `userID`= :uid AND `date`> :datePast
         ", array(':uid' => $userID, ':datePast' => date('Y-m-d H:i:s', strtotime('-2 hours'))));
         if(isset($row['id']) && $row['id'] > 0)
-            return true;
+            return TRUE;
         
-        return false;
+        return FALSE;
     }
     
     public function recoverPassword($id, $username, $email)
     {
         global $route;
         global $security;
+        global $language;
         // Insert new recover_password record with unique key linked to account id
         $key = $security->randStr();
         $this->con->setData("INSERT INTO `recover_password` (`userID`, `key`, `date`) VALUES (:uid, :key, NOW())", array(':uid' => $id, ':key' => $key));
@@ -647,7 +669,6 @@ class UserDAO extends DBConfig
             $sendTo = $security->decrypt($sendTo, $cryptKeys['iv'], $cryptKeys['key']);
         }
 
-        global $language;
         $langs = $language->recoverPasswordLangs();
         
         $replaces = array(
@@ -655,12 +676,17 @@ class UserDAO extends DBConfig
             array('part' => $key, 'message' => FALSE, 'pattern' => '/{key}/'),
         );
         $replacedMessage = $route->replaceMessageParts($replaces);
-
+        
+        
+        if($this->isPrivateIDActive($id))
+            $replacedMessage .= $route->replaceMessagePart($key, $langs['RECOVER_PASSWORD_EMAIL_MESSAGE_PRIVATEID'], '/{key}/');
+        
+        $replacedMessage .= $langs['RECOVER_PASSWORD_EMAIL_FOOTER'];
         $message = $replacedMessage;
         $subject = $langs['RECOVER_PASSWORD_EMAIL_SUBJECT'];
 
         if(self::email($sendFrom, $sendFromName, $message, $css, $sendTo, $subject)) return TRUE;
-        else return FALSE;
+        return FALSE;
     }
 
     public function getRecoverPasswordDataByKey($key)
@@ -668,17 +694,160 @@ class UserDAO extends DBConfig
         $this->con->setData("DELETE FROM `recover_password` WHERE `date`< :datePast", array(':datePast' => date('Y-m-d H:i:s', strtotime('-2 hours'))));
         
         $row = $this->con->getDataSR("
-            SELECT re.`id`, u.`username` FROM `recover_password` AS re LEFT JOIN `user` AS u ON (re.`userID`=u.`id`) WHERE re.`key`= :key
+            SELECT re.`userID`, u.`username` FROM `recover_password` AS re LEFT JOIN `user` AS u ON (re.`userID`=u.`id`) WHERE re.`key`= :key
         ", array(':key' => $key));
-        if(isset($row['id']) && $row['id'] > 0)
+        if(isset($row['userID']) && $row['userID'] > 0)
         {
             $userObj = new User();
+            $userObj->setId($row['userID']);
             $userObj->setUsername($row['username']);
             
             return $userObj;
         }
-        else
-            return FALSE;
+        return FALSE;
+    }
+    
+    public function removeRecoverPasswordByUserID($uid)
+    {
+        $this->con->setData("DELETE FROM `recover_password` WHERE `userID`= :uid", array(':uid' => $uid));
+    }
+    
+    private function getPrivateIdSalts()
+    {
+        $saltFile = DOC_ROOT . $this->privateSaltsFile;
+        $file = fopen($saltFile, "r");
+        $serializedSalts = fgets($file);
+        $serializedSalts = file_get_contents($saltFile);
+        fclose($file);
+        return unserialize($serializedSalts);
+    }
+    
+    public function verifyPrivateID($pid, $password = false, $uid = false)
+    {
+        $id = isset($_SESSION['UID']) ? (int)$_SESSION['UID'] : (int)$uid;
+        $id = $id > 0 ? (int)$id : $this->getIdByPrivateID($pid);
+        
+        $salts = $this->getPrivateIdSalts();
+        $salt = isset($salts[$id]) ? $salts[$id] : null;
+        if(isset($salt) && !empty($salt))
+        {
+            $hash = hash('sha256', $salt . hash('sha256', $pid));
+            
+            $qry = "SELECT `id` FROM `user` WHERE `id`= :uid AND `privateID`= :pid AND `active`='1' AND `deleted`='0' LIMIT 1";
+            $prms = array(':uid' => $id, ':pid' => $hash);
+            if($password)
+            {
+                $file = fopen(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt", "r");
+                $salt = fgets($file);
+                fclose($file);
+    
+                $passHash = hash('sha256', $salt . hash('sha256', $password));
+                
+                $qry = "SELECT `id` FROM `user` WHERE `id`= :uid AND `privateID`= :pid AND `password`= :password AND `active`='1' AND `deleted`='0' LIMIT 1";
+                $prms = array(':uid' => $id, ':pid' => $hash, ':password' => $passHash);
+            }
+            $statement = $this->dbh->prepare($qry);
+            $statement->execute($prms);
+            $row = $statement->fetch();
+            if(isset($row['id']) && $row['id'] > 0)
+                return TRUE;
+        }
+        return FALSE;
+    }
+    
+    public function isPrivateIDActive($uid = false)
+    {
+        $id = isset($_SESSION['UID']) ? (int)$_SESSION['UID'] : (int)$uid; // Logged in user should not be able to check another privateid status.
+        $id = $id > 0 ? (int)$id : null;
+        if(isset($id))
+        {
+            $row = $this->con->getDataSR("SELECT `privateID` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $id));
+            if(isset($row['privateID']) && !empty($row['privateID']))
+                return TRUE;
+        }
+        return FALSE;
+    }
+    
+    public function generatePrivateID($grade)
+    {
+        $id = isset($_SESSION['UID']) ? $_SESSION['UID'] : null;
+        if(isset($id) && !$this->isPrivateIDActive())
+        {
+            global $security;
+            
+            function generatePrivateID($num)
+            {
+                if($num >= 4 && $num <= 6)
+                {
+                    global $security;
+                    $userDAO = new UserDAO();
+                    $available = false;
+                    while($available === false)
+                    {
+                        $pid = $security->randCaseSensitiveStr($num);
+                        if($userDAO->checkUsername($pid)->rowCount() == 0)
+                            $available = true;
+                    }
+                    return $pid;
+                }
+            }
+            switch($grade)
+            {
+                default:
+                case 1:
+                    $pid = generatePrivateID(4);
+                    break;
+                case 2:
+                    $pid = generatePrivateID(5);
+                    break;
+                case 3:
+                    $pid = generatePrivateID(6);
+                    break;
+            }
+            $hash = hash('sha256', $pid);
+            
+            $salt = $security->createSalt();
+            
+            $hash = hash('sha256', $salt . $hash);
+    
+            $statement = $this->dbh->prepare("UPDATE `user` SET `privateID`= :hash WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1");
+            $statement->execute(array(':hash' => $hash, ':uid' => $id));
+            
+            // Save new salt
+            $saltFile = DOC_ROOT . $this->privateSaltsFile;
+            $saltsArr = $this->getPrivateIdSalts();
+            $salts = is_array($saltsArr) && !empty($saltsArr) ? $saltsArr : array();
+            $salts[$id] = $salt;
+            
+            if(file_exists($saltFile)) unlink($saltFile);
+            $ourFileHandle = fopen($saltFile, 'w');
+            fwrite($ourFileHandle, serialize($salts));
+            fclose($ourFileHandle);
+            chmod($saltFile, 0600);
+            
+            return $pid;
+        }
+    }
+    
+    public function deactivatePrivateID($uid = false)
+    {
+        $id = isset($_SESSION['UID']) ? (int)$_SESSION['UID'] : (int)$uid;
+        $id = $id > 0 ? (int)$id : null;
+        if(isset($id) && $this->isPrivateIDActive($id))
+        {
+            $this->con->setData("UPDATE `user` SET `privateID`= NULL WHERE `id`= :uid AND `active`='1' AND `deleted`='0'", array(':uid' => $id));
+            // Remove previous salt
+            $saltFile = DOC_ROOT . $this->privateSaltsFile;
+            $saltsArr = $this->getPrivateIdSalts();
+            $salts = is_array($saltsArr) && !empty($saltsArr) ? $saltsArr : array();
+            unset($salts[$id]);
+            
+            if(file_exists($saltFile)) unlink($saltFile);
+            $ourFileHandle = fopen($saltFile, 'w');
+            fwrite($ourFileHandle, serialize($salts));
+            fclose($ourFileHandle);
+            chmod($saltFile, 0600);
+        }
     }
 /* Cleanup TO DO */
     public function getOnlineMembers()
@@ -698,10 +867,10 @@ class UserDAO extends DBConfig
             $list = array();
             foreach($statement AS $row)
             {
+                $className = SeoService::seoUrl($row['donator']);
                 if($row['statusID'] < 7 || $row['statusID'] == 8)
                     $className = SeoService::seoUrl($row['status']);
-                else
-                    $className = SeoService::seoUrl($row['donator']);
+                
                 $arr = array();
                 $arr['id'] = $row['id'];
                 $arr['username'] = $row['username'];
@@ -734,10 +903,10 @@ class UserDAO extends DBConfig
             $list = array();
             foreach($statement AS $row)
             {
+                $className = SeoService::seoUrl($row['donator']);
                 if($row['statusID'] < 7 || $row['statusID'] == 8)
                     $className = SeoService::seoUrl($row['status']);
-                else
-                    $className = SeoService::seoUrl($row['donator']);
+                
                 $arr = array();
                 $arr['id'] = $row['id'];
                 $arr['username'] = $row['username'];
@@ -769,10 +938,10 @@ class UserDAO extends DBConfig
             $list = array();
             foreach($statement AS $row)
             {
+                $className = SeoService::seoUrl($row['donator']);
                 if($row['statusID'] < 7 || $row['statusID'] == 8)
                     $className = SeoService::seoUrl($row['status']);
-                else
-                    $className = SeoService::seoUrl($row['donator']);
+                
                 $arr = array();
                 $arr['id'] = $row['id'];
                 $arr['username'] = $row['username'];
@@ -785,6 +954,43 @@ class UserDAO extends DBConfig
             }
             return $list;
         }
+    }
+    
+    private static function getSearchByRankArr()
+    {
+        $whoresQry = "(SELECT u.`whoresStreet` + (SELECT COALESCE(SUM(`whores`), 0) FROM `rld_whore` WHERE `userID`=u.`id`))";
+        $ranks = array(
+            'Scum' =>                "u.`rankpoints`<'5'",
+            'Pee Wee' =>             "u.`rankpoints`>='5' AND u.`rankpoints`<'12'",
+            'Thug' =>                "u.`rankpoints`>='12' AND u.`rankpoints`<'22'",
+       	    'Gangster' =>            "u.`rankpoints`>='22' AND u.`rankpoints`<'48'",
+       	    'Hitman' =>              "u.`rankpoints`>='48' AND u.`rankpoints`<'79'",
+       	    'Assassin' =>            "u.`rankpoints`>='79' AND u.`rankpoints`<'111'",
+            'Boss' =>                "u.`rankpoints`>='111' AND u.`rankpoints`<'161'",
+       	    'Godfather' =>           "u.`rankpoints`>='161' AND u.`rankpoints`<'261'",
+       	    'Legendary Godfather' => "u.`rankpoints`>='261' AND (u.`rankpoints`<'511' OR u.`kills`<'2' OR u.`honorPoints`<'200' OR $whoresQry<'2000')",
+            'Don' =>                 "u.`rankpoints`>='511' AND (u.`rankpoints`<'861' OR u.`kills`<'5' OR u.`honorPoints`<'500' OR $whoresQry<'5000') AND u.`kills`>='2' AND u.`honorPoints`>='200' AND $whoresQry>='2000'",
+       	    'Respectable Don' =>     "u.`rankpoints`>='861' AND (u.`rankpoints`<'1311' OR u.`kills`<'15' OR u.`honorPoints`<'1500' OR $whoresQry<'10000') AND u.`kills`>='5' AND u.`honorPoints`>='500' AND $whoresQry>='5000'",
+       	    'Legendary Don' =>       "u.`rankpoints`>='1311' AND u.`kills`>='15' AND u.`honorPoints`>='1500' AND $whoresQry>='10000'"
+        );
+        return $ranks;
+    }
+    
+    public function searchPlayersByRank($rank)
+    {
+        $ranks = self::getSearchByRankArr();
+        if(array_key_exists($rank, $ranks))
+            return $this->getToplist(0, 25, false, $ranks[$rank]);
+        
+        return false;
+    }
+    
+    public function searchPlayersByKeyword($keyword)
+    {
+        if(strlen($keyword))
+            return $this->getToplist(0, 25, $keyword);
+        
+        return false;
     }
 /* // Cleanup TO DO */
     public function getToplist($from, $to, $keyword = false, $rankAdd = false)
@@ -818,23 +1024,20 @@ class UserDAO extends DBConfig
             $i = $from;
             foreach($statement AS $row)
             {
+                $className = SeoService::seoUrl($row['donator']);
                 if($row['statusID'] < 7 || $row['statusID'] == 8)
                     $className = SeoService::seoUrl($row['status']);
-                else
-                    $className = SeoService::seoUrl($row['donator']);
+                
                 $userObj = new User();
                 $userObj->setId($row['id']);
                 $userObj->setUsername($row['username']);
                 $userObj->setUsernameClassName($className);
+                $userObj->setFamily("Geen");
+                if($this->lang == 'en') $userObj->setFamily("None");
+                $userObj->setFamilyID($row['familyID']);
                 if($row['familyID'] > 0)
                 {
                     $userObj->setFamily($row['familyName']);
-                    $userObj->setFamilyID($row['familyID']);
-                }
-                else
-                {
-                    $userObj->setFamily("Geen");
-                    if($this->lang == 'en') $userObj->setFamily("None");
                     $userObj->setFamilyID($row['familyID']);
                 }
                 $userObj->setHonorPoints($row['honorPoints']);
@@ -866,9 +1069,8 @@ class UserDAO extends DBConfig
                 $i++;
             }
             if(!empty($list)) return $list;
-            else return FALSE;
         }
-        else return FALSE;
+        return FALSE;
     }
     
     public function getStatusPageInfo()
@@ -917,6 +1119,7 @@ class UserDAO extends DBConfig
                 $userObj->setActiveTime($row['activeTime']);
                 $userObj->setBullets($row['bullets']);
                 $userObj->setWeapon($row['weapon']);
+                if($this->lang == "en" && $row['weapon'] == "Mes") $userObj->setWeapon("Knife");
                 $userObj->setProtection($row['protection']);
                 $userObj->setAirplane($row['airplane']);
                 
@@ -1067,7 +1270,7 @@ class UserDAO extends DBConfig
                 $statement = $this->dbh->prepare("UPDATE `user` SET `bank`=`bank`- :amount, `cash`=`cash`+ :amount WHERE `id`= :uid AND `active`='1' AND `deleted`='0'");
                 $statement->execute(array(':amount' => $amount, ':uid' => $_SESSION['UID']));
             }
-            else
+            if($action == "putMoney")
             {
                 $statement = $this->dbh->prepare("UPDATE `user` SET `bank`=`bank`+ :amount, `cash`=`cash`- :amount WHERE `id`= :uid AND `active`='1' AND `deleted`='0'");
                 $statement->execute(array(':amount' => $amount, ':uid' => $_SESSION['UID']));
@@ -1084,7 +1287,7 @@ class UserDAO extends DBConfig
                 $statement = $this->dbh->prepare("UPDATE `user` SET `swissBank`=`swissBank`- :amount, `bank`=`bank`+ :amount WHERE `id`= :uid AND `active`='1' AND `deleted`='0'");
                 $statement->execute(array(':amount' => $amount, ':uid' => $_SESSION['UID']));
             }
-            else
+            if($action == "putMoney")
             {
                 $profitOwner = round($amount * 0.05, 0);
                 
@@ -1104,101 +1307,95 @@ class UserDAO extends DBConfig
 
     public function getUserProfile($username)
     {
-        if(isset($_SESSION['UID']))
-        {
-            $statement = $this->dbh->prepare("
-                SELECT  u.`id`, u.`username`, u.`lastclick`, u.`charType`, b.`profession_".$this->lang."` AS `profession`, u.`statusID`, st.`status_".$this->lang."` AS `status`,
-                        u.`donatorID`, d.`donator_".$this->lang."` AS `donator`, u.`familyID`, f.`name` AS `family`, u.`rankpoints`, u.`cash`, u.`bank`, u.`health`,
-                        (SELECT COUNT(`id`) FROM `ground` WHERE `userID`= u.`id`) AS `ground`, u.`luckybox`, u.`avatar`, u.`lang`, u.`honorPoints`, u.`kills`, u.`deaths`,
-                        u.`headshots`, u.`profile`, u.`score`, u.`crimesLv`, u.`crimesXp`, u.`vehiclesLv`, u.`pimpLv`, u.`smugglingLv`, u.`referrals`, u.`whoresStreet`,
-                        (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, u.`restartDate`, u.`isProtected`
-                FROM `user` AS u
-                LEFT JOIN `profession` AS b
-                ON (u.charType=b.id)
-                LEFT JOIN `status` AS st
-                ON (u.statusID=st.id)
-                LEFT JOIN `donator` AS d
-                ON (u.donatorID=d.id)
-                LEFT JOIN `family` AS f
-                ON (u.familyID=f.id)
-                WHERE u.`username` = :username
-                AND u.`active`='1' AND u.`deleted`='0'
-            ");
+        $statement = $this->dbh->prepare("
+            SELECT  u.`id`, u.`username`, u.`lastclick`, u.`charType`, b.`profession_".$this->lang."` AS `profession`, u.`statusID`, st.`status_".$this->lang."` AS `status`,
+                    u.`donatorID`, d.`donator_".$this->lang."` AS `donator`, u.`familyID`, f.`name` AS `family`, u.`rankpoints`, u.`cash`, u.`bank`, u.`health`,
+                    (SELECT COUNT(`id`) FROM `ground` WHERE `userID`= u.`id`) AS `ground`, u.`luckybox`, u.`avatar`, u.`lang`, u.`honorPoints`, u.`kills`, u.`deaths`,
+                    u.`headshots`, u.`profile`, u.`score`, u.`crimesLv`, u.`crimesXp`, u.`vehiclesLv`, u.`pimpLv`, u.`smugglingLv`, u.`referrals`, u.`whoresStreet`,
+                    (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`, u.`restartDate`, u.`isProtected`
+            FROM `user` AS u
+            LEFT JOIN `profession` AS b
+            ON (u.charType=b.id)
+            LEFT JOIN `status` AS st
+            ON (u.statusID=st.id)
+            LEFT JOIN `donator` AS d
+            ON (u.donatorID=d.id)
+            LEFT JOIN `family` AS f
+            ON (u.familyID=f.id)
+            WHERE u.`username` = :username
+            AND u.`active`='1' AND u.`deleted`='0'
+        ");
 
-            $statement->execute(array(':username' => $username));
-            $row = $statement->fetch();
-            if(isset($row['id']) && $row['id'] > 0)
+        $statement->execute(array(':username' => $username));
+        $row = $statement->fetch();
+        if(isset($row['id']) && $row['id'] > 0)
+        {
+            $statementScore = $this->dbh->prepare("SELECT COUNT(`id`) AS `no` FROM `user` WHERE `score`> :score");
+            $statementScore->execute(array(':score' => $row['score']));
+            $scoreRow = $statementScore->fetch();
+            $scorePosition = $scoreRow['no'] + 1;
+            if($row['statusID'] < 7 || $row['statusID'] == 8)
+                $className = SeoService::seoUrl($row['status']);
+            else
+                $className = SeoService::seoUrl($row['donator']);
+            
+            $userObj = new User();
+            $userObj->setId($row['id']);
+            $userObj->setUsername($row['username']);
+            $userObj->setUsernameClassName($className);
+            $userObj->setLastclick($row['lastclick']);
+            $userObj->setCharType($row['charType']);
+            $userObj->setProfession($row['profession']);
+            $userObj->setReferrals($row['referrals']);
+            $userObj->setStatus($row['status']);
+            $userObj->setStatusID($row['statusID']);
+            $userObj->setDonator($row['donator']);
+            $userObj->setDonatorID($row['donatorID']);
+            $userObj->setFamily("Geen");
+            if($this->lang == 'en') $userObj->setFamily("None");
+            $userObj->setFamilyID($row['familyID']);
+            if($row['familyID'] > 0)
             {
-                $statementScore = $this->dbh->prepare("SELECT COUNT(`id`) AS `no` FROM `user` WHERE `score`> :score");
-                $statementScore->execute(array(':score' => $row['score']));
-                $scoreRow = $statementScore->fetch();
-                $scorePosition = $scoreRow['no'] + 1;
-                if($row['statusID'] < 7 || $row['statusID'] == 8)
-                    $className = SeoService::seoUrl($row['status']);
-                else
-                    $className = SeoService::seoUrl($row['donator']);
-                
-                $userObj = new User();
-                $userObj->setId($row['id']);
-                $userObj->setUsername($row['username']);
-                $userObj->setUsernameClassName($className);
-                $userObj->setLastclick($row['lastclick']);
-                $userObj->setCharType($row['charType']);
-                $userObj->setProfession($row['profession']);
-                $userObj->setReferrals($row['referrals']);
-                $userObj->setStatus($row['status']);
-                $userObj->setStatusID($row['statusID']);
-                $userObj->setDonator($row['donator']);
-                $userObj->setDonatorID($row['donatorID']);
-                if($row['familyID'] > 0)
-                {
-                    $userObj->setFamily($row['family']);
-                    $userObj->setFamilyID($row['familyID']);
-                }
-                else
-                {
-                    $userObj->setFamily("Geen");
-                    if($this->lang == 'en') $userObj->setFamily("None");
-                    $userObj->setFamilyID($row['familyID']);
-                }
-                $userObj->setHonorPoints($row['honorPoints']);
-                $userObj->setWhoresStreet($row['whoresStreet']);
-                $userObj->setKills($row['kills']);
-                $userObj->setTotalWhores($row['whoresStreet'] + $row['rld_whores']);
-                $userObj->setIsProtected(false);
-                if($row['isProtected'] == 1 && strtotime($row['restartDate']) > strtotime(date('Y-m-d H:i:s', strtotime("-3 days"))))
-                    $userObj->setIsProtected(date($this->phpDateFormat, strtotime($row['restartDate'])+(60*60*24*3)));
-                
-                $cappedRankpoints = UserCoreService::getCappedRankpoints(
-                    $row['rankpoints'], $userObj->getKills(), $userObj->getHonorPoints(), $userObj->getTotalWhores(), $userObj->getIsProtected()
-                );
-                $userObj->setRankpoints($cappedRankpoints);
-                $rankInfo = UserCoreService::getRankInfoByRankpoints($userObj->getRankpoints());
-                $userObj->setRankID($rankInfo['rankID']);
-                $userObj->setRankname($rankInfo['rank']);
-                $userObj->setScore($row['score']);
-                $userObj->setScorePosition($scorePosition);
-                $userObj->setCash($row['cash']);
-                $userObj->setBank($row['bank']);
-                $userObj->setMoneyRank(UserCoreService::getMoneyRank($row['cash']+$row['bank']));
-                $userObj->setHealth($row['health']);
-                $userObj->setHealthBar(array('health' => $row['health'], 'class' => "bg-success"));
-                $userObj->setLang($row['lang']);
-                $userObj->setAvatar(FALSE);
-                if(file_exists(DOC_ROOT . '/web/public/images/users/'.$row['id'].'/uploads/'.$row['avatar'])) $userObj->setAvatar($row['avatar']);
-                $userObj->setGround($row['ground']);
-                $userObj->setDeaths($row['deaths']);
-                $userObj->setHeadshots($row['headshots']);
-                $userObj->setLastOnline(date('d-m-Y H:i', $row['lastclick']));
-                $userObj->setCrimesLv($row['crimesLv']);
-                $userObj->setCrimesXpRaw($row['crimesXp']); // Used in organized crimes
-                $userObj->setVehiclesLv($row['vehiclesLv']);
-                $userObj->setPimpLv($row['pimpLv']);
-                $userObj->setSmugglingLv($row['smugglingLv']);
-                $userObj->setProfile(stripslashes((string)$row['profile']));
-                
-                return $userObj;
+                $userObj->setFamily($row['family']);
+                $userObj->setFamilyID($row['familyID']);
             }
+            $userObj->setHonorPoints($row['honorPoints']);
+            $userObj->setWhoresStreet($row['whoresStreet']);
+            $userObj->setKills($row['kills']);
+            $userObj->setTotalWhores($row['whoresStreet'] + $row['rld_whores']);
+            $userObj->setIsProtected(false);
+            if($row['isProtected'] == 1 && strtotime($row['restartDate']) > strtotime(date('Y-m-d H:i:s', strtotime("-3 days"))))
+                $userObj->setIsProtected(date($this->phpDateFormat, strtotime($row['restartDate'])+(60*60*24*3)));
+            
+            $cappedRankpoints = UserCoreService::getCappedRankpoints(
+                $row['rankpoints'], $userObj->getKills(), $userObj->getHonorPoints(), $userObj->getTotalWhores(), $userObj->getIsProtected()
+            );
+            $userObj->setRankpoints($cappedRankpoints);
+            $rankInfo = UserCoreService::getRankInfoByRankpoints($userObj->getRankpoints());
+            $userObj->setRankID($rankInfo['rankID']);
+            $userObj->setRankname($rankInfo['rank']);
+            $userObj->setScore($row['score']);
+            $userObj->setScorePosition($scorePosition);
+            $userObj->setCash($row['cash']);
+            $userObj->setBank($row['bank']);
+            $userObj->setMoneyRank(UserCoreService::getMoneyRank($row['cash']+$row['bank']));
+            $userObj->setHealth($row['health']);
+            $userObj->setHealthBar(array('health' => $row['health'], 'class' => "bg-success"));
+            $userObj->setLang($row['lang']);
+            $userObj->setAvatar(FALSE);
+            if(file_exists(DOC_ROOT . '/web/public/images/users/'.$row['id'].'/uploads/'.$row['avatar'])) $userObj->setAvatar($row['avatar']);
+            $userObj->setGround($row['ground']);
+            $userObj->setDeaths($row['deaths']);
+            $userObj->setHeadshots($row['headshots']);
+            $userObj->setLastOnline(date('d-m-Y H:i', $row['lastclick']));
+            $userObj->setCrimesLv($row['crimesLv']);
+            $userObj->setCrimesXpRaw($row['crimesXp']); // Used in organized crimes
+            $userObj->setVehiclesLv($row['vehiclesLv']);
+            $userObj->setPimpLv($row['pimpLv']);
+            $userObj->setSmugglingLv($row['smugglingLv']);
+            $userObj->setProfile(stripslashes((string)$row['profile']));
+            
+            return $userObj;
         }
         return false;
     }
@@ -1321,10 +1518,10 @@ class UserDAO extends DBConfig
                 $userObj->setGymCompetitionWin($row['gymCompetitionWin']);
                 $userObj->setGymCompetitionLoss($row['gymCompetitionLoss']);
                 $wlRatio = CrimeDAO::gcd($row['gymCompetitionWin'], $row['gymCompetitionLoss']);
+                $userObj->setGymCompetitionWLRatio($row['gymCompetitionWin'].':'.$row['gymCompetitionLoss']);
                 if($wlRatio != 0)
                     $userObj->setGymCompetitionWLRatio($row['gymCompetitionWin']/$wlRatio.':'.$row['gymCompetitionLoss']/$wlRatio);
-                else
-                    $userObj->setGymCompetitionWLRatio($row['gymCompetitionWin'].':'.$row['gymCompetitionLoss']);
+                
                 $userObj->setGymProfit($row['gymProfit']);
                 $userObj->setGymScorePointsEarned($row['gymScorePointsEarned']);
                 
@@ -1411,14 +1608,10 @@ class UserDAO extends DBConfig
             $friends = array();
             while($row = $statement->fetch())
             { // Friends
+                $className = SeoService::seoUrl($row['donator']);
                 if($row['statusID'] < 7 || $row['statusID'] == 8)
-                {
                     $className = SeoService::seoUrl($row['status']);
-                }
-                else
-                {
-                    $className = SeoService::seoUrl($row['donator']);
-                }
+                
                 $user = new UserFriendBlock();
                 $user->setId($row['fid']);
                 $user->setInviterID($row['inviterID']);
@@ -1450,10 +1643,10 @@ class UserDAO extends DBConfig
                 $blocks = array();
                 while($row = $statement->fetch())
                 {
+                    $className = SeoService::seoUrl($row['donator']);
                     if($row['statusID'] < 7 || $row['statusID'] == 8)
                         $className = SeoService::seoUrl($row['status']);
-                    else
-                        $className = SeoService::seoUrl($row['donator']);
+                    
                     $user = new UserFriendBlock();
                     $user->setId($row['fid']);
                     $user->setInviterID($row['inviterID']);
@@ -1465,7 +1658,7 @@ class UserDAO extends DBConfig
                     array_push($blocks, $user);
                 }
             }
-            else $blocks = "";
+            $blocks = isset($blocks) ?  $blocks : "";
             $list = array('friends' => $friends, 'blocks' => $blocks);
             return $list;
         }
@@ -1475,11 +1668,12 @@ class UserDAO extends DBConfig
     { // Minimal friendlist for verious select tags
         if(isset($_SESSION['UID']))
         {
-            $sql = "SELECT fb.`id`, fb.`inviterID`, fb.`active`, u.`id` AS `fid`, u.`username`
-                    FROM `user_friend_block` AS fb
-                    LEFT JOIN `user` AS u
-                    ON (fb.`friendID`=u.`id`)
-                    WHERE fb.`userID`= :uid AND fb.`type`='1' AND fb.`deleted`='0'
+            $sql = "
+                SELECT fb.`id`, fb.`inviterID`, fb.`active`, u.`id` AS `fid`, u.`username`
+                FROM `user_friend_block` AS fb
+                LEFT JOIN `user` AS u
+                ON (fb.`friendID`=u.`id`)
+                WHERE fb.`userID`= :uid AND fb.`type`='1' AND fb.`deleted`='0'
             ";
             $statement = $this->dbh->prepare($sql);
             $statement->execute(array(':uid' => $_SESSION['UID']));
@@ -1508,9 +1702,8 @@ class UserDAO extends DBConfig
             $row = $statement->fetch();
             if(isset($row['id']) && $row['id'] > 0)
                 return TRUE;
-            else
-                return FALSE;
         }
+        return FALSE;
     }
 
     public function checkFriendsPending($userID)
@@ -1522,9 +1715,8 @@ class UserDAO extends DBConfig
             $row = $statement->fetch();
             if(isset($row['id']) && $row['id'] > 0)
                 return TRUE;
-            else
-                return FALSE;
         }
+        return FALSE;
     }
 
     public function checkOneWayBlock($userID)
@@ -1536,9 +1728,8 @@ class UserDAO extends DBConfig
             $row = $statement->fetch();
             if(isset($row['id']) && $row['id'] > 0)
                 return TRUE;
-            else
-                return FALSE;
         }
+        return FALSE;
     }
 
     public function checkBlock($userID)
@@ -1555,9 +1746,8 @@ class UserDAO extends DBConfig
             
             if(isset($row['id']) && $row['id'] > 0)
                 return TRUE;
-            else
-                return FALSE;
         }
+        return FALSE;
     }
 
     public function inviteFriend($userID)

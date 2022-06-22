@@ -1,3 +1,9 @@
+{# Auth user tag macro, to be used on out-game pages with at least one user tag macro
+   Authentication is only used to remove profile URL on outgame pages for non-authenticated users
+   When userData.getId is set (authenticated) the profile URL will show / be clickable
+   Auth version should be used in any outgame page including atleast one user tag
+   Auth usage: see /src/Views/forum.twig (authUserTagManager - en extra first parameter userData) #}
+
 {% macro write(userData, name, id, userID, username, donatorID, userClass, avatar='Avatarless', imgMobileHide='False', largeImg='False') %}
     {% include "/app/Resources/Views/macros/.user.tag.twig" %}
 {% endmacro write %}

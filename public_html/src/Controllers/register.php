@@ -12,11 +12,11 @@ if(OFFLINE && !in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS)) $route->headTo(
 
 $userService = new UserService();
 $reqPar3 = $route->requestGetParam(3);
-$referraLlink = $reqPar3 == "referral" ? $route->requestGetParam(4) : $reqPar3;
-$referral = isset($_SESSION['register']['referral']) ? $_SESSION['register']['referral'] : $referraLlink;
-if(isset($_SESSION['register']['referral']) && $referraLlink != false && $_SESSION['register']['referral'] != $referraLlink) $referral = $referraLlink;
+$referralLink = $reqPar3 == "referral" ? $route->requestGetParam(4) : $reqPar3;
+$referral = isset($_SESSION['register']['referral']) ? $_SESSION['register']['referral'] : $referralLink;
+if(isset($_SESSION['register']['referral']) && $referralLink != false && $_SESSION['register']['referral'] != $referralLink) $referral = $referralLink;
 if(strpos($referral, '?')) $referral = substr($referral, 0, strpos($referral, "?"));
-if($userService->checkUsernameExists($referral) !== TRUE) $referral = false;
+if(!is_object($userService->getUserProfile($referral))) $referral = false;
 if($referral != false) $_SESSION['register']['referral'] = $referral;
 
 // Honeypotted

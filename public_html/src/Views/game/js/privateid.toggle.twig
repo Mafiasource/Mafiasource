@@ -1,0 +1,16 @@
+<script type="text/javascript">
+    {% if privateID == 'active' %}
+        $("input[name=deactivate-privateid]").removeAttr('disabled');
+        $("input[name=activate-privateid]").attr('disabled', "disabled");
+        $("select[name=privateid-grade]").attr('disabled', "disabled");
+        $('<input type="text" class="form-control" name="privateid" placeholder="PrivateID"/>').insertBefore("input[name=privateid_pass]");
+        $("input[name=privateid_pass]").remove();
+    {% else %}
+        $("input[name=deactivate-privateid]").attr('disabled', "disabled");
+        $("input[name=activate-privateid]").removeAttr('disabled');
+        $("select[name=privateid-grade]").removeAttr('disabled');
+        $('<input type="password" class="form-control" name="privateid_pass" placeholder="{{ langs.PASSWORD }}"/>').insertBefore("input[name=privateid]");
+        $("input[name=privateid]").remove();
+    {% endif %}
+    $("input[name=deactivate-privateid]").val("{{ deactivate }}");
+</script>

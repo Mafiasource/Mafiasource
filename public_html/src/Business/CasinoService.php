@@ -151,10 +151,7 @@ class CasinoService
                 $diffNow = $scoreNow - 21;
                 $diffThen = 21 - $scoreThen;
                 if($scoreNow == 21)
-                {
-                    $scoreThen = $scoreNow;
                     $computerReady = true;
-                }
                 else
                 {
                     if($diffNow > $diffThen)
@@ -162,9 +159,6 @@ class CasinoService
                         $key = array_search($cardComputer, $_SESSION['blackjack']['computer_cards']);
                         unset($_SESSION['blackjack']['computer_cards'][$key]);
                     }
-                    else
-                        $scoreThen = $scoreNow;
-                    
                     $computerReady = true;
                 }
             }
@@ -177,13 +171,15 @@ class CasinoService
         global $security;
         $cardsLeft = self::getBlackjackCards();
         if(isset($_SESSION['blackjack']['computer_cards']))
+        {
             foreach($_SESSION['blackjack']['computer_cards'] AS $c)
                 unset($cardsLeft[$c]);
-        
+        }
         if(isset($_SESSION['blackjack']['cards']))
+        {
             foreach($_SESSION['blackjack']['cards'] AS $c)
                 unset($cardsLeft[$c]);
-        
+        }
         $cardPicked = false;
         while($cardPicked === false)
         {

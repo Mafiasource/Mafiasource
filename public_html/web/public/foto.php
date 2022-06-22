@@ -10,9 +10,11 @@
  * Examples and documentation available on the project homepage
  * http://www.binarymoon.co.uk/projects/timthumb/
  */
-
+ 
 error_reporting(-1);
 ini_set("display_errors", 1);
+
+ini_set('date.timezone', 'Europe/Amsterdam');
 
 define ('CACHE_SIZE', 2000);				// number of files to store before clearing cache
 define ('CACHE_CLEAR', 20);					// maximum number of files to delete on each cache clear
@@ -26,8 +28,7 @@ define ('MEMORY_LIMIT', '150M');			// set PHP memory limit
 define ('MAX_FILE_SIZE', 4500000);			// file size limit to prevent possible DOS attacks (roughly 1.5 megabytes)
 
 // external domains that are allowed to be displayed on your website
-$allowedSites = array (
-);
+$allowedSites = array ();
 
 // STOP MODIFYING HERE!
 // --------------------
@@ -35,17 +36,17 @@ $allowedSites = array (
 /* Security fix Mafiasource */
 // sort out image source
 $src = get_request ('src', '');
-if ($src == '' || strlen ($src) <= 3 || strpos($src, "://") !== false || strpos(strtoupper($src), "%3A%2F%2F") !== false) {
+if ($src == '' || strlen ($src) <= 3 || strpos($src, "://") !== false || stripos(strtoupper((string) $src), "%3A%2F%2F") !== false) {
     display_error ('no image specified');
     $src = null;
 }
 
 
 // clean params before use
-if(isset($src)) $src = clean_source ($src);
+$src = isset($src) ? clean_source ($src) : "";
 
 // get mime type of src
-if(isset($src)) $mime_type = mime_type ($src);
+$mime_type = $src !== "" ? mime_type ($src) : "";
 
 // used for external websites only
 $external_data_string = '';
@@ -76,7 +77,7 @@ $sharpen = 0; //(bool) get_request ('s', 0);
 // set default width and height if neither are set already
 if ($new_width == 0 && $new_height == 0) {
 
-	if(file_exists($src)) {
+	if(file_exists($src) && is_file($src)) {
 		list($width, $height, $type, $attr) = getimagesize($src);
 
 		if($width > 400) {
@@ -95,8 +96,8 @@ if ($new_width == 0 && $new_height == 0) {
 
 
 // ensure size limits can not be abused
-$new_width = min ($new_width, MAX_WIDTH);
-$new_height = min ($new_height, MAX_HEIGHT);
+$new_width = (int) min($new_width, MAX_WIDTH);
+$new_height = (int) min($new_height, MAX_HEIGHT);
 $sizes = array();
 $sizes["width"] = round($new_width);
 $sizes["height"] = round($new_height);
@@ -116,8 +117,8 @@ if (file_exists ($src)) {
     }
 
     // Get original width and height
-    $width = imagesx ($image);
-    $height = imagesy ($image);
+    $width = is_object($image) ? imagesx ($image) : $new_width;
+    $height = is_object($image) ? imagesy ($image) : $new_height;
 	$origin_x = 0;
 	$origin_y = 0;
 
@@ -129,7 +130,7 @@ if (file_exists ($src)) {
     }
 
 	// create a new true color image
-	$canvas = imagecreatetruecolor ((int)$new_width, (int)$new_height);
+	$canvas = imagecreatetruecolor ((int) $new_width, (int) $new_height);
 	imagealphablending ($canvas, false);
 
 	// Create a new transparent color for image
@@ -234,12 +235,12 @@ if (file_exists ($src)) {
 				break;
 		}
 
-		imagecopyresampled ($canvas, $image, $origin_x, $origin_y, $src_x, $src_y, (int)$new_width, (int)$new_height, $src_w, $src_h);
+		imagecopyresampled ($canvas, $image, $origin_x, $origin_y, $src_x, $src_y, (int) $new_width, (int) $new_height, $src_w, $src_h);
 
     } else {
 
         // copy and resize part of an image with resampling
-        imagecopyresampled ($canvas, $image, 0, 0, 0, 0, (int)$new_width, (int)$new_height, $width, $height);
+        imagecopyresampled ($canvas, $image, 0, 0, 0, 0, (int) $new_width, (int) $new_height, $width, $height);
 
     }
     
@@ -314,17 +315,17 @@ function get_request ($property, $default = 0) {
  */
 function open_image ($mime_type, $src) {
 
-	$mime_type = strtolower ($mime_type);
+	$mime_type = strtolower ((string) $mime_type);
 
 	if (stripos ($mime_type, 'gif') !== false) {
         $image = imagecreatefromgif ($src);
     } elseif (stripos ($mime_type, 'jpeg') !== false) {
         $image = imagecreatefromjpeg ($src);
     } elseif (stripos ($mime_type, 'png') !== false) {
-        $image = imagecreatefrompng ($src);
+        $image = @imagecreatefrompng ($src);
     }
 
-    return $image;
+    return isset($image) ? $image : null;
 
 }
 
@@ -547,7 +548,7 @@ function check_external ($src) {
 	// work out file details
 	$fileDetails = pathinfo ($src);
 	$filename = 'external_' . md5 ($src);
-	$local_filepath = DIRECTORY_CACHE . '/' . $filename . '.' . strtolower ($fileDetails['extension']);
+	$local_filepath = DIRECTORY_CACHE . '/' . $filename . '.' . array_key_exists("extension", $fileDetails) && isset($fileDetails['extension']) ? strtolower ((string) $fileDetails['extension']) : "";
 
 	// only do this stuff the file doesn't already exist
 	if (!file_exists ($local_filepath)) {
@@ -562,7 +563,7 @@ function check_external ($src) {
 
 			// convert youtube video urls
 			// need to tidy up the code
-
+            /*
 			if ($url_info['host'] == 'www.youtube.com' || $url_info['host'] == 'youtube.com') {
 				parse_str ($url_info['query']);
 
@@ -571,7 +572,7 @@ function check_external ($src) {
 					$url_info['host'] = 'img.youtube.com';
 				}
 			}
-
+            */
 			// check allowed sites (if required)
 			if (ALLOW_EXTERNAL) {
 
@@ -766,18 +767,18 @@ function get_document_root ($src) {
 
 /**
  * generic error message
- *
+ * @global <type> $sizes
  * @param <type> $errorString
  */
 function display_error ($errorString = '') {
-    /* Security fix Mafiasource */
-    global $sizes;
-    if(!is_array($sizes) || !array_key_exists("width", $sizes) || !array_key_exists("height", $sizes))
-    {
-        $sizes["width"] = 340;
-        $sizes["height"] = 90;
-    }
-    /* //End security fix Mafiasource */
+    
+        global $sizes;
+        if(!is_array($sizes) || !array_key_exists("width", $sizes) || !array_key_exists("height", $sizes))
+        {
+            $sizes["width"] = 340;
+            $sizes["height"] = 90;
+        }
+
 		$my_img = imagecreate( $sizes["width"], $sizes["height"]);
 		$background = imagecolorallocate( $my_img, 200, 200, 200);
 		$text_colour = imagecolorallocate( $my_img, 0, 0, 0 );

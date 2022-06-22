@@ -65,12 +65,27 @@ class Security
         return random_int($min, $max);
     }
     
+    /* Generates a random hexadecimal string of length $len. Crypto secure with random_bytes() */
     public function randStr($len = 64)
     {
         if($len <= 0 || $len >= 256) $len = $this->randInt(6,255);
         
         $str = bin2hex(random_bytes(round($len/2)));
         return substr($str, 0, $len);
+    }
+    
+    /* Generates a random case sensitive string of length $length. Crypto secure with random_int() */
+    public function randCaseSensitiveStr($length = 64, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+        if($length >= 1)
+        {
+            $pieces = [];
+            $max = mb_strlen($keyspace, '8bit') - 1;
+            for ($i = 0; $i < $length; ++$i)
+                $pieces []= $keyspace[random_int(0, $max)];
+            
+            return implode('', $pieces);
+        }
+        return false;
     }
     
     public function createSalt()

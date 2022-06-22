@@ -7,7 +7,7 @@
     #setting-container .security, #setting-container .account {display: none;}
     #setting-container input, #setting-container select {margin:5px auto; max-width:250px;}
     #setting-container .row {margin: 1em 0;padding:1em 0;box-sizing:border-box;border-bottom:1px solid #e1e1e1;}
-    #setting-container #account-settings .row:last-child {border-bottom:none;}
+    #setting-container #profile-settings .row:last-child {border-bottom:none;}
     #setting-container hr {width:100%;height:1px;background:#e1e1e1;margin:1em 0;border:none;}
     .settings-back-btn {display:none;}
     .settings-back-btn.active {display:inline-block;}
@@ -28,20 +28,29 @@
         </div>
         <div id="setting-container">
             <div class="account">
-                <form id="account-settings" class="account-settings ajaxFormUpload" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings" enctype="multipart/form-data">
+                <form id="email-settings" class="account-settings" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings"  autocomplete="off">
                     <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                     <h4>{{ langs.EDIT_EMAIL }} ({{ langs.ENCRYPTED }})</h4>
                     <input type="email" name="email" placeholder="email"/>&nbsp;
                     <input type="submit" name="email-change" value="{{ langs.EDIT }}"/>
-                    <hr />
+                </form>
+                <hr />
+                <form id="testament-settings" class="account-settings" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                     <h4>{{ langs.TRANSFER_TESTAMENT }}</h4>
                     <input type="text" name="testament" placeholder="{{ langs.WRITE_PLAYERNAME }}"/>&nbsp;
                     <input type="submit" name="testament-change" value="{{ langs.TRANSFER }}"/>
-                    <hr />
+                </form>
+                <hr />
+                <form id="avatar-settings" class="account-settings" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings" enctype="multipart/form-data">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                     <h4>{{ langs.UPLOAD_AVATAR }}</h4>
                     <input name="avatar" type="file" multiple=""/>&nbsp;
                     <input type="submit" name="avatar-upload" value="Upload"/>
-                    <hr />
+                </form>
+                <hr />
+                <form id="profile-settings" class="account-settings" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                     <h4>{{ langs.EDIT_PROFILE }}</h4>
                     <textarea id="editProfile" name="profile" rows="10" cols="80">{{ profile }}</textarea><br />
                     <input type="submit" name="profile-save" value="{{ langs.SAVE }}"/>
@@ -49,7 +58,7 @@
                 </form>
             </div>
             <div class="security">
-                <form id="security-settings" class="account-settings ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings">
+                <form id="password-settings" class="account-settings" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings"  autocomplete="off">
                     <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                     <h4>{{ langs.EDIT_PASSWORD }}</h4>
                     <div class="form-group">
@@ -57,16 +66,24 @@
                     <input type="password" name="new_pass" placeholder="{{ langs.NEW_PASSWORD }}"/>&nbsp;
                     <input type="password" name="new_pass_confirm" placeholder="{{ langs.NEW_PASSWORD_CONFIRM }}"/>&nbsp;
                     <input type="submit" name="password-change" value="{{ langs.EDIT }}"/>
-                    <hr />
-                    <h4>PrivateID - coming soon</h4>
-                    <select name="privateid-grade">
+                </form>
+                <hr />
+                <form id="privateid-settings" class="account-settings" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings"  autocomplete="off">
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <h4>PrivateID - Beta</h4>
+                    <small>{{ langs.PRIVATEID_INFO|raw }}</small><br /><br />
+                    {% if not pidActive %}
+                        <input type="password" class="form-control" name="privateid_pass" placeholder="{{ langs.PASSWORD }}"/>&nbsp;
+                    {% else %}
+                        <input type="text" class="form-control" name="privateid" placeholder="PrivateID"/>&nbsp;
+                    {% endif %}
+                    <select name="privateid-grade"{% if pidActive %} disabled="disabled"{% endif %}>
                         <option value="1">{{ langs.PRIVATEID_GRADE_1 }}</option>
                         <option value="2">{{ langs.PRIVATEID_GRADE_2 }}</option>
                         <option value="3">{{ langs.PRIVATEID_GRADE_3 }}</option>
                     </select>&nbsp;
-                    <input type="submit" name="activate-privateid" value="{{ langs.GENERATE }}"/>&nbsp;
-                    <input type="submit" name="deactivate-privateid" value="{{ langs.DEACTIVATE }} ({{ langs.NOT_ACTIVE }})" disabled="disabled"/><br />
-                    <small>{{ langs.PRIVATEID_INFO|raw }}</small>
+                    <input type="submit" name="activate-privateid" value="{{ langs.GENERATE }}"{% if pidActive %} disabled="disabled"{% endif %}/>&nbsp;
+                    <input type="submit" name="deactivate-privateid" value="{{ langs.DEACTIVATE }}{% if not pidActive %} ({{ langs.NOT_ACTIVE }}){% endif %}"{% if not pidActive %} disabled="disabled"{% endif %}/>
                     <br /><br />
                 </form>
             </div>
@@ -82,27 +99,40 @@
 <script src="{{ staticRoot }}/web/vendor/ckeditorgame/ckeditor.js"></script>
 <script type="text/javascript">
 $("form.account-settings").submit(function(e){
-    for(var instanceName in CKEDITOR.instances){ CKEDITOR.instances[instanceName].updateElement(); }
-    var postData = new FormData($(this)[0]);
-    var formURL = $(this).attr("action");
-    var method = $(this).attr("method");
-    var btn = $("input[type=submit][clicked=true]").attr('name');
-    var btnVal = $("input[type=submit][clicked=true]").val();
-    postData.append(btn,btnVal);
-    var responseField = $(this).attr("data-response");
-    $.ajax(
+    if(ajaxBusy == false)
     {
-        cache: false,
-        contentType: false,
-        processData: false,
-    	url : formURL,
-    	type: method,
-    	data : postData,
-    	success:function(data, textStatus, jqXHR) 
-    	{
-    	  $(responseField).html(data);
-    	}
-    });
+        if($("#ajaxLoader").length)
+        {
+            $("#ajaxLoader").show();
+        }
+        for(var instanceName in CKEDITOR.instances){ CKEDITOR.instances[instanceName].updateElement(); }
+        var postData = new FormData($(this)[0]);
+        var formURL = $(this).attr("action");
+        var method = $(this).attr("method");
+        
+        var btn = $("input[type=submit][clicked=true]").attr('name');
+        var btnVal = $("input[type=submit][clicked=true]").val();
+        postData.append(btn,btnVal);
+        var responseField = $(this).attr("data-response");
+        $.ajax(
+        {
+            cache: false,
+            contentType: false,
+            processData: false,
+        	url : formURL,
+        	type: method,
+        	data : postData,
+            async: false,
+        	success:function(data) 
+        	{
+     	      if($("#ajaxLoader" ).length)
+              {
+                $("#ajaxLoader").hide();
+              }
+        	  $(responseField).html(data);
+        	}
+        });
+    }
     e.preventDefault();
 });
 $(document).ready(function(){

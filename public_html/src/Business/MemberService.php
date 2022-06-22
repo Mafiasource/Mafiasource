@@ -360,11 +360,6 @@ class MemberService
             return TRUE;
     }
     
-    public function checkCookieHash($hash, $id)
-    {
-        return $this->data->checkCookieHash($hash, $id);
-    }
-    
     public function createMember($email, $password, $naam = "", $voornaam = "", $adres = "", $gemeente = "", $postcode = "")
     {
         return $this->data->createMember($email, $password, $naam, $voornaam, $adres, $gemeente, $postcode);
@@ -380,10 +375,10 @@ class MemberService
         global $route;
         if(!isset($_SESSION['cp-logon']) && isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
         {
-            if(!$this->checkCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
+            if(!$this->data->verifyCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
                 $route->headTo('admin-login');
         }
-        if(!isset($_SESSION['cp-logon'])) // Re-check could be set in checkCookieHash on success.
+        if(!isset($_SESSION['cp-logon'])) // Re-check could be set in verifyCookieHash on success.
             $route->headTo('admin-login');
     }
     
@@ -392,7 +387,7 @@ class MemberService
         global $route;
         if(!isset($_SESSION['cp-logon']) && isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
         {
-            if($this->checkCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
+            if($this->data->verifyCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
                 return $route->headTo('admin');
         }
         if(isset($_SESSION['cp-logon']))
@@ -409,9 +404,9 @@ class MemberService
         return $this->data->saveNewAccountSettings($data);
     }
     
-    public function checkPassword($password)
+    public function verifyPassword($password)
     {
-        return $this->data->checkPassword($password);
+        return $this->data->verifyPassword($password);
     }
     
     public function changePassword($password)

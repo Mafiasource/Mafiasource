@@ -155,7 +155,7 @@ class ForumService
         {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
-        if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 3000)
+        if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 10000)
         {
             $error = $l['TOPIC_TOO_SHORT_OR_LONG'];
         }
@@ -234,7 +234,7 @@ class ForumService
             {
                 $error = $langs['INVALID_SECURITY_TOKEN'];
             }
-            if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 3000)
+            if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 10000)
             {
                 $error = $l['TOPIC_TOO_SHORT_OR_LONG'];
             }
@@ -294,7 +294,7 @@ class ForumService
         {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
-        if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 3000)
+        if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 10000)
         {
             $error = $l['REPLY_TOO_SHORT_OR_LONG'];
         }
@@ -356,7 +356,7 @@ class ForumService
             {
                 $error = $langs['INVALID_SECURITY_TOKEN'];
             }
-            if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 3000)
+            if(strlen(strip_tags($message)) < 2 || strlen(strip_tags($message)) > 10000)
             {
                 $error = $l['REPLY_TOO_SHORT_OR_LONG'];
             }

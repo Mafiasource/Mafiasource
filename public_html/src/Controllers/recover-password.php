@@ -11,14 +11,14 @@ if(OFFLINE && !in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS)) $route->headTo(
 
 $userService = new UserService();
 $reqPar3 = $route->requestGetParam(3);
-$key = $reqPar3 == "key" ? $route->requestGetParam(4) : $reqPar3;
+$key = $reqPar3 == "key" || $reqPar3 == "disable-privateid" ? $route->requestGetParam(4) : $reqPar3;
 if($key != FALSE) $recoverPasswordData = $userService->getRecoverPasswordDataByKey($key);
 
 if(isset($recoverPasswordData) && $recoverPasswordData == FALSE) $route->headTo('not_found');
 
 $langs = array_merge($langs, $language->recoverPasswordLangs());
 
-if(isset($_POST) && !empty($_POST) && (isset($_POST['password']) || isset($_POST['email'])) && isset($_POST['captcha_code']))
+if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST['email'])) && isset($_POST['captcha_code']))
 {
     // Handle recover lost password form
     $response = $userService->validateRecoverPassword($_POST);
@@ -45,6 +45,13 @@ elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset(
         header("HTTP/2 301 Moved Permanently");
         header('Location: ' . $route->getRoute(), TRUE, 301); // Redirect user to it's change pwd view with the correct key incase of errors
     }
+    exit(0);
+}
+elseif(isset($recoverPasswordData) && $route->requestGetParam(2) == "disable-privateid" || $reqPar3 == "disable-privateid")
+{
+    $userService->recoverPasswordDeactivatePrivateID($recoverPasswordData->getId());
+    $route->createActionMessage($route->successMessage($langs['DEACTIVATE_PRIVATEID_SUCCESS']));
+    $route->headTo('home');
     exit(0);
 }
 

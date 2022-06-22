@@ -24,7 +24,7 @@ $(document).on("submit", "form.ajaxForm", function(e){
               {
                 $("#ajaxLoader").hide();
               }
-              if($(".writeAndFlush" ).length)
+              if($(".writeAndFlush" ).length && (data.includes("alert-success") || data.includes("<script")) && !data.includes("alert-danger"))
               {
                 $(".writeAndFlush").val("");
               }
@@ -66,7 +66,7 @@ $(document).on("submit", "form.ajaxFormUpload", function(e){
               {
                 $("#ajaxLoader").hide();
               }
-              if($(".writeAndFlush" ).length)
+              if($(".writeAndFlush" ).length && (data.includes("alert-success") || data.includes("<script")) && !data.includes("alert-danger"))
               {
                 $(".writeAndFlush").val("");
               }

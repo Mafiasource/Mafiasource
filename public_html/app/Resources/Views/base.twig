@@ -53,6 +53,7 @@
         {% set altLang = "en" %}
         {% set altLangRaw = "en-US" %}
     {% endif %}
+    <link rel="canonical" href="{{ docRoot }}{{ routing.getReplacedRoute }}" />
     <link rel="alternate" href="{{ docRoot }}{{ routing.getReplacedRoute }}" hreflang="{{ langRaw }}" />
     <link rel="alternate" href="{{ docRoot }}/{{ altLang }}{{ routing.getReplacedRoute }}" hreflang="{{ altLangRaw }}" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -134,6 +135,8 @@
                             <li><a href="{{ routing.getRouteByRouteName('information') }}">{{ langs.INFORMATION }}</a></li>
                         {% endif %}
                         <li><a href="{{ routing.getRouteByRouteName('forum') }}">{{ langs.FORUM }}</a></li>
+                        <li class="d-lg-none"><a href="{{ routing.getRouteByRouteName('terms-and-conditions') }}">{{ langs.TERMS_AND_CONDITIONS }}</a></li>
+                        <li class="d-lg-none"><a href="{{ routing.getRouteByRouteName('privacy-policy') }}">{{ langs.PRIVACY_POLICY }}</a></li>
                     {% endif %}
                 </ul>
             </nav>
@@ -145,7 +148,7 @@
                     </div>
                 {% elseif not offline %}
                     <aside id="login">
-                        <form action="/login" method="POST" class="headLogin">
+                        <form action="/login" method="POST" class="headLogin" autocomplete="off">
                             <input type="text" name="username" placeholder="{{ langs.USERNAME }}" value="{{ username }}"/>
                             <input type="password" name="password" placeholder="{{ langs.PASSWORD }}" value=""/>
                             <input type="hidden" name="security-token" value="{{ securityToken }}"/>

@@ -32,7 +32,7 @@ class UserCoreDAO extends DBConfig
         $this->dbh = null;
     }
     
-    public function checkUser($id, $update) // Rename to managePlayerstateRedirections ??
+    public function checkUser($id, $update)
     {
         if(isset($_SESSION['UID']))
         {
@@ -86,7 +86,7 @@ class UserCoreDAO extends DBConfig
         return FALSE;
     }
     
-    public function checkCookieHash($hash, $id)
+    public function verifyCookieHash($hash, $id)
     {
         if(!isset($_SESSION['UID']))
         {
@@ -253,7 +253,7 @@ class UserCoreDAO extends DBConfig
         if(isset($_SESSION['UID']))
         {
             $statement = $this->dbh->prepare("
-                UPDATE `user` SET `lastclick`= :lclick, `activeTime`=`activeTime`+ :atime WHERE `id`= :uid AND `active`='1' AND `deleted`='0';
+                UPDATE `user` SET `lastclick`= :lclick, `activeTime`=`activeTime`+ :atime WHERE `id`= :uid AND `id`!='1' AND `active`='1' AND `deleted`='0';
                 UPDATE `user` SET `lang`= :lang WHERE `id`= :uid AND `lang`!= :lang AND `active`='1' AND `deleted`='0'                
             ");
             $statement->execute(array(
@@ -308,7 +308,7 @@ class UserCoreDAO extends DBConfig
     }
     
     public function getUsersCount()
-    { // Exact copy of UserDAO->getRecordsCount() | FOR PAGES WHERE THE GIANT UserService & DAO ARE EXCLUDED
+    { // Exact copy of UserDAO->getRecordsCount() | REQUIRED FOR PAGES WHERE THE GIANT UserService & DAO ARE EXCLUDED
         $statement = $this->dbh->prepare("SELECT COUNT(*) AS `total` FROM `user` WHERE `active` = '1' AND `deleted` = '0' AND `statusID` < 8");
         $statement->execute();
         $row = $statement->fetch();

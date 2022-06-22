@@ -44,7 +44,7 @@ class UserCoreService
     public function checkLoggedSession($update = true)
     {
         if(!isset($_SESSION['UID']) && isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
-            $this->data->checkCookieHash($_COOKIE['remember'], $_COOKIE['UID']); // Sets SESSION UID when valid (checked underneath)
+            $this->data->verifyCookieHash($_COOKIE['remember'], $_COOKIE['UID']); // Sets SESSION UID when valid (to eb re-checked underneath)
         
         if(isset($_SESSION['UID']) && $this->data->checkUser($_SESSION['UID'], $update))
             return TRUE;

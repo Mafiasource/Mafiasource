@@ -24,6 +24,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+use src\Business\UserService;
+
+require_once __DIR__."/../src/Business/UserService.php";
+
 class SessionManager extends SessionHandler
 {
     // Always call on any served page that uses sessions (in our case, always)
@@ -31,7 +35,6 @@ class SessionManager extends SessionHandler
     {
         ini_set('session.name', $name . '_Session');
         ini_set('session.auto_start', 'Off');
-        //ini_set('session.use_trans_sid', 0);
         ini_set('session.cookie_doimain', $domain);
         ini_set('session.use_strict_mode', 1);
         ini_set('session.use_cookies', 1);
@@ -41,8 +44,6 @@ class SessionManager extends SessionHandler
         ini_set('session.cookie_httponly', 1);
         ini_set('session.cookie_samesite', 'Strict');
         ini_set('session.cache_expire', 30);
-        //ini_set('session.sid_length', 256);
-        //ini_set('session.sid_bits_per_character', 6);
         ini_set('session.gc_probability', 1);
         ini_set('session.gc_divisor', 100);
         ini_set('session.gc_maxlifetime', 1440);
@@ -55,18 +56,14 @@ class SessionManager extends SessionHandler
     		if(!self::preventHijacking()) // Is this sess request a hijacking attempt?
     		{
     			$_SESSION = array(); // Yes, clear all sess variables
-    			$_SESSION['_IPaddress'] = isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-                            ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+                $_SESSION['_IPaddress'] = UserService::getIP();
     			$_SESSION['_userAgent'] = isset($_SERVER['HTTP_USER_AGENT']) 
                             ? $_SERVER['HTTP_USER_AGENT'] : 'Undefined';
     			self::regenerateSession();
-    		} // .5% chance @ regeneration | make sure current session is atleast 5 minutes old.
+    		} // .5% chance @ regeneration && make sure _lastNewSession is atleast 5 minutes old.
             elseif((random_int(1, 1000) <= 5) && $_SESSION['_lastNewSession'] < (time()-300))
-            {
     			self::regenerateSession();
-            }
     	} else {
-            //var_dump($_SESSION);
     		$_SESSION = array();
     		session_destroy();
     		session_start();
@@ -74,37 +71,39 @@ class SessionManager extends SessionHandler
     	}
 	}
     
-	static function regenerateSession()
-	{
-		if(isset($_SESSION['_OBSOLETE']) || (isset($_SESSION['_OBSOLETE']) && $_SESSION['_OBSOLETE'] === true)) return;
-		$_SESSION['_OBSOLETE'] = true;
-		$_SESSION['_EXPIRES'] = time() + 10; // avoid session overlapping (queued requests) by letting an old session expire after 10 seconds.
-		session_regenerate_id(false);
-		$newSession = session_id();
-		session_write_close();
-		session_id($newSession);
-		session_start();
-		unset($_SESSION['_OBSOLETE']);
-		unset($_SESSION['_EXPIRES']);
+    static function regenerateSession()
+    {
+        if(isset($_SESSION['_OBSOLETE']) || (isset($_SESSION['_OBSOLETE']) && $_SESSION['_OBSOLETE'] === true))
+            return;
+        
+        $_SESSION['_OBSOLETE'] = true;
+        $_SESSION['_EXPIRES'] = time() + 10; // Let old session expire after 10s from now.
+        session_regenerate_id(false);
+        $newSession = session_id();
+        session_write_close();
+        session_id($newSession);
+        session_start();
+        unset($_SESSION['_OBSOLETE']);
+        unset($_SESSION['_EXPIRES']);
         $_SESSION['_lastNewSession'] = time();
 	}
     
 	static protected function validateSession()
 	{
-        if(!isset($_SESSION['_lastNewSession'])) $_SESSION['_lastNewSession'] = time();
+        if(!isset($_SESSION['_lastNewSession']))
+            $_SESSION['_lastNewSession'] = time();
         
         if(isset($_SESSION['_OBSOLETE']) && !isset($_SESSION['_EXPIRES']))
-			return false;
-            
+            return false;
+        
         if(isset($_SESSION['_OBSOLETE']) && isset($_SESSION['_EXPIRES']) && $_SESSION['_EXPIRES'] < time())
             return false;
-            
+        
         return true;
 	}
 	
     static protected function preventHijacking()
     {
-        $aolProxies = array('195.93.', '205.188', '198.81.', '207.200', '202.67.', '64.12.9');
         if(!isset($_SESSION['_IPaddress']) || !isset($_SESSION['_userAgent']))
             return false;
         
@@ -117,12 +116,9 @@ class SessionManager extends SessionHandler
           && !( strpos($_SESSION['_userAgent'], '‘Trident’') !== false
           && strpos($userAgent, '‘Trident’') !== false))
             return false;
-            
-        $sessionIpSegment = substr($_SESSION['_IPaddress'], 0, 7);
-        $remoteIpHeader = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
-        $remoteIpSegment = substr($remoteIpHeader, 0, 7);
-        if($_SESSION['_IPaddress'] != $remoteIpHeader
-            && !(in_array($sessionIpSegment, $aolProxies) && in_array($remoteIpSegment, $aolProxies)))
+        
+        $remoteIpHeader = UserService::getIP();
+        if($_SESSION['_IPaddress'] != $remoteIpHeader)
             return false;
             
         if($_SESSION['_userAgent'] != $userAgent)

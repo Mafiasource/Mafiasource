@@ -20,19 +20,24 @@ $allowedTabs = array(
 );
 $tab = "help"; // Standard tab
 $content = ""; // Init
+
 require_once __DIR__ . '/.inc.foot.ajax.php';
+
 if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
 {
     $tab = $_POST['tab'];
     if($tab == "help")
     {
-        $routeName = $route->getRouteNameByRoute($_SESSION['PREV_ROUTE']);
+        $prevRoute = isset($_SESSION['PREV_ROUTE']) ? $_SESSION['PREV_ROUTE'] : "not_found";
+        $routeName = $route->getRouteNameByRoute($prevRoute);
         $routeName = preg_replace('/-do$/', '', $routeName);
         if($routeName != 'family-page')
             $routeName = preg_replace('/-page$/', '', $routeName);
         
-        if(in_array($routeName, array('in_prison', 'in_prison_raw_paging', '')))
+        if(in_array($routeName, array('in_prison', 'in_prison_raw_paging')))
             $routeName = 'prison';
+        elseif($routeName == 'profile-pimp-now')
+            $routeName = 'profile';
         elseif($routeName == 'travel-vehicle-id')
             $routeName = 'travel-vehicle';
         elseif($routeName == 'murder-user')
@@ -51,7 +56,7 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
                 $content = $langs['NO_CONTENT_YET'];
             }
         }
-        $twigVars['prevRoute'] = $_SESSION['PREV_ROUTE'];
+        $twigVars['prevRoute'] = $prevRoute;
         $string = str_replace(' ', '_', $routeName);
         $string = str_replace('-', '_', $string);
         if(isset($langs[strtoupper($string)]))
@@ -68,6 +73,7 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
     {
         $userService = new UserService();
         $twigVars['profile'] = $userService->getUserProfile($userData->getUsername())->getProfile();
+        $twigVars['pidActive'] = $userService->isPrivateIDActive();
         $langs = array_merge($langs, $language->settingsLangs());
     }
     elseif($tab == "luckybox")
@@ -151,9 +157,10 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
         $langs = array_merge($langs, $language->groundLangs());
         if(empty($twigVars['ground'])) exit(0); //Not a valid ground obj, exit script.
     }
-    elseif($tab == "possession.manage" && ( (!isset($_POST['id']) && !isset($_POST['transfer'])) || (((isset($_POST['id']) && $_POST['id']) || (isset($_POST['transfer']) && $_POST['transfer'])) >= 1 &&
-        ((isset($_POST['id']) && $_POST['id']) || (isset($_POST['transfer']) && $_POST['transfer']) <= 213)) )
-    )
+    elseif($tab == "possession.manage" && (
+        (!isset($_POST['id']) && !isset($_POST['transfer'])) || (((isset($_POST['id']) && $_POST['id'] >= 1) || (isset($_POST['transfer']) && $_POST['transfer'])) >= 1 &&
+        ((isset($_POST['id']) && $_POST['id'] <= 213) || (isset($_POST['transfer']) && $_POST['transfer']) <= 213))
+    ))
     {
         $userService = new UserService();
         $possession = new PossessionService();

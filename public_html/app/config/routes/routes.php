@@ -85,6 +85,13 @@ array(
         'controller' => 'recover-password.php'
     ),
     
+    'disable-privateid'
+    =>
+    array(
+        'route' => $routeLang . '/recover-password/disable-privateid/[A-Za-z0-9-]{64,64}',
+        'controller' => 'recover-password.php'
+    ),
+    
     'change-email'
     =>
     array(

@@ -1,7 +1,9 @@
 <?PHP
 
 namespace app\config;
- 
+
+use src\Business\UserService;
+
 require_once __DIR__.'/config.php';
 
 class Routing
@@ -33,7 +35,6 @@ class Routing
     public function __construct()
     {
         $this->settings['twigCache'] = DEVELOPMENT === false ? DOC_ROOT . '/app/cache/TwigCompilation/' : FALSE;
-        
         require_once __DIR__.'/routes/routes.php';
         
         $endRoute = $_SERVER['REQUEST_URI'];
@@ -206,7 +207,7 @@ class Routing
     
     function getLanguageByIp()
     {
-        $host = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+        $host = gethostbyaddr(UserService::getIP());
         $language = "English";
         if(preg_match("/nl$/", $host) || preg_match("/be$/", $host) || preg_match("/arpa$/", $host))
             $language = "Dutch";
@@ -269,7 +270,8 @@ class Routing
     
     public function getLangRaw()
     {
-        return $this->getLang() == "nl" ? "nl-NL" : "en-EN";
+        global $lang;
+        return isset($lang) && $lang == "nl" ? "nl-NL" : "en-EN";
     }
     
     public function createActionMessage($msg)
