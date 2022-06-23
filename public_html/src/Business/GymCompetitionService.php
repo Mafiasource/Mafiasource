@@ -74,11 +74,11 @@ class GymCompetitionService
         }
         if($stake < 50 || $stake > 5000000)
         {
-            $error = $l['COMPETITION_STAKE_BETWEEN_50_AND_5M'];
+            $error = $l['STAKE_BETWEEN_50_5M'];
         }
         if($check)
         {
-            $error = $l['STAKE_BETWEEN_50_5M'];
+            $error = $l['COMPETITION_ALREADY_STARTED_COMPETITION'];
         }
         
         if(isset($error))
