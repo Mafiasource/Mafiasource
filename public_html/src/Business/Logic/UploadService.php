@@ -13,27 +13,16 @@ class UploadService
     {
         global $security;
         
+        $UploadDirectory = $saveDir.'/';
         if($subDirUploads === true)
         	$UploadDirectory	= $saveDir.'/uploads/';
-        else
-            $UploadDirectory = $saveDir.'/';
         
         if(is_uploaded_file($_FILES[$fieldName]['tmp_name']) === false)
             $error = (string)5;
         
-    	switch(strtolower($files[$fieldName]['type']))
-    	{ // Unsafe method of type checking
-            case 'image/png':
-            case 'image/gif':
-            case 'image/jpeg':
-            case 'image/pjpeg':
-                break;
-            default:
-            	$error = (string)3;// $l['UPLOAD_AVATAR_WRONG_FILE'];
-    	}
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         switch(strtolower(finfo_file($finfo, $files[$fieldName]['tmp_name'])))
-        { // Safer method..
+        {
             case 'image/png':
             case 'image/gif':
             case 'image/jpeg':
@@ -41,6 +30,7 @@ class UploadService
                 break;
             default:
             	$error = (string)3;
+                break;
         }
         finfo_close($finfo);
         
