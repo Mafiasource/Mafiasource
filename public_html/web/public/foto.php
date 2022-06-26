@@ -66,13 +66,15 @@ if (!function_exists ('imagecreatetruecolor')) {
 }
 
 // get standard input properties
-$new_width =  (int) abs (get_request ('w', 0));
-$new_height = (int) abs (get_request ('h', 0));
+$new_width =  (int) abs ((int)get_request ('w', 0));
+$new_height = (int) abs ((int)get_request ('h', 0));
 $zoom_crop = (int) get_request ('zc', 1);
 $quality = 100; //(int) abs (get_request ('q', 100));
 $align = "c"; //get_request ('a', 'c');
 $filters = ""; //get_request ('f', '');
 $sharpen = 0; //(bool) get_request ('s', 0);
+$new_width = $new_width >= 0 ? $new_width : 0;
+$new_height = $new_height >= 0 ? $new_height : 0;
 
 // set default width and height if neither are set already
 if ($new_width == 0 && $new_height == 0) {
@@ -96,11 +98,9 @@ if ($new_width == 0 && $new_height == 0) {
 
 
 // ensure size limits can not be abused
-$new_width = (int) min($new_width, MAX_WIDTH);
-$new_height = (int) min($new_height, MAX_HEIGHT);
 $sizes = array();
-$sizes["width"] = round($new_width);
-$sizes["height"] = round($new_height);
+$new_width = $sizes["height"] = (int) min($new_width, MAX_WIDTH);
+$new_height = $sizes["width"] = (int) min($new_height, MAX_HEIGHT);
 /* //End security fix Mafiasource */
 
 // set memory limit to be able to have enough space to resize larger images
@@ -408,7 +408,7 @@ function mime_type ($file) {
     if(is_file($file))
     {
     	$file_infos = getimagesize ($file);
-    	$mime_type = $file_infos['mime'];
+    	$mime_type = isset($file_infos['mime']) ? $file_infos['mime'] : "";
     
     	// no mime type
     	if (empty ($mime_type)) {
@@ -416,7 +416,7 @@ function mime_type ($file) {
     	}
     
         // use mime_type to determine mime type
-        if (!preg_match ("/jpg|jpeg|gif|png/i", $mime_type)) {
+        if (!preg_match ("/jpg|jpeg|gif|png/i", (string)$mime_type)) {
     		display_error ('Invalid src mime type: ' . $mime_type);
         }
     

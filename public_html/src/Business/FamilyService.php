@@ -905,7 +905,7 @@ class FamilyService
                 {
                     if(isset($res['error']))
                     {
-                        switch($res['error'])
+                        switch((int)$res['error'])
                         {
                             case 3:
                                 $errorMessage = $route->replaceMessagePart(strtolower($l['IMAGE']), $l['UPLOAD_FAMILY_IMAGE_WRONG_FILE'], '/{type}/');
@@ -991,7 +991,7 @@ class FamilyService
                 {
                     if(isset($res['error']))
                     {
-                        switch($res['error'])
+                        switch((int)$res['error'])
                         {
                             case 3:
                                 $errorMessage = $route->replaceMessagePart('icon', $l['UPLOAD_FAMILY_IMAGE_WRONG_FILE'], '/{type}/');

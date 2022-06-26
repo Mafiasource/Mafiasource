@@ -49,7 +49,7 @@ class UploadService
     	
     	if ($files[$fieldName]['size'] > 5242880)
     		$error = "Upload > 5MB";
-            
+        
         $f = fopen($files[$fieldName]['tmp_name'],'r');
         $content="";
         while(!feof($f)) $content .= fgets($f);
@@ -60,8 +60,10 @@ class UploadService
             "view-source"
         );
         foreach($badWords AS $badWord)
-            if(strpos($content, $badWord))
+        {
+            if(strpos(strtoupper((string)$content), strtoupper((string)$badWord)))
                 $error = "Untrusted file detected, please upload another or try to make this one safe using an image editor"; // error 4
+        }
         
         if(!isset($error))
         {

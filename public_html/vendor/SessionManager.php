@@ -107,10 +107,9 @@ class SessionManager extends SessionHandler
         if(!isset($_SESSION['_IPaddress']) || !isset($_SESSION['_userAgent']))
             return false;
         
+        $userAgent = 'Undefined';
         if(isset($_SERVER['HTTP_USER_AGENT']))
             $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        else
-            $userAgent = 'Undefined';
         
         if( $_SESSION['_userAgent'] != $userAgent
           && !( strpos($_SESSION['_userAgent'], '‘Trident’') !== false

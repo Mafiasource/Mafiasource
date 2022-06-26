@@ -17,7 +17,7 @@ const offline_url = "offline.html";
 const assets = [
   "https://static.mafiasource.nl/web/public/css/offline.css",
   "https://fonts.googleapis.com/css?family=Quicksand&display=swap",
-  "https://static.mafiasource.nl/web/public/images/favicon/ic_launcher_round.png"
+  "https://static.mafiasource.nl/web/public/images/favicon/ms-icon-70x70.png"
 ];
 // Incrementing OFFLINE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
@@ -26,7 +26,7 @@ const assets = [
 // eslint-disable-next-line no-unused-vars
 const OFFLINE_VERSION = "1.0.1"; // 1.0 offline_url changes? Incerement.
 const OFFLINE_NAME = "mafiasource-offline-v" + OFFLINE_VERSION;
-const OFFLINE_ASSETS_VERSION = "1.0.1"; // 1.0 assets changes? Increment.
+const OFFLINE_ASSETS_VERSION = "1.0.2"; // 1.0 assets changes? Increment.
 const OFFLINE_ASSETS = "mafiasource-offline-v " + + OFFLINE_VERSION + "-assets-v" + OFFLINE_ASSETS_VERSION;
 
 self.addEventListener("install", (event) => {

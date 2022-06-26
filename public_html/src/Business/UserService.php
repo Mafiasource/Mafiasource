@@ -66,7 +66,6 @@ class UserService
 
     static function getIP()
     {
-        $ip = "Undefined";
         if (!empty($_SERVER['HTTP_CLIENT_IP']))
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
@@ -94,10 +93,14 @@ class UserService
         $username = $security->xssEscape($post['username']);
         $pass = $post['password'];
         if(isset($post['captcha_code'])) $code     = (int)$post['captcha_code'];
-        // Avoid verifyLogin (sets remember cookie) for invalid security-token
+        // Avoid verifyLogin (sets remember cookie) for invalid security-token, captcha
         if($security->checkToken($post['security-token']) ==  FALSE)
         {
             return $langs['INVALID_SECURITY_TOKEN'];
+        }
+        if($captcha == true && (!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code))
+        {
+            return $langs['WRONG_CAPTCHA'];
         }
         
         $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
@@ -105,10 +108,6 @@ class UserService
         {
             $error = $l['WRONG_USERNAME_OR_PASS'];
         }
-        if($captcha == true && $_SESSION['code_captcha'] != $code)
-        {
-    		$error = $langs['WRONG_CAPTCHA'];
-    	}
         
         if(isset($error))
         {
@@ -726,13 +725,14 @@ class UserService
             {
                 if(isset($res['error']))
                 {
-                    switch($res['error'])
+                    switch((int)$res['error'])
                     {
                         case 3:
                             $error = $l['UPLOAD_AVATAR_WRONG_FILE'];
                             break;
                         case 5:
                             $error = $l['UPLOAD_AVATAR_FAILED'];
+                            break;
                         default:
                             $error = $res['error'];
                             break;

@@ -99,7 +99,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         // Db connection | Init globally to avoid multiple sql connections in one request | only to be used in all DAO classes or cronjobs!
         $connection = new DBConfig();
         
-        // UserCoreService class requires above $connection for it's underlying UserDAO class, $user obj immediately used first in GetLanguageContent class
+        // UserCoreService class requires above $connection for its underlying UserCoreDAO class, $user obj immediately used first in GetLanguageContent class
         $lang = $route->getLang(); // Default, used first in UserCoreDAO constructor
         $user = new UserCoreService();
         $userData = $user->getUserData();
