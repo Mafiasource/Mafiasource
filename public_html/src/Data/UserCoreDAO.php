@@ -105,13 +105,18 @@ class UserCoreDAO extends DBConfig
                 {
                     $_SESSION['UID'] = $id;
                     $_SESSION['logon']['cookiehash'] = $hash;
+                    
+                    global $security;
+                    $security->generateNewToken();
+                    $security->generateNewSession();
+                    
                     return TRUE;
                 }
             }
         }
-        elseif(isset($_SESSION['logon']['cookiehash']))
+        if(isset($_SESSION['logon']['cookiehash']) && isset($_SESSION['UID']))
         {
-            if(hash_equals($hash, $_SESSION['logon']['cookiehash']))
+            if(hash_equals($hash, $_SESSION['logon']['cookiehash']) && $_SESSION['UID'] == $id)
                 return TRUE;
         }
         return FALSE;
@@ -253,7 +258,7 @@ class UserCoreDAO extends DBConfig
         if(isset($_SESSION['UID']))
         {
             $statement = $this->dbh->prepare("
-                UPDATE `user` SET `lastclick`= :lclick, `activeTime`=`activeTime`+ :atime WHERE `id`= :uid AND `id`!='1' AND `active`='1' AND `deleted`='0';
+                UPDATE `user` SET `lastclick`= :lclick, `activeTime`=`activeTime`+ :atime WHERE `id`= :uid AND `active`='1' AND `deleted`='0';
                 UPDATE `user` SET `lang`= :lang WHERE `id`= :uid AND `lang`!= :lang AND `active`='1' AND `deleted`='0'                
             ");
             $statement->execute(array(

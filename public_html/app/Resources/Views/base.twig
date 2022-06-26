@@ -151,7 +151,6 @@
                         <form action="/login" method="POST" class="headLogin" autocomplete="off">
                             <input type="text" name="username" placeholder="{{ langs.USERNAME }}" value="{{ username }}"/>
                             <input type="password" name="password" placeholder="{{ langs.PASSWORD }}" value=""/>
-                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                             <button type="submit" name="submit_login" class="button small-1-icon"><img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" width="16" height="16" class="icon" alt="{{ langs.LOGIN }}"/></button>
                         </form>
                     </aside>
@@ -190,8 +189,15 @@
     
     {# Bootstrap core JavaScript #}
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $("form").each(function(){
+            $(this).find("input[name=security-token]").each(function(){
+                $(this).remove();
+            });
+            $(this).append('<input type="hidden" name="security-token" value="{{ securityToken }}"/>');
+        });
+    </script>
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/outgame.js"></script>
-    
     {# Twig javascripts #}
     {% block javascripts %} {% endblock %}
 </body>

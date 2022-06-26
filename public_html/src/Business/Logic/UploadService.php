@@ -19,13 +19,7 @@ class UploadService
             $UploadDirectory = $saveDir.'/';
         
         if(is_uploaded_file($_FILES[$fieldName]['tmp_name']) === false)
-            $error = 5;
-
-    	if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']))
-    		$error = "Invalid headers encountered";
-    	
-    	if ($files[$fieldName]['size'] > 5242880)
-    		$error = "File size to big";
+            $error = (string)5;
         
     	switch(strtolower($files[$fieldName]['type']))
     	{ // Unsafe method of type checking
@@ -35,7 +29,7 @@ class UploadService
             case 'image/pjpeg':
                 break;
             default:
-            	$error = 3;// $l['UPLOAD_AVATAR_WRONG_FILE'];
+            	$error = (string)3;// $l['UPLOAD_AVATAR_WRONG_FILE'];
     	}
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         switch(strtolower(finfo_file($finfo, $files[$fieldName]['tmp_name'])))
@@ -46,10 +40,16 @@ class UploadService
             case 'image/pjpeg':
                 break;
             default:
-            	$error = 3;
+            	$error = (string)3;
         }
         finfo_close($finfo);
         
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']))
+    		$error = "Invalid headers encountered";
+    	
+    	if ($files[$fieldName]['size'] > 5242880)
+    		$error = "Upload > 5MB";
+            
         $f = fopen($files[$fieldName]['tmp_name'],'r');
         $content="";
         while(!feof($f)) $content .= fgets($f);
@@ -61,7 +61,7 @@ class UploadService
         );
         foreach($badWords AS $badWord)
             if(strpos($content, $badWord))
-                $error = "Untrusted file detected, please upload another. Or try to make this one safe using an image editor."; // error 4
+                $error = "Untrusted file detected, please upload another or try to make this one safe using an image editor"; // error 4
         
         if(!isset($error))
         {

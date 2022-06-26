@@ -18,7 +18,7 @@ if(isset($recoverPasswordData) && $recoverPasswordData == FALSE) $route->headTo(
 
 $langs = array_merge($langs, $language->recoverPasswordLangs());
 
-if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST['email'])) && isset($_POST['captcha_code']))
+if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST['email'])) && isset($_POST['captcha_code']) && isset($_POST['security-token']))
 {
     // Handle recover lost password form
     $response = $userService->validateRecoverPassword($_POST);
@@ -30,7 +30,7 @@ if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST
     $route->headTo('recover-password');
     exit(0);
 }
-elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset($_POST['new_password']) && isset($_POST['new_password_check'])) && isset($_POST['captcha_code']))
+elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset($_POST['new_password']) && isset($_POST['new_password_check'])) && isset($_POST['captcha_code']) && isset($_POST['security-token']))
 {
     // Handle recovery key form
     $response = $userService->validateNewRecoveredPassword($_POST, $recoverPasswordData);
@@ -38,13 +38,11 @@ elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset(
     {
         $route->createActionMessage($route->successMessage($langs['RECOVER_PASSWORD_SUCCESS']));
         $route->headTo('home');
+        exit(0);
     }
-    else
-    {
-        $route->createActionMessage($route->errorMessage($response));
-        header("HTTP/2 301 Moved Permanently");
-        header('Location: ' . $route->getRoute(), TRUE, 301); // Redirect user to it's change pwd view with the correct key incase of errors
-    }
+    $route->createActionMessage($route->errorMessage($response));
+    header("HTTP/2 301 Moved Permanently");
+    header('Location: ' . $route->getRoute(), TRUE, 301); // Redirect user to it's change pwd view with the correct key incase of errors
     exit(0);
 }
 elseif(isset($recoverPasswordData) && $route->requestGetParam(2) == "disable-privateid" || $reqPar3 == "disable-privateid")

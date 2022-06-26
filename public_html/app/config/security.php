@@ -36,6 +36,11 @@ class Security
         $this->token = $_SESSION['security_token'];
     }
     
+    public function generateNewSession()
+    {
+        $_SESSION['regenerate'] = true;
+    }
+    
     private function createToken()
     {
         return $this->token = $this->randStr(64);
@@ -56,8 +61,8 @@ class Security
     {
         if($input === $this->token)
             return TRUE;
-        else
-            return FALSE;
+        
+        return FALSE;
     }
     
     public function randInt($min, $max)
@@ -103,7 +108,11 @@ class Security
     {
         // https://github.com/voku/anti-xss
         $antiXss = new AntiXSS();
+        $antiXss->removeEvilAttributes(array('style'));
         $harmless_html = $antiXss->xss_clean($input);
+        if($antiXss->isXssFound())
+            error_log('XSS Attempt logged:' . $input);
+        
         return $harmless_html;
     }
     

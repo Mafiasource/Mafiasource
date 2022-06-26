@@ -64,7 +64,6 @@
                                 <form id="demo-login" name="login" action="{{ routing.getRouteByRouteName('login') }}" method="POST">
                                     <h2>
                                         <a style="position: relative;top: -5px;margin-bottom:10px" href="{{ routing.getRouteByRouteName('register') }}" class="button">{{ langs.REGISTER_BTN }}</a>&nbsp;{{ langs.PLAYERS_BEFORE_MSG|raw }}
-                                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                                         <input type="hidden" name="username" value="ms-demo"/>
                                         <input type="hidden" name="password" value="demo-ms"/>
                                         <input style="position: relative;top: -5px;margin-bottom:10px" type="submit" name="submit_login" class="input-submit blue" value="{% if lang == 'en' %}Try{% else %}Probeer{% endif %} demo!"/>

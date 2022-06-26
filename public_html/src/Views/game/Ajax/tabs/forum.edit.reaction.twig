@@ -30,6 +30,8 @@ $(document).ready(function(){
         $("#triggerModal").click();
         $("#triggerModal").remove();
         CKEDITOR.replace('replyField', {
+            autoGrow_maxHeight: 650,
+            removePlugins: 'resize',
             enterMode: CKEDITOR.ENTER_BR,
             shiftEnterMode: CKEDITOR.ENTER_P
         });

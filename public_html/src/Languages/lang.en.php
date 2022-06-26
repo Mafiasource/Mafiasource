@@ -38,7 +38,7 @@ class GetLanguageContent
                 'LINK_PARTNERS_INFO' => "Get to know our <a href='".$route->getRouteByRouteName('link-partners')."'>link partners</a>.",
                 'DOWNLOAD_APP' => "Download the app",
                 'WRONG_CAPTCHA' => "You've entered the wrong security code!", // Use in & out-game
-                'INVALID_SECURITY_TOKEN' => "Invalid security-token, please try again.", // Use in & out-game
+                'INVALID_SECURITY_TOKEN' => "Invalid security token, please refresh the page (F5) and try again. If you block essential cookies, no valid security token can be granted.", // Use in & out-game
                 'INFORMATION' => "Information", // Use in & out-game
                 'TOPLIST' => "Toplist", // Use in & out-game
                 'NONE' => "None", // Use in & out-game
@@ -123,7 +123,7 @@ class GetLanguageContent
                 'WRONG_CAPTCHA' => "You've entered the wrong security code!", // Use in & out-game
                 'INVALID_ACTION' => "You've selected an invalid action!",
                 'CANNOT_COMMIT_ACTION_SELF' => "You can't take that action on yourself.",
-                'INVALID_SECURITY_TOKEN' => "Invalid security-token, refresh the page (F5) and try again.", // Use in & out-game
+                'INVALID_SECURITY_TOKEN' => "Invalid security token, please refresh the page (F5) and try again.", // Use in & out-game
                 'WAITING_TIME_NOT_PASSED' => "The waiting time hasn't passed yet!",
                 'NOT_ENOUGH_MONEY_BANK' => "You don't have enough money on your bank!",
                 'NOT_ENOUGH_MONEY_CASH' => "You don't have enough cash money!",
@@ -1657,12 +1657,12 @@ class GetLanguageContent
         $langs = array(
             'NO_MEMBERS_ONLINE' => "There are no members online.",
             'NO_FAM_MEMBERS_ONLINE' => "There are no family members online.",
-            'NO_TEAM_MEMBERS_ONLINE' => "There are no team member online.",
+            'NO_TEAM_MEMBERS_ONLINE' => "There are no team members online.",
             'SEARCH_BY_RANK' => "Search by rank",
             'SEARCH_PLAYER' => "Search player..",
             'NO_PLAYERS_FOUND' => "No players found, please try again with a different keyword.",
             'USER_SEARCH_SUCCESSFUL' => "Search complete, following player(s) have been found:",
-            'BLOCK_VIEW' => "Block view",
+            'BLOCK_VIEW' => "Grid view",
             'LIST_VIEW' => "List view",
         );
         return $langs;
@@ -1724,7 +1724,7 @@ class GetLanguageContent
     {
         global $route;
         $langs = array(
-            'EMAIL_UNKNOWN_IP_DETECTED' => "You can't change your email because your IP is not recognized as safe yet.",
+            'EMAIL_UNKNOWN_IP_DETECTED' => "You can't change your email because your IP is not recognized as safe just yet. This takes up to 24 hours after a new IP address is detected.",
             'CHANGE_EMAIL_NEED_TO_VERIFY' => "We've send an email change request to your previous email adress, a tip: {coveredEmail}<br />Beware! The link to change your email will expire in 2 hours from now.",
             'SAME_EMAIL_NO_CHANGE' => "You can't change the email in the current set email.",
             'CHANGE_EMAIL_DEACTIVATE_PRIVATEID' => "To change your email address, your PrivateID must first be deactivated. After the email change you can generate a new PrivateID.",
@@ -1749,7 +1749,7 @@ class GetLanguageContent
             'PASSWORDS_DONT_MATCH' => "The new passwords didn't match!",
             'OLD_PASSWORD_INCORRECT' => "The current password is incorrect, try again.",
             'INVALID_NEW_PASS' => "Your new password has to be atleast 6 characters long!",
-            'PASSWORD_UNKNOWN_IP_DETECTED' => "You can't change your password because your IP is not recognized as safe yet.",
+            'PASSWORD_UNKNOWN_IP_DETECTED' => "You can't change your password because your IP is not recognized as safe yet. This takes up to 24 hours after a new IP address is detected.",
             'PASSWORD_CHANGE_SUCCESS' => "You successfully changed your password. For security reasons we've logged you out everywhere.",
             'PASSWORD' => "Password",
             'PRIVATEID_GRADE_1' => "4 Characters - Good",
@@ -1759,7 +1759,7 @@ class GetLanguageContent
             'DEACTIVATE' => "Deactivate",
             'NOT_ACTIVE' => "Not active",
             'PRIVATEID_INFO' => "PrivateID allows you to set-up a hidden username for your account, once activated you'll only be able to login with your PrivateID in the username field.<br /><strong>Careful!</strong> PrivateID is only visible during each generation after which it's irreversibly stored in our system. The latest generated PrivateID will always be the correct one unless it got deactivated.<br /><strong>www.mafiasource.nl/recover-password</strong> is used to deactivate a lost PrivateID. (Logout & email access required)",
-            'PRIVATEID_UNKNOWN_IP_DETECTED' => "You can't alter your PrivateID because your IP is not recognized as safe yet.",
+            'PRIVATEID_UNKNOWN_IP_DETECTED' => "You can't alter your PrivateID because your IP is not recognized as safe yet. This takes up to 24 hours after a new IP address is detected.",
             'PRIVATEID_ALREADY_ACTIVE' => "Deactivate your PrivateID before generating a new one.",
             'ACTIVATE_PRIVATEID_SUCCESS' => "You can now only log in with this case sensitive hidden username: <code><strong>{pid}</strong></code><br />Do not store this digitally to guarantee a higher security of your PrivateID.",
             'PRIVATEID_NOT_ACTIVE' => "You don't have a PrivateID active at this moment.",

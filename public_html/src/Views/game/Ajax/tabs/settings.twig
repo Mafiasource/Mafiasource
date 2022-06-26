@@ -155,6 +155,8 @@ $(document).ready(function(){
         if(!$(this).hasClass('security-settings'))
         {
             CKEDITOR.replace('editProfile', {
+                autoGrow_maxHeight: 650,
+                removePlugins: 'resize',
                 enterMode: CKEDITOR.ENTER_BR,
                 shiftEnterMode: CKEDITOR.ENTER_P
             });

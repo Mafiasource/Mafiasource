@@ -53,6 +53,7 @@ class CaptchaService
         
         if($count > 0)
         {
+            $maxActs = 2000000000;
             $unsolvedPercent = round($unsolved  / $count * 100);
             $failPercent = round($fail / $count * 100);
             $successPercent = round($success / $count * 100);
@@ -60,13 +61,13 @@ class CaptchaService
             if(($unsolvedPercent >= 95 && $unsolvedPercent <= 100) || ($failPercent >= 95 && $failPercent <= 100))
                 return 5;
             elseif($successPercent >= 95 && $successPercent <= 100)
-                return 100;
+                return $maxActs;
             elseif($failPercent >= 6 && $failPercent <= 94)
-                return 100 - $failPercent;
+                return (int)round((float)$maxActs - $failPercent);
             elseif($unsolvedPercent >= 6 && $unsolvedPercent <= 94)
-                return 100 - $unsolvedPercent;
+                return (int)round((float)$maxActs - $unsolvedPercent);
             elseif($successPercent >= 6 && $successPercent <= 94)
-                return $successPercent;
+                return (int)round((float)$successPercent);
             else
                 return 3;
         }

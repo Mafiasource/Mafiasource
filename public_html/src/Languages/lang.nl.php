@@ -38,7 +38,7 @@ class GetLanguageContent
                 'LINK_PARTNERS_INFO' => "Maak kennis met onze <a href='".$route->getRouteByRouteName('link-partners')."'>linkpartners</a>.",
                 'DOWNLOAD_APP' => "Download de app",
                 'WRONG_CAPTCHA' => "Je hebt de verkeerde code ingevoerd!", // Use in & out-game
-                'INVALID_SECURITY_TOKEN' => "Ongeldige beveiligings-sleutel, probeer a.u.b. opnieuw.", // Use in & out-game
+                'INVALID_SECURITY_TOKEN' => "Ongeldige beveiligings sleutel, vernieuw de pagina (F5) en probeer a.u.b. opnieuw. Indien u essentiele cookies blokkeert kan ook geen geldige beveiligings sleutel worden verleend.", // Use in & out-game
                 'INFORMATION' => "Informatie", // Use in & out-game
                 'TOPLIST' => "Toplijst", // Use in & out-game
                 'NONE' => "Geen", // Use in & out-game
@@ -123,7 +123,7 @@ class GetLanguageContent
                 'WRONG_CAPTCHA' => "Je hebt de verkeerde code ingevoerd!", // Use in & out-game
                 'INVALID_ACTION' => "Je hebt een ongeldige actie geselecteerd!",
                 'CANNOT_COMMIT_ACTION_SELF' => "Je kan deze actie niet uitvoeren op jezelf.",
-                'INVALID_SECURITY_TOKEN' => "Ongeldige beveiligings-sleutel, vernieuw de pagina (F5) en probeer a.u.b. opnieuw.", // Use in & out-game
+                'INVALID_SECURITY_TOKEN' => "Ongeldige beveiligings sleutel, vernieuw de pagina (F5) en probeer a.u.b. opnieuw.", // Use in & out-game
                 'WAITING_TIME_NOT_PASSED' => "De wachttijd is nog niet verstreken!",
                 'NOT_ENOUGH_MONEY_BANK' => "Je hebt niet genoeg geld op je bank staan!",
                 'NOT_ENOUGH_MONEY_CASH' => "Je hebt niet genoeg geld contant staan!",
@@ -1662,7 +1662,7 @@ class GetLanguageContent
             'SEARCH_PLAYER' => "Speler opzoeken..",
             'NO_PLAYERS_FOUND' => "Geen spelers gevonden, probeer a.u.b. opnieuw met een andere zoekterm.",
             'USER_SEARCH_SUCCESSFUL' => "Zoeken voltooid, volgende speler(s) werden gevonden:",
-            'BLOCK_VIEW' => "Blok weergave",
+            'BLOCK_VIEW' => "Grid weergave",
             'LIST_VIEW' => "Lijst weergave",
         );
         return $langs;
@@ -1724,7 +1724,7 @@ class GetLanguageContent
     {
         global $route;
         $langs = array(
-            'EMAIL_UNKNOWN_IP_DETECTED' => "Je kan je email adres niet veranderen omdat je IP nog niet als veilig word erkend.",
+            'EMAIL_UNKNOWN_IP_DETECTED' => "Je kan je email adres niet veranderen omdat je IP nog niet als veilig word erkend. Dit kan tot 24 uur duren nadat een nieuw IP-adres is gedetecteerd.",
             'CHANGE_EMAIL_NEED_TO_VERIFY' => "We hebben je een email verstuurd met verdere instructies naar je oude email adres, kleine tip: {coveredEmail}<br />Pas op! De link om uw email aan te passen zal vervallen binnen 2 uren vanaf nu.",
             'SAME_EMAIL_NO_CHANGE' => "Je kan het email adres niet veranderen omdat dit het huidige email adres is.",
             'CHANGE_EMAIL_DEACTIVATE_PRIVATEID' => "Om je email adres te wijzigen moet eerst je PrivateID gedeactiveerd worden. Na de email wijziging kan je een nieuwe PrivateID genereren.",
@@ -1749,7 +1749,7 @@ class GetLanguageContent
             'PASSWORDS_DONT_MATCH' => "De nieuwe wachtwoorden kwamen niet overeen!",
             'OLD_PASSWORD_INCORRECT' => "Het huidige wachtwoord is niet correct, probeer opnieuw.",
             'INVALID_NEW_PASS' => "Je nieuw wachtwoord moet minimaal 6 tekens lang zijn!",
-            'PASSWORD_UNKNOWN_IP_DETECTED' => "Je kan je wachtwoord niet veranderen omdat je IP nog niet als veilig word erkend.",
+            'PASSWORD_UNKNOWN_IP_DETECTED' => "Je kan je wachtwoord niet veranderen omdat je IP nog niet als veilig word erkend. Dit kan tot 24 uur duren nadat een nieuw IP-adres is gedetecteerd.",
             'PASSWORD_CHANGE_SUCCESS' => "Je wachtwoord werd succesvol aangepast. Om veiligheids redenen hebben we je overal afgemeld.",
             'PASSWORD' => "Wachtwoord",
             'PRIVATEID_GRADE_1' => "4 Karakters - Goed",
@@ -1759,7 +1759,7 @@ class GetLanguageContent
             'DEACTIVATE' => "Deactiveren",
             'NOT_ACTIVE' => "Niet actief",
             'PRIVATEID_INFO' => "Met PrivateID kunt u een verborgen gebruikersnaam voor uw account instellen, eenmaal geactiveerd kunt u alleen inloggen met uw PrivateID in het gebruikersnaamveld.<br /><strong>Voorzichtig!</strong> PrivateID is alleen zichtbaar tijdens elke generatie waarna onomkeerbaar wordt opgeslagen in ons systeem. De laatst gegenereerde PrivateID is altijd de juiste, tenzij deze werd gedeactiveerd.<br /><strong>www.mafiasource.nl/recover-password</strong> wordt gebruikt om een verloren PrivateID te deactiveren. (Uitloggen & email toegang vereist)",
-            'PRIVATEID_UNKNOWN_IP_DETECTED' => "Je kan je PrivateID niet wijzigen omdat je IP nog niet als veilig word erkend.",
+            'PRIVATEID_UNKNOWN_IP_DETECTED' => "Je kan je PrivateID niet wijzigen omdat je IP nog niet als veilig word erkend. Dit kan tot 24 uur duren nadat een nieuw IP-adres is gedetecteerd.",
             'PRIVATEID_ALREADY_ACTIVE' => "Deactiveer je PrivateID vooralleer je een nieuwe genereert.",
             'ACTIVATE_PRIVATEID_SUCCESS' => "Je kan nu enkel inloggen met deze hoofdlettergevoelig verborgen gebruikersnaam: <code><strong>{pid}</strong></code><br />Sla dit niet digitaal op om een hogere veiligheid van uw PrivateID te garanderen.",
             'PRIVATEID_NOT_ACTIVE' => "Je hebt op dit moment geen Private ID actief.",

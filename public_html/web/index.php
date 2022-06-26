@@ -59,28 +59,32 @@ $errRepInt = null;
 $stream = @stream_socket_server('tcp://0.0.0.0:7600', $errno, $errmg, STREAM_SERVER_BIND);
 if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
 {
-    require __DIR__.'/../vendor/autoload.php';
-    // Enable Autoloading with doctrine
-    $classLoader = new ClassLoader('src'   ,   DOC_ROOT);
-    $classLoader->register();
-    $classLoader = null;
-    
-    // Start a session
-    require_once __DIR__.'/../vendor/SessionManager.php';
-    $session = new SessionManager();
-    ini_set('session.save_handler', 'files');
-    session_set_save_handler($session, true);
-    session_save_path(__DIR__ . '/../app/cache/sessions');
-    SessionManager::sessionStart(SeoURL::format($route->settings['gamename']), 0, '/', $route->settings['domain'], SSL_ENABLED);
-    $session = $seoURL = null;
-    
-    // Security class (Anti CSRF, XSS attacks & more)
-    require_once __DIR__.'/../app/config/security.php';
-    $security = new Security();
-    
     // Routing fetched a valid controller?
     if($route->getController() != FALSE)
     {
+        require __DIR__.'/../vendor/autoload.php';
+        // Enable Autoloading with doctrine
+        $classLoader = new ClassLoader('src'   ,   DOC_ROOT);
+        $classLoader->register();
+        $classLoader = null;
+        
+        // Start a session
+        require_once __DIR__.'/../vendor/SessionManager.php';
+        $session = new SessionManager();
+        ini_set('session.save_handler', 'files');
+        session_set_save_handler($session, true);
+        session_save_path(__DIR__ . '/../app/cache/sessions');
+        SessionManager::sessionStart(SeoURL::format($route->settings['gamename']), 0, '/', $route->settings['domain'], SSL_ENABLED);
+        $session = $seoURL = null;
+        if(isset($_SESSION['regenerate']) && $_SESSION['regenerate'] === true)
+        {
+            $_SESSION['regenerate'] = null;
+            SessionManager::regenerateSession();
+        }
+        // Security class (Anti CSRF, XSS attacks & more)
+        require_once __DIR__.'/../app/config/security.php';
+        $security = new Security();
+        
         // Define PROTOCOL used throughout the application http / https? see: app/config/config.php
         if($route->settings['ssl'] === true) define('PROTOCOL', "https://"); else define('PROTOCOL', "http://");
         
@@ -95,7 +99,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         // Db connection | Init globally to avoid multiple sql connections in one request | only to be used in all DAO classes or cronjobs!
         $connection = new DBConfig();
         
-        /// UserCoreService class requires above $connection for it's underlying UserDAO class, $user obj immediately used first in GetLanguageContent class
+        // UserCoreService class requires above $connection for it's underlying UserDAO class, $user obj immediately used first in GetLanguageContent class
         $lang = $route->getLang(); // Default, used first in UserCoreDAO constructor
         $user = new UserCoreService();
         $userData = $user->getUserData();

@@ -130,6 +130,7 @@
                                     <br />
                         		</td>
                         	</tr>
+                            {#
                         		<tr>
                         		<td class="va-top">
                         			<table border="0" cellspacing="0" class="zeroMargin">
@@ -143,13 +144,14 @@
                         	</tr>
                         </table>		</td>
                         		<td>
-                                    {# Captchas nooit vanuit staticRoot ophalen! #}
+                                    { # Captchas nooit vanuit staticRoot ophalen! # }
                         			<img id="captcha" src="{{ docRoot }}/web/public/images/captcha/captcha.php" alt="Captcha" />&nbsp;<a id="captcha-refresh" href="javascript:void(0);">{{ langs.REFRESH }}</a><br /><br /> <input type="text" name="captcha_code" size="5" class="code" maxlength="10" />		</td>
                         	</tr>
+                            #}
                         	<tr>
                         		<td colspan="2">
                         			<br />
-                                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                    {#<input type="hidden" name="security-token" value="{{ securityToken }}"/>#}
                         			<input type="submit" class="input-submit" name="submit_register" value="{{ langs.REGISTER_BTN_PAGE }}" />
                                 </td>
                         	</tr>

@@ -10,22 +10,20 @@ if(OFFLINE && !in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS)) $route->headTo(
 require_once __DIR__ . '/.inc.statistics.php';
 
 // Handle login
-if(isset($_POST) && !empty($_POST) && isset($_POST['username']) && isset($_POST['password']))
+if(isset($_POST) && !empty($_POST) && isset($_POST['username']) && isset($_POST['password']) && isset($_POST['security-token']))
 {
     $userService = new UserService();
     $response = $userService->validateLogin($_POST);
-    //var_dump($response);
     if(is_bool($response) && $response === true)
     {
+        $security->generateNewToken();
+        $security->generateNewSession();
         $route->headTo('game');
         exit(0);
     }
-    else
-    {
-        $route->createActionMessage($route->errorMessage($response));
-        $route->headTo('login');
-        exit(0);
-    }
+    $route->createActionMessage($route->errorMessage($response));
+    $route->headTo('login');
+    exit(0);
 }
 
 require_once __DIR__ . '/.inc.foot.php';

@@ -31,26 +31,28 @@ if(isset($_POST['referral-username']))
 }
 if(
     isset($_POST) && !empty($_POST) && isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password']) &&
-    isset($_POST['password_check']) && isset($_POST['captcha_code']) && isset($_POST['type']) && $blockPost === false
+    isset($_POST['password_check']) /*&& isset($_POST['captcha_code'])*/ && isset($_POST['type']) && isset($_POST['security-token']) && $blockPost === false
 )
 {
     $response = $userService->validateRegister($_POST);
     if(is_bool($response) && $response === true)
     {
         $l = $language->registerLangs();
+        $security->generateNewToken();
+        $security->generateNewSession();
         $route->createActionMessage($route->successMessage($l['REGISTERED_SUCCESSFUL']));
         $route->headTo('game');
+        exit(0);
     }
-    else
-    {
-        $route->createActionMessage($route->errorMessage($response));
-        $route->headTo('register');
-    }
+    $route->createActionMessage($route->errorMessage($response));
+    $route->headTo('register');
+    exit(0);
 }
 elseif($blockPost !== false) //Honeypot
 {
     $route->createActionMessage($route->errorMessage($langs['INVALID_SECURITY_TOKEN']));
     $route->headTo('register');
+    exit(0);
 }
 
 require_once __DIR__ . '/.inc.foot.php';

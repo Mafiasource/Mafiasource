@@ -188,7 +188,6 @@ section#content section#forum .dateActions {position: relative;top:.25em;margin-
                         <form id="forum-quick-reply" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('forum-reply') }}" method="POST" data-response="#forumReplyResponse">
                             <input type="hidden" name="topicID" value="{{ topicData.getId }}"/>
                             <textarea id="quickReply" name="reply-message" rows="10" cols="80"></textarea>
-                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                             <input type="submit" name="reply" class="button" value="{{ langs.PLACE_REACTION }}"/>
                         </form>
                     {% endif %}

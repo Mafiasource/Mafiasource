@@ -79,6 +79,8 @@
         if($("#editFamilyProfile").length)
         {
             CKEDITOR.replace('editFamilyProfile', {
+                autoGrow_maxHeight: 650,
+                removePlugins: 'resize',
                 enterMode: CKEDITOR.ENTER_BR,
                 shiftEnterMode: CKEDITOR.ENTER_P
             });
@@ -107,6 +109,8 @@
         if($("#editFamilyMessage").length)
         {
             CKEDITOR.replace('editFamilyMessage', {
+                autoGrow_maxHeight: 650,
+                removePlugins: 'resize',
                 enterMode: CKEDITOR.ENTER_BR,
                 shiftEnterMode: CKEDITOR.ENTER_P
             });

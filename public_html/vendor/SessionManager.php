@@ -60,8 +60,8 @@ class SessionManager extends SessionHandler
     			$_SESSION['_userAgent'] = isset($_SERVER['HTTP_USER_AGENT']) 
                             ? $_SERVER['HTTP_USER_AGENT'] : 'Undefined';
     			self::regenerateSession();
-    		} // .5% chance @ regeneration && make sure _lastNewSession is atleast 5 minutes old.
-            elseif((random_int(1, 1000) <= 5) && $_SESSION['_lastNewSession'] < (time()-300))
+    		} // 5% chance @ regeneration && make sure _lastNewSession is atleast 5 minutes old.
+            elseif((random_int(1, 100) <= 5) && $_SESSION['_lastNewSession'] < (time()-300))
     			self::regenerateSession();
     	} else {
     		$_SESSION = array();

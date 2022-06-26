@@ -94,6 +94,11 @@ class UserService
         $username = $security->xssEscape($post['username']);
         $pass = $post['password'];
         if(isset($post['captcha_code'])) $code     = (int)$post['captcha_code'];
+        // Avoid verifyLogin (sets remember cookie) for invalid security-token
+        if($security->checkToken($post['security-token']) ==  FALSE)
+        {
+            return $langs['INVALID_SECURITY_TOKEN'];
+        }
         
         $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
         if($id == FALSE)
@@ -104,10 +109,6 @@ class UserService
         {
     		$error = $langs['WRONG_CAPTCHA'];
     	}
-        if($security->checkToken($post['security-token']) ==  FALSE)
-        {
-            $error = $langs['INVALID_SECURITY_TOKEN'];
-        }
         
         if(isset($error))
         {
@@ -135,7 +136,7 @@ class UserService
     	$mailadres = $security->xssEscape($post['email']);
     	$pass = $post['password'];
     	$pass_check = $post['password_check'];
-    	$code = (int)$post['captcha_code'];
+    	//$code = (int)$post['captcha_code'];
         $profession = (int)$post['type'];
 
     	if(!self::is_name($username))
@@ -194,11 +195,12 @@ class UserService
         {
             $error = $l['ALREADY_REGISTERED'];
         }
-        */
+        *
         if(!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code)
         {
     		$error = $langs['WRONG_CAPTCHA'];
     	}
+        */
         if($security->checkToken($post['security-token']) ==  FALSE)
         {
             $error = $langs['INVALID_SECURITY_TOKEN']; 
@@ -353,7 +355,7 @@ class UserService
     public function recoverPasswordDeactivatePrivateID($uid = false)
     {
         $this->data->removeRecoverPasswordByUserID($uid);
-        return $this->data->deactivatePrivateID($uid);
+        $this->data->deactivatePrivateID($uid);
     }
 
     public function validateEmailChange($post, $changeEmailData, $captcha = false)
