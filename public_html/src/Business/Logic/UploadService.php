@@ -15,7 +15,7 @@ class UploadService
         
         $UploadDirectory = $saveDir.'/';
         if($subDirUploads === true)
-        	$UploadDirectory	= $saveDir.'/uploads/';
+        	$UploadDirectory = $saveDir.'/uploads/';
         
         if(is_uploaded_file($_FILES[$fieldName]['tmp_name']) === false)
             $error = (string)5;

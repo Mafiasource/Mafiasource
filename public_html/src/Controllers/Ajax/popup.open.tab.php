@@ -30,8 +30,10 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
     {
         $prevRoute = isset($_SESSION['PREV_ROUTE']) ? $_SESSION['PREV_ROUTE'] : "not_found";
         $routeName = $route->getRouteNameByRoute($prevRoute);
-        $routeName = preg_replace('/-do$/', '', $routeName);
-        if($routeName != 'family-page')
+        if(isset($routeName) && strpos($routeName, '-do'))
+            $routeName = preg_replace('/-do$/', '', $routeName);
+        
+        if(isset($routeName) && $routeName != 'family-page' && strpos($routeName, '-page'))
             $routeName = preg_replace('/-page$/', '', $routeName);
         
         if(in_array($routeName, array('in_prison', 'in_prison_raw_paging')))

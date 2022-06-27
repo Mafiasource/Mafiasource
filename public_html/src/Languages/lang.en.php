@@ -34,7 +34,7 @@ class GetLanguageContent
                 'PLAYERS_BEFORE_MSG' => "along <span class='total'>{totalPlayers}</span> criminals! Or",
                 'REGISTER_BTN' => "Join",
                 'CHANGE_LANG_SUCCESS' => "Je hebt de taalinstellingen verandert naar het Nederlands.",
-                'COOKIES_ACCEPT' => "Our website uses cookies to improve your browsing experience, <a href='/privacy-policy'><strong>click here</strong></a> for more information.",
+                'COOKIES_ACCEPT' => "Our website uses cookies to improve your browsing experience, <a href='/privacy-policy'><strong>view privacy policy</strong></a> for more information.",
                 'LINK_PARTNERS_INFO' => "Get to know our <a href='".$route->getRouteByRouteName('link-partners')."'>link partners</a>.",
                 'DOWNLOAD_APP' => "Download the app",
                 'WRONG_CAPTCHA' => "You've entered the wrong security code!", // Use in & out-game

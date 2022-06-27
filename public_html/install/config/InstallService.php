@@ -239,7 +239,7 @@ class InstallService
                 {
                     $configReplacesMap[7] = 'define(\'BASE_DOMAIN\',      "' .  $replacedDomain . '");       // The primary domain';
                     $htaccessReplacesMap[79] = '    RewriteCond %{HTTP_REFERER} !^' . PROTOCOL . '(www\.)?' . $replacedDomain . '/.*$ [NC]';
-                    $htaccessReplacesMap[145] = '    Header always set Content-Security-Policy "object-src \'none\'; script-src \'self\' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
+                    $htaccessReplacesMap[144] = '    Header always set Content-Security-Policy "object-src \'none\'; script-src \'self\' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
                 }
             }
             
@@ -265,24 +265,16 @@ class InstallService
             if(!empty($email) && self::is_email($email))
                 $htaccessReplacesMap[60] = 'SetEnv SERVER_ADMIN ' . $email;
             
-            self::findAndReplaceInFile(DOC_ROOT . '/sitemap.xml', "://www.", "://");
-            if(strpos($domain, "www.") !== false)
-                self::findAndReplaceInFile(DOC_ROOT . '/sitemap.xml', "://", "://www.");
-            
             $findProtocol = PROTOCOL == "https://" ? "http://" : "https://";
             $replaceProtocol = PROTOCOL == "https://" ? "https://" : "http://";
-            self::findAndReplaceInFile(DOC_ROOT . '/sitemap.xml', $findProtocol, $replaceProtocol);
+            self::findAndReplaceInFile(DOC_ROOT . '/sw.js', $findProtocol . "static.", $replaceProtocol . "static.");
             self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/game.min.css', $findProtocol . "static.", $replaceProtocol . "static.");
             self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/homepage.min.css', $findProtocol . "static.", $replaceProtocol . "static.");
-            self::findAndReplaceInFile(DOC_ROOT . '/web/public/images/favicon/manifest.json', $findProtocol, $replaceProtocol);
-            self::findAndReplaceInFile(DOC_ROOT . '/web/public/images/favicon/browserconfig.xml', $findProtocol, $replaceProtocol);
             if($route->settings['domainBase'] !== $replacedDomain)
             {
-                self::findAndReplaceInFile(DOC_ROOT . '/sitemap.xml', $route->settings['domainBase'], $replacedDomain);
+                self::findAndReplaceInFile(DOC_ROOT . '/sw.js', $route->settings['domainBase'], $replacedDomain);
                 self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/game.min.css', $route->settings['domainBase'], $replacedDomain);
                 self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/homepage.min.css', $route->settings['domainBase'], $replacedDomain);
-                self::findAndReplaceInFile(DOC_ROOT . '/web/public/images/favicon/manifest.json', $route->settings['domainBase'], $replacedDomain);
-                self::findAndReplaceInFile(DOC_ROOT . '/web/public/images/favicon/browserconfig.xml', $route->settings['domainBase'], $replacedDomain);
             }
             
             self::replaceLinesByLineNumbers($configFile, $configReplacesMap);

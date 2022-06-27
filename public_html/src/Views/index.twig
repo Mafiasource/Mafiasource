@@ -63,18 +63,19 @@
                             {% if userData is empty %}
                                 <form id="demo-login" name="login" action="{{ routing.getRouteByRouteName('login') }}" method="POST">
                                     <h2>
-                                        <a style="position: relative;top: -5px;margin-bottom:10px" href="{{ routing.getRouteByRouteName('register') }}" class="button">{{ langs.REGISTER_BTN }}</a>&nbsp;{{ langs.PLAYERS_BEFORE_MSG|raw }}
+                                        <a style="position: relative;top: -5px;margin-bottom:10px" href="{{ routing.getRouteByRouteName('register') }}" class="button">{{ langs.REGISTER_BTN }}</a>&nbsp;
                                         <input type="hidden" name="username" value="ms-demo"/>
                                         <input type="hidden" name="password" value="demo-ms"/>
-                                        <input style="position: relative;top: -5px;margin-bottom:10px" type="submit" name="submit_login" class="input-submit blue" value="{% if lang == 'en' %}Try{% else %}Probeer{% endif %} demo!"/>
+                                        <input style="position: relative;top: -5px;margin-bottom:10px" type="submit" name="submit_login" class="input-submit blue" value="{% if lang == 'en' %}Try{% else %}Probeer{% endif %} demo"/>
                                     </h2>
                                 </form>
-                                <br class="clear"/>
-                            {% endif %}
-                            {% if not fromAndroid %}
-                                <a href="https://play.google.com/store/apps/details?id=com.mafiasource.webviewapp&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img width="180" height="70" alt="Get it on Google Play" src="{{ staticRoot }}/foto/180x70/2/web/public/images/google-play.png"/></a>
                             {% endif %}
                         </section>
+                        {% if not fromAndroid %}
+                            <div class="center">
+                                <a href="https://play.google.com/store/apps/details?id=com.mafiasource.webviewapp&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img width="180" height="70" alt="Get it on Google Play" src="{{ staticRoot }}/foto/180x70/2/web/public/images/google-play.png"/></a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}

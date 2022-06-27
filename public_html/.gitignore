@@ -19,8 +19,6 @@
 !web/public/images/captcha/
 !web/public/images/users/.htaccess
 !web/public/images/families/.htaccess
-!web/public/images/favicon/browserconfig.xml
-!web/public/images/favicon/manifest.json
 
 # Root files
 /.ftpquota

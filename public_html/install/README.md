@@ -56,19 +56,22 @@ No SSL support? Skip to [App wont work on a localhost environment without SSL su
 4) After uploading browse to your website through following URI: https://www.domainname.ex/install (https:// in front is important if applicable)
 5) Follow installation instructions on screen, finish with a successful installation.
 
+A successful installation should render a fresh copy of Mafiasource on your web server www.domainname.ex without issues. (CTRL + F5 might be required)
+Remove the entire /install/ directory in public_html if this is the case.
+Otherwise, refer to [Successful installation but still a blank application like initially.](#p-successful-installation-but-still-a-blank-application-like-initially)
+
 The following source code files should have been modified after a successful installation:
 - /../security.php
 - /.htaccess
 - /app/config/config.php
-- replaces all hard coded mafiasource.nl instances in all .css, .json and .xml files.
-- activates all /app/cronjob/ jobs on the web server.
+- Replaces all hard coded static.mafiasource.nl instances in:
+  * /sw.js
+  * /web/public/css/game.min.css
+  * /web/public/css/homepage.min.css
+- Activates all /app/cronjob/ jobs on the web server.
 
-A successful installation should render a fresh copy of Mafiasource on your web server without issues.
-Remove the entire /install/ directory in public_html if this is the case.
-Otherwise, refer to [Successful installation but still a blank application like initially.](#p-successful-installation-but-still-a-blank-application-like-initially)
-
-You can backup your customized security, htaccess, config and the few *.css, *.json and *.xml files somewhere safe.
-Overwrite these custom backup files after every merge and rebase to stay up-to-date with possible future updates.
+You can backup the above modified source code files somewhere safe for later use.
+Overwrite these modified backup files after every merge and rebase to stay up-to-date with possible future updates.
 This tactic won't update .css style changes, unless these files are changed manually.
 
 ## Troubleshooting common problems and answers
@@ -108,7 +111,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 1) Check the first 3 files (security, htaccess, config) to verify that all definitions are correct including SSL_ENABLED.
   Making these changes without the installation GUI can solve this issue without altering permissions or php settings.
   In .htaccess only the correct domainname is of concern.
-2) If your website works, manually find and replace all mafiasource.nl instances to solve styling, json and or xml issues.
+2) If your website works, manually find and replace all mafiasource.nl instances to solve styling / css issues.
 3) Import /install/config/clean-database.sql manually into your database.
 4) Configure /app/cronjob/ jobs on the web server to finalize installation.
 ```

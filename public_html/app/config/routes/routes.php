@@ -159,7 +159,28 @@ array(
     =>
     array(
         'route' => $routeLang . '/offline.html',
-        'controller' => 'offline.php'
+        'controller' => '.offline.php'
+    ),
+    
+    '_sitemap'
+    =>
+    array(
+        'route' => '/sitemap.xml',
+        'controller' => '.sitemap.php'
+    ),
+    
+    '_app-webmanifest'
+    =>
+    array(
+        'route' => '/app.webmanifest',
+        'controller' => '.app.webmanifest.php'
+    ),
+    
+    '_browserconfig'
+    =>
+    array(
+        'route' => '/browserconfig.xml',
+        'controller' => '.browserconfig.php'
     ),
     
     'php-info'

@@ -17,16 +17,8 @@ $(".closeCookieMessage").click(function(e){
     });
 });
 
-$(document).on("click", "a.menuBurger", function (e){
-    $("nav#menuMobile").slideToggle( "fast", function(){
-        var body = $("html, body");
-        body.stop().animate({scrollTop:0}, "300", "swing");
-    });
-    e.preventDefault();
-});
-
 $(document).ready(function(){
-    $("nav#menu").parent().append("<a href='javascript:void(0);' class='menuBurger'>&nbsp;</a><nav id='menuMobile'>" + $("nav#menu").html() + "</nav>");
+    $("body").prepend('<div id="mobile-menu-wrapper"><input type="checkbox" id="mobile-menu" name="menu" class="menu-checkbox"><nav class="menu"><label class="menu-toggle" for="mobile-menu"><span>Toggle</span></label>' + $("nav#menu").html() + '</nav></div>');
     $("[data-toggle='tooltip']").tooltip();
     $("html").height($(document).height());
 });

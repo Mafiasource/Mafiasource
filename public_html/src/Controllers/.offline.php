@@ -1,7 +1,5 @@
 <?PHP
 
-use src\Business\CMSService;
-
 require_once __DIR__ . '/.inc.head.php';
 
 $offlineMsg = "Please turn on your internet connection.";

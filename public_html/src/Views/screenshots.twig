@@ -2,18 +2,20 @@
 
 {% block stylesheets %}
 {% for s in screenshots %}
-    <link rel="preload" href="{{ staticRoot }}/foto/1802x860/1/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.png" as="image" />
+    <link rel="preload" media="(min-width: 766px)" href="{{ staticRoot }}/foto/1802x860/1/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.png" as="image" />
     <link rel="preload" href="{{ staticRoot }}/foto/web/public/images/screenshots/{{ lang }}/{{ s.screen }}.mobile.png" as="image" />
 {% endfor %}
 <style type="text/css">
-    section#content { padding-bottom:0;}
+    section#content {padding-bottom:0;}
+    .carousel.slide {margin-top:-1.05rem; max-height: 869px;overflow:hidden;}
+    h1 {position: absolute;top: -10em;}
 </style>
 {% endblock stylesheets %}
  
 {% block content %}
-    <h1 style="position: absolute;top: -10em;">{{ langs.MOOD_IMAGES }}</h1>
+    <h1>{{ PAGE_TITLE|replace({' - Mafiasource': ''}) }}</h1>
     <section id="content">
-        <div id="carouselIndicators" class="carousel slide" data-ride="carousel" style="margin-top:-1.05rem;">
+        <div id="carouselIndicators" class="carousel slide" data-ride="carousel">
           <ol class="carousel-indicators">
             {% for s in screenshots %}
                 <li data-target="#carouselIndicators" data-slide-to="{{ loop.index0 }}"{% if loop.first %} class="active"{% endif %}></li>

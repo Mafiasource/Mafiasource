@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://www.mafiasource.nl/</loc>
+        <loc>{{ docRoot }}/</loc>
         <changefreq>hourly</changefreq>
         <priority>1.00</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/register</loc>
+        <loc>{{ docRoot }}/register</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/login</loc>
+        <loc>{{ docRoot }}/login</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/forum</loc>
+        <loc>{{ docRoot }}/forum</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/screenshots</loc>
+        <loc>{{ docRoot }}/screenshots</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/download-app</loc>
+        <loc>{{ docRoot }}/download-app</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/link-partners</loc>
+        <loc>{{ docRoot }}/link-partners</loc>
         <changefreq>hourly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/terms-and-conditions</loc>
+        <loc>{{ docRoot }}/terms-and-conditions</loc>
         <changefreq>hourly</changefreq>
         <priority>1.00</priority>
     </url>
     <url>
-        <loc>https://www.mafiasource.nl/privacy-policy</loc>
+        <loc>{{ docRoot }}/privacy-policy</loc>
         <changefreq>hourly</changefreq>
         <priority>1.00</priority>
     </url>
