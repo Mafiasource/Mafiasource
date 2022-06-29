@@ -153,7 +153,7 @@ IndexIgnore *
         Header append Vary: Accept-Encoding
     </FilesMatch>
     ## Allow cross-domain access control for static files and remove cookies.
-    <FilesMatch ".(ttf|ttc|otf|eot|woff|woff2|font.css|ico|png|jpg|jpeg|gif|webp|css|min.css|js|xml|json|txt|pdf|mov|avi|swf|webmanifest)$">
+    <FilesMatch ".(ttf|ttc|otf|eot|woff|woff2|font.css|ico|png|jpg|jpeg|gif|webp|css|min.css|js|xml|json|txt|pdf|mov|avi|swf)$">
         Header set Access-Control-Allow-Origin "*"
         RequestHeader unset Cookie
         Header unset Cookie

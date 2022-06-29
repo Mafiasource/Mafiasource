@@ -143,7 +143,14 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
             restore_error_handler();
         }
         // Session lockdown after controller did its job except for cookieless routes
-        if(!str_starts_with($route->getRouteName(), '_'))
+        if(str_starts_with($route->getRouteName(), '_'))
+        {
+            header('Access-Control-Allow-Origin: *');
+            header('Cache-Control: max-age=2419200, public, must-revalidate');
+            header_remove('Cookie');
+            header_remove('Set-Cookie');
+        }
+        else
             SessionManager::sessionWriteClose();
     }
     fclose($stream);

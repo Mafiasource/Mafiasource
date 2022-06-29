@@ -158,14 +158,14 @@ array(
         'controller' => 'link-partners.php'
     ),
     
-    /** Cookieless routes **/
-    '_offline'
+    'offline'
     =>
     array(
         'route' => '/offline.html',
-        'controller' => '.offline.php'
+        'controller' => 'offline.php'
     ),
     
+    /** Cookieless routes **/
     '_sitemap'
     =>
     array(
