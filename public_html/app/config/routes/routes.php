@@ -161,7 +161,7 @@ array(
     'offline'
     =>
     array(
-        'route' => '/offline.html',
+        'route' => $routeLang . '/offline.html',
         'controller' => 'offline.php'
     ),
     
