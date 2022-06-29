@@ -4,6 +4,9 @@
  * Routes - file included in / extension of Routing constructor. Below AjaxRoutes are included.
  * - $routeGET: Outgame social media sharing, allow any and all GET parameters in request URI (See Routing)
  * - $routeLang: Outgame multilingual SEO purposes
+ * - @RouteName: Starting with underscore (_) are dynamic app routes with static content (cookieless routes)
+ *     These static resources can be filled with dynamic content but without any session / cookie use
+ *     These resources can only be visited from the app main domain, NOT the static. subdomain while remaining cookieless (Without interference from root/.htaccess)
  **/
 
 $this->routeLang = "(?:\/(" . $this->allowedLangs[0] . "|" . $this->allowedLangs[1] . "))?"; // Duplicate, but with allowedLangs values
@@ -155,10 +158,11 @@ array(
         'controller' => 'link-partners.php'
     ),
     
+    /** Cookieless routes **/
     '_offline'
     =>
     array(
-        'route' => $routeLang . '/offline.html',
+        'route' => '/offline.html',
         'controller' => '.offline.php'
     ),
     
@@ -182,6 +186,7 @@ array(
         'route' => '/browserconfig.xml',
         'controller' => '.browserconfig.php'
     ),
+    /** //END Cookieless routes **/
     
     'php-info'
     =>

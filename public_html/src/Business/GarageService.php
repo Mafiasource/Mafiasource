@@ -378,7 +378,7 @@ class GarageService
                                 $error = $l['TUNE_ITEM_IN_POSSESSION'];
                             }
                         }
-                        if($tuneAction == "sell" && $inPossession !== $tuneItem)
+                        if($tuneAction == "sell" && (string)$inPossession !== (string)$tuneItem)
                         {
                             $error = $l['TUNE_ITEM_NOT_IN_POSSESSION'];
                         }

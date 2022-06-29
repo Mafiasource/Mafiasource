@@ -67,19 +67,21 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         $classLoader = new ClassLoader('src'   ,   DOC_ROOT);
         $classLoader->register();
         $classLoader = null;
-        
-        // Start a session
-        require_once __DIR__.'/../vendor/SessionManager.php';
-        $session = new SessionManager();
-        ini_set('session.save_handler', 'files');
-        session_set_save_handler($session, true);
-        session_save_path(__DIR__ . '/../app/cache/sessions');
-        SessionManager::sessionStart(SeoURL::format($route->settings['gamename']), 0, '/', $route->settings['domain'], SSL_ENABLED);
-        $session = $seoURL = null;
-        if(isset($_SESSION['regenerate']) && $_SESSION['regenerate'] === true)
+        // Start a session except for cookieless routes
+        if(!str_starts_with($route->getRouteName(), '_'))
         {
-            $_SESSION['regenerate'] = null;
-            SessionManager::regenerateSession();
+            require_once __DIR__.'/../vendor/SessionManager.php';
+            $session = new SessionManager();
+            ini_set('session.save_handler', 'files');
+            session_set_save_handler($session, true);
+            session_save_path(__DIR__ . '/../app/cache/sessions');
+            SessionManager::sessionStart(SeoURL::format($route->settings['gamename']), 0, '/', $route->settings['domain'], SSL_ENABLED);
+            $session = $seoURL = null;
+            if(isset($_SESSION['regenerate']) && $_SESSION['regenerate'] === true)
+            {
+                $_SESSION['regenerate'] = null;
+                SessionManager::regenerateSession();
+            }
         }
         // Security class (Anti CSRF, XSS attacks & more)
         require_once __DIR__.'/../app/config/security.php';
@@ -140,8 +142,9 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
             }
             restore_error_handler();
         }
-        // Session lockdown after controller did its job
-        SessionManager::sessionWriteClose();
+        // Session lockdown after controller did its job except for cookieless routes
+        if(!str_starts_with($route->getRouteName(), '_'))
+            SessionManager::sessionWriteClose();
     }
     fclose($stream);
 }

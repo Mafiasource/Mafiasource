@@ -147,6 +147,8 @@ If all else failed please create an issue, describe your problem as best you can
 
 ## LICENSE DISCLAIMER
 The license included by this software does NOT apply to the following resources used by this project:
+- jQuery: +UI +UI touch punch + touchswipe + imageMapResizer (modified), Popper JS & Bootstrap: CSS + JS (Front-end resources)
+- /sw.js (License top of file)
 - /vendor/SessionManager.php (License top of file)
 - /vendor/SimpleImage.php (License top of file)
 - /web/public/foto.php (License top of file)

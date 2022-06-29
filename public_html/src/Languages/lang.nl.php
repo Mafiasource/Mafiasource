@@ -34,7 +34,7 @@ class GetLanguageContent
                 'PLAYERS_BEFORE_MSG' => "met <span class='total'>{totalPlayers}</span> criminelen! Of",
                 'REGISTER_BTN' => "Doe mee",
                 'CHANGE_LANG_SUCCESS' => "You have changed the language settings to English.",
-                'COOKIES_ACCEPT' => "Onze website maakt gebruik van cookies om uw browse ervaring te verbeteren, <a href='/privacy-policy'><strong>bekijk privacy beleid</strong></a> voor meer informatie.",
+                'COOKIES_ACCEPT' => "Onze website maakt gebruik van cookies om uw browse ervaring te verbeteren, <a href='/privacy-policy'><strong>bekijk privacybeleid</strong></a> voor meer informatie.",
                 'LINK_PARTNERS_INFO' => "Maak kennis met onze <a href='".$route->getRouteByRouteName('link-partners')."'>linkpartners</a>.",
                 'DOWNLOAD_APP' => "Download de app",
                 'WRONG_CAPTCHA' => "Je hebt de verkeerde code ingevoerd!", // Use in & out-game
