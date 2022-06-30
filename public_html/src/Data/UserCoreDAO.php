@@ -115,6 +115,7 @@ class UserCoreDAO extends DBConfig
                     return TRUE;
                 }
             }
+            global $route;
             $this->con->setData("
                 INSERT INTO `login_fail` (`username`,`ip`,`date`,`time`,`type`, `cookieLogin`) VALUES (:username, :ip, :date, :time, :type, 1)
             ", array(':username' => $row['username'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => 0)); // $type 0 = Credentials
