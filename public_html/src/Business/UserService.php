@@ -195,7 +195,7 @@ class UserService
             $error = $langs['INVALID_SECURITY_TOKEN']; 
         }
         
-        $isRg      = $this->data->checkIPRegistered($this->ipAddr);
+        $isRg      = $this->data->checkIPRegistered(UserCoreService::getIP());
     	$isRegged  = is_object($isRg) ? $isRg->rowCount() : 0;
     	if($isRegged >= 1)
         {
