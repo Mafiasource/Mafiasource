@@ -63,14 +63,15 @@ class UserCoreService
         if($this->data->checkPermBannedIP($ipAddr) || !$this->ipValid)
             return FALSE;
         
-        if($this->data->getCookieLoginFailedCountByIP($ipAddr) >= 2)
-        {
-            $this->data->addPermanentBannedIP($ipAddr);
-            return FALSE;
-        }
-        
         if(!isset($_SESSION['UID']) && isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
+        {
+            if($this->data->getCookieLoginFailedCountByIP($ipAddr) >= 2)
+            {
+                $this->data->addPermanentBannedIP($ipAddr);
+                return FALSE;
+            }
             $this->data->verifyCookieHash($_COOKIE['remember'], $_COOKIE['UID']); // Sets SESSION UID when valid (to be re-checked underneath)
+        }
         
         if(isset($_SESSION['UID']) && $this->data->checkUser($_SESSION['UID'], $update))
             return TRUE;
