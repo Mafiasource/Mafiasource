@@ -24,9 +24,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-use src\Business\UserService;
+use src\Business\UserCoreService;
 
-require_once __DIR__."/../src/Business/UserService.php";
+require_once __DIR__."/../src/Business/UserCoreService.php";
 
 class SessionManager extends SessionHandler
 {
@@ -56,7 +56,7 @@ class SessionManager extends SessionHandler
     		if(!self::preventHijacking()) // Is this sess request a hijacking attempt?
     		{
     			$_SESSION = array(); // Yes, clear all sess variables
-                $_SESSION['_IPaddress'] = UserService::getIP();
+                $_SESSION['_IPaddress'] = UserCoreService::getIP();
     			$_SESSION['_userAgent'] = isset($_SERVER['HTTP_USER_AGENT']) 
                             ? $_SERVER['HTTP_USER_AGENT'] : 'Undefined';
     			self::regenerateSession();
@@ -116,7 +116,7 @@ class SessionManager extends SessionHandler
           && strpos($userAgent, '‘Trident’') !== false))
             return false;
         
-        $remoteIpHeader = UserService::getIP();
+        $remoteIpHeader = UserCoreService::getIP();
         if($_SESSION['_IPaddress'] != $remoteIpHeader)
             return false;
             

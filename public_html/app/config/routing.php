@@ -2,7 +2,7 @@
 
 namespace app\config;
 
-use src\Business\UserService;
+use src\Business\UserCoreService;
 
 require_once __DIR__.'/config.php';
 
@@ -207,7 +207,7 @@ class Routing
     
     function getLanguageByIp()
     {
-        $host = gethostbyaddr(UserService::getIP());
+        $host = gethostbyaddr(UserCoreService::getIP());
         $language = "English";
         if(preg_match("/nl$/", $host) || preg_match("/be$/", $host) || preg_match("/arpa$/", $host))
             $language = "Dutch";

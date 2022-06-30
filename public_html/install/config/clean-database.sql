@@ -1710,12 +1710,32 @@ CREATE TABLE `login`  (
   `date` datetime NOT NULL,
   `time` bigint NOT NULL,
   `tries` int NOT NULL DEFAULT 1,
+  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`userID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of login
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for login_fail
+-- ----------------------------
+DROP TABLE IF EXISTS `login_fail`;
+CREATE TABLE `login_fail`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
+  `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `ip` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `date` datetime NULL DEFAULT NULL,
+  `time` bigint NOT NULL DEFAULT 0,
+  `type` smallint NOT NULL DEFAULT 0 COMMENT 'select=Inloggegevens,Overtreding,Waarschuwing,Tijdelijke ban,Permanente ban',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+
+
+-- ----------------------------
+-- Records of login_fail
 -- ----------------------------
 
 -- ----------------------------

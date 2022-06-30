@@ -158,14 +158,64 @@ class UserDAO extends DBConfig
     
     public function loginUser($username, $id)
     { // Beware! Only use loginUser function after correct validation! ie. verifyLoginGetIdOnSuccess($username, $pass)
-        $tries = 0;
+        $tries = 1;
         if(isset($_SESSION['login-tries'])) $tries = $_SESSION['login-tries'];
         $_SESSION['UID'] = $id;
         global $route;
         if(!isset($_COOKIE['username']) && !$this->isPrivateIDActive()) setcookie('username', $username, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
         $statement = $this->dbh->prepare("INSERT INTO `login` (`userID`,`ip`,`date`,`time`,`tries`) VALUES (:id, :ip, :date, :time, :tries)");
-        $statement->execute(array(':id' => $_SESSION['UID'], ':ip' => UserService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => $tries));
+        $statement->execute(array(':id' => $_SESSION['UID'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => $tries));
         return TRUE;
+    }
+    
+    public function loginFailed($username, $type)
+    {
+        $userService = new UserService();
+        $exists = $userService->checkUsernameExists($username);
+        $id = $this->getIdByUsername($username);
+        if($id !== FALSE || $exists === TRUE)
+        {
+            if($exists === TRUE && $id === FALSE)
+                $username = "PrivateID";
+        }
+        $this->con->setData("
+            INSERT INTO `login_fail` (`username`,`ip`,`date`,`time`,`type`) VALUES (:username, :ip, :date, :time, :type)
+        ", array(':username' => $username, ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => $type));
+    }
+    
+    public function getLoginFailedCountByIp($ipAddr, $type = false)
+    {
+        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-24 hours')));
+        $whereAdd = "";
+        if($type != false && $type >= 0 && $type <= 4)
+        {
+            $whereAdd = "AND `type`= :type";
+            $prms[':type'] = $type;
+        }
+        $row = $this->con->getDataSR("
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (3, 4) $whereAdd LIMIT 1
+        ", $prms);
+        if(isset($row['total']) && $row['total'] >= 0)
+            return (int)$row['total'];
+        
+        return 0;
+    }
+    
+    public function checkTempBannedIP($ipAddr)
+    {
+        $userService = new UserService();
+        $row = $this->con->getDataSR("
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast LIMIT 1
+        ", array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours'))));
+        if(isset($row['total']) && $row['total'] >= $userService->maxLogin24h)
+            return TRUE;
+        
+        return FALSE;
+    }
+    
+    public function checkPermBannedIP($ipAddr)
+    {
+        return FALSE;
     }
 
     public function verifyValidOwner($id = false, $ip = false)
@@ -173,11 +223,11 @@ class UserDAO extends DBConfig
         if(isset($_SESSION['UID']))
         {
             $id = $id ? $id : $_SESSION['UID'];
-            $ip = $ip ? $ip : UserService::getIP();
+            $ip = $ip ? $ip : UserCoreService::getIP();
             
             $row = $this->con->getDataSR("
                 SELECT `id` FROM `login` WHERE `ip`= :ip AND `date`< :datePast AND `userID`= :uid ORDER BY `id` DESC LIMIT 1
-            ", array(':ip' => $ip, ':datePast' =>date('Y-m-d H:i:s', strtotime('-24 hours')), ':uid' => $id));
+            ", array(':ip' => $ip, ':datePast' => date('Y-m-d H:i:s', strtotime('-24 hours')), ':uid' => $id));
             
             if(isset($row['id']) && $row['id'] > 0)
                 return TRUE;
@@ -245,7 +295,7 @@ class UserDAO extends DBConfig
             ':username' => $username,
             ':password' => $hash,
             ':email' => 'NULL',
-            ':ip' => UserService::getIP(),
+            ':ip' => UserCoreService::getIP(),
             ':registerDate' => date('Y-m-d H:i:s'),
             ':restartDate' => date('Y-m-d H:i:s'),
             ':lang' => $this->lang,
@@ -803,7 +853,7 @@ class UserDAO extends DBConfig
                 case 3:
                     $pid = generatePrivateID(6);
                     break;
-            }
+            }            
             $hash = hash('sha256', $pid);
             
             $salt = $security->createSalt();
@@ -824,7 +874,7 @@ class UserDAO extends DBConfig
             fwrite($ourFileHandle, serialize($salts));
             fclose($ourFileHandle);
             chmod($saltFile, 0600);
-            
+                        
             return $pid;
         }
     }

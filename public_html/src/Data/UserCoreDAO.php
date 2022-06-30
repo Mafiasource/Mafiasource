@@ -106,6 +106,10 @@ class UserCoreDAO extends DBConfig
                     $_SESSION['UID'] = $id;
                     $_SESSION['logon']['cookiehash'] = $hash;
                     
+                    $this->con->setData("
+                        INSERT INTO `login` (`userID`,`ip`,`date`,`time`,`tries`, `cookieLogin`) VALUES (:id, :ip, :date, :time, :tries, 1)
+                    ", array(':id' => $_SESSION['UID'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => 1));
+                    
                     global $security;
                     $security->generateNewToken();
                     $security->generateNewSession();

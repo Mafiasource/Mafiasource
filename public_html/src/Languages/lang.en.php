@@ -213,6 +213,8 @@ class GetLanguageContent
     {
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "You've entered the wrong username or password!",
+            'LOGIN_FAILED_WARNING' => "You have {attempts} login attempts left!",
+            'TEMPORARILY_IP_BANNED' => "You have no more login attempts left, this can take up to 72 hours.",
             'PRE_TITLE_TXT' => "Login to",
             'FORGOT_PASSWORD' => "Forgot username / password?"
         );

@@ -213,6 +213,8 @@ class GetLanguageContent
     {
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "Je hebt een ongeldige gebruikersnaam of wachtwoord ingevoerd!",
+            'LOGIN_FAILED_WARNING' => "Je hebt nog {attempts} inlogpogingen over!",
+            'TEMPORARILY_IP_BANNED' => "Je hebt geen login pogingen meer over dit kan tot 72 uur aanhouden.",
             'PRE_TITLE_TXT' => "Inloggen op",
             'FORGOT_PASSWORD' => "Gebruikersnaam / wachtwoord vergeten?"
         );
