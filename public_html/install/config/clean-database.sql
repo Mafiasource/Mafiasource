@@ -1700,6 +1700,20 @@ CREATE TABLE `honorpoint_log`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for ip_ban
+-- ----------------------------
+DROP TABLE IF EXISTS `ip_ban`;
+CREATE TABLE `ip_ban`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
+  `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ip_ban
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for login
 -- ----------------------------
 DROP TABLE IF EXISTS `login`;
@@ -1730,6 +1744,7 @@ CREATE TABLE `login_fail`  (
   `date` datetime NULL DEFAULT NULL,
   `time` bigint NOT NULL DEFAULT 0,
   `type` smallint NOT NULL DEFAULT 0 COMMENT 'select=Inloggegevens,Overtreding,Waarschuwing,Tijdelijke ban,Permanente ban',
+  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
