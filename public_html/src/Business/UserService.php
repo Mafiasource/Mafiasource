@@ -107,7 +107,7 @@ class UserService
         $_SESSION['login-tries'] = !isset($_SESSION['login-tries']) ? 1 : $_SESSION['login-tries']++;
         $permBan = $user->checkPermBannedIP(UserCoreService::getIP());
         // $type 1=Violation | 2=Warning | 3=Temp. IP Ban | 4=Perm. IP Ban
-        $type = 1;
+        $type = $permBan ? 4 : 1;
         $laMsg = $this->getLoginAttemptsMessage($l);
         if($laMsg !== "") // Default LOGIN_FAILED_WARNING | Type 2
             $type = 2;
