@@ -3,6 +3,7 @@
 namespace src\Business;
 
 use app\config\Routing;
+use src\Business\UserCoreService;
 use src\Business\GarageService;
 use src\Business\StateService;
 use src\Business\PossessionService;
@@ -16,11 +17,14 @@ class UserService
 {
     private $data;
 
+    public $maxLogin24h = 20; // The amount of unsuccessful attempts an IP address can login within 24 hours before receiving 72 hour IP ban.
+    public $minLogin24h = 5; // The amount of unsuccessful attempts an IP address can login within 24 houts before receiving a warning.
     public $healCostsPercent = 2500; // Hospital heal costs / each percent damage.
     public $creditsChance = 25; // <= 25
     public $creditsChanceRand = 100; // rand 1, [100]
     public $creditsWon = 0; // Init
     public $tryAgainMessage = ""; // Init
+    public $ipValid = false; // Init
     public $unavailableUsernames = array("Guest", "Gast", "Webmaster", "Admin", "Moderator", "Helpdesk", "None", "Geen");
 
     public function __construct()
@@ -31,6 +35,10 @@ class UserService
         $this->creditsChanceRand = $security->randInt(1, 100);
         $this->creditsWon = $security->randInt(2, 4);
         $this->tryAgainMessage = $lang == "en" ? "Try again later." : "Probeer later opnieuw.";
+        $this->ipValid = filter_var(
+            UserCoreService::getIP(),
+            FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE
+        );
         /* Double credits sample: */
         if(strtotime("2021-12-07 14:00:00") < strtotime('now') && strtotime("2021-12-10 14:00:00") > strtotime('now'))
         {
@@ -64,17 +72,6 @@ class UserService
    		return TRUE;
     }
 
-    static function getIP()
-    {
-        if (!empty($_SERVER['HTTP_CLIENT_IP']))
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        else
-            $ip = $_SERVER['REMOTE_ADDR'];
-        return $ip;
-    }
-
     public function checkUsernameExists($username)
     {
         $nameSet = $this->data->checkUsername($username);
@@ -82,6 +79,21 @@ class UserService
             return "404";
         
         return TRUE;
+    }
+    
+    private function getLoginAttemptsMessage($langs = array())
+    {
+        $ipAddr = UserCoreService::getIP();
+        $tempBan = $this->data->checkTempBannedIP($ipAddr);
+        if($tempBan)
+            return $langs['TEMPORARILY_IP_BANNED'] . " ";
+        
+        global $route;
+        $lfc = $this->data->getLoginFailedCountByIp($ipAddr);
+        if($lfc >= $this->minLogin24h && $lfc <= $this->maxLogin24h)
+            return $route->replaceMessagePart(20 - $lfc, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
+        
+        return ""; // Nothing to prepend to message
     }
 
     public function validateLogin($post, $captcha = false)
@@ -92,35 +104,39 @@ class UserService
         $l = $language->loginLangs();
         $username = $security->xssEscape($post['username']);
         $pass = $post['password'];
-        if(isset($post['captcha_code'])) $code     = (int)$post['captcha_code'];
-        // Avoid verifyLogin (sets remember cookie) for invalid security-token, captcha
-        if($security->checkToken($post['security-token']) ==  FALSE)
-        {
-            return $langs['INVALID_SECURITY_TOKEN'];
-        }
+        $code = isset($post['captcha_code']) ? (int)$post['captcha_code'] : null;
+        $_SESSION['login-tries'] = !isset($_SESSION['login-tries']) ? 1 : $_SESSION['login-tries']++;
+        // $type 1=Violation | 2=Warning | 3=Temp. IP Ban | 4=Perm. IP Ban
+        $type = 1;
+        $laMsg = $this->getLoginAttemptsMessage($l);
+        if($laMsg !== "") // Default LOGIN_FAILED_WARNING | Type 2
+            $type = 2;
+        
+        if($laMsg == $l['TEMPORARILY_IP_BANNED'] . " ")
+            $type = $this->data->checkPermBannedIP(UserCoreService::getIP()) ? 4 : 3;
+        
+        if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
+            $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 1
+        
         if($captcha == true && (!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code))
+            $return = $langs['WRONG_CAPTCHA']; // Violation | Type 1
+        
+        if(in_array($type, array(3, 4)))
+            $return = $l['TEMPORARILY_IP_BANNED'] . " "; // Type 3 & 4
+        
+        if(isset($return))
         {
-            return $langs['WRONG_CAPTCHA'];
+            $this->data->loginFailed($username, $type);
+            return $laMsg === $return ? $laMsg : $laMsg . $return;
         }
         
         $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
         if($id == FALSE)
         {
-            $error = $l['WRONG_USERNAME_OR_PASS'];
+            $this->data->loginFailed($username, 0); // Credentials | Type 0
+            return $laMsg . $l['WRONG_USERNAME_OR_PASS'];
         }
         
-        if(isset($error))
-        {
-            if(!isset($_SESSION['login-tries']))
-            {
-                $_SESSION['login-tries'] = 1;
-            }
-            else
-            {
-                $_SESSION['login-tries']++;
-            }
-            return $error;
-        }
         $this->data->loginUser($username, $id);
         return TRUE;
     }
@@ -174,14 +190,12 @@ class UserService
     		$error = $l['EMAIL_TAKEN'];
     	}
         
-        $ipAddr = self::getIP();
-        $ipValid = filter_var($ipAddr, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE);
-        if(!$ipValid)
+        if(!$this->ipValid)
         {
             $error = $langs['INVALID_SECURITY_TOKEN']; 
         }
         
-        $isRg      = $this->data->checkIPRegistered($ipAddr);
+        $isRg      = $this->data->checkIPRegistered($this->ipAddr);
     	$isRegged  = is_object($isRg) ? $isRg->rowCount() : 0;
     	if($isRegged >= 1)
         {
