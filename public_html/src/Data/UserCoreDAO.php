@@ -53,14 +53,6 @@ class UserCoreDAO extends DBConfig
                     $route->headTo('logout');
                     exit(0);
                 }
-                elseif($security->checkCaptcha($userCaptcha->getSecurityTodo(), $userCaptcha->getSecurity()) && $route->getRouteName() != "captcha_test" && $route->getRouteName() != "rest_in_peace")
-                {
-                    if(!in_array($route->getController(), $denyPrevRouteSaves))
-                        $route->setPrevRoute();
-                    
-                    $route->headTo('captcha_test');
-                    exit(0);
-                }
                 elseif($this->getUserData()->getHealth() <= 0 && $route->getRouteName() != "rest_in_peace" && $route->getRouteName() != "captcha_test")
                 {
                     if(!in_array($route->getController(), $denyPrevRouteSaves))
@@ -91,7 +83,13 @@ class UserCoreDAO extends DBConfig
         if(!isset($_SESSION['UID']))
         {
             $id = (int)$id;
-            $statement = $this->dbh->prepare("SELECT u.`id`, u.`email`, u.`password` FROM `user` AS u LEFT JOIN `status` AS s ON (u.statusID=s.id) WHERE u.`id` = :id AND u.`active`='1' AND u.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 1");
+            $statement = $this->dbh->prepare("
+                SELECT u.`id`, u.`username`, u.`email`, u.`password`
+                FROM `user` AS u
+                LEFT JOIN `status` AS s
+                ON (u.statusID=s.id)
+                WHERE u.`id` = :id AND u.`active`='1' AND u.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 1
+            ");
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
             $saltFile = DOC_ROOT . "/app/Resources/userSalts/".$id.".txt";
@@ -117,12 +115,50 @@ class UserCoreDAO extends DBConfig
                     return TRUE;
                 }
             }
+            $this->con->setData("
+                INSERT INTO `login_fail` (`username`,`ip`,`date`,`time`,`type`, `cookieLogin`) VALUES (:username, :ip, :date, :time, :type, 1)
+            ", array(':username' => $row['username'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => 0)); // $type 0 = Credentials
+            setcookie('remember', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
+            setcookie('UID', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
         }
         if(isset($_SESSION['logon']['cookiehash']) && isset($_SESSION['UID']))
         {
             if(hash_equals($hash, $_SESSION['logon']['cookiehash']) && $_SESSION['UID'] == $id)
                 return TRUE;
         }
+        return FALSE;
+    }
+    
+    public function getCookieLoginFailedCountByIP($ipAddr, $type = false)
+    {
+        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-5 minutes')));
+        $whereAdd = "";
+        if($type != false && $type >= 0 && $type <= 4)
+        {
+            $whereAdd = "AND `type`= :type";
+            $prms[':type'] = $type;
+        }
+        $row = $this->con->getDataSR("
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (3, 4) AND `cookieLogin`='1' $whereAdd LIMIT 1
+        ", $prms);
+        if(isset($row['total']) && $row['total'] >= 0)
+            return (int)$row['total'];
+        
+        return 0;
+    }
+    
+    public function addPermanentBannedIP($ipAddr)
+    {
+        if(!$this->checkPermBannedIP($ipAddr))
+            $this->con->setData("INSERT INTO `ip_ban` (`ip`) VALUES (:ip)", array(':ip' => $ipAddr));
+    }
+    
+    public function checkPermBannedIP($ipAddr)
+    {
+        $row = $this->con->getDataSR("SELECT `id` FROM `ip_ban` WHERE `ip`= :ip LIMIT 1", array(':ip' => $ipAddr));
+        if(isset($row['id']) && $row['id'] >= 1)
+            return TRUE;
+        
         return FALSE;
     }
     

@@ -31,14 +31,12 @@ class UserService
     {
         global $security;
         global $lang;
+        global $user;
         $this->data = new UserDAO();
         $this->creditsChanceRand = $security->randInt(1, 100);
         $this->creditsWon = $security->randInt(2, 4);
         $this->tryAgainMessage = $lang == "en" ? "Try again later." : "Probeer later opnieuw.";
-        $this->ipValid = filter_var(
-            UserCoreService::getIP(),
-            FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE
-        );
+        $this->ipValid = $user->ipValid;
         /* Double credits sample: */
         if(strtotime("2021-12-07 14:00:00") < strtotime('now') && strtotime("2021-12-10 14:00:00") > strtotime('now'))
         {
@@ -87,12 +85,12 @@ class UserService
         $tempBan = $this->data->checkTempBannedIP($ipAddr);
         if($tempBan)
             return $langs['TEMPORARILY_IP_BANNED'] . " ";
-        
+
         global $route;
-        $lfc = $this->data->getLoginFailedCountByIp($ipAddr);
+        $lfc = $this->data->getLoginFailedCountByIP($ipAddr);
         if($lfc >= $this->minLogin24h && $lfc <= $this->maxLogin24h)
             return $route->replaceMessagePart(20 - $lfc, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
-        
+
         return ""; // Nothing to prepend to message
     }
 
@@ -101,6 +99,7 @@ class UserService
         global $security;
         global $language;
         global $langs;
+        global $user;
         $l = $language->loginLangs();
         $username = $security->xssEscape($post['username']);
         $pass = $post['password'];
@@ -113,7 +112,7 @@ class UserService
             $type = 2;
         
         if($laMsg == $l['TEMPORARILY_IP_BANNED'] . " ")
-            $type = $this->data->checkPermBannedIP(UserCoreService::getIP()) ? 4 : 3;
+            $type = $user->checkPermBannedIP(UserCoreService::getIP()) ? 4 : 3;
         
         if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
             $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 1

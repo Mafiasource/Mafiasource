@@ -158,8 +158,8 @@ class UserDAO extends DBConfig
     
     public function loginUser($username, $id)
     { // Beware! Only use loginUser function after correct validation! ie. verifyLoginGetIdOnSuccess($username, $pass)
-        $tries = 1;
-        if(isset($_SESSION['login-tries'])) $tries = $_SESSION['login-tries'];
+        $tries = isset($_SESSION['login-tries']) ? $_SESSION['login-tries'] : 1;
+        $_SESSION['login-tries'] = null;
         $_SESSION['UID'] = $id;
         global $route;
         if(!isset($_COOKIE['username']) && !$this->isPrivateIDActive()) setcookie('username', $username, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
@@ -183,7 +183,7 @@ class UserDAO extends DBConfig
         ", array(':username' => $username, ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => $type));
     }
     
-    public function getLoginFailedCountByIp($ipAddr, $type = false)
+    public function getLoginFailedCountByIP($ipAddr, $type = false)
     {
         $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-24 hours')));
         $whereAdd = "";
@@ -193,7 +193,7 @@ class UserDAO extends DBConfig
             $prms[':type'] = $type;
         }
         $row = $this->con->getDataSR("
-            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (3, 4) $whereAdd LIMIT 1
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (3, 4) $whereAdd LIMIT 1
         ", $prms);
         if(isset($row['total']) && $row['total'] >= 0)
             return (int)$row['total'];
@@ -205,16 +205,11 @@ class UserDAO extends DBConfig
     {
         $userService = new UserService();
         $row = $this->con->getDataSR("
-            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (3, 4) LIMIT 1
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (3, 4) LIMIT 1
         ", array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours'))));
         if(isset($row['total']) && $row['total'] >= $userService->maxLogin24h)
             return TRUE;
         
-        return FALSE;
-    }
-    
-    public function checkPermBannedIP($ipAddr)
-    {
         return FALSE;
     }
 

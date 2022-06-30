@@ -10,6 +10,7 @@ class UserCoreService
 {
     private $data;
 
+    public $ipValid = false; // Init
     public $dateFormat = "j M, H:i:s"; // PHP format
     
     public function __construct()
@@ -17,6 +18,10 @@ class UserCoreService
         global $lang;
         
         $this->data = new UserCoreDAO();
+        $this->ipValid = filter_var(
+            self::getIP(),
+            FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE
+        );
         if($lang == 'en') $this->dateFormat = "M j, g:i:s A"; // PHP format
     }
 
@@ -54,8 +59,18 @@ class UserCoreService
     
     public function checkLoggedSession($update = true)
     {
+        $ipAddr = self::getIP();
+        if($this->data->checkPermBannedIP($ipAddr) || !$this->ipValid)
+            return FALSE;
+        
+        if($this->data->getCookieLoginFailedCountByIP($ipAddr) >= 2)
+        {
+            $this->data->addPermanentBannedIP($ipAddr);
+            return FALSE;
+        }
+        
         if(!isset($_SESSION['UID']) && isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
-            $this->data->verifyCookieHash($_COOKIE['remember'], $_COOKIE['UID']); // Sets SESSION UID when valid (to eb re-checked underneath)
+            $this->data->verifyCookieHash($_COOKIE['remember'], $_COOKIE['UID']); // Sets SESSION UID when valid (to be re-checked underneath)
         
         if(isset($_SESSION['UID']) && $this->data->checkUser($_SESSION['UID'], $update))
             return TRUE;
@@ -193,5 +208,10 @@ class UserCoreService
     public function getStatusAndDonatorColors()
     {
         return $this->data->getStatusAndDonatorColors();
+    }
+    
+    public function checkPermBannedIP($ipAddr)
+    {
+        return $this->data->checkPermBannedIP($ipAddr);
     }
 }
