@@ -205,7 +205,7 @@ class UserDAO extends DBConfig
     {
         $userService = new UserService();
         $row = $this->con->getDataSR("
-            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast LIMIT 1
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (3, 4) LIMIT 1
         ", array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours'))));
         if(isset($row['total']) && $row['total'] >= $userService->maxLogin24h)
             return TRUE;
@@ -853,7 +853,7 @@ class UserDAO extends DBConfig
                 case 3:
                     $pid = generatePrivateID(6);
                     break;
-            }            
+            }
             $hash = hash('sha256', $pid);
             
             $salt = $security->createSalt();
@@ -874,7 +874,7 @@ class UserDAO extends DBConfig
             fwrite($ourFileHandle, serialize($salts));
             fclose($ourFileHandle);
             chmod($saltFile, 0600);
-                        
+            
             return $pid;
         }
     }
