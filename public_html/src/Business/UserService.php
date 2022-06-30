@@ -105,6 +105,7 @@ class UserService
         $pass = $post['password'];
         $code = isset($post['captcha_code']) ? (int)$post['captcha_code'] : null;
         $_SESSION['login-tries'] = !isset($_SESSION['login-tries']) ? 1 : $_SESSION['login-tries']++;
+        $permBan = $user->checkPermBannedIP(UserCoreService::getIP());
         // $type 1=Violation | 2=Warning | 3=Temp. IP Ban | 4=Perm. IP Ban
         $type = 1;
         $laMsg = $this->getLoginAttemptsMessage($l);
@@ -112,7 +113,7 @@ class UserService
             $type = 2;
         
         if($laMsg == $l['TEMPORARILY_IP_BANNED'] . " ")
-            $type = $user->checkPermBannedIP(UserCoreService::getIP()) ? 4 : 3;
+            $type = $permBan ? 4 : 3;
         
         if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
             $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 1
@@ -120,7 +121,7 @@ class UserService
         if($captcha == true && (!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code))
             $return = $langs['WRONG_CAPTCHA']; // Violation | Type 1
         
-        if(in_array($type, array(3, 4)))
+        if(in_array($type, array(3, 4)) || $permBan)
             $return = $l['TEMPORARILY_IP_BANNED'] . " "; // Type 3 & 4
         
         if(isset($return))
