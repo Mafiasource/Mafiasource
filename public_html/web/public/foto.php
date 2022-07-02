@@ -15,6 +15,7 @@ error_reporting(-1);
 ini_set("display_errors", 1);
 
 ini_set('date.timezone', 'Europe/Amsterdam');
+setlocale(LC_ALL, "nl-NL");
 
 define ('CACHE_SIZE', 2000);				// number of files to store before clearing cache
 define ('CACHE_CLEAR', 20);					// maximum number of files to delete on each cache clear
@@ -482,7 +483,7 @@ function show_cache_file ($mime_type) {
 		if (!@readfile ($cache_file)) {
 			$content = file_get_contents ($cache_file);
 			if ($content != FALSE) {
-				echo $content;
+				echo htmlspecialchars($content);
 			} else {
 				display_error ('cache file could not be loaded');
 			}
@@ -618,7 +619,7 @@ function check_external ($src) {
 
                 } else {
 
-					if (!$img = file_get_contents ($src)) {
+					if (!$img = file_get_contents (basename($src))) {
 						display_error ('remote file for ' . $src . ' can not be accessed. It is likely that the file permissions are restricted');
 					}
 
@@ -687,10 +688,10 @@ function curl_write ($handle, $data) {
 function clean_source ($src) {
     if(isset($src))
     {
-    	$host = str_replace ('www.', '', $_SERVER['HTTP_HOST']);
+    	$host = str_replace ('www.', '', htmlspecialchars($_SERVER['HTTP_HOST']));
     	$regex = "/^(http(s|):\/\/)(www\.|)" . $host . "\//i";
     
-    	$src = preg_replace ($regex, '', $src);
+    	$src = ltrim( preg_replace ($regex, '', $src), '/');
     	$src = strip_tags ($src);
     	$src = str_replace (' ', '%20', $src);
         $src = check_external ($src);

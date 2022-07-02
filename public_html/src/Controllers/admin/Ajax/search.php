@@ -10,7 +10,7 @@ $admin = new AdminService();
 $validTables = $admin->getValidTables();
 if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validTables) && $security->checkToken($_POST['securityToken']))
 {
-    $table = $dataTable = $_POST['table'];
+    $table = $tableName = $security->xssEscape($_POST['table']);
     $zoekTerm = $security->xssEscape($_POST['search']);
     $zoekenOp = $security->xssEscape($_POST['search-by']);
     $fields = FALSE;
@@ -31,7 +31,7 @@ if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validT
         'memberObj' => $member,
         'check' => $check,
         'msg' => $msg,
-        'table' => $dataTable,
+        'table' => $tableName,
         'tableRows' => $tableRows,
         'fields' => $fields,
         'skipFields' => $skipFields

@@ -10,7 +10,7 @@ $admin = new AdminService();
 $validTables = $admin->getValidTables();
 if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'],$validTables) && $security->checkToken($_POST['securityToken']))
 {
-    $table = $_POST['table'];
+    $table = $security->xssEscape($_POST['table']);
     $id = (int)$_POST['id'];
     $table = new AdminService($table);
     $check = $table->deactivateRow($id);

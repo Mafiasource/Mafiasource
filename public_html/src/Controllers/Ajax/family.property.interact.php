@@ -50,8 +50,9 @@ if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
     $propertyAction = $buyCheck || $upgradeCheck || $produceCheck ? true : null;
     if($propertyAction)
     {
-        if($produceCheck) $_POST['property'] = 'bullet-factory';
-        switch($_POST['property'])
+        $property = $security->xssEscape($_POST['property']);
+        if($produceCheck) $property = 'bullet-factory';
+        switch($property)
         {
             default:
             case 'bullet-factory':
@@ -91,7 +92,7 @@ if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
     }
     
     if($propertyAction)
-        echo $twig->render('/src/Views/game/Ajax/family-properties/' . strtolower($_POST['property']) . '/property.twig', $twigVars);
+        echo $twig->render('/src/Views/game/Ajax/family-properties/' . strtolower($property) . '/property.twig', $twigVars);
     else
         echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
 }

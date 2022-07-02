@@ -204,20 +204,20 @@ class UserDAO extends DBConfig
     public function checkTempBannedIP($ipAddr)
     {
         $userService = new UserService();
-        $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :datePrev AND `cookieLogin`='0' AND `type` NOT IN (3, 4) LIMIT 1";
-        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-74 hours')), ':datePrev' => date('Y-m-d H:i:s', strtotime('-48 hours')));
+        $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :dateTo AND `cookieLogin`='0' AND `type` NOT IN (3, 4) LIMIT 1";
+        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-74 hours')), ':dateTo' => date('Y-m-d H:i:s', strtotime('-48 hours')));
         $row = $this->con->getDataSR($qry, $prms);
         if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $userService->maxLogin24h))
         {
             $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-48 hours'));
-            $prms[':datePrev'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
+            $prms[':dateTo'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
             $row = $this->con->getDataSR($qry, $prms);
         }
         if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $userService->maxLogin24h))
         {
             $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (3, 4) LIMIT 1";
             $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
-            unset($prms[':datePrev']);
+            unset($prms[':dateTo']);
             $row = $this->con->getDataSR($qry, $prms);
         }
         

@@ -10,7 +10,7 @@ $admin = new AdminService();
 $validTables = $admin->getValidTables();
 if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validTables) && $security->checkToken($_POST['securityToken']))
 {
-    $table = $_POST['table'];
+    $table = $tableName = $security->xssEscape( $_POST['table']);
     $id = (int)$_POST['id'];
     $table = new AdminService($table);
     $check = $table->editRow($id);
@@ -23,8 +23,8 @@ if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validT
         'check' => $check,
         'rows' => $check,
         'rowid' => $id,
-        'table' => $_POST['table'],
-        'uploadDir' => strtolower($_POST['table']),
+        'table' => $tableName,
+        'uploadDir' => strtolower($tableName),
         'msg' => 'Fout bij ophalen record in de database.'
     );
     

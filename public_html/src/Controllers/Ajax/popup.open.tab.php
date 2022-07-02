@@ -25,7 +25,7 @@ require_once __DIR__ . '/.inc.foot.ajax.php';
 
 if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
 {
-    $tab = $_POST['tab'];
+    $tab = $security->xssEscape($_POST['tab']);
     if($tab == "help")
     {
         $prevRoute = isset($_SESSION['PREV_ROUTE']) ? $_SESSION['PREV_ROUTE'] : "not_found";
