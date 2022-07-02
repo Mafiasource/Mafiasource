@@ -88,8 +88,12 @@ class UserService
 
         global $route;
         $lfc = $this->data->getLoginFailedCountByIP($ipAddr);
-        if($lfc >= $this->minLogin24h && $lfc <= $this->maxLogin24h)
-            return $route->replaceMessagePart($this->maxLogin24h - $lfc, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
+        if($lfc >= $this->minLogin24h && $lfc < $this->maxLogin24h)
+        {
+            $incPossibleSuccess = (int)($this->maxLogin24h - 1) - $lfc;
+            $replace = $incPossibleSuccess !== 0 ? $incPossibleSuccess : strtolower($langs['NONE']);
+            return $route->replaceMessagePart($replace, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
+        }
 
         return ""; // Nothing to prepend to message
     }
@@ -108,6 +112,7 @@ class UserService
         $permBan = $user->checkPermBannedIP(UserCoreService::getIP());
         // $type 1=Violation | 2=Warning | 3=Temp. IP Ban | 4=Perm. IP Ban
         $type = $permBan ? 4 : 1;
+        $l['NONE'] = $langs['NONE'];
         $laMsg = $this->getLoginAttemptsMessage($l);
         if($laMsg !== "") // Default LOGIN_FAILED_WARNING | Type 2
             $type = 2;
@@ -983,7 +988,7 @@ class UserService
         if(isset($error))
         {
             return Routing::errorMessage($error);
-    }
+        }
         $username = $receiverProfile->getUsername();
         $message = $security->xssEscape($post['message']);
         global $route;

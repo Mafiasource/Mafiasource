@@ -213,7 +213,7 @@ class GetLanguageContent
     {
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "Je hebt een ongeldige gebruikersnaam of wachtwoord ingevoerd!",
-            'LOGIN_FAILED_WARNING' => "Je hebt nog {attempts} inlogpogingen over!",
+            'LOGIN_FAILED_WARNING' => "Je hebt {attempts} inlogpogingen over!",
             'TEMPORARILY_IP_BANNED' => "Je hebt geen login pogingen meer over dit kan tot 72 uur aanhouden.",
             'PRE_TITLE_TXT' => "Inloggen op",
             'FORGOT_PASSWORD' => "Gebruikersnaam / wachtwoord vergeten?"
@@ -247,8 +247,8 @@ class GetLanguageContent
             'ENCRYPTED' => "Versleuteld opgeslagen",
             'REFRESH' => "Vernieuwen",
             'EMAIL_INFO' => "Vul een geldig e-mailadres in! Nodig voor onder andere wachtwoord vergeten.",
-            'USERNAME_INFO' => "Alleen letters, getallen of een streepje, minimaal 1 letter. 3-15 tekens.",
-            'INVALID_USERNAME' => "Je hebt een ongeldige gebrukersnaam ingevoerd. Alleen letters, getallen of een streepje, minimaal 1 letter. 3-15 tekens.",
+            'USERNAME_INFO' => "Alleen letters, getallen of een streepje(-), begin met minimaal 1 letter. 3-15 tekens.",
+            'INVALID_USERNAME' => "Je hebt een ongeldige gebrukersnaam ingevoerd. Alleen letters, getallen of een streepje(-), begin met minimaal 1 letter. 3-15 tekens.",
             'INVALID_EMAIL' => "Je hebt een ongeldig email adres ingegeven!",
             'INVALID_PASS' => "Je wachtwoord moet minimaal 6 tekens lang zijn!",
             'PASSES_DONT_MATCH' => "De opgegeven wachtwoorden zijn ongelijk!",
