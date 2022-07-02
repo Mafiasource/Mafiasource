@@ -89,7 +89,7 @@ class UserService
         global $route;
         $lfc = $this->data->getLoginFailedCountByIP($ipAddr);
         if($lfc >= $this->minLogin24h && $lfc <= $this->maxLogin24h)
-            return $route->replaceMessagePart(20 - $lfc, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
+            return $route->replaceMessagePart($this->maxLogin24h - $lfc, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
 
         return ""; // Nothing to prepend to message
     }
