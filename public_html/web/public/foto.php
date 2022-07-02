@@ -689,9 +689,9 @@ function clean_source ($src) {
     if(isset($src))
     {
     	$host = str_replace ('www.', '', htmlspecialchars($_SERVER['HTTP_HOST']));
-    	$regex = "/^(http(s|):\/\/)(www\.|)" . $host . "\//i";
+    	$regex = preg_quote("/^(http(s|):\/\/)(www\.|)" . $host . "\//i", '#');
     
-    	$src = ltrim( preg_replace ($regex, '', $src), '/');
+    	$src = ltrim( preg_replace ('#' . $regex . '#', '', $src), '/');
     	$src = strip_tags ($src);
     	$src = str_replace (' ', '%20', $src);
         $src = check_external ($src);
