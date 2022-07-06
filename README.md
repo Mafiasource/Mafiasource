@@ -18,7 +18,7 @@ Made possible by © 2016 Michael Carrein inspired by © 2006 crimeclub.nl
 
 ## Directory above web root
 Contents of the web server home directory (one directory above public_html) where sensitive statics are defined.
-- security.php = sensitive statics, these don't guarantee a restriction from public_html/ authorized developers since they could print these values easily.
+- security.php = sensitive statics, these don't guarantee a restriction from public_html/ authorized developers since they could print these values easily without direct access.
 - error_log should log all cronjob thrown errors. Not necessarily localhost. (not included)
 - public_html/ the actual web app root directory.
 
