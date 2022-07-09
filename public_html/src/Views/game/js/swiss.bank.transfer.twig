@@ -1,0 +1,41 @@
+<script type="text/javascript">
+{% if action == 'getMoney' %}
+    if( {{ bankData.getSwissBank }} >= 999999999 ) {
+        $("{{ inputField }}").val('999999999');
+    } else {
+        $("{{ inputField }}").val('{{ bankData.getSwissBank }}');
+    }
+{% endif %}
+{% if action == 'putMoney' %}
+    if( {{ userData.getBank }} >= {{ swissLeft }} ) {
+        $("{{ inputField }}").val('{{ swissLeft }}');
+    } else if( {{ userData.getBank }} >= 999999999 ) {
+        $("{{ inputField }}").val('999999999');
+    } else {
+        $("{{ inputField }}").val('{{ userData.getBank }}');
+    }
+{% endif %}
+
+$(document).on('change', '{{ selectTag }}', function (e) {
+    var val = $(this).val();
+    switch(val)
+    {
+        case 'getMoney':
+            if( {{ bankData.getSwissBank }} >= 999999999 ) {
+                $("{{ inputField }}").val('999999999');
+            } else {
+                $("{{ inputField }}").val('{{ bankData.getSwissBank }}');
+            }
+            break;
+        case 'putMoney':
+            if( {{ userData.getBank }} >= {{ swissLeft }} ) {
+                $("{{ inputField }}").val('{{ swissLeft }}');
+            } else if( {{ userData.getBank }} >= 999999999 ) {
+                $("{{ inputField }}").val('999999999');
+            } else {
+                $("{{ inputField }}").val('{{ userData.getBank }}');
+            }
+            break;
+    }
+}).change();
+</script>

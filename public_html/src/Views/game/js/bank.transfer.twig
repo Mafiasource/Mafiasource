@@ -1,0 +1,37 @@
+<script type="text/javascript">
+{% if action == 'getMoney' %}
+    if( {{ userData.getBank }} >= 999999999 ) {
+        $("{{ inputField }}").val('999999999');
+    } else {
+        $("{{ inputField }}").val('{{ userData.getBank }}');
+    }
+{% endif %}
+{% if action == 'putMoney' %}
+    if( {{ userData.getCash }} >= 999999999 ) {
+        $("{{ inputField }}").val('999999999');
+    } else {
+        $("{{ inputField }}").val('{{ userData.getCash }}');
+    }
+{% endif %}
+
+$(document).on('change', '{{ selectTag }}', function (e) {
+    var val = $(this).val();
+    switch(val)
+    {
+        case 'getMoney':
+            if( {{ userData.getBank }} >= 999999999 ) {
+                $("{{ inputField }}").val('999999999');
+            } else {
+                $("{{ inputField }}").val('{{ userData.getBank }}');
+            }
+            break;
+        case 'putMoney':
+            if( {{ userData.getCash }} >= 999999999 ) {
+                $("{{ inputField }}").val('999999999');
+            } else {
+                $("{{ inputField }}").val('{{ userData.getCash }}');
+            }
+            break;
+    }
+}).change();
+</script>

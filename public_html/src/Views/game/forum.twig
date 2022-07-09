@@ -20,6 +20,7 @@ section#ccontainer section#content div.content-container.border-top {border-top:
 .button {margin:0.5em 0;margin-bottom:1em !important;position: relative;top: 1.2em;}
 .button.topic {top: 0.2em;}
 blockquote {padding-left:10px;border-left:5px solid #808080;box-sizing:border-box;}
+.row>.c-85, section#ccontainer section#content .row>.c-85 {width:85%}
 </style>
 {% endblock stylesheets %}
 
@@ -73,13 +74,13 @@ blockquote {padding-left:10px;border-left:5px solid #808080;box-sizing:border-bo
             {% if topics is not empty %}<a id="newTopic2" href="javascript:void(0);" class="button topic right ajaxTab" data-tab="forum.new.topic" data-category="{{ catData.getCategory }}">{{ langs.NEW_TOPIC }}</a>{% endif %}
         {% else %}
             <div class="row cols cf">
-                <div class="c-20 column">
+                <div class="c-15 column">
                     {{ userTagManager.write('topicStarter', topicData.getId, topicData.getStarterUID, topicData.getStarter, topicData.getStarterDonatorID, topicData.getStarterClassName) }}
                     <br />
                     <img src="{{ staticRoot }}/foto/web/public/images/users/{% if topicData.getStarterAvatar %}{{ topicData.getStarterUID }}/uploads/{{ topicData.getStarterAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ topicData.getStarter|strip }}" /><br />
                     <small>Posts: {{ topicData.getStarterPostsCnt }}</small>
                 </div>
-                <div class="c-80 column">
+                <div class="c-85 column">
                     <small class="right darkgray" style="position: relative;margin-bottom: 0em;margin-left: 1em;">{{ topicData.getDate }}<br />
                         {% if topicData.getStarter == userData.getUsername %}
                             <a href="javascript:void(0);" class="ajaxTab" data-tab="forum.edit.topic" data-topic-id="{{ topicData.getId }}" data-topic-title="{{ topicData.getTitle|pureHtml }}" data-topic-content="{{ topicData.getContent|pureHtml }}">{{ langs.EDIT }}</a>
@@ -95,13 +96,13 @@ blockquote {padding-left:10px;border-left:5px solid #808080;box-sizing:border-bo
         <div class="content-container border-top">
             {% for reaction in topicData.getReactions %}
                 <div class="row cols cf {{ cycle(['odd', 'even'], loop.index) }}">
-                    <div class="c-20 column">
+                    <div class="c-15 column">
                         {{ userTagManager.write('topicReactor', reaction.getId, reaction.getReactorUID, reaction.getReactor, reaction.getReactorDonatorID, reaction.getReactorClassName) }}
                         <br />
                         <img src="{{ staticRoot }}/foto/web/public/images/users/{% if reaction.getReactorAvatar %}{{ reaction.getReactorUID }}/uploads/{{ reaction.getReactorAvatar }}{% else %}nopic.jpg{% endif %}" alt="{{ reaction.getReactor|strip }}" /><br />
                         <small>Posts: {{ reaction.getReactorPostsCnt }}</small>
                     </div>
-                    <div class="c-80 column">
+                    <div class="c-85 column">
                         <small class="right darkgray" style="position: relative;margin-bottom: 0em;margin-left: 1em;">
                             {{ reaction.getDate }}<br />
                             {% if reaction.getReactor != userData.getUsername %}

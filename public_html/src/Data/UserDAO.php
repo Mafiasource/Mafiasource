@@ -205,7 +205,7 @@ class UserDAO extends DBConfig
     {
         $userService = new UserService();
         $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :dateTo AND `cookieLogin`='0' AND `type` NOT IN (3, 4) LIMIT 1";
-        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-74 hours')), ':dateTo' => date('Y-m-d H:i:s', strtotime('-48 hours')));
+        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours')), ':dateTo' => date('Y-m-d H:i:s', strtotime('-48 hours')));
         $row = $this->con->getDataSR($qry, $prms);
         if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $userService->maxLogin24h))
         {

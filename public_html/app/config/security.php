@@ -21,8 +21,6 @@ namespace app\config;
 
 use voku\helper\AntiXSS;
 
-require_once __DIR__ . '/../../../security.php';
-
 class Security
 {
     private $masterIv = MASTERIV; // Master iv SECRET
@@ -111,7 +109,7 @@ class Security
         $antiXss->removeEvilAttributes(array('style'));
         $harmless_html = $antiXss->xss_clean($input);
         if($antiXss->isXssFound())
-            error_log('XSS Attempt logged:' . $input);
+            error_log('XSS Attempt logged: ' . $input);
         
         return $harmless_html;
     }

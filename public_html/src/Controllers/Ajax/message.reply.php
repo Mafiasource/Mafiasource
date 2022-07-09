@@ -21,7 +21,7 @@ if(isset($_POST['security-token']) && isset($_POST['sendMessage']) && isset($_PO
     {
         ?>
         <script type="text/javascript">
-        reloadMessages("<?$security->xssEscape($_POST['receiver']);?>");
+        reloadMessages("<?=$security->xssEscape($_POST['receiver']);?>");
         </script>
         <?PHP
     }

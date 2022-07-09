@@ -52,7 +52,7 @@ No SSL support? Skip to [App wont work on a localhost environment without SSL su
   * Create a new subdomain 'static' for your domainname and link it to your public_html directory.
   * HTTPS? Make sure the static subdomain has a working certificate as well.
 2) Have a fresh database name, user and password ready create these new credentials if necessary.
-3) Upload /../security.php and public_html to your web server.
+3) Upload /../credentials.php and public_html to your web server.
 4) After uploading browse to your website through following URI: https://www.domainname.ex/install (https:// in front is important if applicable)
 5) Follow installation instructions on screen, finish with a successful installation.
 
@@ -61,7 +61,7 @@ Remove the entire /install/ directory in public_html if this is the case.
 Otherwise, refer to [Successful installation but still a blank application like initially.](#p-successful-installation-but-still-a-blank-application-like-initially)
 
 The following source code files should have been modified after a successful installation:
-- /../security.php
+- /../credentials.php
 - /.htaccess
 - /app/config/config.php
 - Replaces all hard coded static.mafiasource.nl instances in:
@@ -108,7 +108,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 
 ###### P) Successful installation but still a blank application like initially.
 ###### A) Standard configurations should be replaced everywhere, permissions and or restrictions could have avoided this.
-1) Check the first 3 files (security, htaccess, config) to verify that all definitions are correct including SSL_ENABLED.
+1) Check the first 3 files (credentials, htaccess, config) to verify that all definitions are correct including SSL_ENABLED.
   Making these changes without the installation GUI can solve this issue without altering permissions or php settings.
   In .htaccess only the correct domainname is of concern.
 2) If your website works, manually find and replace all mafiasource.nl instances to solve styling / css issues.
@@ -130,7 +130,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 2) The MySQL server database name and or database user and or password are incorrectly configured. (Server side)
 3) MySQL database not added to the MySQL user with the minimal permissions: DELETE, SELECT, DROP, INSERT, UPDATE (Server side)
 4) OPTIONAL Remote MySQL? Make sure your web server IP address is whitelisted if remote connections are restricted. (MySQL Server side)
-5) The provided database credentials in /../security.php are invalid. (Application side)
+5) The provided database credentials in /../credentials.php are invalid. (Application side)
 6) Double check any connection restrictions that might have been set.
 
 ###### P) 500 or above server error persists

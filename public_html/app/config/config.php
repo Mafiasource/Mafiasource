@@ -2,7 +2,7 @@
 
 /** Configuration file for some global values used throughout this entire application **/
 
-require_once __DIR__ . '/../../../security.php'; // Require hidden security essentials
+require_once __DIR__ . '/../../../credentials.php'; // Require credentials
 
 // Game, app and web settings
 define('BASE_DOMAIN',      "mafiasource.nl");       // The primary domain

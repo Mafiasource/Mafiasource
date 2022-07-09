@@ -10,7 +10,7 @@ $admin = new AdminService();
 $validTables = $admin->getValidTables();
 if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validTables) && $security->checkToken($_POST['securityToken']))
 {
-    $table = $security->xssEscape($_POST['table']);
+    $table = $tableName = $security->xssEscape($_POST['table']);
     $table = new AdminService($table);
     $id = $table->getLastInsertId();
     $check = $table->createToEditRow();
@@ -22,8 +22,8 @@ if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validT
         'check' => (bool)$check,
         'rows' => $check,
         'rowid' => $id,
-        'table' => $_POST['table'],
-        'uploadDir' => strtolower($_POST['table']),
+        'table' => $tableName,
+        'uploadDir' => strtolower($tableName),
         'msg' => 'Fout bij ophalen record in de database.',
         'newRowMessage' => "Record werd toegevoegd in de database, je kan het item meteen aanpassen."
     );

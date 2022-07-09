@@ -41,50 +41,55 @@
 {% endblock content %}
 
 {% block javascripts %}
-{% set swissLeft = bankData.getSwissBankMax - bankData.getSwissBank %}
 <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
 <script type="text/javascript">
-    $(document).on('change', 'select#bankTransferAction', function (e) {
+    {% set swissLeft = bankData.getSwissBankMax - bankData.getSwissBank %}
+    {% set selectTag = 'select#bankTransferAction' %}
+    {% set inputField = 'input#bankTransferValueField' %}
+    $('{{ selectTag }}').change(function (e) {
         var val = $(this).val();
         switch(val)
         {
             case 'getMoney':
                 if( {{ userData.getBank }} >= 999999999 ) {
-                    $("input#bankTransferValueField").val('999999999');
+                    $("{{ inputField }}").val('999999999');
                 } else {
-                    $("input#bankTransferValueField").val('{{ userData.getBank }}');
+                    $("{{ inputField }}").val('{{ userData.getBank }}');
                 }
                 break;
             case 'putMoney':
                 if( {{ userData.getCash }} >= 999999999 ) {
-                    $("input#bankTransferValueField").val('999999999');
+                    $("{{ inputField }}").val('999999999');
                 } else {
-                    $("input#bankTransferValueField").val('{{ userData.getCash }}');
+                    $("{{ inputField }}").val('{{ userData.getCash }}');
                 }
                 break;
         }
-    }).change();
-    $(document).on('change', 'select#swissBankTransferAction', function (e) {
+    });
+    
+    {% set selectTag = 'select#swissBankTransferAction' %}
+    {% set inputField = 'input#swissBankTransferValueField' %}
+    $('{{ selectTag }}').change(function (e) {
         var val = $(this).val();
         switch(val)
         {
             case 'getMoney':
                 if( {{ bankData.getSwissBank }} >= 999999999 ) {
-                    $("input#swissBankTransferValueField").val('999999999');
+                    $("{{ inputField }}").val('999999999');
                 } else {
-                    $("input#swissBankTransferValueField").val('{{ bankData.getSwissBank }}');
+                    $("{{ inputField }}").val('{{ bankData.getSwissBank }}');
                 }
                 break;
             case 'putMoney':
-                if( {{ userData.getBank }} >= 999999999 ) {
-                    $("input#swissBankTransferValueField").val('999999999');
-                } else if( {{ userData.getBank }} >= {{ swissLeft }} ) {
-                    $("input#swissBankTransferValueField").val('{{ swissLeft }}');
+                if( {{ userData.getBank }} >= {{ swissLeft }} ) {
+                    $("{{ inputField }}").val('{{ swissLeft }}');
+                } else if( {{ userData.getBank }} >= 999999999 ) {
+                    $("{{ inputField }}").val('999999999');
                 } else {
-                    $("input#swissBankTransferValueField").val('{{ userData.getBank }}');
+                    $("{{ inputField }}").val('{{ userData.getBank }}');
                 }
                 break;
         }
-    }).change();
+    });
 </script>
 {% endblock javascripts %}

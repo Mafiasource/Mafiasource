@@ -203,9 +203,9 @@ class InstallService
             global $route;
             
             $configFile = DOC_ROOT . '/app/config/config.php';
-            $securityFile = DOC_ROOT . '/../security.php';
+            $credentialsFile = DOC_ROOT . '/../credentials.php';
             $htaccessFile = DOC_ROOT . '/.htaccess';
-            $configReplacesMap = $securityReplacesMap = $htaccessReplacesMap = array();
+            $configReplacesMap = $credentialsReplacesMap = $htaccessReplacesMap = array();
             
             if(!empty($gameName))
                 $configReplacesMap[9] = 'define(\'APP_GAMENAME\',     "' . $gameName . '");          // Gamename, obviously';
@@ -254,13 +254,13 @@ class InstallService
                 $configReplacesMap[21] = 'define(\'PDO_CONSTRING\', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
             
             if(!empty($dbName))
-                $securityReplacesMap[3] = 'define(\'DBNAME\', "' . $dbName . '");';
+                $credentialsReplacesMap[3] = 'define(\'DBNAME\', "' . $dbName . '");';
             
             if(!empty($dbUser))
-                $securityReplacesMap[4] = 'define(\'DBUSR\', "' . $dbUser . '");';
+                $credentialsReplacesMap[4] = 'define(\'DBUSR\', "' . $dbUser . '");';
             
             if(!empty($dbPwd))
-                $securityReplacesMap[5] = 'define(\'DBPWD\', "' . $dbPwd . '");';
+                $credentialsReplacesMap[5] = 'define(\'DBPWD\', "' . $dbPwd . '");';
             
             if(!empty($email) && self::is_email($email))
                 $htaccessReplacesMap[60] = 'SetEnv SERVER_ADMIN ' . $email;
@@ -278,7 +278,7 @@ class InstallService
             }
             
             self::replaceLinesByLineNumbers($configFile, $configReplacesMap);
-            self::replaceLinesByLineNumbers($securityFile, $securityReplacesMap);
+            self::replaceLinesByLineNumbers($credentialsFile, $credentialsReplacesMap);
             self::replaceLinesByLineNumbers($htaccessFile, $htaccessReplacesMap);
             self::createCronjobs();
             if(isset($dbName) && isset($dbUser) && isset($dbPwd))

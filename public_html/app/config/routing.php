@@ -207,9 +207,10 @@ class Routing
     
     function getLanguageByIp()
     {
-        $host = gethostbyaddr(UserCoreService::getIP());
+        $user = new UserCoreService();
+        $host = $user->ipValid ? gethostbyaddr(UserCoreService::getIP()) : null;
         $language = "English";
-        if(preg_match("/nl$/", $host) || preg_match("/be$/", $host) || preg_match("/arpa$/", $host))
+        if(isset($host) && (preg_match("/nl$/", $host) || preg_match("/be$/", $host) || preg_match("/arpa$/", $host)))
             $language = "Dutch";
         
         return $language;

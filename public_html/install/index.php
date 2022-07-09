@@ -106,15 +106,15 @@ if($stream)
     {
         $installService = new InstallService("localhost", "ms", "root", "");
         
-        $securityFile = DOC_ROOT . '/../security.php';
-        $securityReplacesMap = array();
+        $credentialsFile = DOC_ROOT . '/../credentials.php';
+        $credentialsReplacesMap = array();
         $masterEncryption = InstallService::generateMasterEncryptionIvAndKey();
-        $securityReplacesMap[8] = "define('MASTERIV', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['iv'])) . "'));";
-        $securityReplacesMap[9] = "define('MASTERKEY', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['key'])) . "'));";
-        InstallService::replaceLinesByLineNumbers($securityFile, $securityReplacesMap);
+        $credentialsReplacesMap[8] = "define('MASTERIV', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['iv'])) . "'));";
+        $credentialsReplacesMap[9] = "define('MASTERKEY', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['key'])) . "'));";
+        InstallService::replaceLinesByLineNumbers($credentialsFile, $credentialsReplacesMap);
         $_SESSION['install']['masterEncryption'] = true;
         
-        $route->createActionMessage(Routing::successMessage("New master encryption keys were generated and written to the security file."));
+        $route->createActionMessage(Routing::successMessage("New master encryption keys were generated and written to the credentials file."));
         header("HTTP/2 301 Moved Permanently");
         header('Location: /install/index.php?encryption=encrypted', TRUE, 301);
         exit(0);
