@@ -1721,13 +1721,13 @@ CREATE TABLE `ip_ban`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `login`;
 CREATE TABLE `login`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `userID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
-  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `date` datetime NOT NULL,
-  `time` bigint NOT NULL,
-  `tries` int NOT NULL DEFAULT 1,
-  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0,
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'type=disabled',
+  `date` datetime NOT NULL COMMENT 'type=disabled',
+  `time` bigint NOT NULL COMMENT 'type=disabled',
+  `tries` int NOT NULL DEFAULT 1 COMMENT 'type=disabled',
+  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
   `position` bigint NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -1745,12 +1745,12 @@ CREATE TABLE `login`  (
 DROP TABLE IF EXISTS `login_fail`;
 CREATE TABLE `login_fail`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
-  `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `ip` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `date` datetime NULL DEFAULT NULL,
-  `time` bigint NOT NULL DEFAULT 0,
+  `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'type=disabled',
+  `ip` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'type=disabled',
+  `date` datetime NULL DEFAULT NULL COMMENT 'type=disabled',
+  `time` bigint NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `type` smallint NOT NULL DEFAULT 0 COMMENT 'select=Inloggegevens,Overtreding,Waarschuwing,Tijdelijke ban,Permanente ban',
-  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0,
+  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
