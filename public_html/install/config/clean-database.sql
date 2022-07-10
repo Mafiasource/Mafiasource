@@ -1706,6 +1706,9 @@ DROP TABLE IF EXISTS `ip_ban`;
 CREATE TABLE `ip_ban`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `position` int NULL DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -1725,6 +1728,9 @@ CREATE TABLE `login`  (
   `time` bigint NOT NULL,
   `tries` int NOT NULL DEFAULT 1,
   `cookieLogin` tinyint(1) NOT NULL DEFAULT 0,
+  `position` bigint NULL DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`userID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
@@ -1745,6 +1751,9 @@ CREATE TABLE `login_fail`  (
   `time` bigint NOT NULL DEFAULT 0,
   `type` smallint NOT NULL DEFAULT 0 COMMENT 'select=Inloggegevens,Overtreding,Waarschuwing,Tijdelijke ban,Permanente ban',
   `cookieLogin` tinyint(1) NOT NULL DEFAULT 0,
+  `position` int NULL DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
