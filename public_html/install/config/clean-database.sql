@@ -1722,7 +1722,7 @@ CREATE TABLE `ip_ban`  (
 DROP TABLE IF EXISTS `login`;
 CREATE TABLE `login`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `userID` bigint NOT NULL DEFAULT 0,
+  `userID` bigint NOT NULL DEFAULT 0, COMMENT 'couple=user&factor=id&show=username',
   `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `date` datetime NOT NULL,
   `time` bigint NOT NULL,
