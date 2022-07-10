@@ -2918,27 +2918,6 @@ CREATE TABLE `user`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for user_captcha
--- ----------------------------
-DROP TABLE IF EXISTS `user_captcha`;
-CREATE TABLE `user_captcha`  (
-  `id` bigint NOT NULL COMMENT 'couple=user&factor=id&show=username',
-  `security` mediumint NOT NULL DEFAULT 1,
-  `count` int NOT NULL DEFAULT 0,
-  `success` int NOT NULL DEFAULT 0,
-  `fail` int NOT NULL DEFAULT 0,
-  `unsolved` int NOT NULL DEFAULT 0,
-  `position` bigint NULL DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT 1,
-  `deleted` tinyint(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
-
--- ----------------------------
--- Records of user_captcha
--- ----------------------------
-
--- ----------------------------
 -- Table structure for user_friend_block
 -- ----------------------------
 DROP TABLE IF EXISTS `user_friend_block`;

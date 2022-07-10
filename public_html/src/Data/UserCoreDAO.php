@@ -44,16 +44,13 @@ class UserCoreDAO extends DBConfig
                 global $security;
                 global $denyPrevRouteSaves;
                 
-                $captchaService = new CaptchaService();
-                $userCaptcha = $captchaService->getUserCaptcha();
-                
                 if($row['statusID'] == 8 && $route->getRouteName() != "home")
                 { // Banned
                     unset($_SESSION['UID']);
                     $route->headTo('logout');
                     exit(0);
                 }
-                elseif($this->getUserData()->getHealth() <= 0 && $route->getRouteName() != "rest_in_peace" && $route->getRouteName() != "captcha_test")
+                elseif($this->getUserData()->getHealth() <= 0 && $route->getRouteName() != "rest_in_peace")
                 {
                     if(!in_array($route->getController(), $denyPrevRouteSaves))
                         $route->setPrevRoute();

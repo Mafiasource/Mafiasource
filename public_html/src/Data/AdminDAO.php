@@ -18,11 +18,11 @@ class AdminDAO extends DBConfig
     private $table = "";
     private $phpDateFormat = "Y-m-d H:i:s";
     public $validTables = array(
-        "categories", "cms", "member", "status", "user", "donator", "profession", "state", "city", "news", "ground", "ground_building", "rld_whore", "weapon", "protection",
-        "airplane", "helpsystem", "vehicle", "residence", "crime", "crime_org", "steal_vehicle", "possess", "possession", "forum_category", "forum_status", "forum_topic",
+        "cms", "member", "status", "user", "donator", "profession", "state", "city", "news", "ground", "ground_building", "rld_whore", "weapon", "protection", "airplane",
+        "helpsystem", "vehicle", "residence", "crime", "crime_org", "steal_vehicle", "possess", "possession", "forum_category", "forum_status", "forum_topic",
         "forum_reaction", "smuggle", "detective", "family", "family_alliance", "family_bf_donation_log", "family_bf_send_log", "family_brothel_whore", "family_garage",
         "family_join_invite", "family_mercenary_log", "family_raid", "garage", "gym_competition", "user_garage", "market", "message", "murder_log", "poll_answer",
-        "poll_question", "poll_vote", "seo", "shoutbox_nl", "shoutbox_en", "user_captcha", "user_friend_block", "round"
+        "poll_question", "poll_vote", "seo", "shoutbox_nl", "shoutbox_en", "user_friend_block", "round"
     );
     
     public function __construct($table = "")
