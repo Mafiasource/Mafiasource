@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "composer"
+  - package-ecosystem: "Composer"
     directory: "/public_html/"
     schedule:
       interval: "daily"
@@ -17,14 +17,14 @@ updates:
     commit-message:
       prefix: "Composer"
       include: "scope"
-  - package-ecosystem: "composer"
+  - package-ecosystem: "Composer"
     directory: "/public_html/web/"
     schedule:
       interval: "daily"
     allow:
       # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
-    # Prefix all commit messages with "Composer"
+    # Prefix all commit messages with "Composer /web"
     # include a list of updated dependencies
     commit-message:
       prefix: "Composer /web"
