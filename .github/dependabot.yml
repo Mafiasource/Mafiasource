@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "Composer"
+  - package-ecosystem: "composer"
     directory: "/public_html/"
     schedule:
       interval: "daily"
@@ -17,7 +17,7 @@ updates:
     commit-message:
       prefix: "Composer"
       include: "scope"
-  - package-ecosystem: "Composer"
+  - package-ecosystem: "composer"
     directory: "/public_html/web/"
     schedule:
       interval: "daily"
