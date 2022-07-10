@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['ip_ban'] = $ipBan;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/ip-ban.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/ip-ban.twig', $twigVars));
