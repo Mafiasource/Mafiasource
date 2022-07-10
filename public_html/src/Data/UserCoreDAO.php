@@ -115,7 +115,7 @@ class UserCoreDAO extends DBConfig
             global $route;
             $this->con->setData("
                 INSERT INTO `login_fail` (`username`,`ip`,`date`,`time`,`type`, `cookieLogin`) VALUES (:username, :ip, :date, :time, :type, 1)
-            ", array(':username' => $row['username'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => 0)); // $type 0 = Credentials
+            ", array(':username' => $row['username'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => 1)); // $type 1 = Credentials
             setcookie('remember', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
             setcookie('UID', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
         }
@@ -137,7 +137,7 @@ class UserCoreDAO extends DBConfig
             $prms[':type'] = $type;
         }
         $row = $this->con->getDataSR("
-            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (3, 4) AND `cookieLogin`='1' $whereAdd LIMIT 1
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (4, 5) AND `cookieLogin`='1' $whereAdd LIMIT 1
         ", $prms);
         if(isset($row['total']) && $row['total'] >= 0)
             return (int)$row['total'];

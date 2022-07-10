@@ -110,24 +110,24 @@ class UserService
         $code = isset($post['captcha_code']) ? (int)$post['captcha_code'] : null;
         $_SESSION['login-tries'] = !isset($_SESSION['login-tries']) ? 1 : $_SESSION['login-tries']++;
         $permBan = $user->checkPermBannedIP(UserCoreService::getIP());
-        // $type 1=Violation | 2=Warning | 3=Temp. IP Ban | 4=Perm. IP Ban
-        $type = $permBan ? 4 : 1;
+        // $type 1=Credentials | 2=Violation | 3=Warning | 4=Temp. IP Ban | 5=Perm. IP Ban
+        $type = $permBan ? 5 : 2;
         $l['NONE'] = $langs['NONE'];
         $laMsg = $this->getLoginAttemptsMessage($l);
-        if($laMsg !== "") // Default LOGIN_FAILED_WARNING | Type 2
-            $type = 2;
+        if($laMsg !== "") // Default LOGIN_FAILED_WARNING | Type 3
+            $type = 3;
         
         if($laMsg == $l['TEMPORARILY_IP_BANNED'] . " ")
-            $type = $permBan ? 4 : 3;
+            $type = $permBan ? 5 : 4;
         
         if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
-            $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 1
+            $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 2
         
         if($captcha == true && (!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code))
-            $return = $langs['WRONG_CAPTCHA']; // Violation | Type 1
+            $return = $langs['WRONG_CAPTCHA']; // Violation | Type 2
         
-        if(in_array($type, array(3, 4)) || $permBan)
-            $return = $l['TEMPORARILY_IP_BANNED'] . " "; // Type 3 & 4
+        if(in_array($type, array(4, 5)) || $permBan)
+            $return = $l['TEMPORARILY_IP_BANNED'] . " "; // Type 4 & 5
         
         if(isset($return))
         {
@@ -138,7 +138,7 @@ class UserService
         $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
         if($id == FALSE)
         {
-            $this->data->loginFailed($username, 0); // Credentials | Type 0
+            $this->data->loginFailed($username, 1); // Credentials | Type 1
             return $laMsg . $l['WRONG_USERNAME_OR_PASS'];
         }
         

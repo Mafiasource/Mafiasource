@@ -1991,6 +1991,48 @@ array(
         'controller' => 'admin/shoutbox-en.php'
     ),
     
+    'admin-ip-ban'
+    =>
+    array(
+        'route' => '/admin/ip-ban',
+        'controller' => 'admin/ip-ban.php'
+    ),
+    
+    'admin-ip-ban-pagina'
+    =>
+    array(
+        'route' => '/admin/ip-ban/pagina/[1-9][0-9]{0,3}',
+        'controller' => 'admin/ip-ban.php'
+    ),
+    
+    'admin-user-login'
+    =>
+    array(
+        'route' => '/admin/user-login',
+        'controller' => 'admin/user-login.php'
+    ),
+    
+    'admin-user-login-pagina'
+    =>
+    array(
+        'route' => '/admin/user-login/pagina/[1-9][0-9]{0,3}',
+        'controller' => 'admin/user-login.php'
+    ),
+    
+    'admin-user-login-fail'
+    =>
+    array(
+        'route' => '/admin/user-login-fail',
+        'controller' => 'admin/user-login-fail.php'
+    ),
+    
+    'admin-user-login-fail-pagina'
+    =>
+    array(
+        'route' => '/admin/user-login-fail/pagina/[1-9][0-9]{0,3}',
+        'controller' => 'admin/user-login-fail.php'
+    ),
+    
     'admin-user-friend-block'
     =>
     array(

@@ -17,12 +17,13 @@ class AdminDAO extends DBConfig
     private $dbh = "";
     private $table = "";
     private $phpDateFormat = "Y-m-d H:i:s";
+    private $denySaves = array("login", "login_fail");
     public $validTables = array(
         "cms", "member", "status", "user", "donator", "profession", "state", "city", "news", "ground", "ground_building", "rld_whore", "weapon", "protection", "airplane",
         "helpsystem", "vehicle", "residence", "crime", "crime_org", "steal_vehicle", "possess", "possession", "forum_category", "forum_status", "forum_topic",
         "forum_reaction", "smuggle", "detective", "family", "family_alliance", "family_bf_donation_log", "family_bf_send_log", "family_brothel_whore", "family_garage",
         "family_join_invite", "family_mercenary_log", "family_raid", "garage", "gym_competition", "user_garage", "market", "message", "murder_log", "poll_answer",
-        "poll_question", "poll_vote", "seo", "shoutbox_nl", "shoutbox_en", "user_friend_block", "round"
+        "poll_question", "poll_vote", "seo", "shoutbox_nl", "shoutbox_en", "user_friend_block", "round", "login", "login_fail", "ip_ban"
     );
     
     public function __construct($table = "")
@@ -315,7 +316,7 @@ class AdminDAO extends DBConfig
     
     public function sortRows($data)
     {
-        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
+        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables) && !in_array($this->table, $this->denySaves))
         {
             foreach($data AS $key => $val)
             {
@@ -330,7 +331,7 @@ class AdminDAO extends DBConfig
     
     public function activateRow($id)
     {
-        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
+        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables) && !in_array($this->table, $this->denySaves))
         {
             $id = (int)$id;
             $statement = $this->dbh->prepare("UPDATE `$this->table` SET `active` = '1' WHERE `id` = :id AND `active`='0'");
@@ -345,7 +346,7 @@ class AdminDAO extends DBConfig
     
     public function deactivateRow($id)
     {
-        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
+        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables) && !in_array($this->table, $this->denySaves))
         {
             $id = (int)$id;
             $statement = $this->dbh->prepare("UPDATE `$this->table` SET `active` = '0' WHERE `id` = :id AND `active`='1' AND `deleted`!='-1'");
@@ -360,7 +361,7 @@ class AdminDAO extends DBConfig
     
     public function deleteRow($id)
     {
-        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
+        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables) && !in_array($this->table, $this->denySaves))
         {
             $id = (int)$id;
             $statement = $this->dbh->prepare("UPDATE `$this->table` SET `deleted` = '1' WHERE `id` = :id AND `deleted`='0'");
@@ -387,11 +388,11 @@ class AdminDAO extends DBConfig
     
     public function saveEditedRow($post, $id, $files = false)
     {
-        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
+        if(isset($_SESSION['cp-logon']) && in_array($this->table, $this->validTables) && !in_array($this->table, $this->denySaves))
         {
             $editStr = "";
             $parArr = array();
-            $denySaves = array("id", "password", "memberID", "active", "position", "deleted", "uploadDir", "imageWidth", "imageHeight");
+            $denyFields = array("id", "password", "memberID", "active", "position", "deleted", "uploadDir", "imageWidth", "imageHeight");
             
             if(isset($post['uploadDir']))
                 $uploadDir = $post['uploadDir'];
@@ -460,7 +461,7 @@ class AdminDAO extends DBConfig
                 }
                 $statement = $this->dbh->prepare("SELECT * FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = '$this->database' AND `TABLE_NAME` = '$this->table' AND `COLUMN_NAME` = :key");
                 $statement->execute(array(':key' => $key));
-                if(!empty($statement) && !in_array($key,$denySaves))
+                if(!empty($statement) && !in_array($key, $denyFields))
                 {
                     $editStr .= " `$key` = :".$key.",";
                     $arr = array(':'.$key.'' => $value);
@@ -485,7 +486,7 @@ class AdminDAO extends DBConfig
     
     public function createToEditRow()
     {
-        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables))
+        if(isset($_SESSION['cp-logon']) && in_array($this->table,$this->validTables) && !in_array($this->table, $this->denySaves))
         {
             $statement = $this->dbh->prepare("SELECT `position` FROM `$this->table` ORDER BY `position` DESC LIMIT 1");
             $statement->execute();

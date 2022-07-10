@@ -187,13 +187,13 @@ class UserDAO extends DBConfig
     {
         $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-24 hours')));
         $whereAdd = "";
-        if($type != false && $type >= 0 && $type <= 4)
+        if($type != false && $type >= 1 && $type <= 5)
         {
             $whereAdd = "AND `type`= :type";
             $prms[':type'] = $type;
         }
         $row = $this->con->getDataSR("
-            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (3, 4) $whereAdd LIMIT 1
+            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (4, 5) $whereAdd LIMIT 1
         ", $prms);
         if(isset($row['total']) && $row['total'] >= 0)
             return (int)$row['total'];
@@ -204,7 +204,7 @@ class UserDAO extends DBConfig
     public function checkTempBannedIP($ipAddr)
     {
         $userService = new UserService();
-        $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :dateTo AND `cookieLogin`='0' AND `type` NOT IN (3, 4) LIMIT 1";
+        $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :dateTo AND `cookieLogin`='0' AND `type` NOT IN (4, 5) LIMIT 1";
         $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours')), ':dateTo' => date('Y-m-d H:i:s', strtotime('-48 hours')));
         $row = $this->con->getDataSR($qry, $prms);
         if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $userService->maxLogin24h))
@@ -215,7 +215,7 @@ class UserDAO extends DBConfig
         }
         if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $userService->maxLogin24h))
         {
-            $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (3, 4) LIMIT 1";
+            $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (4, 5) LIMIT 1";
             $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
             unset($prms[':dateTo']);
             $row = $this->con->getDataSR($qry, $prms);
