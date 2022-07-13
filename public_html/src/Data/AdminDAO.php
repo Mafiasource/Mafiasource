@@ -550,18 +550,10 @@ class AdminDAO extends DBConfig
                                 $split = explode('=', $comment);
                                 $cPar = $split[0];
                                 $cVal = $split[1];
-                                switch($cPar)
-                                {
-                                    case 'couple':
-                                        $koppel = $cVal;
-                                        break;
-                                    case 'factor':
-                                        $factor = $cVal;
-                                        break;
-                                    case 'show':
-                                        $show = $cVal;
-                                        break;
-                                }
+                                
+                                if($cPar == 'couple') $koppel = in_array($cVal, $this->validTables) ? $cVal : '';
+                                if(isset($koppel) && $koppel != '' && $cPar == 'factor') $factor = $cVal;
+                                if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && $cPar == 'show') $show = $cVal;
                                 if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && isset($show) && strpos($show, ',') !== FALSE) $showMore = explode(',', $show);
                             }
                             if(isset($show) && $show != '' && !isset($showMore))
