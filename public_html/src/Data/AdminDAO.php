@@ -137,7 +137,7 @@ class AdminDAO extends DBConfig
             {
                 $statement = $this->dbh->prepare("SELECT c.`COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` AS c WHERE c.`TABLE_SCHEMA` ='$this->database' AND c.`TABLE_NAME` = '$this->table' AND c.`COLUMN_NAME` = :key ");
                 $statement->execute(array(':key' => $fieldKey));
-                $row = $statement->fetch();
+                $row = $statement->fetchAll(\PDO::FETCH_ASSOC);
                 
                 if(isset($row['COLUMN_COMMENT']) && $row['COLUMN_COMMENT'] != '')
                 {
