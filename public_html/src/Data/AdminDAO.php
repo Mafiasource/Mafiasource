@@ -137,7 +137,7 @@ class AdminDAO extends DBConfig
             {
                 $statement = $this->dbh->prepare("SELECT c.`COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` AS c WHERE c.`TABLE_SCHEMA` ='$this->database' AND c.`TABLE_NAME` = '$this->table' AND c.`COLUMN_NAME` = :key ");
                 $statement->execute(array(':key' => $fieldKey));
-                $row = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                $row = $statement->fetch(\PDO::FETCH_ASSOC);
                 
                 if(isset($row['COLUMN_COMMENT']) && $row['COLUMN_COMMENT'] != '')
                 {
@@ -530,7 +530,7 @@ class AdminDAO extends DBConfig
             $searchByCouple = $searchByCoupleAndMore = false;
             $validatedFields = $coupleSelectArr = array();
             $koppel = $factor = $colName = $show = "";
-            while ($row = $statement->fetch())
+            while ($row = $statement->fetch(\PDO::FETCH_ASSOC))
             {
                 if(!in_array($row['COLUMN_NAME'], $validatedFields))
                     $validatedFields[] = $row['COLUMN_NAME'];
