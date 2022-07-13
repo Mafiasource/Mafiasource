@@ -73,7 +73,7 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `active`='1' AND `deleted` = '0' ORDER BY `id` DESC LIMIT 1");
             $statement->execute();
             $list = array();
-            $list = $this->checkCommentsForFieldsInRows($list, $statement);
+            $list = $this->checkFieldsComments($list, $statement);
             return $list;
         }
     }
@@ -99,7 +99,7 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT $fields FROM `$this->table` WHERE `deleted` = '0' ORDER BY `position` ASC, `id` ASC LIMIT $from,$to");
             $statement->execute();
             $list = array();
-            $list = $this->checkCommentsForFieldsInRows($list, $statement);
+            $list = $this->checkFieldsComments($list, $statement);
             return $list;
         }
     }
@@ -111,7 +111,7 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `id`=:id");
             $statement->execute(array(':id' => $id));
             $list = array();
-            $list = $this->checkCommentsForFieldsInRows($list, $statement);
+            $list = $this->checkFieldsComments($list, $statement);
             return $list;
         }
     }
@@ -123,12 +123,12 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `memberID`=:id");
             $statement->execute(array(':id' => $id));
             $list = array();
-            $list = $this->checkCommentsForFieldsInRows($list, $statement);
+            $list = $this->checkFieldsComments($list, $statement);
             return $list;
         }
     }
     
-    private function checkCommentsForFieldsInRows($list, $statement)
+    private function checkFieldsComments($list, $statement, $type = 'rows')
     {
         foreach($statement AS $key => $val)
         {
@@ -141,61 +141,18 @@ class AdminDAO extends DBConfig
                 
                 if(isset($row['COLUMN_COMMENT']) && $row['COLUMN_COMMENT'] != '')
                 {
-                    if(strpos($row['COLUMN_COMMENT'], '&'))
+                    switch($type)
                     {
-                        $comments = explode('&', $row['COLUMN_COMMENT']);
-                        foreach($comments AS $comment)
-                        {
-                            $split = explode('=', $comment);
-                            $cPar = $split[0];
-                            $cVal = $split[1];
-                            if(strpos($cVal, ',')) $multipleVals = explode(',', $cVal);
-                            
-                            if($cPar == 'couple') $koppel = $cVal;
-                            if(isset($koppel) && $koppel != '' && $cPar == 'factor') $factor = $cVal;
-                            if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && $cPar == 'show') $show = $cVal;
-                            if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && isset($show) && strpos($show, ',') !== FALSE) $showMore = explode(',', $show);
-                        }
-                        if(isset($show) && $show != '' && !isset($showMore))
-                        {
-                            $statement = $this->dbh->prepare("SELECT `$show` FROM `$koppel` WHERE `$factor` = :factorId AND `active`='1' AND (`deleted`='0' OR `deleted`='-1')");
-                            $statement->execute(array(':factorId' => $value));
-                            $row = $statement->fetch();
-                            if(isset($row[$show])) $val[$fieldKey] = $row[$show];
-                            unset($show);
-                        }
-                        elseif(isset($show) && $show != '' && isset($showMore))
-                        {
-                            $statement = $this->dbh->prepare("SELECT `$showMore[0]`, `$showMore[1]` FROM `$koppel` WHERE `$factor` = :factorId  AND `active`='1' AND (`deleted`='0' OR `deleted`='-1')");
-                            $statement->execute(array(':factorId' => $value));
-                            $row = $statement->fetch();
-                            if(isset($row[$showMore[0]]) && isset($row[$showMore[1]])) $val[$fieldKey] = $row[$showMore[0]]. " ".$row[$showMore[1]];
-                            if(isset($showMore[2])) $val[$fieldKey] .= " ,..";
-                            unset($showMore);
-                            unset($show);
-                        }
-                    }
-                    else
-                    {
-                        $split = explode('=',$row['COLUMN_COMMENT']);
-                        $cPar = $split[0];
-                        $cVal = $split[1];
-                        if(strpos($cVal,',')) $multipleVals = explode(',',$cVal);
-                        
-                        if($cPar == 'select' && isset($multipleVals) && !empty($multipleVals)) $select = $multipleVals;
-                        
-                        if($cPar == 'select' && isset($select))
-                        {
-                            if(is_numeric($value) && $value >= 1)
-                                $val[$fieldKey] = $select[$value-1];
-                        }
-                        elseif($cPar == 'type' && $cVal == 'yesno')
-                        {
-                            if($value == 0) $val[$fieldKey] = "Nee";
-                            if($value == 1) $val[$fieldKey] = "Ja";
-                        }
+                        default:
+                        case 'rows':
+                            $val =  $this->checkCommentsForFieldInRows($row, $fieldKey, $value, $val);
+                            break;
+                        case 'edit':
+                            $val = $this->checkCommentsForFieldInEdit($row, $fieldKey, $value, $val, $key);
+                            break;
                     }
                 }
+                unset($row);
             }
             $arr[$key] = $val;
             array_push($list, $arr);
@@ -203,115 +160,157 @@ class AdminDAO extends DBConfig
         return $list;
     }
     
-    private function checkCommentsForFieldsInEdit($list,$statement)
+    private function checkCommentsForFieldInRows($row, $fieldKey, $value, $val)
     {
-        foreach($statement AS $key => $val)
+        if(strpos($row['COLUMN_COMMENT'], '&'))
         {
-            $arr = array();
-            foreach($val AS $fieldKey => $value)
+            $comments = explode('&', $row['COLUMN_COMMENT']);
+            foreach($comments AS $comment)
             {
-                $statement = $this->dbh->prepare("SELECT c.`COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` AS c WHERE c.`TABLE_SCHEMA` ='$this->database' AND c.`TABLE_NAME` = '$this->table' AND c.`COLUMN_NAME` = :key ");
-                $statement->execute(array(':key' => $fieldKey));
-                $row = $statement->fetch();
+                $split = explode('=', $comment);
+                $cPar = $split[0];
+                $cVal = $split[1];
+                if(strpos($cVal, ',')) $multipleVals = explode(',', $cVal);
                 
-                if(isset($row['COLUMN_COMMENT']) && $row['COLUMN_COMMENT'] != '')
-                {
-                    if(strpos($row['COLUMN_COMMENT'], '&'))
-                    {
-                        $comments = explode('&', $row['COLUMN_COMMENT']);
-                        foreach($comments AS $comment)
-                        {
-                            $split = explode('=', $comment);
-                            $cPar = $split[0];
-                            $cVal = $split[1];
-                            if(strpos($cVal, ',')) $multipleVals = explode(',', $cVal);
-                            
-                            if($cPar == 'couple') $koppel = $cVal;
-                            if(isset($koppel) && $koppel != '' && $cPar == 'factor') $factor = $cVal;
-                            if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && $cPar == 'show') $show = $cVal;
-                            if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && isset($show) && strpos($show, ',') !== FALSE) $showMore = explode(',', $show);
-                            
-                            if($cPar == 'type' && $cVal == 'upload') $upload = $cVal;
-                            if(isset($upload) && $upload != '' && $cPar == 'width') $width = $cVal;
-                            if(isset($upload) && $upload != '' && isset($width) && $width != '' && $cPar == 'height') $height = $cVal;
-                        }
-                        if(isset($show) && $show != '' && !isset($showMore))
-                        {
-                            $statement = $this->dbh->prepare("SELECT `$factor`,`$show` FROM `$koppel` WHERE `active`='1' AND (`deleted`='0' OR `deleted`='-1') ORDER BY `position` ASC");
-                            $statement->execute();
-                            $koppelArr = array();
-                            foreach($statement AS $row)
-                            {
-                                if($row[$factor] == $val[$fieldKey])
-                                    $koppelArr[$row[$factor]] = array($row[$show] => "checked");
-                                else
-                                    $koppelArr[$row[$factor]] = $row[$show];
-                            }
-                            $val[$fieldKey] = array('couple' => $koppelArr);
-                            unset($show);
-                        }
-                        elseif(isset($show) && $show != '' && isset($showMore))
-                        {
-                            $statement = $this->dbh->prepare("SELECT `$factor`,`$showMore[0]`,`$showMore[1]` FROM `$koppel` WHERE `active`='1' AND (`deleted`='0' OR `deleted`='-1') ORDER BY `position` ASC");
-                            $statement->execute();
-                            $koppelArr = array();
-                            foreach($statement AS $row)
-                            {
-                                if($row[$factor] == $val[$fieldKey])
-                                    $koppelArr[$row[$factor]] = array("".$row[$showMore[0]]." ".$row[$showMore[1]]."" => "checked");
-                                else
-                                    $koppelArr[$row[$factor]] = $row[$showMore[0]]." ".$row[$showMore[1]];
-                            }
-                            $val[$fieldKey] = array('couple' => $koppelArr);
-                            unset($showMore);
-                            unset($show);
-                        }
-                        elseif(isset($upload) && isset($width) && is_numeric($width) && !isset($height))
-                        {
-                            $uploadArr = array('upload' => $value, 'imageWidth' => $width);
-                            $val[$fieldKey] = array('uploadWithSize' => $uploadArr);
-                        }
-                        elseif(isset($upload) && isset($height) && is_numeric($height) && !isset($width))
-                        {
-                            $uploadArr = array('upload' => $value, 'imageHeight' => $height);
-                            $val[$fieldKey] = array('uploadWithSize' => $uploadArr);
-                        }
-                        elseif(isset($upload) && isset($width) && is_numeric($width) && isset($height) && is_numeric($height))
-                        {
-                            $uploadArr = array('upload' => $value, 'imageWidth' => $width, 'imageHeight' => $height);
-                            $val[$fieldKey] = array('uploadWithSize' => $uploadArr);
-                        }
-                    }
-                    else
-                    {
-                        $split = explode('=', $row['COLUMN_COMMENT']);
-                        $cPar = $split[0];
-                        $cVal = $split[1];
-                        if(strpos($cVal, ',')) $multipleVals = explode(',', $cVal);
-                        
-                        if($cPar == 'select' && isset($multipleVals) && !empty($multipleVals)) $select = $multipleVals;
-                        
-                        if($cPar == 'select' && isset($select))
-                        {
-                            foreach(array_keys($select) AS $key) if($key+1 == $value) $select[$key] = array($select[$key] => "checked");
-                            $val[$fieldKey] = array('select' => $select);
-                        }
-                        elseif($cPar == 'type' && $cVal == 'disabled')
-                            $val[$fieldKey] = array('disabled' => $value);
-                        elseif($cPar == 'type' && $cVal == 'cms')
-                            $val[$fieldKey] = array('cms' => $value);
-                        elseif($cPar == 'type' && $cVal == 'yesno')
-                            $val[$fieldKey] = array('yesno' => $value);
-                        elseif($cPar == 'type' && $cVal == 'upload')
-                            $val[$fieldKey] = array('upload' => $value);
-                    }
-                }
-                unset($row);
+                if($cPar == 'couple') $koppel = $cVal;
+                if(isset($koppel) && $koppel != '' && $cPar == 'factor') $factor = $cVal;
+                if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && $cPar == 'show') $show = $cVal;
+                if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && isset($show) && strpos($show, ',') !== FALSE) $showMore = explode(',', $show);
             }
-            $arr[$key] = $val;
-            array_push($list,$arr);
+            if(isset($show) && $show != '' && !isset($showMore))
+            {
+                $statement = $this->dbh->prepare("SELECT `$show` FROM `$koppel` WHERE `$factor` = :factorId AND `active`='1' AND (`deleted`='0' OR `deleted`='-1')");
+                $statement->execute(array(':factorId' => $value));
+                $row = $statement->fetch();
+                if(isset($row[$show])) $val[$fieldKey] = $row[$show];
+                unset($show);
+            }
+            elseif(isset($show) && $show != '' && isset($showMore))
+            {
+                $statement = $this->dbh->prepare("SELECT `$showMore[0]`, `$showMore[1]` FROM `$koppel` WHERE `$factor` = :factorId  AND `active`='1' AND (`deleted`='0' OR `deleted`='-1')");
+                $statement->execute(array(':factorId' => $value));
+                $row = $statement->fetch();
+                if(isset($row[$showMore[0]]) && isset($row[$showMore[1]])) $val[$fieldKey] = $row[$showMore[0]]. " ".$row[$showMore[1]];
+                if(isset($showMore[2])) $val[$fieldKey] .= " ,..";
+                unset($showMore);
+                unset($show);
+            }
         }
-        return $list;
+        else
+        {
+            $split = explode('=',$row['COLUMN_COMMENT']);
+            $cPar = $split[0];
+            $cVal = $split[1];
+            if(strpos($cVal,',')) $multipleVals = explode(',',$cVal);
+            
+            if($cPar == 'select' && isset($multipleVals) && !empty($multipleVals)) $select = $multipleVals;
+            
+            if($cPar == 'select' && isset($select))
+            {
+                if(is_numeric($value) && $value >= 1)
+                    $val[$fieldKey] = $select[$value-1];
+            }
+            elseif($cPar == 'type' && $cVal == 'yesno')
+            {
+                if($value == 0) $val[$fieldKey] = "Nee";
+                if($value == 1) $val[$fieldKey] = "Ja";
+            }
+        }
+        return $val;
+    }
+    
+    private function checkCommentsForFieldInEdit($row, $fieldKey, $value, $val, $key)
+    {
+        if(strpos($row['COLUMN_COMMENT'], '&'))
+        {
+            $comments = explode('&', $row['COLUMN_COMMENT']);
+            foreach($comments AS $comment)
+            {
+                $split = explode('=', $comment);
+                $cPar = $split[0];
+                $cVal = $split[1];
+                if(strpos($cVal, ',')) $multipleVals = explode(',', $cVal);
+                
+                if($cPar == 'couple') $koppel = $cVal;
+                if(isset($koppel) && $koppel != '' && $cPar == 'factor') $factor = $cVal;
+                if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && $cPar == 'show') $show = $cVal;
+                if(isset($koppel) && $koppel != '' && isset($factor) && $factor != '' && isset($show) && strpos($show, ',') !== FALSE) $showMore = explode(',', $show);
+                
+                if($cPar == 'type' && $cVal == 'upload') $upload = $cVal;
+                if(isset($upload) && $upload != '' && $cPar == 'width') $width = $cVal;
+                if(isset($upload) && $upload != '' && isset($width) && $width != '' && $cPar == 'height') $height = $cVal;
+            }
+            if(isset($show) && $show != '' && !isset($showMore))
+            {
+                $statement = $this->dbh->prepare("SELECT `$factor`,`$show` FROM `$koppel` WHERE `active`='1' AND (`deleted`='0' OR `deleted`='-1') ORDER BY `position` ASC");
+                $statement->execute();
+                $koppelArr = array();
+                foreach($statement AS $row)
+                {
+                    if($row[$factor] == $val[$fieldKey])
+                        $koppelArr[$row[$factor]] = array($row[$show] => "checked");
+                    else
+                        $koppelArr[$row[$factor]] = $row[$show];
+                }
+                $val[$fieldKey] = array('couple' => $koppelArr);
+                unset($show);
+            }
+            elseif(isset($show) && $show != '' && isset($showMore))
+            {
+                $statement = $this->dbh->prepare("SELECT `$factor`,`$showMore[0]`,`$showMore[1]` FROM `$koppel` WHERE `active`='1' AND (`deleted`='0' OR `deleted`='-1') ORDER BY `position` ASC");
+                $statement->execute();
+                $koppelArr = array();
+                foreach($statement AS $row)
+                {
+                    if($row[$factor] == $val[$fieldKey])
+                        $koppelArr[$row[$factor]] = array("".$row[$showMore[0]]." ".$row[$showMore[1]]."" => "checked");
+                    else
+                        $koppelArr[$row[$factor]] = $row[$showMore[0]]." ".$row[$showMore[1]];
+                }
+                $val[$fieldKey] = array('couple' => $koppelArr);
+                unset($showMore);
+                unset($show);
+            }
+            elseif(isset($upload) && isset($width) && is_numeric($width) && !isset($height))
+            {
+                $uploadArr = array('upload' => $value, 'imageWidth' => $width);
+                $val[$fieldKey] = array('uploadWithSize' => $uploadArr);
+            }
+            elseif(isset($upload) && isset($height) && is_numeric($height) && !isset($width))
+            {
+                $uploadArr = array('upload' => $value, 'imageHeight' => $height);
+                $val[$fieldKey] = array('uploadWithSize' => $uploadArr);
+            }
+            elseif(isset($upload) && isset($width) && is_numeric($width) && isset($height) && is_numeric($height))
+            {
+                $uploadArr = array('upload' => $value, 'imageWidth' => $width, 'imageHeight' => $height);
+                $val[$fieldKey] = array('uploadWithSize' => $uploadArr);
+            }
+        }
+        else
+        {
+            $split = explode('=', $row['COLUMN_COMMENT']);
+            $cPar = $split[0];
+            $cVal = $split[1];
+            if(strpos($cVal, ',')) $multipleVals = explode(',', $cVal);
+            
+            if($cPar == 'select' && isset($multipleVals) && !empty($multipleVals)) $select = $multipleVals;
+            
+            if($cPar == 'select' && isset($select))
+            {
+                foreach(array_keys($select) AS $key) if($key + 1 == $value) $select[$key] = array($select[$key] => "checked");
+                $val[$fieldKey] = array('select' => $select);
+            }
+            elseif($cPar == 'type' && $cVal == 'disabled')
+                $val[$fieldKey] = array('disabled' => $value);
+            elseif($cPar == 'type' && $cVal == 'cms')
+                $val[$fieldKey] = array('cms' => $value);
+            elseif($cPar == 'type' && $cVal == 'yesno')
+                $val[$fieldKey] = array('yesno' => $value);
+            elseif($cPar == 'type' && $cVal == 'upload')
+                $val[$fieldKey] = array('upload' => $value);
+        }
+        return $val;
     }
     
     public function sortRows($data)
@@ -381,7 +380,7 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `id`=:id AND `deleted` = '0'");
             $statement->execute(array(':id' => $id));
             $list = array();
-            $list = $this->checkCommentsForFieldsInEdit($list,$statement);
+            $list = $this->checkComments($list, $statement, 'edit');
             return $list;
         }
     }
@@ -513,19 +512,17 @@ class AdminDAO extends DBConfig
                 $fieldsArr = explode(',', $fields);
                 foreach($fieldsArr AS $k => $v) $fieldsArr[$k] = " '" . $v . "'";
                 $fields = implode(',', $fieldsArr);
-                $fields = ltrim($fields, ' ');
-                $statement = $this->dbh->prepare("SELECT `COLUMN_NAME`, `COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` ='$this->database' AND `TABLE_NAME` = '$this->table' AND `COLUMN_NAME` IN ($fields)");
-                $statement->execute();            
+                $fields = ltrim($fields, ' ');         
             }
             elseif($skipFields != FALSE)
             {
                 $skipFieldsArr = explode(',', $skipFields);
                 foreach($skipFieldsArr AS $k => $v) $skipFieldsArr[$k] = " '" . $v . "'";
                 $skipFields = implode(',', $skipFieldsArr);
-                $skipFields = ltrim($skipFields, ' ');
-                $statement = $this->dbh->prepare("SELECT `COLUMN_NAME`, `COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` ='$this->database' AND `TABLE_NAME` = '$this->table' AND `COLUMN_NAME` NOT IN ($skipFields)");
-                $statement->execute();
+                $fields = $skipFields = ltrim($skipFields, ' ');
             }
+            $statement = $this->dbh->prepare("SELECT `COLUMN_NAME`, `COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` ='$this->database' AND `TABLE_NAME` = '$this->table' AND `COLUMN_NAME` IN ($fields)");
+            $statement->execute();   
             
             $searchByCouple = $searchByCoupleAndMore = false;
             $validatedFields = $coupleSelectArr = array();
@@ -611,7 +608,7 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare($searchQuery);
             $statement->execute(array(':search' => "%".$search."%"));
             $list = array();
-            $list = $this->checkCommentsForFieldsInRows($list, $statement);
+            $list = $this->checkFieldsComments($list, $statement);
             return $list;
         }
     }
@@ -623,7 +620,7 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `deleted` = '0' AND `memberID`=:id");
             $statement->execute(array(':id' => $id));
             $list = array();
-            $list = $this->checkCommentsForFieldsInRows($list, $statement);
+            $list = $this->checkFieldsComments($list, $statement);
             return $list;
         }
     }
