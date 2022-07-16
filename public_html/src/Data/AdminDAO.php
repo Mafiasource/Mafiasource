@@ -145,7 +145,7 @@ class AdminDAO extends DBConfig
                     {
                         default:
                         case 'rows':
-                            $val =  $this->checkCommentsForFieldInRows($row, $fieldKey, $value, $val);
+                            $val =  $this->checkCommentsForFieldInRow($row, $fieldKey, $value, $val);
                             break;
                         case 'edit':
                             $val = $this->checkCommentsForFieldInEdit($row, $fieldKey, $value, $val, $key);
@@ -160,7 +160,7 @@ class AdminDAO extends DBConfig
         return $list;
     }
     
-    private function checkCommentsForFieldInRows($row, $fieldKey, $value, $val)
+    private function checkCommentsForFieldInRow($row, $fieldKey, $value, $val)
     {
         if(strpos($row['COLUMN_COMMENT'], '&'))
         {
@@ -247,10 +247,9 @@ class AdminDAO extends DBConfig
                 $koppelArr = array();
                 foreach($statement AS $row)
                 {
+                    $koppelArr[$row[$factor]] = $row[$show];
                     if($row[$factor] == $val[$fieldKey])
                         $koppelArr[$row[$factor]] = array($row[$show] => "checked");
-                    else
-                        $koppelArr[$row[$factor]] = $row[$show];
                 }
                 $val[$fieldKey] = array('couple' => $koppelArr);
                 unset($show);
@@ -262,10 +261,9 @@ class AdminDAO extends DBConfig
                 $koppelArr = array();
                 foreach($statement AS $row)
                 {
+                    $koppelArr[$row[$factor]] = $row[$showMore[0]]." ".$row[$showMore[1]];
                     if($row[$factor] == $val[$fieldKey])
                         $koppelArr[$row[$factor]] = array("".$row[$showMore[0]]." ".$row[$showMore[1]]."" => "checked");
-                    else
-                        $koppelArr[$row[$factor]] = $row[$showMore[0]]." ".$row[$showMore[1]];
                 }
                 $val[$fieldKey] = array('couple' => $koppelArr);
                 unset($showMore);
@@ -380,7 +378,7 @@ class AdminDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT * FROM `$this->table` WHERE `id`=:id AND `deleted` = '0'");
             $statement->execute(array(':id' => $id));
             $list = array();
-            $list = $this->checkComments($list, $statement, 'edit');
+            $list = $this->checkFieldsComments($list, $statement, 'edit');
             return $list;
         }
     }
