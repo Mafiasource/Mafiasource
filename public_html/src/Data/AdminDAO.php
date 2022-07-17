@@ -520,7 +520,7 @@ class AdminDAO extends DBConfig
                 $fields = $skipFields = ltrim($skipFields, ' ');
             }
             $statement = $this->dbh->prepare("SELECT `COLUMN_NAME`, `COLUMN_COMMENT` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` ='$this->database' AND `TABLE_NAME` = '$this->table' AND `COLUMN_NAME` IN ($fields)");
-            $statement->execute();   
+            $statement->execute();
             
             $searchByCouple = $searchByCoupleAndMore = false;
             $validatedFields = $coupleSelectArr = array();
@@ -533,7 +533,7 @@ class AdminDAO extends DBConfig
                 if(!in_array($row['COLUMN_NAME'], $coupleSelectArr))
                     $coupleSelectArr[] = $row['COLUMN_NAME'];
                 
-                if($row['COLUMN_NAME'] == $searchBy)
+                if($row['COLUMN_NAME'] == $searchBy && in_array($searchBy, $validatedFields))
                 {
                     if($row['COLUMN_COMMENT'] != '')
                     {
@@ -579,8 +579,8 @@ class AdminDAO extends DBConfig
                     SELECT ht.`id`, $coupleSelectFields, ht.`active`, ht.`deleted`, ht.`position`
                     FROM `$this->table` AS ht
                     LEFT JOIN `$koppel` AS st
-                    ON (ht.`$colName`=st.`$factor`)
-                    WHERE (st.`$show` LIKE :search OR st.`id` LIKE :search)
+                    ON (ht.`{$colName}`=st.`{$factor}`)
+                    WHERE (st.`{$show}` LIKE :search OR st.`id` LIKE :search)
                     AND ht.`deleted` = '0'
                     ORDER BY ht.`position` ASC
                 ";
@@ -591,10 +591,10 @@ class AdminDAO extends DBConfig
                     SELECT ht.`id`, $coupleSelectFields, ht.`active`, ht.`deleted`, ht.`position`
                     FROM `$this->table` AS ht
                     LEFT JOIN `$koppel` AS st
-                    ON (ht.`$colName`=st.`$factor`)
-                    WHERE (st.`$showMore[0]` LIKE :search OR st.`$showMore[1]` LIKE :search
-                        OR CONCAT(st.`$showMore[0]`, ' ', st.`$showMore[1]`) LIKE :search
-                        OR CONCAT(st.`$showMore[1]`, ' ', st.`$showMore[0]`) LIKE :search
+                    ON (ht.`{$colName}`=st.`{$factor}`)
+                    WHERE (st.`{$showMore[0]}` LIKE :search OR st.`{$showMore[1]}` LIKE :search
+                        OR CONCAT(st.`{$showMore[0]}`, ' ', st.`{$showMore[1]}`) LIKE :search
+                        OR CONCAT(st.`{$showMore[1]}`, ' ', st.`{$showMore[0]}`) LIKE :search
                         OR st.`id` LIKE :search)
                     AND ht.`deleted` = '0'
                     ORDER BY ht.`position` ASC
