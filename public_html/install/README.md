@@ -109,11 +109,11 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 ###### P) Successful installation but still a blank application like initially.
 ###### A) Standard configurations should be replaced everywhere, permissions and or restrictions could have avoided this.
 1) Check the first 3 files (credentials, htaccess, config) to verify that all definitions are correct including SSL_ENABLED.
-  - All good except credentials.php? Some servers only allow read but not write or nothing at all outside document root, in that case:
-    - move credentials.php in public_html
-    - modify app/config/config.php remove one path traversal for credentials.php '../'
-    -  edit /.htaccess to deny all access to credentials.php
   - Making these changes without the installation GUI can solve this issue without altering permissions or php settings.
+  - All good except /../credentials.php? Some servers only allow read but not write or nothing at all outside document root, in that case:
+    - move /../credentials.php in public_html
+    - modify app/config/config.php remove one path traversal for credentials.php '../'
+    - edit /.htaccess to deny all access to credentials.php (preferably after installation with GUI, keeps lines the same during install)
   - In .htaccess only the correct domainname is of concern.
 2) If your website works, manually find and replace all mafiasource.nl instances to solve styling / css issues.
 3) Import /install/config/clean-database.sql manually into your database.
@@ -144,8 +144,10 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 - Enable any missing extensions
 - Make sure PHP 8.0 or above is installed, any hints within php error_log?
 - Check if Apache2 is functioning correctly, any hints within apache error logs?
-- Remove /.htaccess to see if server error disappears. If so test piece by piece to find error causing lines
-- DEVELOPMENT global set to true can enable live errors
+- Remove /.htaccess to see if server error disappears. If so test piece by piece to find error causing lines.
+  - Some servers won't allow php_value or Options try to #comment these, Mafiasource can be installed without those.
+  - If your apache server doesn't allow DirectoryIndex than Mafiasource cannot be installed among possible other restrictions. (rare, custom setups)
+- DEVELOPMENT global set to true can enable live PHP errors to the browser, except for fatal errors refer to php error_log
 
 If all else failed please create an issue, describe your problem as best you can.
 
