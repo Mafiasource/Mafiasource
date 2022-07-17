@@ -28,6 +28,7 @@ if($buyCheck || $upgradeCheck || $produceCheck || $donateCheck || $sendCheck || 
 $famID = $userData->getFamilyID();
 if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
 {
+    $userService = new UserService();
     $famProperty = new FamilyPropertyService();
     
     if($buyCheck)
@@ -54,7 +55,6 @@ if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
         {
             default:
             case 'bullet-factory':
-                $userService = new UserService();
                 $family = new FamilyService();
                 $pagination = new Pagination($famProperty, 15, 15);
                 $pageInfo = $famProperty->getFamilyBulletFactoryPageInfo($pagination->from, $pagination->to);
