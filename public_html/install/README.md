@@ -109,8 +109,12 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 ###### P) Successful installation but still a blank application like initially.
 ###### A) Standard configurations should be replaced everywhere, permissions and or restrictions could have avoided this.
 1) Check the first 3 files (credentials, htaccess, config) to verify that all definitions are correct including SSL_ENABLED.
-  Making these changes without the installation GUI can solve this issue without altering permissions or php settings.
-  In .htaccess only the correct domainname is of concern.
+  - All good except credentials.php? Some servers only allow read but not write or nothing at all outside document root, in that case:
+    - move credentials.php in public_html
+    - modify app/config/config.php remove one path traversal for credentials.php '../'
+    -  edit /.htaccess to deny all access to credentials.php
+  - Making these changes without the installation GUI can solve this issue without altering permissions or php settings.
+  - In .htaccess only the correct domainname is of concern.
 2) If your website works, manually find and replace all mafiasource.nl instances to solve styling / css issues.
 3) Import /install/config/clean-database.sql manually into your database.
 4) Configure /app/cronjob/ jobs on the web server to finalize installation.
