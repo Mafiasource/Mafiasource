@@ -3,10 +3,10 @@
 use src\Business\UserService;
 use src\Business\CMSService;
 use src\Business\StatisticService;
+use src\Business\DonatorService;
 
 require_once __DIR__ . '/.inc.head.php';
 
-$userService = new UserService();
 $cms = new CMSService();
 $rules = $cms->getCMSById(8, $lang);
 
@@ -23,6 +23,11 @@ switch($route->getRouteName())
         break;
     case 'information-team-members':
         $tab = "team-members";
+        $userService = new UserService();
+        $donator = new DonatorService();
+        $donationData = $donator->getDonationData(true);
+        $donatorList = $donator->getDonatorList();
+        $langs = array_merge($langs, $language->donationShopLangs()); // Extend base langs, before twigVars[langs] gets extended
         break;
     case 'information-hall-of-fame':
     case 'information-hall-of-fame-round':
@@ -48,5 +53,7 @@ if(isset($statistics) && $tab == "statistics" || $tab == "hall-of-fame") $twigVa
 if(isset($hallOfFame) && $tab == "hall-of-fame") $twigVars['hof'] = $hallOfFame;
 if(isset($rounds) && $tab == "hall-of-fame") $twigVars['rounds'] = $rounds;
 if(isset($round) && $tab == "hall-of-fame") $twigVars['round'] = (string) $round;
+if(isset($donationData) && is_array($donationData)) $twigVars['donationData'] = $donationData;
+if(isset($donatorList) && is_array($donatorList)) $twigVars['donatorList'] = $donatorList;
 
 echo $twig->render('/src/Views/game/information.twig', $twigVars);

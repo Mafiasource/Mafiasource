@@ -952,6 +952,9 @@ class GetLanguageContent
             'DONATE_SUCCESS' => "Je donatie werd ontvangen en {credits} credits werden aan je account toegevoegd als beloning. Bedankt!",
             'DONATE_SUCCESS_HIT_LIMIT' => "Je hebt wel je limiet bereikt die zal resetten binnen 31 dagen.",
             'DONATE_SUCCESS_LIMIT' => "Je donatie werd ontvangen maar door jouw limiet heb je geen credits ontvangen! Bedankt!",
+            'DONATOR_LIST_INFO' => "Ik wil mijn gebruikersnaam toevoegen aan de ledenlijst van donateurs.",
+            'LEAVE_DONATOR_LIST_SUCCESS' => "Je hebt de donateurs ledenlijst verlaten.",
+            'DONATOR_LIST_APPLICATION_SUCCESS' => "Je hebt je succesvol aangemeld voor de donateurs ledenlijst."
         );
         return $langs;
     }

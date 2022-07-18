@@ -68,10 +68,7 @@ class UserDAO extends DBConfig
         
         $saveDir = DOC_ROOT . "/app/Resources/masterCrypts/user/";
         $ourFileName = $saveDir . "emails.txt";
-        $file = fopen($ourFileName, "r");
-        $serializedEmails = fgets($file);
         $serializedEmails = file_get_contents($ourFileName);
-        fclose($file);
         $emails = unserialize($serializedEmails);
         
         $uid = array_search($email, $emails);
@@ -343,8 +340,7 @@ class UserDAO extends DBConfig
             $ourFileName = DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt";
             if(file_exists($ourFileName)) unlink($ourFileName);
             $ourFileHandle = fopen($ourFileName, 'w');
-            $stringData = $salt;
-            fwrite($ourFileHandle, $stringData);
+            fwrite($ourFileHandle, $salt);
             fclose($ourFileHandle);
             chmod($ourFileName, 0600);
             
@@ -352,10 +348,7 @@ class UserDAO extends DBConfig
             
             $saveDir = DOC_ROOT . "/app/Resources/masterCrypts/user/";
             $ourFileName = $saveDir . "emails.txt";
-            $file = fopen($ourFileName, "r");
-            $serializedEmails = fgets($file);
             $serializedEmails = file_get_contents($ourFileName);
-            fclose($file);
             $emails = unserialize($serializedEmails);
             $emails[$_SESSION['UID']] = $masterEncrypted;
             
@@ -372,9 +365,9 @@ class UserDAO extends DBConfig
         $this->con->setData("
             DELETE FROM `business_stock` WHERE `userID`= :uid;
             DELETE FROM `crime_org_prep` WHERE `userID`= :uid;
-            UPDATE `crime_org_prep` SET `participantID`='0' WHERE `participantID`= :uid;
-            UPDATE `crime_org_prep` SET `participant2ID`='0' WHERE `participant2ID`= :uid;
-            UPDATE `crime_org_prep` SET `participant3ID`='0' WHERE `participant3ID`= :uid;
+            UPDATE `crime_org_prep` SET `participantID`='0', `participantReady`='0', `garageID`='0' WHERE `participantID`= :uid;
+            UPDATE `crime_org_prep` SET `participant2ID`='0', `participant2Ready`='0', `weaponType`='0' WHERE `participant2ID`= :uid;
+            UPDATE `crime_org_prep` SET `participant3ID`='0', `participant3Ready`='0', `intelType`='0' WHERE `participant3ID`= :uid;
             DELETE FROM `detective` WHERE `userID`= :uid;
             DELETE FROM `drug_liquid` WHERE `userID`= :uid;
             DELETE FROM `equipment` WHERE `userID`= :uid;
@@ -585,10 +578,7 @@ class UserDAO extends DBConfig
             
             $saveDir = DOC_ROOT . "/app/Resources/masterCrypts/user/";
             $ourFileName = $saveDir . "emails.txt";
-            $file = fopen($ourFileName, "r");
-            $serializedEmails = fgets($file);
             $serializedEmails = file_get_contents($ourFileName);
-            fclose($file);
             $emails = unserialize($serializedEmails);
             $emails[$changeEmailData->getId()] = $masterEncrypted;
             
@@ -774,10 +764,7 @@ class UserDAO extends DBConfig
     private function getPrivateIdSalts()
     {
         $saltFile = DOC_ROOT . $this->privateSaltsFile;
-        $file = fopen($saltFile, "r");
-        $serializedSalts = fgets($file);
         $serializedSalts = file_get_contents($saltFile);
-        fclose($file);
         return unserialize($serializedSalts);
     }
     

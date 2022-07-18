@@ -3,6 +3,8 @@
 namespace src\Data;
 
 use src\Data\config\DBConfig;
+use src\Data\StatisticDAO;
+use src\Entities\Donator;
 
 class DonatorDAO extends DBConfig
 {
@@ -126,12 +128,18 @@ class DonatorDAO extends DBConfig
         return false;
     }
     
-    public function getDonationData()
+    public function getDonationData($allTime = false)
     {
+        $datePast = date('Y-m-d H:i:s', strtotime("-31 days"));
+        if($allTime !== false)
+        {
+            $statisticDAO = new StatisticDAO();
+            $datePast = "2021-12-07 00:00:00";
+        }
         $id = $_SESSION['UID'];
         $date = $this->con->getDataSR("
             SELECT `date` FROM `donate` WHERE `userID`= :uid AND `date` >= :datePast AND `active`='1' AND `deleted`='0' ORDER BY `date` ASC LIMIT 1
-        ", array(':uid' => $id, ':datePast' => date('Y-m-d H:i:s', strtotime("-31 days"))));
+        ", array(':uid' => $id, ':datePast' => $datePast));
         
         $datePast = isset($date['date']) ? $date['date'] : null;
         
@@ -174,10 +182,41 @@ class DonatorDAO extends DBConfig
         return false;
     }
     
-    public function addCredits($credits)
+    public function addDonationCredits($credits)
     {
         $this->con->setData("
             UPDATE `user` SET `credits`=`credits`+ :cr WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
         ", array(':cr' => $credits, ':uid' => $_SESSION['UID']));
+    }
+    
+    public function leaveDonatorList()
+    {
+        if(isset($_SESSION['UID']))
+            $this->con->setData("DELETE FROM `donator_list` WHERE `userID`= :uid", array(':uid' => $_SESSION['UID']));
+    }
+    
+    public function donatorListApplication()
+    {
+        if(isset($_SESSION['UID']))
+            $this->con->setData("INSERT INTO `donator_list` (`userID`) VALUES (:uid)", array(':uid' => $_SESSION['UID']));
+    }
+    
+    public function getDonatorList()
+    {
+        global $userService;
+        
+        $list = array();
+        $rows = $this->con->getData("SELECT `userID` FROM `donator_list` WHERE `userID`!='0'");
+        foreach($rows AS $row)
+        {
+            $profileData = $userService->getUserProfile($userService->getUsernameById($row['userID']));
+            
+            $donator = new Donator();
+            $donator->setDonator($profileData->getUsername());
+            $donator->setColorCode($profileData->getUsernameClassName());
+            
+            array_push($list, $donator);
+        }
+        return $list;
     }
 }

@@ -1,0 +1,7 @@
+{% if response %}
+    {% include "app/Resources/Views/macros/alerts.game.responses.twig" %}
+{% endif %}
+{% for donator in donatorList %}
+    <strong class="{{ donator.getColorCode }}">{{ donator.getDonator }}</strong>,&nbsp;
+{% endfor %}
+...

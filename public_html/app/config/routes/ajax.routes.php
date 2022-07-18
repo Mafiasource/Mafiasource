@@ -814,6 +814,13 @@ array(
         'controller' => 'Ajax/donate.php'
     ),
     
+    'donator-list'
+    =>
+    array(
+        'route' => '/game/information/team-members/apply-donator-list',
+        'controller' => 'Ajax/donator.list.php'
+    ),
+    
     /**
      * Admin Ajax routes
      * **/

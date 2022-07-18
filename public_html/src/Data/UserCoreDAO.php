@@ -131,7 +131,7 @@ class UserCoreDAO extends DBConfig
     {
         $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-5 minutes')));
         $whereAdd = "";
-        if($type != false && $type >= 0 && $type <= 4)
+        if($type != false && $type >= 1 && $type <= 5)
         {
             $whereAdd = "AND `type`= :type";
             $prms[':type'] = $type;

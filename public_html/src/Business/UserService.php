@@ -20,8 +20,8 @@ class UserService
     public $maxLogin24h = 20; // The amount of unsuccessful attempts an IP address can login within 24 hours before receiving 72 hour IP ban.
     public $minLogin24h = 5; // The amount of unsuccessful attempts an IP address can login within 24 houts before receiving a warning.
     public $healCostsPercent = 2500; // Hospital heal costs / each percent damage.
-    public $creditsChance = 25; // <= 25
-    public $creditsChanceRand = 100; // rand 1, [100]
+    public $creditsChance = 25; // <= 25 1 in 4 if creditsChanceRand === 100
+    public $creditsChanceRand = 100; // rand(1, [100])
     public $creditsWon = 0; // Init
     public $tryAgainMessage = ""; // Init
     public $ipValid = false; // Init
@@ -33,7 +33,7 @@ class UserService
         global $lang;
         global $user;
         $this->data = new UserDAO();
-        $this->creditsChanceRand = $security->randInt(1, 100);
+        $this->creditsChanceRand = $security->randInt(1, (int)$this->creditsChanceRand);
         $this->creditsWon = $security->randInt(2, 4);
         $this->tryAgainMessage = $lang == "en" ? "Try again later." : "Probeer later opnieuw.";
         $this->ipValid = $user->ipValid;
@@ -1456,7 +1456,7 @@ class UserService
         /** Beware! All chanceInAMillion numeric values have to add up to 1,000,000 combined, make sure you know what you're doing here. **/
         $list = array(
             1 => array(
-                'amount' => 2500, // Amount to add in database / show on luckybox page
+                'amount' => 3000, // Amount to add in database / show on luckybox page
                 'prize' => "Credits", // Prize to show on luckybox page
                 'prizeDb' => "credits", // Prize field in user table (database)
                 'chanceInAMillion' => 1, // Chance in a million to win prize
@@ -1598,9 +1598,13 @@ class UserService
         $previousChance = 0;
         foreach($chanceList AS $prize)
         {
-            if($luck > $previousChance && $luck <= ($previousChance + $prize['chanceInAMillion']))
-                $prizeWon = $prize;
-            $previousChance += $prize['chanceInAMillion'];
+            if(!isset($prizeWon))
+            {
+                if($luck > $previousChance && $luck <= ($previousChance + $prize['chanceInAMillion']))
+                    $prizeWon = $prize;
+                
+                $previousChance += $prize['chanceInAMillion'];
+            }
         }
         unset($previousChance);
         // Is prize a random between 2 values?

@@ -952,6 +952,9 @@ class GetLanguageContent
             'DONATE_SUCCESS' => "Your donation was received and {credits} credits have been added to your account as a reward. Thank you!",
             'DONATE_SUCCESS_HIT_LIMIT' => "You have reached your limit which will reset within 31 days.",
             'DONATE_SUCCESS_LIMIT' => "Your donation was received but because of your limit you didn't receive any credits! Thank you!",
+            'DONATOR_LIST_INFO' => "I want to add my username to the donator members list.",
+            'LEAVE_DONATOR_LIST_SUCCESS' => "You have left the donator members list.",
+            'DONATOR_LIST_APPLICATION_SUCCESS' => "You have successfully registered for the donator members list."
         );
         return $langs;
     }

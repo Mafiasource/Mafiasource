@@ -188,20 +188,19 @@ class Security
         if(file_exists($ivFileName)) unlink($ivFileName);
         $ivFileHandle = fopen($ivFileName, 'w') or null;
         if($ivFileHandle)
-        {
             fwrite($ivFileHandle, $iv);
-            fclose($ivFileHandle);
-            chmod($ivFileName, 0600);
-        }
+        
+        fclose($ivFileHandle);
+        chmod($ivFileName, 0600);
+            
         $keyFileName = $saveDir . "key.txt";
         if(file_exists($keyFileName)) unlink($keyFileName);
         $keyFileHandle = fopen($keyFileName, 'w') or null;
         if($keyFileHandle)
-        {
             fwrite($keyFileHandle, $key);
-            fclose($keyFileHandle);
-            chmod($keyFileName, 0600);
-        }
+        
+        fclose($keyFileHandle);
+        chmod($keyFileName, 0600);
     }
     
     public function encrypt($str)
@@ -222,19 +221,17 @@ class Security
         $ivFileName = $saveDir . "iv.txt";
         $ivFile = fopen($ivFileName, 'r') or null;
         if($ivFile)
-        {
-            $iv = fgets($ivFile);
             $iv = file_get_contents($ivFileName);
-            fclose($ivFile);
-        }
+        
+        fclose($ivFile);
+        
         $keyFileName = $saveDir . "key.txt";
         $keyFile = fopen($keyFileName, 'r') or null;
         if($keyFile)
-        {
-            $key = fgets($keyFile);
             $key = file_get_contents($keyFileName);
-            fclose($keyFile);
-        }
+        
+        fclose($keyFile);
+        
         return array('iv' => $iv, 'key' => $key);
     }
     

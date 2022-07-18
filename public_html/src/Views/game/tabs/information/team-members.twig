@@ -13,6 +13,29 @@
             {% endfor %}
             <br class="clear"/>
             {{ langs.THANKS_TO_ALL_DONATORS }}
+            <br /><br />
+            <div id="donatorListReponse">
+                {% set inDonatorList = 'False' %}
+                {% for donator in donatorList %}
+                    {% if donator.getDonator == userData.getUsername %}
+                        {% set inDonatorList = 'True' %}
+                    {% endif %}
+                    <strong class="{{ donator.getColorCode }}">{{ donator.getDonator }}</strong>,&nbsp;
+                {% endfor %}
+                ...
+            </div>
+            <br />
+            {% if donationData %}
+                <form name="donator-list" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('donator-list') }}" method="POST" data-response="#donatorListReponse">
+                    <div class="form-check">
+                      <input type="hidden" name="security-token" value="{{ securityToken }}" />
+                      <input class="form-check-input" type="checkbox" name="donator-list"{% if inDonatorList != 'False' %} checked="checked"{% endif %} value="" id="donator-list-application" />
+                      <label class="form-check-label" for="donator-list-application">
+                        {{ langs.DONATOR_LIST_INFO }}
+                      </label>
+                    </div>
+                </form>
+            {% endif %}
         </div>
     </div>
 </div>

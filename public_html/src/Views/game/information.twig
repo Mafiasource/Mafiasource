@@ -41,3 +41,16 @@
 </div>
 {% include "/src/Views/game/tabs/information/"~tab~".twig" %}
 {% endblock content %}
+
+{% block javascripts %}
+    {% if donationData %}
+        <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('input[name=donator-list]').click(function(){
+                    $(this).closest('form').submit();
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock javascripts %}

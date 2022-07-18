@@ -315,7 +315,7 @@ class DonatorService extends DonatorStatics
                 $cr = (int)$json->amount->value * 100;
                 if($crPoss + $cr < $crLimit && $cr >= 100)
                 {
-                    $this->data->addCredits($cr);
+                    $this->data->addDonationCredits($cr);
                     $replacedMessage = $route->replaceMessagePart(number_format($cr, 0, '', ','), $l['DONATE_SUCCESS'], '/{credits}/');
                 }
                 elseif($crDiff > 0 && $cr >= 100)
@@ -332,9 +332,45 @@ class DonatorService extends DonatorStatics
         }
     }
     
-    public function getDonationData()
+    public function leaveDonatorList()
     {
-        return $this->data->getDonationData();
+        global $route;
+        global $language;
+        $l = $language->donationShopLangs();
+        
+        $this->data->leaveDonatorList();
+        return $route->errorMessage($l['LEAVE_DONATOR_LIST_SUCCESS']);
+    }
+    
+    public function donatorListApplication($post)
+    {
+        global $route;
+        global $security;
+        global $language;
+        global $langs;
+        $l = $language->donationShopLangs();
+        
+        if($security->checkToken($post['security-token']) == FALSE)
+        {
+            $error = $langs['INVALID_SECURITY_TOKEN'];
+        }
+        
+        if(isset($error))
+        {
+            return $route->errorMessage($error);
+        }
+        $this->data->donatorListApplication();
+        return $route->successMessage($l['DONATOR_LIST_APPLICATION_SUCCESS']);
+    }
+    
+    public function getDonatorList()
+    {
+        return $this->data->getDonatorList();
+    }
+    
+    public function getDonationData($allTime = false)
+    {
+        return $this->data->getDonationData($allTime);
     }
     
     public function getDonationShopData()

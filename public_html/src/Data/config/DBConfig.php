@@ -35,7 +35,7 @@ class DBConfig
             catch(\PDOException $e)
             {
                 $this->error = $e->getMessage();
-                die("An error occured while connecting to the database. Please try again later.");
+                die("An error occured while connecting to our database. Please try again later.");
                 exit(0);
             }
         }
