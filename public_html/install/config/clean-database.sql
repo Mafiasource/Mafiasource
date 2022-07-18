@@ -499,6 +499,21 @@ INSERT INTO `donator` VALUES (1, 'Donateur', 'Donator', '#F7FF15', 2, 1, 0);
 INSERT INTO `donator` VALUES (5, 'VIP', 'VIP', '#42A6C6', 3, 1, 0);
 INSERT INTO `donator` VALUES (10, 'Gold Member', 'Gold Member', '#F56D23', 4, 1, 0);
 
+
+-- ----------------------------
+-- Table structure for donator_list
+-- ----------------------------
+DROP TABLE IF EXISTS `donator_list`;
+CREATE TABLE `donator_list`  (
+  `id` int NOT NULL COMMENT 'type=disabled',
+  `userID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of donator_list
+-- ----------------------------
+
 -- ----------------------------
 -- Table structure for drug_liquid
 -- ----------------------------
