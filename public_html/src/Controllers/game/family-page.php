@@ -30,4 +30,4 @@ $twigVars['familyPage'] = $familyPage;
 $twigVars['familyMembers'] = $familyMembers;
 $twigVars['familyAlliances'] = $familyAlliances;
 
-echo $twig->render('/src/Views/game/family-page.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-page.twig', $twigVars));

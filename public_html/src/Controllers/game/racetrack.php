@@ -25,4 +25,4 @@ $twigVars['blackFonts'] = $casinoService->racetrackBlackFontColors;
 $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/racetrack.twig', $twigVars);
+print_r($twig->render('/src/Views/game/racetrack.twig', $twigVars));

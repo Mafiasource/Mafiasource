@@ -12,4 +12,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['linkPartners'] = $linkPartners;
 
 // Render view
-echo $twig->render('/src/Views/link-partners.twig', $twigVars);
+print_r($twig->render('/src/Views/link-partners.twig', $twigVars));

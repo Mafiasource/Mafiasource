@@ -12,4 +12,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['langs'] = array_merge($twigVars['langs'], $language->notFoundLangs());
 
 // Render view
-echo $twig->render('/src/Views/notfound.twig', $twigVars);
+print_r($twig->render('/src/Views/notfound.twig', $twigVars));

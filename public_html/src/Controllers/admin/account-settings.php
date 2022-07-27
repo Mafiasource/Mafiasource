@@ -52,7 +52,7 @@ if(isset($_POST) && !empty($_POST))
     
     $twigVars['response'] = $response;
     
-    echo $twig->render('/src/Views/admin/Ajax/.default.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/Ajax/.default.response.twig', $twigVars));
     exit(0);
 }
 else
@@ -65,5 +65,5 @@ else
     $twigVars['settings'] = $settings[0][0];
     $twigVars['gemeentes'] = $gemeentes;
     
-    echo $twig->render('/src/Views/admin/account-settings.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/account-settings.twig', $twigVars));
 }

@@ -15,5 +15,5 @@ if(!empty($_POST['security-token']) && $famID > 0 && (isset($_POST['crush-conver
     $twigVars['response'] = $response;
     $twigVars['colspan'] = 4; // Required for bootstrap in-table response.
     
-    echo $twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars); // First bootstrap in table response
+    print_r($twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars)); // First bootstrap in table response
 }

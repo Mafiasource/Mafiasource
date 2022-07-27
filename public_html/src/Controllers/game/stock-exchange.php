@@ -51,4 +51,4 @@ if(isset($stockHistory)) $twigVars['stockHistory'] = $stockHistory;
 if(isset($inPosession)) $twigVars['inPossession'] = $inPosession;
 if(isset($portfolioStocks)) $twigVars['portfolio'] = $portfolioStocks;
 
-echo $twig->render('/src/Views/game/stock-exchange.twig', $twigVars);
+print_r($twig->render('/src/Views/game/stock-exchange.twig', $twigVars));

@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['family_join_invite'] = $familyJoinInvite;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/family-join-invite.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/family-join-invite.twig', $twigVars));

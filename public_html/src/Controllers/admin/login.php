@@ -27,5 +27,5 @@ else
 {
     require_once __DIR__ . '/.inc.foot.php';
     
-    echo $twig->render('/src/Views/admin/login.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/login.twig', $twigVars));
 }

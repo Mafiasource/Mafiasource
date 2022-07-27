@@ -28,4 +28,4 @@ $twigVars['latestMessages'] = $latestMessages;
 if(isset($tab) && ($tab == "news" || $tab == "updates" || $tab = "latest")) $twigVars['tab'] = $tab;
 $twigVars['langs'] = array_merge($twigVars['langs'], $language->newsLangs()); // Extend base langs
 
-echo $twig->render('/src/Views/game/news.twig', $twigVars);
+print_r($twig->render('/src/Views/game/news.twig', $twigVars));

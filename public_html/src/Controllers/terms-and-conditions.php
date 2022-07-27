@@ -12,4 +12,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['termsAndConditions'] = $termsAndConditions;
 
 // Render view
-echo $twig->render('/src/Views/terms-and-conditions.twig', $twigVars);
+print_r($twig->render('/src/Views/terms-and-conditions.twig', $twigVars));

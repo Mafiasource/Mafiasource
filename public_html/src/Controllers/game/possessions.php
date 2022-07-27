@@ -20,4 +20,4 @@ $twigVars['states'] = $states;
 $twigVars['cities'] = $cities;
 $twigVars['city'] = $userData->getCity();
 
-echo $twig->render('/src/Views/game/possessions.twig', $twigVars);
+print_r($twig->render('/src/Views/game/possessions.twig', $twigVars));

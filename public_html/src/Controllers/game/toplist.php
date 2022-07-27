@@ -26,4 +26,4 @@ $twigVars['toplist'] = $toplist;
 $twigVars['pagination'] = $pagination;
 $twigVars['view'] = $view;
 
-echo $twig->render('/src/Views/game/toplist.twig', $twigVars);
+print_r($twig->render('/src/Views/game/toplist.twig', $twigVars));

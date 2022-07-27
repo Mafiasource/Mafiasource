@@ -78,4 +78,4 @@ if(isset($vehicle)) $twigVars['vehicle'] = $vehicle;
 $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/garage.twig', $twigVars);
+print_r($twig->render('/src/Views/game/garage.twig', $twigVars));

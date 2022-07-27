@@ -38,4 +38,4 @@ $twigVars['bankData'] = $userService->getBankPageInfo();
 $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/bank.twig', $twigVars);
+print_r($twig->render('/src/Views/game/bank.twig', $twigVars));

@@ -34,4 +34,4 @@ $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 if($type == 'in-prison'  && isset($unableTo) && $unableTo != "page") $twigVars['unableTo'] = $unableTo;
 
-echo $twig->render('/src/Views/game/prison.twig', $twigVars);
+print_r($twig->render('/src/Views/game/prison.twig', $twigVars));

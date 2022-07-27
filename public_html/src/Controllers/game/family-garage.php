@@ -79,4 +79,4 @@ if($tab == "crusher-converter")
     $twigVars['converters'] = $garage->familyConverters;
 }
 
-echo $twig->render('/src/Views/game/family-garage.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-garage.twig', $twigVars));

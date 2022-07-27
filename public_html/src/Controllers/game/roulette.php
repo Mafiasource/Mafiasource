@@ -25,4 +25,4 @@ $twigVars['comboFields'] = $casinoService->rouletteComboFields;
 $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/roulette.twig', $twigVars);
+print_r($twig->render('/src/Views/game/roulette.twig', $twigVars));

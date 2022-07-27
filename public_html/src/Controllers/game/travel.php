@@ -54,4 +54,4 @@ $twigVars['possessionData'] = $pData;
 if(isset($vehicles)) $twigVars['vehicles'] = $vehicles;
 if(isset($selectedVehicle)) $twigVars['selectedVehicle'] = $selectedVehicle;
 
-echo $twig->render('/src/Views/game/travel.twig', $twigVars);
+print_r($twig->render('/src/Views/game/travel.twig', $twigVars));

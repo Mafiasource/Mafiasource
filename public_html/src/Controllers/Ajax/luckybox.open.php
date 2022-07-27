@@ -24,5 +24,5 @@ if(isset($_POST['security-token']))
     $twigVars['luckybox'] = $userDataAfter->getLuckybox();
     $twigVars['chanceList'] = $userService->getLuckyboxChanceList();
     
-    echo $twig->render('/src/Views/game/Ajax/luckybox.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/luckybox.twig', $twigVars));
 }

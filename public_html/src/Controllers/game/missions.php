@@ -40,4 +40,4 @@ if(isset($publicMission) && is_object($publicMission))
     $twigVars['futureHourTime'] = $futureHourTime;
 }
 
-echo $twig->render('/src/Views/game/missions.twig', $twigVars);
+print_r($twig->render('/src/Views/game/missions.twig', $twigVars));

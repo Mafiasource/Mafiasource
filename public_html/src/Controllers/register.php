@@ -64,4 +64,4 @@ if(isset($_SESSION['register']['type'])) $twigVars['regType'] = $_SESSION['regis
 if(isset($referral)) $twigVars['referral'] = $referral;
 
 // Render view
-echo $twig->render('/src/Views/register.twig', $twigVars);
+print_r($twig->render('/src/Views/register.twig', $twigVars));

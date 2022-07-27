@@ -17,4 +17,4 @@ $twigVars['hometownFamily'] = $ground->getHometownFamily();
 $twigVars['states'] = $states;
 $twigVars['groundMap'] = $ground->getGroundMapDataByStateID($userData->getStateID());
 
-echo $twig->render('/src/Views/game/ground.twig', $twigVars);
+print_r($twig->render('/src/Views/game/ground.twig', $twigVars));

@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['family_alliance'] = $familyAlliances;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/family-alliances.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/family-alliances.twig', $twigVars));

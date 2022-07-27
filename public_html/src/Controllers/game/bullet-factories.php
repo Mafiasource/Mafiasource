@@ -22,4 +22,4 @@ $twigVars['possessionData'] = $pData;
 $twigVars['bfInfo'] = $bfInfo;
 $twigVars['bulletFactories'] = $bulletFactories;
 
-echo $twig->render('/src/Views/game/bullet-factories.twig', $twigVars);
+print_r($twig->render('/src/Views/game/bullet-factories.twig', $twigVars));

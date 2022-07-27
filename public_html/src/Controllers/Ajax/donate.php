@@ -28,5 +28,5 @@ if(isset($_POST))
     $twigVars['response'] = $response;
     $twigVars['langs'] = array_merge($twigVars['langs'], $language->donationShopLangs()); // Extend base langs
     
-    echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
 }

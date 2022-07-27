@@ -15,4 +15,4 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH']
     $twigVars['fromAndroid'] = true;
 
 // Render view
-echo $twig->render('/src/Views/index.twig', $twigVars);
+print_r($twig->render('/src/Views/index.twig', $twigVars));

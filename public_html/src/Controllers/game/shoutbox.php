@@ -28,4 +28,4 @@ $twigVars['shoutbox'] = $famID; // 0 standaard shoutbox
 $twigVars['messages'] = $messages;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/game/shoutbox.twig', $twigVars);
+print_r($twig->render('/src/Views/game/shoutbox.twig', $twigVars));

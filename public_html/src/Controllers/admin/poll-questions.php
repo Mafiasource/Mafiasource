@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['poll_question'] = $pollQuestions;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/poll-questions.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/poll-questions.twig', $twigVars));

@@ -41,4 +41,4 @@ $twigVars['count'] = $equipmentService->getRecordsCount();
 $twigVars['equipment'] = $equipmentPage;
 $twigVars['statusPage'] = $userService->getStatusPageInfo();
 
-echo $twig->render('/src/Views/game/equipment-stores.twig', $twigVars);
+print_r($twig->render('/src/Views/game/equipment-stores.twig', $twigVars));

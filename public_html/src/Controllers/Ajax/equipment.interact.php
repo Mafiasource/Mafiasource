@@ -28,5 +28,5 @@ if(isset($_POST['security-token']) && isset($_POST['table']) && in_array($_POST[
     require_once __DIR__ . '/.inc.foot.ajax.php';
     $twigVars['response'] = $response;
     
-    echo $twig->render('/src/Views/game/Ajax/scroll-top.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/scroll-top.twig', $twigVars));
 }

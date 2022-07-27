@@ -37,5 +37,5 @@ if(!empty($_POST['security-token']) && isset($_POST['crime']) && (isset($_POST['
     $twigVars['familyCrimes'] = $famCrimes;
     $twigVars['insideFamilyCrime'] = $famCrime->userInsideFamilyCrime();
     
-    echo $twig->render('/src/Views/game/Ajax/family.crimes.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/family.crimes.twig', $twigVars));
 }

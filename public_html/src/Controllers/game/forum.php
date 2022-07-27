@@ -84,4 +84,4 @@ if(isset($topicID) && $topicID > 0 && isset($catID)) {$twigVars['catID'] = $catI
 if(isset($cat)) $twigVars['catData'] = $cat;
 if(isset($topicData)) $twigVars['topicData'] = $topicData;
 
-echo $twig->render('/src/Views/game/forum.twig', $twigVars);
+print_r($twig->render('/src/Views/game/forum.twig', $twigVars));

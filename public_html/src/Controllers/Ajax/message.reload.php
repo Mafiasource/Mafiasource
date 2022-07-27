@@ -16,5 +16,5 @@ if(!empty($messages))
     $twigVars['lastMessage'] = $messages;
     $twigVars['langs'] = $langs;
     
-    echo $twig->render('/src/Views/game/Ajax/message.reload.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/message.reload.twig', $twigVars));
 }

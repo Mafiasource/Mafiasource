@@ -32,4 +32,4 @@ $twigVars['langs']["YOU_HAVE_X_HONOR_POINTS"] = $route->replaceMessagePart(
 if(isset($exchangeList)) $twigVars['exchangeList'] = $exchangeList;
 if(isset($hpLogs)) $twigVars['hpLogs'] = $hpLogs;
 
-echo $twig->render('/src/Views/game/honor-points.twig', $twigVars);
+print_r($twig->render('/src/Views/game/honor-points.twig', $twigVars));

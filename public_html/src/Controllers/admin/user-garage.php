@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['user_garage'] = $userGarage;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/user-garage.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/user-garage.twig', $twigVars));

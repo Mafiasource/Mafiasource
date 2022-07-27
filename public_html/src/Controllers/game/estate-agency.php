@@ -20,4 +20,4 @@ $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 $twigVars['residence'] = $residences;
 
-echo $twig->render('/src/Views/game/estate-agency.twig', $twigVars);
+print_r($twig->render('/src/Views/game/estate-agency.twig', $twigVars));

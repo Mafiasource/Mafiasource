@@ -24,4 +24,4 @@ $twigVars['winningCombinations'] = $casinoService->slotMachineWinningCombination
 $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/slot-machine.twig', $twigVars);
+print_r($twig->render('/src/Views/game/slot-machine.twig', $twigVars));

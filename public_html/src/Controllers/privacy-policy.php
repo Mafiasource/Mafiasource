@@ -12,4 +12,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['privacyPolicy'] = $privacyPolicy;
 
 // Render view
-echo $twig->render('/src/Views/privacy-policy.twig', $twigVars);
+print_r($twig->render('/src/Views/privacy-policy.twig', $twigVars));

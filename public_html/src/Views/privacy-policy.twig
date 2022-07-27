@@ -1,15 +1,14 @@
 {% extends "/app/Resources/Views/base.twig" %}
  
 {% block content %}
-    <section id="content">
-        <div class="container">
-            {% include "/src/Views/.cookies.twig" %}
-            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
-            <div class="row">
-                <div class="col-lg-12">
-                    {{ privacyPolicy|raw }}
-                </div>
+    <div class="container">
+        {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+        <div class="row">
+            <div class="col-lg-12">
+                {{ privacyPolicy|raw }}
             </div>
         </div>
-    </section>
+    </div>
 {% endblock content %}
+
+{% block privacyNotice %}{% endblock privacyNotice %}

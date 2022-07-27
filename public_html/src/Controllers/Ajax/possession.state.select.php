@@ -25,5 +25,5 @@ if(isset($_POST['city']) && in_array($_POST['city'], $state->allowedCities))
     $twigVars['cities'] = $cities;
     $twigVars['city'] = $_POST['city'];
     
-    echo $twig->render('/src/Views/game/Ajax/possessions.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/possessions.twig', $twigVars));
 }

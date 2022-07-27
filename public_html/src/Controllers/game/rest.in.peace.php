@@ -53,5 +53,5 @@ else
     $twigVars['username'] = $username;
     $twigVars['profession'] = $profession;
     
-    echo $twig->render('/src/Views/game/rest.in.peace.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/rest.in.peace.twig', $twigVars));
 }

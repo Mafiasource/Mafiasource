@@ -23,5 +23,5 @@ if(isset($_POST['security-token']) && isset($_POST['search']))
     $twigVars['langs'] = array_merge($twigVars['langs'], $language->familyLangs()); // Extend base langs
     $twigVars['userData'] = $userData;
     
-    echo $twig->render('/src/Views/game/Ajax/family.search.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/family.search.twig', $twigVars));
 }

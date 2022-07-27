@@ -215,4 +215,4 @@ if(isset($_POST['tab']) && in_array($_POST['tab'],$allowedTabs))
 }
 $twigVars['langs'] = $langs; // Extend base langs
 
-echo $twig->render('/src/Views/game/Ajax/tabs/'.$tab.'.twig', $twigVars);
+print_r($twig->render('/src/Views/game/Ajax/tabs/'.$tab.'.twig', $twigVars));

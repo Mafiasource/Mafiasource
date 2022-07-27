@@ -59,7 +59,7 @@ if(isset($_POST['id']) && !empty($_POST['security-token']) &&  $acceptPost)
     if(isset($weapons)) $twigVars['weapons'] = $weapons;
     
     if($_POST['id'] == 2 || isset($_POST['stop-confirm']))
-        echo $twig->render('/src/Views/game/Ajax/organized.crimes.twig', $twigVars);
+        print_r($twig->render('/src/Views/game/Ajax/organized.crimes.twig', $twigVars));
     else
-        echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+        print_r($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
 }

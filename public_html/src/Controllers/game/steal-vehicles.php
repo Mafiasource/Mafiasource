@@ -16,4 +16,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->stealVehiclesLan
 if(isset($commit)) $twigVars['commit'] = $commit;
 
 
-echo $twig->render('/src/Views/game/steal-vehicles.twig', $twigVars);
+print_r($twig->render('/src/Views/game/steal-vehicles.twig', $twigVars));

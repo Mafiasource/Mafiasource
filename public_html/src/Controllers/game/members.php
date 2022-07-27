@@ -18,4 +18,4 @@ $twigVars['onlineMembers'] = $online;
 $twigVars['onlineFam'] = $onlineFam;
 $twigVars['onlineTeam'] = $onlineTeam;
 
-echo $twig->render('/src/Views/game/members.twig', $twigVars);
+print_r($twig->render('/src/Views/game/members.twig', $twigVars));

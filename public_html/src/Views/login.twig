@@ -1,80 +1,78 @@
 {% extends "/app/Resources/Views/base.twig" %}
  
 {% block content %}
-    <section id="content">
-        <div class="container">
-            {% include "/src/Views/.cookies.twig" %}
-            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
-            <div class="row">
-                <div class="col-md-6" style="margin-bottom: 1em;">
-                    <section id="login-full">
-                        <h1 class="right">Enter <span class="black">Mafia</span>source</h1>
-                        <form name="login" action="{{ routing.getRouteByRouteName('login') }}" method="POST" autocomplete="off">
-                            <table cellspacing="3" class="login-table" width="100%">
-                            	<tr>
-                            		<td class="va-top">
-                            			<table border="0" cellspacing="0" class="zeroMargin">
-                            	<tr>
-                            		<td>
-                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.USERNAME }}" border="0" />
-                            		</td>
-                            		<td>
-                            			&nbsp;{{ langs.USERNAME }}:
-                            		</td>
-                            	</tr>
-                            </table>		</td>
-                            		<td>
-                            			<input type="text" name="username" autofocus maxlength="25" value="{{ username }}"/>
-                            		</td>
-                            	</tr>
-                            	<tr>
-                            		<td class="va-top">
-                            			<table border="0" cellspacing="0" class="zeroMargin">
-                            	<tr>
-                            		<td>
-                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="{{ langs.PASSWORD }}" border="0" />
-                            		</td>
-                            		<td>
-                            			&nbsp;{{ langs.PASSWORD }}:
-                            		</td>
-                            	</tr>
-                            </table>		</td>
-                            		<td>
-                            			&nbsp;<input type="password" pattern="\S{6,}" name="password" /><br />
-                            		</td>
-                            	</tr>
-                                <tr>
-                            		<td class="va-top">
-                            			<table border="0" cellspacing="0" class="zeroMargin">
-                            	<tr>
-                            		<td>
-                            			&nbsp;
-                            		</td>
-                            		<td>
-                            			&nbsp;
-                            		</td>
-                            	</tr>
-                            </table>		</td>
-                            		<td>
-                            			&nbsp;<a href="{{ routing.getRouteByRouteName('recover-password') }}"><small>{{ langs.FORGOT_PASSWORD }}</small></a>
-                            		</td>
-                            	</tr>
-                            	<tr>
-                            		<td colspan="2">
-                            			<br />
-                            			<input type="submit" class="input-submit blue" name="submit_login" value="{{ langs.LOGIN }}" />
-                                    </td>
-                            	</tr>
-                            </table>
-                        </form>
-                    </section>
-                </div>
-                <div class="col-md-6">
-                    <section id="stats" class="middle">
-                        {{ langs.STATS|raw }}
-                    </section>
-                    <br /><br />
-                </div>
+    <div class="container">
+        {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+        <div class="row">
+            <div class="col-md-6" style="margin-bottom: 1em;">
+                <section id="login-full">
+                    <h1 class="right">Enter <span class="black">Mafia</span>source</h1>
+                    <form name="login" action="{{ routing.getRouteByRouteName('login') }}" method="POST" autocomplete="off">
+                        <table cellspacing="3" class="login-table" width="100%">
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.USERNAME }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.USERNAME }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			<input type="text" name="username" autofocus maxlength="25" value="{{ username }}"/>
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="{{ langs.PASSWORD }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.PASSWORD }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<input type="password" pattern="\S{6,}" name="password" /><br />
+                        		</td>
+                        	</tr>
+                            <tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			&nbsp;
+                        		</td>
+                        		<td>
+                        			&nbsp;
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<a href="{{ routing.getRouteByRouteName('recover-password') }}"><small>{{ langs.FORGOT_PASSWORD }}</small></a>
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td colspan="2">
+                        			<br />
+                        			<input type="submit" class="input-submit blue" name="submit_login" value="{{ langs.LOGIN }}" />
+                                </td>
+                        	</tr>
+                        </table>
+                    </form>
+                </section>
             </div>
-    </section>
+            <div class="col-md-6">
+                <section id="stats" class="middle">
+                    {{ langs.STATS|raw }}
+                </section>
+                <br /><br />
+            </div>
+        </div>
+    </div>
 {% endblock content %}

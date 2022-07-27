@@ -12,5 +12,5 @@ if(isset($_POST['type']) && isset($_POST['fromCity']) && isset($_POST['toCity'])
     require_once __DIR__ . '/.inc.foot.ajax.php';
     $twigVars['response'] = $response;
     
-    echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
 }

@@ -26,4 +26,4 @@ $twigVars['possessionData'] = $pData;
 
 unset($_SESSION['blackjack']); // Always unset any possibly unfinished session var 'blackjack' on bj page request
 
-echo $twig->render('/src/Views/game/blackjack.twig', $twigVars);
+print_r($twig->render('/src/Views/game/blackjack.twig', $twigVars));

@@ -47,4 +47,4 @@ if($profileData->getFamilyID() > 0) $twigVars['familyData'] = $family->getFamily
 
 if(isset($commitPimp)) $twigVars['commitPimp'] = $commitPimp;
 
-echo $twig->render('/src/Views/game/profile.twig', $twigVars);
+print_r($twig->render('/src/Views/game/profile.twig', $twigVars));

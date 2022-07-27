@@ -24,4 +24,4 @@ $twigVars['possessionData'] = $pData;
 $twigVars['healCostsPercent'] = $userService->healCostsPercent;
 if(isset($familyMembers)) $twigVars['familyMembers'] = $familyMembers;
 
-echo $twig->render('/src/Views/game/hospital.twig', $twigVars);
+print_r($twig->render('/src/Views/game/hospital.twig', $twigVars));

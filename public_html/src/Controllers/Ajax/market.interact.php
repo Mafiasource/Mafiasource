@@ -22,7 +22,7 @@ if(!empty($_POST['security-token']) && isset($_POST['id']))
     $twigVars['response'] = $response;
     $twigVars['colspan'] = 5;
     
-    echo $twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars));
     
     require_once __DIR__ . '/.moneyAnimation.php'; 
 }

@@ -27,4 +27,4 @@ $twigVars['crimes'] = $famCrime->crimeNames;
 $twigVars['familyCrimes'] = $famCrimes;
 $twigVars['insideFamilyCrime'] = $famCrime->userInsideFamilyCrime();
 
-echo $twig->render('/src/Views/game/family-crimes.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-crimes.twig', $twigVars));

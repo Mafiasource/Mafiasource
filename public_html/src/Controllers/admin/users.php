@@ -17,4 +17,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['users'] = $users;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/users.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/users.twig', $twigVars));

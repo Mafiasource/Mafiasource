@@ -85,4 +85,4 @@ if(isset($cities1)) $twigVars['cities1'] = $cities1;
 if(isset($cities2)) $twigVars['cities2'] = $cities2;
 $twigVars['langs'] = array_merge($twigVars['langs'], $language->smugglingLangs()); // Extend base langs
 
-echo $twig->render('/src/Views/game/smuggling.twig', $twigVars);
+print_r($twig->render('/src/Views/game/smuggling.twig', $twigVars));

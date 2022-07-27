@@ -45,4 +45,4 @@ $twigVars['langs']['NO_REQUESTS_IN_MARKET'] = $route->replaceMessagePart(strtolo
 $twigVars['langs']['ITEMS_SALE_INFO'] = $route->replaceMessagePart(strtolower($typeName), $twigVars['langs']['ITEMS_SALE_INFO'], '/{typeName}/');
 $twigVars['langs']['ITEMS_REQUEST_INFO'] = $route->replaceMessagePart(strtolower($typeName), $twigVars['langs']['ITEMS_REQUEST_INFO'], '/{typeName}/');
 
-echo $twig->render('/src/Views/game/market.twig', $twigVars);
+print_r($twig->render('/src/Views/game/market.twig', $twigVars));

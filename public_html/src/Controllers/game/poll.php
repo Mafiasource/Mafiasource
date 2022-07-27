@@ -27,4 +27,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->pollLangs()); //
 if(isset($activePolls)) $twigVars['activePolls'] = $activePolls;
 if(isset($finishedPolls)) $twigVars['finishedPolls'] = $finishedPolls;
 
-echo $twig->render('/src/Views/game/poll.twig', $twigVars);
+print_r($twig->render('/src/Views/game/poll.twig', $twigVars));

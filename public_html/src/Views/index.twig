@@ -1,96 +1,93 @@
 {% extends "/app/Resources/Views/base.twig" %}
  
 {% block content %}
-    <section id="content">
-        <h1 style="position: absolute;top: -10em;">CrimeClub Maffia RPG</h1>
-        <div class="container">
-            {% include "/src/Views/.cookies.twig" %}
-            {% if offline %}
-                <h1>{{ langs.OFFLINE_MSG|raw }}</h1>
-            {% endif %}
-            <div class="online-txt">
-                {# { # Usefull reset timer # }
-                    <p><span id="cResetTime">{{ "ResetTime"|countdownHmsTime(date('07/01/2020 13:00:00').timestamp - date().timestamp)|raw }}</span></p>
-                #}
-                {% if not offline %}
-                    <p>{{ langs.ONLINE_MSG|raw }}</p>
-                {% endif %}
-            </div>
-            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
-            <div class="row">
-                <div class="col-lg-6">
-                    <section id="slider" class="middle">
-                    {# Attention! When adjusting slider ALSO adjust game.CSS file to slide the slider further than current 4 blocks #}
-                        <ul>
-                            <li>
-                                <div class="slider-container">
-                                    {{ langs.SLIDER1|raw }}
-                                </div>
-                            </li>
-                            <li>
-                                <div class="slider-container">
-                                    {{ langs.SLIDER2|raw }}
-                                </div>
-                            </li>
-                            <li>
-                                <div class="slider-container">
-                                    {{ langs.SLIDER3|raw }}
-                                </div>
-                            </li>
-                            <li>
-                                <div class="slider-container">
-                                    {{ langs.SLIDER4|raw }}
-                                </div>
-                            </li>
-                        </ul>
-                    </section>
-                    <br class="clear"/>
-                    <p>{{ langs.LINK_PARTNERS_INFO|raw }}<br /><a href=" {{ routing.getRouteByRouteName('get-the-app') }}">{{ langs.DOWNLOAD_APP }}</a></p>
-                    {#
-                        <p>Reset:&nbsp;<span id="cResetTime">{{ "ResetTime"|countdownHmsTime(date('11/30/2021 19:00:00').timestamp - date().timestamp)|raw }}</span></p>
-                    #}
-                </div>
-                <div class="col-lg-6">
-                    <section id="stats" class="middle">
-                        {{ langs.STATS|raw }}
-                    </section>
-                </div>
-            </div>
+    <h1 style="position: absolute;top: -10em;">CrimeClub Maffia RPG</h1>
+    <div class="container">
+        {% if offline %}
+            <h1>{{ langs.OFFLINE_MSG|raw }}</h1>
+        {% endif %}
+        <div class="online-txt">
+            {# { # Usefull reset timer # }
+                <p><span id="cResetTime">{{ "ResetTime"|countdownHmsTime(date('07/01/2020 13:00:00').timestamp - date().timestamp)|raw }}</span></p>
+            #}
             {% if not offline %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <section id="call-to-action-register">
-                            {% if userData is empty %}
-                                <form id="demo-login" name="login" action="{{ routing.getRouteByRouteName('login') }}" method="POST">
-                                    <h2>
-                                        <a style="position: relative;top: -5px;margin-bottom:10px" href="{{ routing.getRouteByRouteName('register') }}" class="button">{{ langs.REGISTER_BTN }}</a>&nbsp;
-                                        <input type="hidden" name="username" value="ms-demo"/>
-                                        <input type="hidden" name="password" value="demo-ms"/>
-                                        <input style="position: relative;top: -5px;margin-bottom:10px" type="submit" name="submit_login" class="input-submit blue" value="{% if lang == 'en' %}Try{% else %}Probeer{% endif %} demo"/>
-                                    </h2>
-                                </form>
-                            {% endif %}
-                        </section>
-                        {% if not fromAndroid %}
-                            <div class="center">
-                                <a href="https://play.google.com/store/apps/details?id=com.mafiasource.webviewapp&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img width="180" height="70" alt="Get it on Google Play" src="{{ staticRoot }}/foto/180x70/2/web/public/images/google-play.png"/></a>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+                <p>{{ langs.ONLINE_MSG|raw }}</p>
             {% endif %}
-            {# { # Social media, unused # }
+        </div>
+        {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+        <div class="row">
+            <div class="col-lg-6">
+                <section id="slider" class="middle">
+                {# Attention! When adjusting slider ALSO adjust game.CSS file to slide the slider further than current 4 blocks #}
+                    <ul>
+                        <li>
+                            <div class="slider-container">
+                                {{ langs.SLIDER1|raw }}
+                            </div>
+                        </li>
+                        <li>
+                            <div class="slider-container">
+                                {{ langs.SLIDER2|raw }}
+                            </div>
+                        </li>
+                        <li>
+                            <div class="slider-container">
+                                {{ langs.SLIDER3|raw }}
+                            </div>
+                        </li>
+                        <li>
+                            <div class="slider-container">
+                                {{ langs.SLIDER4|raw }}
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+                <br class="clear"/>
+                <p>{{ langs.LINK_PARTNERS_INFO|raw }}<br /><a href=" {{ routing.getRouteByRouteName('get-the-app') }}">{{ langs.DOWNLOAD_APP }}</a></p>
+                {#
+                    <p>Reset:&nbsp;<span id="cResetTime">{{ "ResetTime"|countdownHmsTime(date('11/30/2021 19:00:00').timestamp - date().timestamp)|raw }}</span></p>
+                #}
+            </div>
+            <div class="col-lg-6">
+                <section id="stats" class="middle">
+                    {{ langs.STATS|raw }}
+                </section>
+            </div>
+        </div>
+        {% if not offline %}
             <div class="row">
                 <div class="col-md-12">
-                    <section id="social">
-                        <a class="fb" href="https://facebook.com/{{ settings.fbPage }}" target="_blank"></a>
-                        <a class="twitter" href="https://twitter.com/{{ settings.twPage }}" target="_blank"></a>
-                        <a class="google" href="https://plus.google.com/{{ settings.gpPage }}" target="_blank"></a>
+                    <section id="call-to-action-register">
+                        {% if userData is empty %}
+                            <form id="demo-login" name="login" action="{{ routing.getRouteByRouteName('login') }}" method="POST">
+                                <h2>
+                                    <a style="position: relative;top: -5px;margin-bottom:10px" href="{{ routing.getRouteByRouteName('register') }}" class="button">{{ langs.REGISTER_BTN }}</a>&nbsp;
+                                    <input type="hidden" name="username" value="ms-demo"/>
+                                    <input type="hidden" name="password" value="demo-ms"/>
+                                    <input style="position: relative;top: -5px;margin-bottom:10px" type="submit" name="submit_login" class="input-submit blue" value="{% if lang == 'en' %}Try{% else %}Probeer{% endif %} demo"/>
+                                </h2>
+                            </form>
+                        {% endif %}
                     </section>
+                    {% if not fromAndroid %}
+                        <div class="center">
+                            <a href="https://play.google.com/store/apps/details?id=com.mafiasource.webviewapp&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img width="180" height="70" alt="Get it on Google Play" src="{{ staticRoot }}/foto/180x70/2/web/public/images/google-play.png"/></a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
-            #}
+        {% endif %}
+        {# { # Social media, unused # }
+        <div class="row">
+            <div class="col-md-12">
+                <section id="social">
+                    <a class="fb" href="https://facebook.com/{{ settings.fbPage }}" target="_blank"></a>
+                    <a class="twitter" href="https://twitter.com/{{ settings.twPage }}" target="_blank"></a>
+                    <a class="google" href="https://plus.google.com/{{ settings.gpPage }}" target="_blank"></a>
+                </section>
+            </div>
         </div>
-        <div class="push"></div>
-    </section>
+        #}
+    </div>
+    <div class="push"></div>
 {% endblock content %}

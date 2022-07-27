@@ -31,4 +31,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['langs'] = array_merge($twigVars['langs'], $language->loginLangs());
 
 // Render view
-echo $twig->render('/src/Views/login.twig', $twigVars);
+print_r($twig->render('/src/Views/login.twig', $twigVars));

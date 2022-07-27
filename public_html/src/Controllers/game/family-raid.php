@@ -36,4 +36,4 @@ if(isset($vehicles))
 if($available === false)
     $twigVars['waitingTime'] = $userData->getCFamilyRaid();
 
-echo $twig->render('/src/Views/game/family-raid.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-raid.twig', $twigVars));

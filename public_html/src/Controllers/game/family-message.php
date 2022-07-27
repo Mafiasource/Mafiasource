@@ -23,4 +23,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->familyLangs()); 
 $twigVars['hasRights'] = $hasRights;
 $twigVars['familyMessage'] = $familyMessage;
 
-echo $twig->render('/src/Views/game/family-message.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-message.twig', $twigVars));

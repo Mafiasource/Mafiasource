@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['market'] = $market;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/market.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/market.twig', $twigVars));

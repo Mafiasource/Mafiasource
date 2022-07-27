@@ -14,4 +14,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->dailyChallengesL
 $twigVars['langs']['DAILY_INFO'] = $route->replaceMessagePart($luckies, $twigVars['langs']['DAILY_INFO'], '/{luckies}/');
 $twigVars['challenges'] = $challenges;
 
-echo $twig->render('/src/Views/game/daily-challenges.twig', $twigVars);
+print_r($twig->render('/src/Views/game/daily-challenges.twig', $twigVars));

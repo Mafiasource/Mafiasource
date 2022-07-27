@@ -12,4 +12,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['downloadApp'] = $downloadApp;
 
 // Render view
-echo $twig->render('/src/Views/get-app.twig', $twigVars);
+print_r($twig->render('/src/Views/get-app.twig', $twigVars));

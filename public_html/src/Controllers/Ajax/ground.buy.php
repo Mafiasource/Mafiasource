@@ -31,6 +31,6 @@ if(isset($_POST['state']) && in_array($_POST['state'], $state->allowedStates) &&
         $twigVars['ground'] = $ground->getGroundDataByStateIdAndGroundID($stateID, $groundID);
         $twigVars['statusPage'] = $userService->getStatusPageInfo();
         
-        echo $twig->render('/src/Views/game/Ajax/ground.area.twig', $twigVars);
+        print_r($twig->render('/src/Views/game/Ajax/ground.area.twig', $twigVars));
     }
 }

@@ -3,4 +3,4 @@
 header('Content-Type: text/xml');
 
 // Render view
-echo $twig->render('/web/public/browserconfig.xml');
+print_r($twig->render('/web/public/browserconfig.xml'));

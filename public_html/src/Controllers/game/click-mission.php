@@ -6,4 +6,4 @@
 
 //$twigVars['langs'] = array_merge($twigVars['langs'], $language->statusLangs()); // Extend base langs
 
-//echo $twig->render('/src/Views/index.twig', $twigVars);
+//print_r($twig->render('/src/Views/index.twig', $twigVars));

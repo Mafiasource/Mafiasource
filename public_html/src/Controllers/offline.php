@@ -7,4 +7,4 @@ if($lang == "nl")
 $twigVars = array('offlineMsg' => $offlineMsg, 'routing' => $route);
 
 // Render view
-echo $twig->render('/src/Views/offline.twig', $twigVars);
+print_r($twig->render('/src/Views/offline.twig', $twigVars));

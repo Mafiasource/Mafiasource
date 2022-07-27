@@ -12,4 +12,4 @@ require_once __DIR__ . '/.inc.foot.php';
 
 $twigVars['langs'] = array_merge($twigVars['langs'], $language->familyLangs()); // Extend base langs
 
-echo $twig->render('/src/Views/game/family-create.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-create.twig', $twigVars));

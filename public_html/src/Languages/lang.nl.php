@@ -38,7 +38,7 @@ class GetLanguageContent
                 'LINK_PARTNERS_INFO' => "Maak kennis met onze <a href='".$route->getRouteByRouteName('link-partners')."'>linkpartners</a>.",
                 'DOWNLOAD_APP' => "Download de app",
                 'WRONG_CAPTCHA' => "Je hebt de verkeerde code ingevoerd!", // Use in & out-game
-                'INVALID_SECURITY_TOKEN' => "Ongeldige beveiligings sleutel, vernieuw de pagina (F5) en probeer a.u.b. opnieuw. Indien u essentiele cookies blokkeert kan ook geen geldige beveiligings sleutel worden verleend.", // Use in & out-game
+                'INVALID_SECURITY_TOKEN' => "Ongeldige beveiligingssleutel, vernieuw de pagina (F5) en probeer a.u.b. opnieuw. Indien u essentiele cookies blokkeert kan ook geen geldige beveiligingssleutel worden verleend.", // Use in & out-game
                 'INFORMATION' => "Informatie", // Use in & out-game
                 'TOPLIST' => "Toplijst", // Use in & out-game
                 'NONE' => "Geen", // Use in & out-game
@@ -1763,7 +1763,7 @@ class GetLanguageContent
             'GENERATE' => "Genereren",
             'DEACTIVATE' => "Deactiveren",
             'NOT_ACTIVE' => "Niet actief",
-            'PRIVATEID_INFO' => "Met PrivateID kunt u een verborgen gebruikersnaam voor uw account instellen, eenmaal geactiveerd kunt u alleen inloggen met uw PrivateID in het gebruikersnaamveld.<br /><strong>Voorzichtig!</strong> PrivateID is alleen zichtbaar tijdens elke generatie waarna onomkeerbaar wordt opgeslagen in ons systeem. De laatst gegenereerde PrivateID is altijd de juiste, tenzij deze werd gedeactiveerd.<br /><strong>".strtolower($route->settings['domain'])."/recover-password</strong> wordt gebruikt om een verloren PrivateID te deactiveren. (Uitloggen & email toegang vereist)",
+            'PRIVATEID_INFO' => "Met PrivateID kunt u een verborgen gebruikersnaam voor uw account instellen, eenmaal geactiveerd kunt u alleen inloggen met uw PrivateID in het gebruikersnaamveld.<br /><strong>Voorzichtig!</strong> PrivateID is alleen zichtbaar tijdens elke generatie waarna het onomkeerbaar wordt opgeslagen in ons systeem. De laatst gegenereerde PrivateID is altijd de juiste, tenzij deze werd gedeactiveerd.<br /><strong>".strtolower($route->settings['domain'])."/recover-password</strong> wordt gebruikt om een verloren PrivateID te deactiveren. (Uitloggen & email toegang vereist)",
             'PRIVATEID_UNKNOWN_IP_DETECTED' => "Je kan je PrivateID niet wijzigen omdat je IP nog niet als veilig word erkend. Dit kan tot 24 uur duren nadat een nieuw IP-adres is gedetecteerd.",
             'PRIVATEID_ALREADY_ACTIVE' => "Deactiveer je PrivateID vooralleer je een nieuwe genereert.",
             'ACTIVATE_PRIVATEID_SUCCESS' => "Je kan nu enkel inloggen met deze hoofdlettergevoelig verborgen gebruikersnaam: <code><strong>{pid}</strong></code><br />Sla dit niet digitaal op om een hogere veiligheid van uw PrivateID te garanderen.",

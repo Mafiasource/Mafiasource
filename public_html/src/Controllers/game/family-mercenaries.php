@@ -26,4 +26,4 @@ $twigVars['langs']['MERCENARIES_INFO'] = $route->replaceMessagePart(number_forma
 $twigVars['pageInfo'] = $pageInfo;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/game/family-mercenaries.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-mercenaries.twig', $twigVars));

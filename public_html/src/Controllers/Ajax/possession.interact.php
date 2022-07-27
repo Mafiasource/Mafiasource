@@ -37,8 +37,8 @@ if( isset($id) && isset($_POST['security-token']) &&
     if(isset($_POST['drop']) && $_POST['drop'] != 'false')
     {
         $twigVars['id'] = $id;
-        echo $twig->render('/src/Views/game/Ajax/possession.drop.twig', $twigVars);
+        print_r($twig->render('/src/Views/game/Ajax/possession.drop.twig', $twigVars));
     }
     else
-        echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+        print_r($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
 }

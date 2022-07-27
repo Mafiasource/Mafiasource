@@ -56,4 +56,4 @@ if(isset($round) && $tab == "hall-of-fame") $twigVars['round'] = (string) $round
 if(isset($donationData) && is_array($donationData)) $twigVars['donationData'] = $donationData;
 if(isset($donatorList) && is_array($donatorList)) $twigVars['donatorList'] = $donatorList;
 
-echo $twig->render('/src/Views/game/information.twig', $twigVars);
+print_r($twig->render('/src/Views/game/information.twig', $twigVars));

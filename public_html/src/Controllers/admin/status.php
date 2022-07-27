@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['status'] = $status;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/status.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/status.twig', $twigVars));

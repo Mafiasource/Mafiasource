@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="manifest" href="{{ docRoot }}/app.webmanifest" />
+    <link rel="manifest" href="{{ docRoot }}/app.webmanifest" crossorigin="use-credentials" />
     <meta name="theme-color" content="#464646" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0{#, shrink-to-fit=no, user-scalable=no #}" />
     <meta name="msapplication-config" content="{{ docRoot }}/browserconfig.xml" />
@@ -107,7 +107,7 @@
         {% endfor %}
     </style>
     {# Twig stylesheets #}
-    {% block stylesheets %} {% endblock stylesheets %}
+    {% block stylesheets %}{% endblock stylesheets %}
 </head>
 <body>
     {% block header %}
@@ -158,10 +158,19 @@
         </div>
     </header>
     {% endblock header %}
-    
-    {% block content %}
-    {% endblock content %}
-    
+
+    <section id="content">
+        {% block content %}
+            Hello word!
+        {% endblock content %}
+
+        {% block privacyNotice %}
+            <div class="container">
+                {% include "/src/Views/.cookies.twig" %}
+            </div>
+        {% endblock privacyNotice %}
+    </section>
+
     {% block footer %}
     <footer>
         <div class="container">
@@ -185,7 +194,7 @@
         </div>
     </footer>
     {% endblock footer %}
-    
+
     {# Bootstrap core JavaScript #}
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"></script>
     <script type="text/javascript">
@@ -198,7 +207,7 @@
     </script>
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/outgame.js"></script>
     {# Twig javascripts #}
-    {% block javascripts %} {% endblock %}
+    {% block javascripts %}{% endblock %}
 </body>
 </html>
 {% endapply %}

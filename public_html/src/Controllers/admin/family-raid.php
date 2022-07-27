@@ -17,4 +17,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['family_raid'] = $familyRaid;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/family-raid.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/family-raid.twig', $twigVars));

@@ -37,4 +37,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['changeEmailData'] = $changeEmailData;
 
 // Render view
-echo $twig->render('/src/Views/change-email.twig', $twigVars);
+print_r($twig->render('/src/Views/change-email.twig', $twigVars));

@@ -16,4 +16,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->statusLangs()); 
 $twigVars['statusData'] = $userService->getStatusPageInfo();
 $twigVars['residenceData'] = $residenceData;
 
-echo $twig->render('/src/Views/game/status.twig', $twigVars);
+print_r($twig->render('/src/Views/game/status.twig', $twigVars));

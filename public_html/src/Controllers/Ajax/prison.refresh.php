@@ -33,5 +33,5 @@ if(isset($_POST['from']) && isset($_POST['to']) && isset($_POST['famID']))
     $twigVars['time'] = time();
     $twigVars['pagination'] = $pagination;
     
-    echo $twig->render('/src/Views/game/Ajax/prison.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/prison.twig', $twigVars));
 }

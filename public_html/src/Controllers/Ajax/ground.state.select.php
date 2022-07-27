@@ -23,5 +23,5 @@ if(isset($_POST['state']) && in_array($_POST['state'], $state->allowedStates))
     $twigVars['states'] = $states;
     $twigVars['groundMap'] = $groundMap;
     
-    echo $twig->render('/src/Views/game/Ajax/ground.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/ground.twig', $twigVars));
 }

@@ -13,4 +13,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['vehicle'] = $vehicles;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/vehicles.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/vehicles.twig', $twigVars));

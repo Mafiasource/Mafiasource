@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['profession'] = $beroepen;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/beroep.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/beroep.twig', $twigVars));

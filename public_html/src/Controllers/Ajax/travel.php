@@ -39,5 +39,5 @@ if(isset($_POST['type']) && in_array($_POST['type'],$allowedMediums))
     else
         $twigVars['response'] = $response;
 
-    echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
 }

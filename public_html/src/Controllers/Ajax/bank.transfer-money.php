@@ -30,5 +30,5 @@ if(isset($_POST['amount']) && isset($_POST['security-token']) && isset($_POST['a
             'action' => isset($_POST['action']) && $_POST['action'] === 'putMoney' ? "putMoney" : "getMoney"
         ));
     
-    echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
 }

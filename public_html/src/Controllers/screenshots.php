@@ -14,4 +14,4 @@ $twigVars['screenshots'] = array(
 );
 
 // Render view
-echo $twig->render('/src/Views/screenshots.twig', $twigVars);
+print_r($twig->render('/src/Views/screenshots.twig', $twigVars));

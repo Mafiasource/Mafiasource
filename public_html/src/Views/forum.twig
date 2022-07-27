@@ -43,9 +43,7 @@ section#content section#forum .dateActions {position: relative;top:.25em;margin-
 {% endblock stylesheets %}
 
 {% block content %}
-<section id="content">
     <div class="container">
-        {% include "/src/Views/.cookies.twig" %}
         {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
         <section id="forum">
             <h1>{{ forumTitle|raw }}</h1>
@@ -195,8 +193,7 @@ section#content section#forum .dateActions {position: relative;top:.25em;margin-
             {% endif %}
         </section>
     </div>
-</section>
-<div id="openTab"></div>
+    <div id="openTab"></div>
 {% endblock content %}
 
 {% block javascripts %}

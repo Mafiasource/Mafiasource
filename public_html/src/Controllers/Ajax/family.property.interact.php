@@ -92,7 +92,7 @@ if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
     }
     
     if($propertyAction)
-        echo $twig->render('/src/Views/game/Ajax/family-properties/' . strtolower($property) . '/property.twig', $twigVars);
+        print_r($twig->render('/src/Views/game/Ajax/family-properties/' . strtolower($property) . '/property.twig', $twigVars));
     else
-        echo $twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars);
+        print_r($twig->render('/src/Views/game/Ajax/.default.response.twig', $twigVars));
 }

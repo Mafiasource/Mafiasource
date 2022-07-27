@@ -72,4 +72,4 @@ if(isset($alliances)) $twigVars['alliances'] = $alliances;
 if(isset($possessId)) $twigVars['possessId'] = $possessId;
 if(isset($pData)) $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/family-management.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-management.twig', $twigVars));

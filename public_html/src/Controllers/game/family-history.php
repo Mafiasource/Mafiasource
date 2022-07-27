@@ -15,4 +15,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->murderLogLangs()
 $twigVars['logs'] = $logs;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/game/family-history.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-history.twig', $twigVars));

@@ -59,4 +59,4 @@ require_once __DIR__ . '/.inc.foot.php';
 if(isset($recoverPasswordData)) $twigVars['recoverPasswordData'] = $recoverPasswordData;
 
 // Render view
-echo $twig->render('/src/Views/recover-password.twig', $twigVars);
+print_r($twig->render('/src/Views/recover-password.twig', $twigVars));

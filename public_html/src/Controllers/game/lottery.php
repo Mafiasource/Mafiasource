@@ -43,4 +43,4 @@ $twigVars['ticket'] = $lottery->getLotteryTicketByType($type);
 $twigVars['lastWinners'] = $lottery->getLastLotteryWinnersByType($type);
 $twigVars['places'] = array(1 => $ll['FIRST'], $ll['SECOND'], $ll['THIRD'], $ll['FOURTH'], $ll['FIFTH'], $ll['SIXTH'], $ll['SEVENTH'], $ll['EIGHTH'], $ll['NINTH']);
 
-echo $twig->render('/src/Views/game/lottery.twig', $twigVars);
+print_r($twig->render('/src/Views/game/lottery.twig', $twigVars));

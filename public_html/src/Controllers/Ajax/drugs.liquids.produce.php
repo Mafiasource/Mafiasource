@@ -54,5 +54,5 @@ if(isset($_POST['security-token']) && isset($_POST['type']) && in_array($_POST['
     if(isset($units))
         $twigVars['units'] = $units;
     
-    echo $twig->render('/src/Views/game/Ajax/drugs.liquids.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/drugs.liquids.twig', $twigVars));
 }

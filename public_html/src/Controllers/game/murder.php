@@ -65,4 +65,4 @@ if(isset($pData)) $twigVars['possessionData'] = $pData;
 if(isset($logs)) $twigVars['logs'] = $logs;
 if(isset($pagination)) $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/game/murder.twig', $twigVars);
+print_r($twig->render('/src/Views/game/murder.twig', $twigVars));

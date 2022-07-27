@@ -21,4 +21,4 @@ $twigVars['langs']['DOBBLING_INFO'] = $route->replaceMessageParts($casinoReplace
 $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/dobbling.twig', $twigVars);
+print_r($twig->render('/src/Views/game/dobbling.twig', $twigVars));

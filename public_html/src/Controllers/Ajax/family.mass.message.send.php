@@ -17,5 +17,5 @@ if(!empty($_POST['security-token']) && isset($_POST['mass-message']) && isset($_
     $twigVars['response'] = $response;
     $twigVars['colspan'] = 2;
     
-    echo $twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars));
 }

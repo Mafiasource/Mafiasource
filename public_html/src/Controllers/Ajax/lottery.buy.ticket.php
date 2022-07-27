@@ -44,5 +44,5 @@ if(isset($_POST['security-token']) && isset($_POST['type']))
     $twigVars['type'] = $type;
     $twigVars['places'] = array(1 => $ll['FIRST'], $ll['SECOND'], $ll['THIRD'], $ll['FOURTH'], $ll['FIFTH'], $ll['SIXTH'], $ll['SEVENTH'], $ll['EIGHTH'], $ll['NINTH']);
     
-    echo $twig->render('/src/Views/game/Ajax/lottery.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/lottery.twig', $twigVars));
 }

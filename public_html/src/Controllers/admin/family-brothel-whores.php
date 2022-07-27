@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['family_brothel_whore'] = $familyBrothelWhores;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/family-brothel-whores.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/family-brothel-whores.twig', $twigVars));

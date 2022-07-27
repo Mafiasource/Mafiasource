@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['family_bf_donation_log'] = $familyBulletDonations;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/family-bullet-donations.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/family-bullet-donations.twig', $twigVars));

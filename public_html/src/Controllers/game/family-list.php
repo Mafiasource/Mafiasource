@@ -15,4 +15,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->familyLangs()); 
 $twigVars['famlist'] = $famlist;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/game/family-list.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-list.twig', $twigVars));

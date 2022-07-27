@@ -53,4 +53,4 @@ $twigVars['userWhoresInfo'] = $replacedWhoresInfoMessage;
 $twigVars['possessId'] = $possessId;
 $twigVars['possessionData'] = $pData;
 
-echo $twig->render('/src/Views/game/red-light-district.twig', $twigVars);
+print_r($twig->render('/src/Views/game/red-light-district.twig', $twigVars));

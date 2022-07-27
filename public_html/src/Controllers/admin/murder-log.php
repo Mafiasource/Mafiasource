@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['murder_log'] = $murderLog;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/murder-log.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/murder-log.twig', $twigVars));

@@ -15,4 +15,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->hitlistLangs());
 $twigVars['hitlist'] = $records;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/game/hitlist.twig', $twigVars);
+print_r($twig->render('/src/Views/game/hitlist.twig', $twigVars));

@@ -27,5 +27,5 @@ if(isset($_POST['from']) && isset($_POST['to']) && isset($_POST['famID']))
     $twigVars['messages'] = $messages;
     $twigVars['LOOKS_SILENT'] = $language->shoutboxLangs()['LOOKS_SILENT'];
     
-    echo $twig->render('/src/Views/game/Ajax/shoutbox.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/shoutbox.twig', $twigVars));
 }

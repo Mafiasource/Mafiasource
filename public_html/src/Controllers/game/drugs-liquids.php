@@ -31,4 +31,4 @@ $twigVars['sPage'] = $sPage;
 $twigVars['maxUnits'] = $drugLiquid->maxUnits;
 if(isset($units)) $twigVars['units'] = $units;
 
-echo $twig->render('/src/Views/game/drugs-liquids.twig', $twigVars);
+print_r($twig->render('/src/Views/game/drugs-liquids.twig', $twigVars));

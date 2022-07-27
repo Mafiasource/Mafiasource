@@ -17,4 +17,4 @@ $twigVars['luckyboxAmnt'] = $donator->luckyboxAmnt;
 $twigVars['luckyboxCr'] = $donator->luckyboxCr;
 $twigVars['shopData'] = $donator->getDonationShopData();
 
-echo $twig->render('/src/Views/game/donation-shop.twig', $twigVars);
+print_r($twig->render('/src/Views/game/donation-shop.twig', $twigVars));

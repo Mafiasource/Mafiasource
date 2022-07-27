@@ -26,4 +26,4 @@ $twigVars['waitingTimes'] = $waitingTimes;
 $twigVars['competitions'] = $gymCompetition->getOpenCompetitions();
 if(isset($commit)) $twigVars['commit'] = $commit;
 
-echo $twig->render('/src/Views/game/gym.twig', $twigVars);
+print_r($twig->render('/src/Views/game/gym.twig', $twigVars));

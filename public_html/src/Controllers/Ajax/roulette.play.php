@@ -39,7 +39,7 @@ if(isset($_POST['security-token']) && $acceptPost === true && isset($_POST['play
     $twigVars['response'] = $response;
     $twigVars['colspan'] = 3;
     
-    echo $twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/.default.in-table.response.twig', $twigVars));
     
     require_once __DIR__ . '/.moneyAnimation.php';
     if(isset($cashMoneyBefore) && isset($cashMoneyAfter) && $cashMoneyBefore != $cashMoneyAfter) valueAnimation("#casinoStakeAmount", $cashMoneyBefore, $cashMoneyAfter);

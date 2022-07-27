@@ -49,4 +49,4 @@ if(isset($familyDonations)) $twigVars['familyDonations'] = $familyDonations;
 if(isset($familyBankLogs)) $twigVars['familyBankLogs'] = $familyBankLogs;
 if(isset($familyMembers)) $twigVars['familyMembers'] = $familyMembers; 
 
-echo $twig->render('/src/Views/game/family-bank.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-bank.twig', $twigVars));

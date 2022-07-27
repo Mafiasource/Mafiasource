@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['seo'] = $seo;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/seo.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/seo.twig', $twigVars));

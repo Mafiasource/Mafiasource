@@ -39,4 +39,4 @@ $twigVars['langs'] = array_merge($twigVars['langs'], $language->fiftyGamesLangs(
 $twigVars['fiftyGames'] = $gameRecords;
 $twigVars['amountPossession'] = $amountPossession;
 
-echo $twig->render('/src/Views/game/fifty-games.twig', $twigVars);
+print_r($twig->render('/src/Views/game/fifty-games.twig', $twigVars));

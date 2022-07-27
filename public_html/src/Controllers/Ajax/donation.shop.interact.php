@@ -35,5 +35,5 @@ if(isset($_POST['security-token']) && $orCheck)
     $twigVars['luckyboxCr'] = $donator->luckyboxCr;
     $twigVars['shopData'] = $donator->getDonationShopData();
     
-    echo $twig->render('/src/Views/game/Ajax/donation-shop.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/donation-shop.twig', $twigVars));
 }

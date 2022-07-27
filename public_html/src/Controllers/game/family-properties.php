@@ -61,4 +61,4 @@ if(isset($statusData)) $twigVars['statusData'] = $statusData;
 if(isset($familyMembers)) $twigVars['familyMembers'] = $familyMembers;
 if(isset($streetWhores)) $twigVars['streetWhores'] = $streetWhores;
 
-echo $twig->render('/src/Views/game/family-properties.twig', $twigVars);
+print_r($twig->render('/src/Views/game/family-properties.twig', $twigVars));

@@ -20,9 +20,8 @@
                     {% if donator.getDonator == userData.getUsername %}
                         {% set inDonatorList = 'True' %}
                     {% endif %}
-                    <strong class="{{ donator.getColorCode }}">{{ donator.getDonator }}</strong>,&nbsp;
                 {% endfor %}
-                ...
+                {% include "/src/Views/game/Ajax/donator-list.twig" %}
             </div>
             <br />
             {% if donationData %}

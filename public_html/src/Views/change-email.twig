@@ -1,85 +1,83 @@
 {% extends "/app/Resources/Views/base.twig" %}
  
 {% block content %}
-    <section id="content">
-        <div class="container">
-            {% include "/src/Views/.cookies.twig" %}
-            {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
-            <div class="alert alert-warning">
-                <img src="{{ staticRoot }}/foto/web/public/images/icons/bell.png" class="icon" alt="Bell"/>&nbsp;{{ langs.CHANGE_EMAIL_INFO|raw }}
+    <div class="container">
+        {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
+        <div class="alert alert-warning">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/bell.png" class="icon" alt="Bell"/>&nbsp;{{ langs.CHANGE_EMAIL_INFO|raw }}
+        </div>
+            
+        <div class="row">
+            <div class="col-md-6" style="margin-bottom: 1em;">
+                <section id="login-full">
+                    <h1 class="right">{{ langs.CHANGE_EMAIL_ON }} <span class="black">Mafia</span>source</h1>
+                    <form name="change-email" action="{{ routing.getRoute }}" method="POST">
+                        <table cellspacing="3" class="change-email-table" width="100%">
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.USERNAME }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.USERNAME }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;{{ changeEmailData.getUsername }}
+                        		</td>
+                        	</tr>
+                            <tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="{{ langs.PASSWORD }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.PASSWORD }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;<input type="password" pattern="\S{6,}" name="password" /><br />
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td class="va-top">
+                        			<table border="0" cellspacing="0" class="zeroMargin">
+                        	<tr>
+                        		<td>
+                        			<img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" alt="{{ langs.NEW_MAIL }}" border="0" />
+                        		</td>
+                        		<td>
+                        			&nbsp;{{ langs.NEW_EMAIL }}:
+                        		</td>
+                        	</tr>
+                        </table>		</td>
+                        		<td>
+                        			&nbsp;{{ changeEmailData.getEmail }}
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td colspan="2">
+                        			<br />
+                                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                        			<input type="submit" class="input-submit" name="submit_email_change" value="{{ langs.CHANGE_EMAIL }}" />
+                                </td>
+                        	</tr>
+                        </table>
+                    </form>
+                </section>
             </div>
-                
-            <div class="row">
-                <div class="col-md-6" style="margin-bottom: 1em;">
-                    <section id="login-full">
-                        <h1 class="right">{{ langs.CHANGE_EMAIL_ON }} <span class="black">Mafia</span>source</h1>
-                        <form name="change-email" action="{{ routing.getRoute }}" method="POST">
-                            <table cellspacing="3" class="change-email-table" width="100%">
-                            	<tr>
-                            		<td class="va-top">
-                            			<table border="0" cellspacing="0" class="zeroMargin">
-                            	<tr>
-                            		<td>
-                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" alt="{{ langs.USERNAME }}" border="0" />
-                            		</td>
-                            		<td>
-                            			&nbsp;{{ langs.USERNAME }}:
-                            		</td>
-                            	</tr>
-                            </table>		</td>
-                            		<td>
-                            			&nbsp;{{ changeEmailData.getUsername }}
-                            		</td>
-                            	</tr>
-                                <tr>
-                            		<td class="va-top">
-                            			<table border="0" cellspacing="0" class="zeroMargin">
-                            	<tr>
-                            		<td>
-                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/key.png" alt="{{ langs.PASSWORD }}" border="0" />
-                            		</td>
-                            		<td>
-                            			&nbsp;{{ langs.PASSWORD }}:
-                            		</td>
-                            	</tr>
-                            </table>		</td>
-                            		<td>
-                            			&nbsp;<input type="password" pattern="\S{6,}" name="password" /><br />
-                            		</td>
-                            	</tr>
-                            	<tr>
-                            		<td class="va-top">
-                            			<table border="0" cellspacing="0" class="zeroMargin">
-                            	<tr>
-                            		<td>
-                            			<img src="{{ staticRoot }}/foto/web/public/images/icons/email.png" alt="{{ langs.NEW_MAIL }}" border="0" />
-                            		</td>
-                            		<td>
-                            			&nbsp;{{ langs.NEW_EMAIL }}:
-                            		</td>
-                            	</tr>
-                            </table>		</td>
-                            		<td>
-                            			&nbsp;{{ changeEmailData.getEmail }}
-                            		</td>
-                            	</tr>
-                            	<tr>
-                            		<td colspan="2">
-                            			<br />
-                                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                            			<input type="submit" class="input-submit" name="submit_email_change" value="{{ langs.CHANGE_EMAIL }}" />
-                                    </td>
-                            	</tr>
-                            </table>
-                        </form>
-                    </section>
-                </div>
-                <div class="col-md-6">
-                    <section id="stats" class="middle">
-                        {{ langs.STATS|raw }}
-                    </section>
-                    <br /><br />
-                </div>
+            <div class="col-md-6">
+                <section id="stats" class="middle">
+                    {{ langs.STATS|raw }}
+                </section>
+                <br /><br />
             </div>
-    </section>
+        </div>
+    </div>
 {% endblock content %}

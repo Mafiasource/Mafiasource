@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['weapon'] = $weapons;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/weapons.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/weapons.twig', $twigVars));

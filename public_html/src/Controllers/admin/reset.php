@@ -43,7 +43,7 @@ if(isset($_POST) && !empty($_POST))
     
     $twigVars['response'] = $response;
     
-    echo $twig->render('/src/Views/admin/Ajax/.default.response.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/Ajax/.default.response.twig', $twigVars));
     exit(0);
 }
 else
@@ -54,5 +54,5 @@ else
     $twigVars['offline'] = OFFLINE;
     $twigVars['previousRound'] = $table->getLastRecord()[0][0];
     
-    echo $twig->render('/src/Views/admin/reset.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/reset.twig', $twigVars));
 }

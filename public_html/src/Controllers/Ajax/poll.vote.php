@@ -23,5 +23,5 @@ if(isset($_POST['security-token']) && isset($_POST['question']))
     $twigVars['response'] = $response;
     $twigVars['activePolls'] = $activePolls;
     
-    echo $twig->render('/src/Views/game/Ajax/poll.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/Ajax/poll.twig', $twigVars));
 }

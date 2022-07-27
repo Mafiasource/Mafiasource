@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['shoutbox_nl'] = $shoutbox;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/shoutbox-nl.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/shoutbox-nl.twig', $twigVars));

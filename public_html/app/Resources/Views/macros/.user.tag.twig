@@ -1,29 +1,32 @@
-{% if avatar != 'Avatarless' %}
-    <style type="text/css">
-        span#{{ name }}_{{ id }} {
-            background: url({{ staticRoot }}/foto/web/public/images/users/{% if avatar %}{{ userID }}/uploads/{{ avatar }}{% else %}nopic.jpg{% endif %}) no-repeat -1.15em -0.9em;
-            display:inline-block;background-size: 225%; width: 24px; height: 24px; border: 1px solid #000;
-        }
-        {% if largeImg != 'False' %}
-            span#{{ name }}_{{ id }} {
-                width:48px;height:48px;
-                background: url({{ staticRoot }}/foto/web/public/images/users/{% if avatar %}{{ userID }}/uploads/{{ avatar }}{% else %}nopic.jpg{% endif %}) no-repeat -2.285em -0.9em;
-            }
-        {% endif %}
-    </style>
-{% endif %}
-<span{% if avatar != 'Avatarless' %} style="{% if largeImg != 'False' %}line-height: 48px;{% else %}line-height: 24px;{% endif %}"{% endif %}
-      {% if imgMobileHide != 'False' %} class="user-img-hide"{% endif %}>
+{% apply spaceless %}
     {% if avatar != 'Avatarless' %}
-        <span id="{{ name }}_{{ id }}"
-                {% if userData.getId %}onClick="document.location='/game/profile/{{ username }}'"
-                onMouseOver="this.style.cursor='pointer';"{% endif %}>
-            &nbsp;
-        </span>
+        <style type="text/css">
+            span#{{ name }}_{{ id }} {
+                background: url({{ staticRoot }}/foto/web/public/images/users/{% if avatar %}{{ userID }}/uploads/{{ avatar }}{% else %}nopic.jpg{% endif %}) no-repeat -1.15em -0.9em;
+                display:inline-block;background-size: 225%; width: 24px; height: 24px; border: 1px solid #000;
+            }
+            {% if largeImg != 'False' %}
+                span#{{ name }}_{{ id }} {
+                    width:48px;height:48px;
+                    background: url({{ staticRoot }}/foto/web/public/images/users/{% if avatar %}{{ userID }}/uploads/{{ avatar }}{% else %}nopic.jpg{% endif %}) no-repeat -2.285em -0.9em;
+                }
+            {% endif %}
+        </style>
     {% endif %}
-    {% if userData.getId %}<a href="/game/profile/{{ username }}">{% endif %}
-        <strong class="{{ userClass }}">
-            {{ username }}{% if donatorID == 10 %}&nbsp;<img src="{{ staticRoot }}/foto/web/public/images/icons/goldmember_icon.png" alt="" title="Gold Member"/>{% endif %}
-        </strong>
-    {% if userData.getId %}</a>{% endif %}
-</span>
+    <span{% if avatar != 'Avatarless' %} style="{% if largeImg != 'False' %}line-height: 48px;{% else %}line-height: 24px;{% endif %}"{% endif %}
+          {% if imgMobileHide != 'False' %} class="user-img-hide"{% endif %}>
+        {% if avatar != 'Avatarless' %}
+            <span id="{{ name }}_{{ id }}"
+                    {% if userData.getId %}onClick="document.location='/game/profile/{{ username }}'"
+                    onMouseOver="this.style.cursor='pointer';"{% endif %}>
+                &nbsp;
+            </span>&hairsp;
+        {% endif %}
+        {% if userData.getId %}<a href="/game/profile/{{ username }}">{% endif %}
+            <strong class="{{ userClass }}">{{ username }}</strong>
+            {% if donatorID == 10 %}
+                &hairsp;<img src="{{ staticRoot }}/foto/web/public/images/icons/goldmember_icon.png" alt="" title="Gold Member"/>
+            {% endif %}
+        {% if userData.getId %}</a>{% endif %}
+    </span>
+{% endapply %}

@@ -47,4 +47,4 @@ if(isset($vehicles)) $twigVars['vehicles'] = $vehicles;
 if(isset($weapons)) $twigVars['weapons'] = $weapons;
 if(isset($intel)) $twigVars['intel'] = $intel;
 
-echo $twig->render('/src/Views/game/crimes.twig', $twigVars);
+print_r($twig->render('/src/Views/game/crimes.twig', $twigVars));
