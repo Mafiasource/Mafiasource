@@ -215,7 +215,7 @@ class InstallService
                 if(PROTOCOL === "https://")
                 {
                     $htaccessReplacesMap[92] = '        RewriteCond %{HTTPS} off';
-                    $htaccessReplacesMap[91] = '        RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]';
+                    $htaccessReplacesMap[93] = '        RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]';
                     $htaccessReplacesMap[115] = '        RewriteCond %{REQUEST_URI} /favicon.ico [NC]';
                     $htaccessReplacesMap[116] = '        RewriteRule (.*) https://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]';
                 }
