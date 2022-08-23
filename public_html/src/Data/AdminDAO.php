@@ -8,7 +8,6 @@ use src\Data\config\DBConfig;
 use vendor\SimpleImage;
 
 use DateTime;
-use stdClass;
 
 class AdminDAO extends DBConfig
 {
@@ -651,67 +650,57 @@ class AdminDAO extends DBConfig
         $memberList = array();
         foreach($hof['members'] AS $member)
         {
-            $hofMember = new stdClass();
-            $hofMember->getScorePosition = $member->getScorePosition();
-            $hofMember->getId = $member->getId();
-            $hofMember->getUsername = $member->getUsername();
-            $hofMember->getDonatorID = $member->getDonatorID();
-            $hofMember->getUsernameClassName = $member->getUsernameClassName();
-            $hofMember->getAvatar = $member->getAvatar();
-            $hofMember->getScore = $member->getScore();
-            $hofMember->getFamilyID = $member->getFamilyID();
-            $hofMember->getFamily = $member->getFamily();
+            $hofMember['getScorePosition'] = $member->getScorePosition();
+            $hofMember['getId'] = $member->getId();
+            $hofMember['getUsername'] = $member->getUsername();
+            $hofMember['getDonatorID'] = $member->getDonatorID();
+            $hofMember['getUsernameClassName'] = $member->getUsernameClassName();
+            $hofMember['getAvatar'] = $member->getAvatar();
+            $hofMember['getScore'] = $member->getScore();
+            $hofMember['getFamilyID'] = $member->getFamilyID();
+            $hofMember['getFamily'] = $member->getFamily();
             
             array_push($memberList, $hofMember);
         }
         
-        $hofObj = new stdClass();
-        $hofObj->members = $memberList;
+        $hofObj['members'] = $memberList;
         
         $famList = array();
         foreach($hof['families'] AS $fam)
         {
-            $hofFamily = new stdClass();
-            $hofFamily->getName = $fam->getName();
-            $hofFamily->getVip = $fam->getVip();
-            $hofFamily->getMoney = $fam->getMoney();
-            $hofFamily->getTotalScore = $fam->getTotalScore();
+            $hofFamily['getName'] = $fam->getName();
+            $hofFamily['getVip'] = $fam->getVip();
+            $hofFamily['getMoney'] = $fam->getMoney();
+            $hofFamily['getTotalScore'] = $fam->getTotalScore();
             
             array_push($famList, $hofFamily);
         }
         
-        $hofObj->families = $famList;
+        $hofObj['families'] = $famList;
         
-        $hofGame = new stdClass();
-        $hofGame->getTotalMembers = $hof['game']->getTotalMembers();
-        $hofGame->getTotalCash = $hof['game']->getTotalCash();
-        $hofGame->getTotalBank = $hof['game']->getTotalBank();
-        $hofGame->getTotalMoney = $hof['game']->getTotalMoney();
-        $hofGame->getAverageMoney = $hof['game']->getAverageMoney();
-        $hofGame->getTotalFamilies = $hof['game']->getTotalFamilies();
-        $hofGame->getTotalBullets = $hof['game']->getTotalBullets();
-        $hofGame->getAverageBullets = $hof['game']->getAverageBullets();
-        $hofGame->getTotalDeathNow = $hof['game']->getTotalDeathNow();
-        $hofGame->getTotalBanned = $hof['game']->getTotalBanned();
+        $hofGame['getTotalMembers'] = $hof['game']->getTotalMembers();
+        $hofGame['getTotalCash'] = $hof['game']->getTotalCash();
+        $hofGame['getTotalBank'] = $hof['game']->getTotalBank();
+        $hofGame['getTotalMoney'] = $hof['game']->getTotalMoney();
+        $hofGame['getAverageMoney'] = $hof['game']->getAverageMoney();
+        $hofGame['getTotalFamilies'] = $hof['game']->getTotalFamilies();
+        $hofGame['getTotalBullets'] = $hof['game']->getTotalBullets();
+        $hofGame['getAverageBullets'] = $hof['game']->getAverageBullets();
+        $hofGame['getTotalDeathNow'] = $hof['game']->getTotalDeathNow();
+        $hofGame['getTotalBanned'] = $hof['game']->getTotalBanned();
         $gameObj = $hofGame;
         
-        $hofObj->game = $gameObj;
+        $hofObj['game'] = $gameObj;
         
         foreach(array_keys($hof) AS $key)
         {
             $denyKeys = array("game", "members", "families", "startDate", "endDate");
             if(!in_array($key, $denyKeys))
             {
-                $hofData = new stdClass();
                 $statList = array();
                 foreach($hof[$key] AS $stat)
-                {
-                    $obj = new stdClass();
-                    $obj->getKey = $stat->getKey();
-                    $obj->getValue = $stat->getValue();
-                    
-                    array_push($statList, $obj);
-                }
+                    array_push($statList, $stat);
+                
                 $hofData = $statList;
                 $dataObj = $hofData;
                 
@@ -719,31 +708,31 @@ class AdminDAO extends DBConfig
                 {
                     default:
                     case "richest":
-                        $hofObj->richest = $dataObj;
+                        $hofObj['richest'] = $dataObj;
                         break;
                     case "mostHonored":
-                        $hofObj->mostHonored = $dataObj;
+                        $hofObj['mostHonored'] = $dataObj;
                         break;
                     case "killerking":
-                        $hofObj->killerking = $dataObj;
+                        $hofObj['killerking'] = $dataObj;
                         break;
                     case "prisonBreaking":
-                        $hofObj->prisonBreaking = $dataObj;
+                        $hofObj['prisonBreaking'] = $dataObj;
                         break;
                     case "carjacking":
-                        $hofObj->carjacking = $dataObj;
+                        $hofObj['carjacking'] = $dataObj;
                         break;
                     case "crimes":
-                        $hofObj->crimes = $dataObj;
+                        $hofObj['crimes'] = $dataObj;
                         break;
                     case "pimping":
-                        $hofObj->pimping = $dataObj;
+                        $hofObj['pimping'] = $dataObj;
                         break;
                     case "smuggling":
-                        $hofObj->smuggling = $dataObj;
+                        $hofObj['smuggling'] = $dataObj;
                         break;
                     case "referral":
-                        $hofObj->referral = $dataObj;
+                        $hofObj['referral'] = $dataObj;
                         break;
                 }
             }

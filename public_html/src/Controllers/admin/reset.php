@@ -52,7 +52,7 @@ else
     
     require_once __DIR__ . '/.inc.foot.php';
     $twigVars['offline'] = OFFLINE;
-    $twigVars['previousRound'] = $table->getLastRecord()[0][0];
+    $twigVars['previousRound'] = isset($table->getLastRecord()[0][0]) ? $table->getLastRecord()[0][0] : 0;
     
     print_r($twig->render('/src/Views/admin/reset.twig', $twigVars));
 }
