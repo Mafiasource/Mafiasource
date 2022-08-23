@@ -1,6 +1,7 @@
 # App cache & backups
 /app/cache/TwigCompilation/*
 /app/cronjob/backup/*
+!/app/cronjob/backup/1.txt
 
 # Vendor files
 /vendor/*
