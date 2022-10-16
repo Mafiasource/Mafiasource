@@ -49,7 +49,7 @@ if(!empty($_POST['security-token']) && $famID > 0 && $acceptPost)
     $propertyAction = $buyCheck || $upgradeCheck || $produceCheck ? true : null;
     if($propertyAction)
     {
-        $property = $security->xssEscape($_POST['property']);
+        $property = isset($_POST['property']) ? $security->xssEscape($_POST['property']) : 'brothel';
         if($produceCheck) $property = 'bullet-factory';
         switch($property)
         {

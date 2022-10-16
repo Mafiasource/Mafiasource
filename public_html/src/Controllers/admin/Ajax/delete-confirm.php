@@ -30,8 +30,8 @@ if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validT
         'check' => TRUE
     );
     
-    echo $twig->render('/src/Views/admin/Ajax/delete-confirm.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/Ajax/delete-confirm.twig', $twigVars));
     exit(0);
 }
 else
-    echo $twig->render('/src/Views/admin/Ajax/general.fail.msg.twig', $twigVars = array('msg' => 'Verkeerde gegevens ontvangen.', 'check' => FALSE));
+    print_r($twig->render('/src/Views/admin/Ajax/general.fail.msg.twig', $twigVars = array('msg' => 'Verkeerde gegevens ontvangen.', 'check' => FALSE)));

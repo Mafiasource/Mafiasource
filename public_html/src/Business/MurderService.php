@@ -209,7 +209,7 @@ class MurderService
             $protections = $protectionService->getEquipmentPage();
             $residences = $residenceService->getResidencePage();
             
-            $bulletList = array(200, 300, 500, 1000, 1500, 2500, 4000, 5000, 7500, 12500, 20000, 25000, 35000, 50000, 75000, 115000, 175000, 225000, 300000, 450000);
+            $bulletList = array(0 => 200, 300, 500, 1000, 1500, 2500, 4000, 5000, 7500, 12500, 20000, 25000, 35000, 50000, 75000, 115000, 175000, 225000, 300000, 450000);
             $weaponList = array(0 => 1.0);
             foreach($weapons AS $w)
                 $weaponList[] = 1 - ($w->getDamage() / 100);
@@ -222,7 +222,7 @@ class MurderService
             foreach($residences AS $r)
                 $defenceList[] = 1 + ($r->getDefence() / 100);
             
-            $knife = array(
+            $knife = array(0 =>
                 $security->randInt(26, 40),
                 $security->randInt(21, 30),
                 $security->randInt(17, 25),
@@ -239,10 +239,16 @@ class MurderService
            	);
             
             $bulletsToKill = round(
-                (($bulletList[$userData->getRankID()] * $protectionList[$murderData->getProtection()]) * $defenceList[$murderData->getResidence()]) * $weaponList[$victimMurderData->getWeapon()], 0
+                (
+                    ($bulletList[$userData->getRankID()] * $protectionList[$murderData->getProtection()]) *
+                    $defenceList[$murderData->getResidence()]
+                ) * $weaponList[$victimMurderData->getWeapon()], 0
             );
             $victimBulletsToKill = round(
-                (($bulletList[$victimProfile->getRankID()] * $protectionList[$victimMurderData->getProtection()]) * $defenceList[$victimMurderData->getResidence()]) * $weaponList[$murderData->getWeapon()], 0
+                (
+                    ($bulletList[$victimProfile->getRankID()] * $protectionList[$victimMurderData->getProtection()]) *
+                    $defenceList[$victimMurderData->getResidence()]
+                ) * $weaponList[$murderData->getWeapon()], 0
             );
             
             $bulletsToKill += $murderData->getKills() * 2;

@@ -166,7 +166,7 @@ class Simpleimage {
 
       $ratio = $height / $this->getHeight();
 
-      $width = $this->getWidth() * $ratio;
+      $width = (int)$this->getWidth() * $ratio;
 
       $this->resize($width,$height);
 
@@ -178,7 +178,7 @@ class Simpleimage {
 
       $ratio = $width / $this->getWidth();
 
-      $height = $this->getheight() * $ratio;
+      $height = (int)$this->getheight() * $ratio;
 
       $this->resize($width,$height);
 

@@ -5,10 +5,11 @@ use src\Business\SeoService;
 
 if($security->checkSSL() === false) exit(0);
 
-if(!isset($_SESSION['UID']) || !$userData)
+$loggedSession = $user->checkLoggedSession(false) ? true : false;
+if(!$userData)
 {
-    $loggedSession = $user->checkLoggedSession(false) ? true : false;
-    if($loggedSession) $userData = $user->getUserData();
+    if($loggedSession)
+        $userData = $user->getUserData();
 }
 
 $cookie = "false";

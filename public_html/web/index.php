@@ -77,11 +77,6 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
             session_save_path(__DIR__ . '/../app/cache/sessions');
             SessionManager::sessionStart(SeoURL::format($route->settings['gamename']), 0, '/', $route->settings['domain'], SSL_ENABLED);
             $session = $seoURL = null;
-            if(isset($_SESSION['regenerate']) && $_SESSION['regenerate'] === true)
-            {
-                $_SESSION['regenerate'] = null;
-                SessionManager::regenerateSession();
-            }
         }
         // Security class (Anti CSRF, XSS attacks & more)
         require_once __DIR__ . '/../app/config/security.php';
@@ -155,4 +150,6 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
             SessionManager::sessionWriteClose();
     }
     fclose($stream);
+    exit(0);
 }
+print_r('<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">');

@@ -44,9 +44,8 @@ class GetLanguageContent
                 'NONE' => "None", // Use in & out-game
             );
         }
-        else // Base langs ingame
+        if(!$user->notIngame()) // Base langs ingame
         {
-            global $route;
             $langs = array(
                 'GENERAL' => "General",
                 'INFORMATION' => "Information", // Use in & out-game

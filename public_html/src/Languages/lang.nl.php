@@ -44,9 +44,8 @@ class GetLanguageContent
                 'NONE' => "Geen", // Use in & out-game
             );
         }
-        else // Base langs ingame
+        if(!$user->notIngame()) // Base langs ingame
         {
-            global $route;
             $langs = array(
                 'GENERAL' => "Algemeen",
                 'INFORMATION' => "Informatie", // Use in & out-game
@@ -1316,7 +1315,7 @@ class GetLanguageContent
             'NO_GARAGE_IN_STATE' => "Je hebt geen garage in deze staat!",
             'NO_SPACE_LEFT_GARAGE_IN_STATE' => "Je hebt geen plaats meer in je garage in de staat {state}!",
             'X_SPACE_LEFT_GARAGE_IN_STATE' => "Je hebt {x} plaatsen vrij in je garage in {state}!",
-            'HAS_FAMILY_GARAGE_ALREADY' => "Je bezit al een garage in deze staat.",
+            'HAS_FAMILY_GARAGE_ALREADY' => "Je bezit al een familie garage.",
             'FAMILY_GARAGE_BOUGHT' => "Je hebt een familie garage gekocht, nu is het mogelijk om familie misdaden te plegen met familieleden!",
             'NO_FAMILY_GARAGE' => "Jullie hebben geen familie garage! Alleen de baas of onderbaas kan er één kopen.",
             'NO_SPACE_LEFT_FAMILY_GARAGE' => "Julie hebben geen plaats meer in de familie garage!",

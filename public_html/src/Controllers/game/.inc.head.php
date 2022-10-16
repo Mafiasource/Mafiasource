@@ -6,7 +6,7 @@ use src\Business\PollService;
 if($security->checkSSL() === false) exit(0);
 
 $loggedSession = $user->checkLoggedSession() ? true : false;
-if(!isset($_SESSION['UID']) || !$userData)
+if(!$userData)
 {
     if($loggedSession)
         $userData = $user->getUserData();

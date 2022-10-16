@@ -28,8 +28,8 @@ if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validT
         'msg' => 'Fout bij ophalen record in de database.'
     );
     
-    echo $twig->render('/src/Views/admin/Ajax/edit.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/Ajax/edit.twig', $twigVars));
     exit(0);
 }
 else
-    echo $twig->render('/src/Views/admin/Ajax/general.fail.msg.twig', $twigVars = array('msg' => 'Verkeerde gegevens ontvangen.', 'check' => FALSE));
+    print_r($twig->render('/src/Views/admin/Ajax/general.fail.msg.twig', $twigVars = array('msg' => 'Verkeerde gegevens ontvangen.', 'check' => FALSE)));

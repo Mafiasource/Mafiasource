@@ -37,8 +37,8 @@ if(isset($_POST) && !empty($_POST['table']) && in_array($_POST['table'], $validT
         'skipFields' => $skipFields
     );
     
-    echo $twig->render('/src/Views/admin/Ajax/search.twig', $twigVars);
+    print_r($twig->render('/src/Views/admin/Ajax/search.twig', $twigVars));
     exit(0);
 }
 else
-    echo $twig->render('/src/Views/admin/Ajax/general.fail.msg.twig', $twigVars = array('msg' => 'Verkeerde gegevens ontvangen.', 'check' => FALSE));
+    print_r($twig->render('/src/Views/admin/Ajax/general.fail.msg.twig', $twigVars = array('msg' => 'Verkeerde gegevens ontvangen.', 'check' => FALSE)));

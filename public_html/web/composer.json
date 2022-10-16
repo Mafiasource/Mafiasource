@@ -1,5 +1,7 @@
 {
     "require": {
-        "ckeditor/ckeditor": "dev-full/4.13.x"
+        "ckeditor/ckeditor": "dev-full/4.13.x",
+        "components/jquery": "^3.6",
+        "twbs/bootstrap": "^5.0.2"
     }
 }
