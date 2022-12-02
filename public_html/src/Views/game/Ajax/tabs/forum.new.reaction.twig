@@ -1,42 +1,35 @@
-<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ langs.NEW_REACTION }}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        <div id="ajaxLoader"></div>
-        <div id="forumNewReplyResponse"></div>
-        <form id="forum-reply" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('forum-reply') }}" method="POST" data-response="#forumNewReplyResponse">
-            <input type="hidden" name="topicID" value="{{ topicID }}"/>
-            <textarea id="replyField" name="reply-message" rows="10" cols="80"></textarea>
-            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-            <br class="clear"/>
-            <input type="submit" name="submit-reply" class="execbutton small" value="{{ langs.PLACE_REACTION }}"/>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script type="text/javascript">
-$(document).ready(function(){
-    if($('#modal').hasClass('in') == false) {
-        $("#triggerModal").click();
-        $("#triggerModal").remove();
-        CKEDITOR.replace('replyField', {
-            autoGrow_maxHeight: 650,
-            removePlugins: 'resize',
-            enterMode: CKEDITOR.ENTER_BR,
-            shiftEnterMode: CKEDITOR.ENTER_P
+{% extends "/app/Resources/Views/modal.twig" %}
+
+{% block title %}
+    <h4 class="modal-title">{{ langs.NEW_REACTION }}</h4>
+{% endblock title %}
+
+{% block content %}
+    <div id="ajaxLoader"></div>
+    <div id="forumNewReplyResponse"></div>
+    <form id="forum-reply" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('forum-reply') }}" method="POST" data-response="#forumNewReplyResponse">
+        <input type="hidden" name="topicID" value="{{ topicID }}"/>
+        <textarea id="replyField" name="reply-message" rows="10" cols="80"></textarea>
+        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+        <br class="clear"/>
+        <input type="submit" name="submit-reply" class="execbutton small" value="{{ langs.PLACE_REACTION }}"/>
+    </form>
+{% endblock content %}
+
+{% block js %}
+    $(document).ready(function(){
+        if($('#modal').hasClass('in') == false) {
+            $("#triggerModal").click();
+            $("#triggerModal").remove();
+            CKEDITOR.replace('replyField', {
+                autoGrow_maxHeight: 650,
+                removePlugins: 'resize',
+                enterMode: CKEDITOR.ENTER_BR,
+                shiftEnterMode: CKEDITOR.ENTER_P
+            });
+        }
+        $('#modal').on('hidden.bs.modal', function () {
+            $("#openTab").empty();
         });
-    }
-    $('#modal').on('hidden.bs.modal', function () {
-        $("#openTab").empty();
     });
-});
-</script>
+{% endblock js %}

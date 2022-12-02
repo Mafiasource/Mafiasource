@@ -1,202 +1,200 @@
+{% extends "/app/Resources/Views/modal.twig" %}
+
 {% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
 
-<style type="text/css">
-#messages-container > .row {margin: 0;padding: 0;box-sizing:border-box;border:none;}
-#messages-container > .row > .c-30, #messages-container .row > .c-70 {border:none;}
-nav#messages {display:block;width:100%;height:568px;max-height:100%;box-sizing: border-box;padding:0 .5em 0 0;overflow-y: auto;}
-nav#messages > ul {display:block;width:100%;height:auto;box-sizing: border-box;padding:0;margin:0;list-style:none;border:1px solid #e1e1e1; border-radius:5px;}
-nav#messages > ul > li {display:block;width:100%;height:auto;margin:0; padding:0.5em; box-sizing: border-box;background:#cacaca;}
-nav#messages > ul > li:nth-child(odd) {background: #d4d4d4;}
-nav#messages > ul > li.active {background:#B6E6E6;}
-#message-container {display:block;width:100%;background:#e4e4e4;border:1px solid #e1e1e1;border-radius:10px;height:400px;max-height:100%;overflow-y: auto;overflow-x:hidden;box-sizing:border-box;padding:1em;}
-#message-container > div.senderRow {display:block;clear:both;}
-#message-container > div.receiverRow {display:block;clear:both;float:right;text-align:right;}
-#message-container > div.senderRow > div.senderRow {margin: 0.5em 0;background: #b0d4e3;background: -moz-linear-gradient(top,  #9bc8d0 0%,#7ca2ab 100%);background: -webkit-linear-gradient(top,  #9bc8d0 0%,#7ca2ab 100%);background: linear-gradient(to bottom,  #9bc8d0 0%,#7ca2ab 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b0d4e3', endColorstr='#88bacf',GradientType=0 );border-radius:5px;display:block;width:auto;max-width:75%;box-sizing:border-box;padding: 1em;float:left;color:#fff;word-break: break-word;}
-#message-container > div.receiverRow > div.receiverRow {margin: 0.5em 0;background: #f9fcf7;background: -moz-linear-gradient(top,  #f9fcf7 0%, #f5f9f0 100%);background: -webkit-linear-gradient(top,  #f9fcf7 0%,#f5f9f0 100%);background: linear-gradient(to bottom,  #f9fcf7 0%,#f5f9f0 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9fcf7', endColorstr='#f5f9f0',GradientType=0 );border-radius:5px;display:block;width:auto;max-width:75%;box-sizing:border-box;padding: 1em;float:right;text-align:right;word-break: break-word;}
-.del, .open {margin-top:-2px;}
-img.open {cursor:pointer;margin-top: -5px;position: relative;top: 0px;}
-nav#messages strong, #message-container strong {text-shadow: 1px 0px 6px rgba(255, 255, 255, 0.5);}
-#ajaxLoaderMessages {position:absolute;margin-top:1em;margin-left:0.75em;}
-select[name=report], select[name=delete] {display:inline-block;width:auto !important;}
-small.hideMobile.msg {cursor:pointer;}
-strong.msg {cursor:pointer;}
-</style>
-<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ langs.MESSAGES }}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-         <div id="messages-container">
-            <div class="row cols cf">
-                <div class="c-30">
-                    <nav id="messages">
-                        <ul class="cf">
-                            {% for lmsgs in latestMessages %}
-                            <li class="cf{% if loop.first %} active{% endif %} open" data-receiver="{{ lmsgs.getSenderUsername }}">
-                                {#<a href="javascript:void(0)" class="visitUser" data-id="{{ lmsgs.getId }}">#}
-                                    <small class="hideMobile msg">{{ lmsgs.getDate }}&nbsp; {{ langs.WITH }}: </small>
-                                    {{ lmsgs.getSenderUsername }}
-                                {#</a>#}
-                                <span class="right icon hideMobile" style="margin:0px;">
-                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/email{% if lmsgs.getRead %}_open{% endif %}.png" class="open" data-receiver="{{ lmsgs.getSenderUsername }}" alt=""/>
-                                </span>
-                            </li>
-                            {% endfor %}
-                            {% if latestMessages is empty %}
-                                <li><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_MESSAGES_TO_VIEW }}</li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                </div>
-                <div class="c-70">
-                    <div id="ajaxLoaderMessages"></div>
-                    <div id="message-container">
-                        {% set receiver = '' %}
-                        {# lastMessage|var_dump #}
-                        {% for msg in lastMessage %}
-                        <div class="row cf {% if msg.receiver == true %}senderRow{% else %}receiverRow{% endif %}">
-                            {{ userTagManager.write('memberMessage', msg.getId, msg.getSenderID, msg.getSenderUsername, msg.getSenderDonatorID, msg.getSenderUsernameClassName, msg.getSenderAvatar, 'True') }}{{ langs.WROTE_ON|lower }} {{ msg.getDate }}:</small><br />
-                            <div class="{% if msg.getReceiver == true %}{% set receiver = msg.getSenderUsername %}senderRow{% else %}{% if receiver is empty %}{% set receiver = msg.getReceiverUsername %}{% endif %}receiverRow{% endif %}">
-                                {{ msg.getMessage|raw }}
-                            </div>
-                        </div>
+{% block css %}
+    #messages-container > .row {margin: 0;padding: 0;box-sizing:border-box;border:none;}
+    #messages-container > .row > .c-30, #messages-container .row > .c-70 {border:none;}
+    nav#messages {display:block;width:100%;height:568px;max-height:100%;box-sizing: border-box;padding:0 .5em 0 0;overflow-y: auto;}
+    nav#messages > ul {display:block;width:100%;height:auto;box-sizing: border-box;padding:0;margin:0;list-style:none;border:1px solid #e1e1e1; border-radius:5px;}
+    nav#messages > ul > li {display:block;width:100%;height:auto;margin:0; padding:0.5em; box-sizing: border-box;background:#cacaca;}
+    nav#messages > ul > li:nth-child(odd) {background: #d4d4d4;}
+    nav#messages > ul > li.active {background:#B6E6E6;}
+    #message-container {display:block;width:100%;background:#e4e4e4;border:1px solid #e1e1e1;border-radius:10px;height:400px;max-height:100%;overflow-y: auto;overflow-x:hidden;box-sizing:border-box;padding:1em;}
+    #message-container > div.senderRow {display:block;clear:both;}
+    #message-container > div.receiverRow {display:block;clear:both;float:right;text-align:right;}
+    #message-container > div.senderRow > div.senderRow {margin: 0.5em 0;background: #b0d4e3;background: -moz-linear-gradient(top,  #9bc8d0 0%,#7ca2ab 100%);background: -webkit-linear-gradient(top,  #9bc8d0 0%,#7ca2ab 100%);background: linear-gradient(to bottom,  #9bc8d0 0%,#7ca2ab 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b0d4e3', endColorstr='#88bacf',GradientType=0 );border-radius:5px;display:block;width:auto;max-width:75%;box-sizing:border-box;padding: 1em;float:left;color:#fff;word-break: break-word;}
+    #message-container > div.receiverRow > div.receiverRow {margin: 0.5em 0;background: #f9fcf7;background: -moz-linear-gradient(top,  #f9fcf7 0%, #f5f9f0 100%);background: -webkit-linear-gradient(top,  #f9fcf7 0%,#f5f9f0 100%);background: linear-gradient(to bottom,  #f9fcf7 0%,#f5f9f0 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9fcf7', endColorstr='#f5f9f0',GradientType=0 );border-radius:5px;display:block;width:auto;max-width:75%;box-sizing:border-box;padding: 1em;float:right;text-align:right;word-break: break-word;}
+    .del, .open {margin-top:-2px;}
+    img.open {cursor:pointer;margin-top: -5px;position: relative;top: 0px;}
+    nav#messages strong, #message-container strong {text-shadow: 1px 0px 6px rgba(255, 255, 255, 0.5);}
+    #ajaxLoaderMessages {position:absolute;margin-top:1em;margin-left:0.75em;}
+    select[name=report], select[name=delete] {display:inline-block;width:auto !important;}
+    small.hideMobile.msg {cursor:pointer;}
+    strong.msg {cursor:pointer;}
+{% endblock css %}
+
+{% block title %}
+    <h4 class="modal-title">{{ langs.MESSAGES }}</h4>
+{% endblock title %}
+
+{% block content %}
+    <div id="messages-container">
+        <div class="row cols cf">
+            <div class="c-30">
+                <nav id="messages">
+                    <ul class="cf">
+                        {% for lmsgs in latestMessages %}
+                        <li class="cf{% if loop.first %} active{% endif %} open" data-receiver="{{ lmsgs.getSenderUsername }}">
+                            {#<a href="javascript:void(0)" class="visitUser" data-id="{{ lmsgs.getId }}">#}
+                                <small class="hideMobile msg">{{ lmsgs.getDate }}&nbsp; {{ langs.WITH }}: </small>
+                                {{ lmsgs.getSenderUsername }}
+                            {#</a>#}
+                            <span class="right icon hideMobile" style="margin:0px;">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/email{% if lmsgs.getRead %}_open{% endif %}.png" class="open" data-receiver="{{ lmsgs.getSenderUsername }}" alt=""/>
+                            </span>
+                        </li>
                         {% endfor %}
+                        {% if latestMessages is empty %}
+                            <li><img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_MESSAGES_TO_VIEW }}</li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            <div class="c-70">
+                <div id="ajaxLoaderMessages"></div>
+                <div id="message-container">
+                    {% set receiver = '' %}
+                    {# lastMessage|var_dump #}
+                    {% for msg in lastMessage %}
+                    <div class="row cf {% if msg.receiver == true %}senderRow{% else %}receiverRow{% endif %}">
+                        {{ userTagManager.write('memberMessage', msg.getId, msg.getSenderID, msg.getSenderUsername, msg.getSenderDonatorID, msg.getSenderUsernameClassName, msg.getSenderAvatar, 'True') }}{{ langs.WROTE_ON|lower }} {{ msg.getDate }}:</small><br />
+                        <div class="{% if msg.getReceiver == true %}{% set receiver = msg.getSenderUsername %}senderRow{% else %}{% if receiver is empty %}{% set receiver = msg.getReceiverUsername %}{% endif %}receiverRow{% endif %}">
+                            {{ msg.getMessage|raw }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if lastMessage is empty %}
+                        <div id="new-msg-info" class="row">
+                            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_MESSAGES_INFO|raw }}
+                        </div>
+                    {% endif %}                                                                                
+                </div>                    
+                <div id="actions-container">
+                    <div id="sendMessageResponse"></div>
+                    <div id="ajaxLoader"></div>
+                    <form class="ajaxForm" id="reply-message" action="{{ routing.getAjaxRouteByRouteName('reply-message') }}" method="POST" data-response="#sendMessageResponse">
+                        <br />
+                        <div class="row">
+                            <img src="{{ staticRoot }}/web/public/images/smileys/lol.gif" alt=":D" title=":D" onClick="addSmileyToPersonalMessage(':D');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/smile.gif" alt=":)" title=":)" onClick="addSmileyToPersonalMessage(':)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/wink.gif" alt=";)" title=";)" onClick="addSmileyToPersonalMessage(';)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/confused.gif" alt=":s" title=":s" onClick="addSmileyToPersonalMessage(':s');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/neutral.gif" alt=":|" title=":|" onClick="addSmileyToPersonalMessage(':|');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/razz.gif" alt=":P" title=":P" onClick="addSmileyToPersonalMessage(':P');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/sad.gif" alt=":(" title=":(" onClick="addSmileyToPersonalMessage(':(');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/surprised.gif" alt=":O" title=":O" onClick="addSmileyToPersonalMessage(':O');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/twisted.gif" alt=":twisted:" title=":twisted:" onClick="addSmileyToPersonalMessage(':twisted:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/cry.gif" alt=":cry:" title=":cry:" onClick="addSmileyToPersonalMessage(':cry:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/mad2.gif" alt=":mad:" title=":mad:" onClick="addSmileyToPersonalMessage(':mad:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/cool.gif" alt="8)" title="8)" onClick="addSmileyToPersonalMessage('8)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/silenced.gif" alt=":x" title=":x" onClick="addSmileyToPersonalMessage(':x');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/question.gif" alt=":?:" title=":?:" onClick="addSmileyToPersonalMessage(':?:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/exclaim.gif" alt=":!:" title=":!:" onClick="addSmileyToPersonalMessage(':!:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/naugthy.gif" alt=":no:" title=":no:" onClick="addSmileyToPersonalMessage(':no:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/ehh.gif" alt=":huh:" title=":huh:" onClick="addSmileyToPersonalMessage(':huh:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/ashamed.gif" alt=":$" title=":$" onClick="addSmileyToPersonalMessage(':$');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/applause.gif" alt=":applause:" title=":applause:" onClick="addSmileyToPersonalMessage(':applause:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/biggrin.gif" alt=":grin:" title=":grin:" onClick="addSmileyToPersonalMessage(':grin:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/rolleyes.gif" alt=":rolleyes:" title=":rolleyes:" onClick="addSmileyToPersonalMessage(':rolleyes:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/whistle.gif" alt=":whistle:" title=":whistle:" onClick="addSmileyToPersonalMessage(':whistle:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                    		<img src="{{ staticRoot }}/web/public/images/smileys/angel.gif" alt="(A)" title="(A)" onClick="addSmileyToPersonalMessage('(A)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
+                        </div>
                         {% if lastMessage is empty %}
-                            <div id="new-msg-info" class="row">
-                                <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NO_MESSAGES_INFO|raw }}
-                            </div>
-                        {% endif %}                                                                                
-                    </div>                    
-                    <div id="actions-container">
-                        <div id="sendMessageResponse"></div>
-                        <div id="ajaxLoader"></div>
-                        <form class="ajaxForm" id="reply-message" action="{{ routing.getAjaxRouteByRouteName('reply-message') }}" method="POST" data-response="#sendMessageResponse">
-                            <br />
-                            <div class="row">
-                                <img src="{{ staticRoot }}/web/public/images/smileys/lol.gif" alt=":D" title=":D" onClick="addSmileyToPersonalMessage(':D');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/smile.gif" alt=":)" title=":)" onClick="addSmileyToPersonalMessage(':)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/wink.gif" alt=";)" title=";)" onClick="addSmileyToPersonalMessage(';)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/confused.gif" alt=":s" title=":s" onClick="addSmileyToPersonalMessage(':s');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/neutral.gif" alt=":|" title=":|" onClick="addSmileyToPersonalMessage(':|');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/razz.gif" alt=":P" title=":P" onClick="addSmileyToPersonalMessage(':P');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/sad.gif" alt=":(" title=":(" onClick="addSmileyToPersonalMessage(':(');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/surprised.gif" alt=":O" title=":O" onClick="addSmileyToPersonalMessage(':O');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/twisted.gif" alt=":twisted:" title=":twisted:" onClick="addSmileyToPersonalMessage(':twisted:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/cry.gif" alt=":cry:" title=":cry:" onClick="addSmileyToPersonalMessage(':cry:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/mad2.gif" alt=":mad:" title=":mad:" onClick="addSmileyToPersonalMessage(':mad:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/cool.gif" alt="8)" title="8)" onClick="addSmileyToPersonalMessage('8)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/silenced.gif" alt=":x" title=":x" onClick="addSmileyToPersonalMessage(':x');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/question.gif" alt=":?:" title=":?:" onClick="addSmileyToPersonalMessage(':?:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/exclaim.gif" alt=":!:" title=":!:" onClick="addSmileyToPersonalMessage(':!:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/naugthy.gif" alt=":no:" title=":no:" onClick="addSmileyToPersonalMessage(':no:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/ehh.gif" alt=":huh:" title=":huh:" onClick="addSmileyToPersonalMessage(':huh:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/ashamed.gif" alt=":$" title=":$" onClick="addSmileyToPersonalMessage(':$');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/applause.gif" alt=":applause:" title=":applause:" onClick="addSmileyToPersonalMessage(':applause:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/biggrin.gif" alt=":grin:" title=":grin:" onClick="addSmileyToPersonalMessage(':grin:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/rolleyes.gif" alt=":rolleyes:" title=":rolleyes:" onClick="addSmileyToPersonalMessage(':rolleyes:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/whistle.gif" alt=":whistle:" title=":whistle:" onClick="addSmileyToPersonalMessage(':whistle:');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                        		<img src="{{ staticRoot }}/web/public/images/smileys/angel.gif" alt="(A)" title="(A)" onClick="addSmileyToPersonalMessage('(A)');" onMouseOver="this.style.cursor='pointer';" />&nbsp;
-                            </div>
-                            {% if lastMessage is empty %}
-                                <div id="new-msg" style="display: none;">
-                                    <br class="clear"/>
-                                    <div class="reply-field">
-                                        <input type="text" name="receiver" placeholder="{{ langs.WRITE_PLAYERNAME }}" value=""/><br /><br />
-                                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                                        <textarea id="writeMessage" class="writeAndFlush" name="message" rows="6" cols="80"></textarea><br class="clear"/><br />
-                                        <input type="submit" name="sendMessage" value="{{ langs.SEND }}"/>
-                                    </div>
-                                </div>
-                            {% else %}
-                                {#
-                                <span class="right">
-                                    { # <a href="javascript:void(0);"><img src="{{ staticRoot }}/foto/web/public/images/icons/email_error.png" class="icon" alt=""/> <strong>{{ langs.REPORT }}</strong></a> {{ langs.THIS|lower }} {{ langs.CONVERSATION|lower }}&nbsp;-&nbsp;
-                                    <a href="javascript:void(0);"><img src="{{ staticRoot }}/foto/web/public/images/icons/email_delete.png" class="icon" alt=""/> <strong>{{ langs.DELETE }}</strong></a> <select name="delete"><option value="all">{{ langs.ALL_THESE|lower }}</option><option value="selected">{{ langs.SELECTED|lower }}</option></select> {{ langs.MESSAGES|lower }}
-                                    # }
-                                </span>
-                                #}
+                            <div id="new-msg" style="display: none;">
                                 <br class="clear"/>
                                 <div class="reply-field">
-                                    {% if receiver is empty %} {# No reply yet in lastMessage fetch first latestMessages getSenderUsername #}
-                                        {% set receiver = latestMessages.0.getSenderUsername %}
-                                    {% endif %}
-                                    <input type="hidden" name="receiver" value="{{ receiver }}"/>
+                                    <input type="text" name="receiver" placeholder="{{ langs.WRITE_PLAYERNAME }}" value=""/><br /><br />
                                     <input type="hidden" name="security-token" value="{{ securityToken }}"/>
                                     <textarea id="writeMessage" class="writeAndFlush" name="message" rows="6" cols="80"></textarea><br class="clear"/><br />
                                     <input type="submit" name="sendMessage" value="{{ langs.SEND }}"/>
                                 </div>
-                            {% endif %}
-                        </form>
-                    </div>
+                            </div>
+                        {% else %}
+                            {#
+                            <span class="right">
+                                { # <a href="javascript:void(0);"><img src="{{ staticRoot }}/foto/web/public/images/icons/email_error.png" class="icon" alt=""/> <strong>{{ langs.REPORT }}</strong></a> {{ langs.THIS|lower }} {{ langs.CONVERSATION|lower }}&nbsp;-&nbsp;
+                                <a href="javascript:void(0);"><img src="{{ staticRoot }}/foto/web/public/images/icons/email_delete.png" class="icon" alt=""/> <strong>{{ langs.DELETE }}</strong></a> <select name="delete"><option value="all">{{ langs.ALL_THESE|lower }}</option><option value="selected">{{ langs.SELECTED|lower }}</option></select> {{ langs.MESSAGES|lower }}
+                                # }
+                            </span>
+                            #}
+                            <br class="clear"/>
+                            <div class="reply-field">
+                                {% if receiver is empty %} {# No reply yet in lastMessage fetch first latestMessages getSenderUsername #}
+                                    {% set receiver = latestMessages.0.getSenderUsername %}
+                                {% endif %}
+                                <input type="hidden" name="receiver" value="{{ receiver }}"/>
+                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                                <textarea id="writeMessage" class="writeAndFlush" name="message" rows="6" cols="80"></textarea><br class="clear"/><br />
+                                <input type="submit" name="sendMessage" value="{{ langs.SEND }}"/>
+                            </div>
+                        {% endif %}
+                    </form>
                 </div>
             </div>
-         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script type="text/javascript">
-if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
-    var x = document.createElement('script');
-    x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
-    document.getElementsByTagName("body")[0].appendChild(x);
-}
-$(document).on("keydown", '#writeMessage', function(event) {
- if(event.keyCode === 13 && (!event.ctrlKey && !event.metaKey) && $(document).width() > 1074) {
-    $("input[name=sendMessage]").attr('type', "hidden"); // Hack jQuery to include input type, before submit
-    $(this.form).submit();
-    $("input[name=sendMessage]").attr('type', "submit"); // Reset input type, after submit
-    return false;
- }
- if(event.keyCode === 13 && (event.ctrlKey || event.metaKey) && $(document).width() > 1074) {
-    var txt = $("textarea#writeMessage");
-    txt.val( txt.val() + "\n");
-    return false;
- }
-});
-{% if receiver != '' %}
-    var interval = setInterval("checkMessages('{{ receiver }}')", 3000);
-{% endif %}
-function addSmileyToPersonalMessage(short)
-{
-    let frmPersonalMessage = 'reply-message';
-    let fldPersonalMessage = 'message';
-	document.forms[frmPersonalMessage].elements[fldPersonalMessage].value += short + " ";
-	document.forms[frmPersonalMessage].elements[fldPersonalMessage].focus();
-}
-$(document).on('click', '.open', function (e) {
-    receiver = $(this).attr('data-receiver');
-    checkMessages(receiver);
-    $("nav#messages > ul > li.active").each(function(){
-        $(this).removeClass("active");
-    });
-    $(this).closest('nav#messages > ul > li.cf').addClass('active');
-    {% if receiver != '' %}
-        clearInterval(interval);
-        reloadMessages(receiver);
-        interval = setInterval("checkMessages('"+receiver+"')", 3000);
-    {% endif %}
-});
-$(document).ready(function(){
-    if($('#modal').hasClass('in') == false){
-        $("#triggerModal").click();
-        $("#triggerModal").remove();
+        </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+
+{% endblock footer %}
+
+{% block js %}
+    if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
+        var x = document.createElement('script');
+        x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
+        document.getElementsByTagName("body")[0].appendChild(x);
     }
-    $('#modal').on('hidden.bs.modal', function () {
+    $(document).on("keydown", '#writeMessage', function(event) {
+     if(event.keyCode === 13 && (!event.ctrlKey && !event.metaKey) && $(document).width() > 1074) {
+        $("input[name=sendMessage]").attr('type', "hidden"); // Hack jQuery to include input type, before submit
+        $(this.form).submit();
+        $("input[name=sendMessage]").attr('type', "submit"); // Reset input type, after submit
+        return false;
+     }
+     if(event.keyCode === 13 && (event.ctrlKey || event.metaKey) && $(document).width() > 1074) {
+        var txt = $("textarea#writeMessage");
+        txt.val( txt.val() + "\n");
+        return false;
+     }
+    });
+    {% if receiver != '' %}
+        var interval = setInterval("checkMessages('{{ receiver }}')", 3000);
+    {% endif %}
+    function addSmileyToPersonalMessage(short)
+    {
+        let frmPersonalMessage = 'reply-message';
+        let fldPersonalMessage = 'message';
+    	document.forms[frmPersonalMessage].elements[fldPersonalMessage].value += short + " ";
+    	document.forms[frmPersonalMessage].elements[fldPersonalMessage].focus();
+    }
+    $(document).on('click', '.open', function (e) {
+        receiver = $(this).attr('data-receiver');
+        checkMessages(receiver);
+        $("nav#messages > ul > li.active").each(function(){
+            $(this).removeClass("active");
+        });
+        $(this).closest('nav#messages > ul > li.cf').addClass('active');
         {% if receiver != '' %}
             clearInterval(interval);
+            reloadMessages(receiver);
+            interval = setInterval("checkMessages('"+receiver+"')", 3000);
         {% endif %}
-        $("#openTab").empty();
     });
-    {% if receiver != '' %}
-        checkMessages('{{ receiver }}');
-    {% endif %}
-});
-</script>
+    $(document).ready(function(){
+        if($('#modal').hasClass('in') == false){
+            $("#triggerModal").click();
+            $("#triggerModal").remove();
+        }
+        $('#modal').on('hidden.bs.modal', function () {
+            {% if receiver != '' %}
+                clearInterval(interval);
+            {% endif %}
+            $("#openTab").empty();
+        });
+        {% if receiver != '' %}
+            checkMessages('{{ receiver }}');
+        {% endif %}
+    });
+{% endblock js %}

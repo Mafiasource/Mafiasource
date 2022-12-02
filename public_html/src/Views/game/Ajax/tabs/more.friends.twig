@@ -1,9 +1,10 @@
+{% extends "/app/Resources/Views/modal.twig" %}
+
 {% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
 
 {% import "app/Resources/Views/macros/record.tile.macro.twig" as recordTile %}
 
-{{ recordTile.css('members-container', 'memberRecordFBL', '110px', '49.45%') }}
-<style type="text/css">
+{% block css %}
     /** Additional tile css and media query fixes **/
     .memberRecordFBL {background:rgba(140,140,140,0.9) !important;} /** Color fix in white bg **/
     .memberRecordFBL.even {background-color: rgba(130,130,130,0.9) !important;} /** Color fix in white bg **/
@@ -15,49 +16,30 @@
     #inviteBlockResponse {text-align:left;}
     .blocklist-red-bg {background: #ffa8a8;border-radius: 7px;margin: -3px;padding: 3px;padding-left: 1%;padding-right: 0}
     form.inviteBlockArea {display: block;width:100%;}
-</style>
-<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ username }}'{% if username|last != 's' %}s{% endif %} {{ langs.FRIENDS }}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        {% if friends is not empty %}
-            <div class="row cols cf">
-                {% if friends.friends is not empty %}
-                    <div>
-                        <div class="members-container cf">
-                            {% for member in friends.friends %}
-                                <div class="memberRecordFBL {{ cycle(['odd', 'even'], loop.index0) }}">
-                                    {{ userTagManager.write('fblFriendMember', member.getId, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'False', 'True') }}
-                                </div>
-                            {% endfor %}
-                        </div>
+{% endblock css %}
+
+{% block size %}modal-xs{% endblock size %}
+
+{% block title %}
+    <h4 class="modal-title">{{ username }}'{% if username|last != 's' %}s{% endif %} {{ langs.FRIENDS }}</h4>
+{% endblock title %}
+
+{% block content %}
+    {% if friends is not empty %}
+        <div class="row cols cf">
+            {% if friends.friends is not empty %}
+                <div>
+                    <div class="members-container cf">
+                        {% for member in friends.friends %}
+                            <div class="memberRecordFBL {{ cycle(['odd', 'even'], loop.index0) }}">
+                                {{ userTagManager.write('fblFriendMember', member.getId, member.getId, member.getUsername, member.getDonatorID, member.getUsernameClassName, member.getAvatar, 'False', 'True') }}
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endif %}
-            </div>
-        {% else %}
-            <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NONE }}
-        {% endif %}
-      </div>
-      <div id="inviteBlockResponse"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script type="text/javascript">
-$(document).ready(function(){
-    if($('#modal').hasClass('in') == false){
-        $("#triggerModal").click();
-        $("#triggerModal").remove();
-    }
-    $('#modal').on('hidden.bs.modal', function () {
-        $("#openTab").empty();
-    });
-});
-</script>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <img src="{{ staticRoot }}/foto/web/public/images/icons/cross.png" alt="" class="icon"/> {{ langs.NONE }}
+    {% endif %}
+{% endblock content %}

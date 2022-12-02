@@ -1,73 +1,56 @@
+{% extends "/app/Resources/Views/modal.twig" %}
+
 {% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
 
-<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ category }} {{ langs.MARKET|lower }}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        {{ alert.build('Info', 'alert-info', 'help', langs.SUPPLY_AND_DEMAND_INFO) }}
-        <div id="ajaxLoader"></div>
-        <div id="newMarketItemResponse"></div>
-        <form id="newMarketItem" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('new-market-item') }}" method="POST" data-response="#newMarketItemResponse">
-            <input type="hidden" name="category" value="{{ category }}"/><br />
-            <div class="row cols cf">
-                <div class="c-20 no-border">
-                    {{ category }}
-                </div>
-                <div class="c-80 no-border">
-                    <input type="number" name="amount" placeholder="100" value="" max="10000"/>
-                </div>
-            </div><br />
-            <div class="row cols cf">
-                <div class="c-20 no-border">
-                    {{ langs.SELL }}/{{ langs.BUY }}
-                </div>
-                <div class="c-80 no-border">
-                    <select name="requested">
-                        <option value="0">{% if lang == 'en' %}{{ langs.SELL }} {{ category|lower }}{% else %}{{ category }} {{ langs.SELL|lower }}{% endif %}</option>
-                        <option value="1">{% if lang == 'en' %}{{ langs.BUY }} {{ category|lower }}{% else %}{{ category }} {{ langs.BUY|lower }}{% endif %}</option>
-                    </select>
-                </div>
-            </div><br />
-            <div class="row cols cf">
-                <div class="c-20 no-border">
-                    {{ langs.PRICE }}
-                </div>
-                <div class="c-80 no-border">
-                    <input type="number" name="price" placeholder="25000000" value="" max="9999999999"/>
-                </div>
-            </div><br />
-            <div class="row cols cf">
-                <div class="c-20 no-border">
-                    {{ langs.ANONYMOUS }}
-                </div>
-                <div class="c-80 no-border">
-                    <input type="checkbox" name="anonymous" value="1"/>
-                </div>
+{% block size %}modal-lg{% endblock size %}
+
+{% block title %}
+    <h4 class="modal-title">{{ category }} {{ langs.MARKET|lower }}</h4>
+{% endblock title %}
+
+{% block content %}
+    {{ alert.build('Info', 'alert-info', 'help', langs.SUPPLY_AND_DEMAND_INFO) }}
+    <div id="ajaxLoader"></div>
+    <div id="newMarketItemResponse"></div>
+    <form id="newMarketItem" class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('new-market-item') }}" method="POST" data-response="#newMarketItemResponse">
+        <input type="hidden" name="category" value="{{ category }}"/><br />
+        <div class="row cols cf">
+            <div class="c-20 no-border">
+                {{ category }}
             </div>
-            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-            <br class="clear"/>
-            <input type="submit" name="submit-reply" class="button" value="{{ langs.PLACE_OR_REQUEST_X_ON_MARKET }}"/>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script type="text/javascript">
-$(document).ready(function(){
-    if($('#modal').hasClass('in') == false){
-        $("#triggerModal").click();
-        $("#triggerModal").remove();
-    }
-    $('#modal').on('hidden.bs.modal', function () {
-        $("#openTab").empty();
-    });
-});
-</script>
+            <div class="c-80 no-border">
+                <input type="number" name="amount" placeholder="100" value="" max="10000"/>
+            </div>
+        </div><br />
+        <div class="row cols cf">
+            <div class="c-20 no-border">
+                {{ langs.SELL }}/{{ langs.BUY }}
+            </div>
+            <div class="c-80 no-border">
+                <select name="requested">
+                    <option value="0">{% if lang == 'en' %}{{ langs.SELL }} {{ category|lower }}{% else %}{{ category }} {{ langs.SELL|lower }}{% endif %}</option>
+                    <option value="1">{% if lang == 'en' %}{{ langs.BUY }} {{ category|lower }}{% else %}{{ category }} {{ langs.BUY|lower }}{% endif %}</option>
+                </select>
+            </div>
+        </div><br />
+        <div class="row cols cf">
+            <div class="c-20 no-border">
+                {{ langs.PRICE }}
+            </div>
+            <div class="c-80 no-border">
+                <input type="number" name="price" placeholder="25000000" value="" max="9999999999"/>
+            </div>
+        </div><br />
+        <div class="row cols cf">
+            <div class="c-20 no-border">
+                {{ langs.ANONYMOUS }}
+            </div>
+            <div class="c-80 no-border">
+                <input type="checkbox" name="anonymous" value="1"/>
+            </div>
+        </div>
+        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+        <br class="clear"/>
+        <input type="submit" name="submit-reply" class="button" value="{{ langs.PLACE_OR_REQUEST_X_ON_MARKET }}"/>
+    </form>
+{% endblock content %}

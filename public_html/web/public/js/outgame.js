@@ -19,7 +19,6 @@ $(".closeCookieMessage").click(function(e){
 
 $(document).ready(function(){
     $("body").prepend('<div id="mobile-menu-wrapper"><input type="checkbox" id="mobile-menu" name="menu" class="menu-checkbox"><nav class="menu"><label class="menu-toggle" for="mobile-menu"><span>Toggle</span></label>' + $("nav#menu").html() + '</nav></div>');
-    $("[data-toggle='tooltip']").tooltip();
     $("html").height($(document).height());
 });
 

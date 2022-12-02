@@ -16,7 +16,7 @@
         {% include "app/Resources/Views/macros/alerts.base.top.twig" %}
         <div class="row">
             <div class="col-lg-6">
-                <section id="register">
+                <section id="register" class="middle">
                     <h1 class="right">{{ langs.PRE_TITLE_TXT }} <span class="black">Mafia</span>source</h1>
                     <form name="register" action="{{ routing.getRouteByRouteName('register') }}" method="POST">
                     <table cellspacing="3" class="register-table" width="100%">
@@ -52,7 +52,7 @@
                     </table>		</td>
                     		<td>
                     			&nbsp;<input type="text" name="username" autofocus maxlength="25" value="{{ regUsername }}"/>
-                                <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="{{ langs.USERNAME_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="bottom" class="float-right" title="{{ langs.USERNAME_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
                     		</td>
                     	</tr>
                     	<tr>
@@ -69,7 +69,8 @@
                     </table>		</td>
                     		<td>
                     			&nbsp;<input type="email" class="ms-hp" name="email" maxlength="75" value="" autocorrect="off" spellcheck="false" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/><input type="text" class="ms-l" name="referral-username" maxlength="75" value="{{ regEmail }}" autocorrect="off" spellcheck="false" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');"/>
-                                <small>({{ langs.ENCRYPTED }})</small> <a href="javascript:void(0);" data-toggle="tooltip" data-placement="bottom" class="float-right" title="{{ langs.EMAIL_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
+                                <small>{{ langs.ENCRYPTED }}</small>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="bottom" class="float-right" title="{{ langs.EMAIL_INFO }}"><img src="{{ staticRoot }}/foto/web/public/images/icons/help.png" alt="Help" /></a>
                     		</td>
                     	</tr>
                     	<tr>
@@ -207,8 +208,16 @@
     </div>
 {% endblock content %}
 
+{% block bootstrapJs %}
+    <script type="text/javascript" src="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock bootstrapJs %}
+
 {% block javascripts %}
 <script type="text/javascript">
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
     $(document).on("click", "a#captcha-refresh", function(e){
         $("img#captcha").attr('src', '{{ docRoot }}/web/public/images/captcha/captcha.php?_t='+new Date().getTime());
         e.preventDefault();
