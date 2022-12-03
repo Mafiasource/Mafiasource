@@ -219,4 +219,11 @@ class DonatorDAO extends DBConfig
         }
         return $list;
     }
+
+    public function changeNickName($credits, $nickname)
+    {
+        $this->con->setData("
+            UPDATE `user` SET `credits`=`credits`- :cr, `username`= :p WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
+        ", array(':cr' => $credits, ':p' => $nickname, ':uid' => $_SESSION['UID']));
+    }
 }
