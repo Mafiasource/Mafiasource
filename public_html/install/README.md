@@ -1,7 +1,7 @@
 ## Getting started with a few notes
+Don't forget to add the [missing resources (download)](https://download.mafiasource.nl/web/downloads/public_html.zip) to your public_html directory.
 This install directory should be deleted after a successful installation.
 In this document '/../' refers to one directory above the rooted public_html directory on the web server.
-Don't forget to add the [missing resources (download)](https://download.mafiasource.nl/web/downloads/public_html.zip) to your public_html directory.
 /admin access equals superpowers, beware to whom you grant access.
 Admin fields that seem locked can be overwritten.
 
