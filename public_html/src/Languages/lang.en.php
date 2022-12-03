@@ -953,7 +953,12 @@ class GetLanguageContent
             'DONATE_SUCCESS_LIMIT' => "Your donation was received but because of your limit you didn't receive any credits! Thank you!",
             'DONATOR_LIST_INFO' => "I want to add my username to the donator members list.",
             'LEAVE_DONATOR_LIST_SUCCESS' => "You have left the donator members list.",
-            'DONATOR_LIST_APPLICATION_SUCCESS' => "You have successfully registered for the donator members list."
+            'DONATOR_LIST_APPLICATION_SUCCESS' => "You have successfully registered for the donator members list.",
+            "CHANGE_NAME" => "Change your name",
+            "NEW_NAME" => "New name",
+            "INVALID_USERNAME" => $registerLangs['INVALID_USERNAME'],
+            "USERNAME_TAKEN" => $registerLangs['USERNAME_TAKEN'],
+            "BOUGHT_NICKNAME_SUCCESS" => "You've changed your name successfully!"
         );
         return $langs;
     }

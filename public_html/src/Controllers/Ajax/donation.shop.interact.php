@@ -6,7 +6,7 @@ use src\Business\FamilyService;
 require_once __DIR__ . '/.inc.head.ajax.php';
 
 $orCheck = false;
-$orKeys = array("donator", "vip", "gold-member", "vip-family", "luckybox", "halving-times", "bribing-police", "ground", "smuggling-capacity", "new-profession");
+$orKeys = array("donator", "vip", "gold-member", "vip-family", "luckybox", "halving-times", "bribing-police", "ground", "smuggling-capacity", "new-profession", "new-name");
 foreach($orKeys AS $key)
 {
     if(array_key_exists($key, $_POST) && isset($_POST[$key]))

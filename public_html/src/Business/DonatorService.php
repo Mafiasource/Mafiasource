@@ -58,7 +58,8 @@ class DonatorService extends DonatorStatics
         $ground = isset($post['ground']) ? true : null;
         $smuggling = isset($post['smuggling-capacity']) ? true : null;
         $profession = isset($post['new-profession']) ? true : null;
-        
+        $newNickname = isset($post['new-name']) ? true : null;
+
         $familyData = $family->getFamilyDataByName($userData->getFamily());
         if(is_object($familyData)) $familyVip = $familyData->getVip();
         $hasStatus = $hasFamilyStatus = false;
@@ -93,6 +94,8 @@ class DonatorService extends DonatorStatics
             $creditsNeeded = 100;
         elseif(isset($profession))
             $creditsNeeded = 50;
+        elseif(isset($newNickname))
+            $creditsNeeded = 100;
         
         $donationShopData = $this->data->getDonationShopData();
         if(isset($donator) || isset($vip) || isset($goldMember) || isset($vipFamily))
@@ -151,7 +154,19 @@ class DonatorService extends DonatorStatics
         {
             $error = $l['INVALID_PROFESSION'];
         }
-        
+
+        if(isset($newNickname)) {
+            if(!UserService::is_name($post['nickname'])) {
+                $error = $l['INVALID_USERNAME'];
+            } else {
+                $UserService = new UserService();
+
+                if($UserService->checkUsernameExists($post['nickname']) === true) {
+                    $error = $l['USERNAME_TAKEN'];
+                }
+            }
+        }
+
         if(isset($error))
         {
             return Routing::errorMessage($error);
@@ -210,6 +225,11 @@ class DonatorService extends DonatorStatics
                 $this->data->buyNewProfession($creditsNeeded, $post['profession']);
                 $userData = $user->getUserData();
                 $replacedMessage = $route->replaceMessagePart($userData->getProfession(), $l['BOUGHT_NEW_PROFESSION_SUCCESS'], '/{profession}/');
+            }
+            elseif($newNickname)
+            {
+                $this->data->changeNickName((int)$creditsNeeded, $post['nickname']);
+                $replacedMessage = $l['BOUGHT_NICKNAME_SUCCESS'];
             }
             
             return $route->successMessage($replacedMessage);
