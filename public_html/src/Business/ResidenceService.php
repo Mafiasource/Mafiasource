@@ -120,7 +120,7 @@ class ResidenceService
         {
             $error = $l['RESIDENCE_DOESNT_EXIST'];
         }
-        if(is_object($residence) && $residence->getInPossession() == false)
+        if(isset($residence) && is_object($residence) && $residence->getInPossession() == false)
         {
             $error = $l['DONT_OWN_RESIDENCE'];
         }

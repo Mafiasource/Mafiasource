@@ -22,7 +22,7 @@ class Donator
             $wt *= 0.5;
         
         // Halving times event example
-        if(strtotime("2021-12-24 14:00:00") < strtotime('now') && strtotime("2021-12-27 14:00:00") > strtotime('now'))
+        if(strtotime("2022-11-28 14:00:00") < strtotime('now') && strtotime("2022-12-02 14:00:00") > strtotime('now'))
             $wt *= 0.5;
         
         return round($wt);
