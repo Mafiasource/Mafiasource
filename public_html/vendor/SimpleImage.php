@@ -166,7 +166,7 @@ class Simpleimage {
 
       $ratio = $height / $this->getHeight();
 
-      $width = (int)$this->getWidth() * $ratio;
+      $width = $this->getWidth() * $ratio;
 
       $this->resize($width,$height);
 
@@ -178,7 +178,7 @@ class Simpleimage {
 
       $ratio = $width / $this->getWidth();
 
-      $height = (int)$this->getheight() * $ratio;
+      $height = $this->getheight() * $ratio;
 
       $this->resize($width,$height);
 
@@ -218,7 +218,7 @@ class Simpleimage {
 
 	
 
-	  $new_image = imagecreatetruecolor($width, $height);
+	  $new_image = imagecreatetruecolor((int)$width, (int)$height);
 
 	  /* Check if this image is PNG or GIF, then set if Transparent*/  
 
@@ -230,11 +230,11 @@ class Simpleimage {
 
 	      $transparent = imagecolorallocatealpha($new_image, 255, 255, 255, 127);
 
-	      imagefilledrectangle($new_image, 0, 0, $width, $height, $transparent);
+	      imagefilledrectangle($new_image, 0, 0, (int)$width, (int)$height, $transparent);
 
 	  }
 
-	  imagecopyresampled($new_image, $this->image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
+	  imagecopyresampled($new_image, $this->image, 0, 0, 0, 0, (int)$width, (int)$height, $this->getWidth(), $this->getHeight());
 
 	
 

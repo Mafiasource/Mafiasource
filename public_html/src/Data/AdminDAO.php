@@ -697,12 +697,17 @@ class AdminDAO extends DBConfig
             $denyKeys = array("game", "members", "families", "startDate", "endDate");
             if(!in_array($key, $denyKeys))
             {
-                $statList = array();
+                $statList = $dataObj = array();
                 foreach($hof[$key] AS $stat)
-                    array_push($statList, $stat);
+                {
+                    $obj = new \stdClass();
+                    $obj->getKey = $stat->getKey();
+                    $obj->getValue = $stat->getValue();
+
+                    array_push($statList, $obj);
+                }
                 
-                $hofData = $statList;
-                $dataObj = $hofData;
+                $dataObj = $statList;
                 
                 switch($key)
                 {

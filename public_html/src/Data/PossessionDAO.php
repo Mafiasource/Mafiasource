@@ -435,32 +435,35 @@ class PossessionDAO extends DBConfig
                 ON (p.`stateID`=s.`id`)
                 LEFT JOIN `city` AS c
                 ON (p.`cityID`=c.`id`)
-                WHERE p.`id` IN( ".$ids." ) AND p.`active`='1' AND p.`deleted`='0'
+                WHERE p.`id` IN(".$ids.") AND p.`active`='1' AND p.`deleted`='0'
                     AND p2.`active`='1' AND p2.`deleted`='0'
                 ORDER BY p.`id` ASC
-            ", array(':uid' => $_SESSION['UID']));
+            ");
             
             $list = array();
-            foreach($possessions AS $row)
+            if(is_array($possessions))
             {
-                $possession = new Possession();
-                $possession->setId($row['id']);
-                $possession->setName($row['name']);
-                
-                $possess = new Possess();
-                $possess->setId($row['pid']); // Id possess record 
-                $possess->setPID($row['id']); // Id possession record
-                $possess->setStateID($row['stateID']);
-                $possess->setState($row['state']);
-                $possess->setCityID($row['cityID']);
-                $possess->setCity($row['city']);
-                $possess->setUserID($row['userID']);
-                $possess->setIsOwner(false);
-                $possession->setPossessDetails($possess);
-                
-                array_push($list, $possession);
+                foreach($possessions AS $row)
+                {
+                    $possession = new Possession();
+                    $possession->setId($row['id']);
+                    $possession->setName($row['name']);
+                    
+                    $possess = new Possess();
+                    $possess->setId($row['pid']); // Id possess record 
+                    $possess->setPID($row['id']); // Id possession record
+                    $possess->setStateID($row['stateID']);
+                    $possess->setState($row['state']);
+                    $possess->setCityID($row['cityID']);
+                    $possess->setCity($row['city']);
+                    $possess->setUserID($row['userID']);
+                    $possess->setIsOwner(false);
+                    $possession->setPossessDetails($possess);
+                    
+                    array_push($list, $possession);
+                }
+                return $list;
             }
-            return $list;
         }
     }
     

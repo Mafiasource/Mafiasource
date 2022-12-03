@@ -6,7 +6,7 @@ use src\Business\SmuggleService;
 require_once __DIR__ . '/.inc.head.ajax.php';
 
 $allowedTypes = array("Drugs", "Liquids");
-if(isset($_POST['security-token']) && isset($_POST['type']) && in_array($_POST['type'], $allowedTypes))
+if(isset($_POST['security-token']) && isset($_POST['units']) && is_array($_POST['units']) && isset($_POST['type']) && in_array($_POST['type'], $allowedTypes))
 {
     $dl = new DrugLiquidService();
     
