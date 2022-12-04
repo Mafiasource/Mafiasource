@@ -32,7 +32,7 @@
                     <!-- Indicators / Active always latest/hardest crime -->
                     <ol class="carousel-indicators">
                         {% for item in svPage.svehicles %}
-                            <li data-target="#carousel-sv" data-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
+                            <li data-bs-target="#carousel-sv" data-bs-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
                         {% endfor %}
                     </ol>
                     <!-- Wrapper for slides -->
@@ -53,11 +53,11 @@
                     </div>
                     {% if svPage.svehicles is not empty %}
                         <!-- Controls left/right -->
-                        <a class="left carousel-control-prev" href="#carousel-sv" role="button" data-slide="prev">
+                        <a class="left carousel-control-prev" href="#carousel-sv" role="button" data-bs-slide="prev">
                           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                           <span class="sr-only">&nbsp;</span>
                         </a>
-                        <a class="right carousel-control-next" href="#carousel-sv" role="button" data-slide="next">
+                        <a class="right carousel-control-next" href="#carousel-sv" role="button" data-bs-slide="next">
                           <span class="sr-only">&nbsp;</span>
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         </a>
