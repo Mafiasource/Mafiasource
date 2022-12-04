@@ -953,7 +953,12 @@ class GetLanguageContent
             'DONATE_SUCCESS_LIMIT' => "Je donatie werd ontvangen maar door jouw limiet heb je geen credits ontvangen! Bedankt!",
             'DONATOR_LIST_INFO' => "Ik wil mijn gebruikersnaam toevoegen aan de ledenlijst van donateurs.",
             'LEAVE_DONATOR_LIST_SUCCESS' => "Je hebt de donateurs ledenlijst verlaten.",
-            'DONATOR_LIST_APPLICATION_SUCCESS' => "Je hebt je succesvol aangemeld voor de donateurs ledenlijst."
+            'DONATOR_LIST_APPLICATION_SUCCESS' => "Je hebt je succesvol aangemeld voor de donateurs ledenlijst.",
+            "CHANGE_NAME" => "Naam wijzigingen",
+            "NEW_NAME" => "Nieuwe naam",
+            "INVALID_USERNAME" => $registerLangs['INVALID_USERNAME'],
+            "USERNAME_TAKEN" => $registerLangs['USERNAME_TAKEN'],
+            "BOUGHT_NICKNAME_SUCCESS" => "Je hebt succesvol je naam gewijzigd!"
         );
         return $langs;
     }
