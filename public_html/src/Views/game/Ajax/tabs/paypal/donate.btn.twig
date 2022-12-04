@@ -24,7 +24,7 @@
         addToFormData(key, value, formData);
     });
     
-    let response = fetch(url, { method: 'POST', body: formData })
+    let response = fetch(url, { method: 'POST', body: formData, headers: {"X-Requested-With": "XMLHttpRequest"}})
     .then(function (response) {
       return response.text();
     })
