@@ -10,6 +10,7 @@ class DonatorDAO extends DBConfig
 {
     protected $con = "";
     private $dbh = "";
+    private $lang = "en";
     private $dateFormat = "%d-%m-%Y %H:%i:%s"; // SQL Format
     private $phpDateFormat = "d-m-Y H:i:s";
     
