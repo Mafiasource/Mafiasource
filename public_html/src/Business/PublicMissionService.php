@@ -56,7 +56,6 @@ class PublicMissionService extends PublicMissionStatics
             /* "make profits with blackjack.", */
         )
     );
-    public $missionRewards;
     
     public function __construct()
     {

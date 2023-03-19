@@ -11,7 +11,9 @@ class PublicMission
         "Animal Smuggler", /* "Dice Gambler", */ 12 => "Prison Breaker", /* "Horse Better", **/ 14 => "Credit Scavenger", /* "Roll the Ball", */
         16 => "Stamina Striver", /* "Fruit Spinner", */ 18 => "Hoes for Bro's", /* "Card Counter", */
     );
+    public $missionRewards = array(); // Init
     public $missionRewardDbFields = array(1 => "bank", "whoresStreet", "honorPoints", "score"); // Big Score = rare
+    public $additionalMissionRewards = array(); // Init
     public $additionalRewardDbFields = array(1 => "rankpoints", "score", "luckybox", "credits"); // Credits = rare
     
     public function getPrizesByRank($prizes, $rank)

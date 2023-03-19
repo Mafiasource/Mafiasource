@@ -7,9 +7,9 @@ Admin fields that seem locked can be overwritten.
 
 ## Requirements
 This application runs stable on web servers with the following (min) requirements
-- Web server 128MB+ RAM - 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
+- Web server 128MB+ RAM, 256MB+ storage 1GB+ preferred - Linux OS x32_64 kernel v3.10+
 - Apache 2
-- PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL, DOM, SOCKETS, GD, CURL
+- PHP 8.0 or higher with extensions PDO, ND_PDO_MYSQL or PDO_MYSQL, DOM, SOCKETS, GD, CURL
 - MySQL 8 or higher or MariaDB 10 or higher
 
 ## Dependencies
@@ -48,7 +48,7 @@ Customize your [ckeditor(game)](https://ckeditor.com/ckeditor-4/download/)
 ## Built in simplified installation process
 Requires a web server, domainname, mysql credentials and a correct configured SSL/HTTPS certificate.
 No SSL support? Skip to [App wont work on a localhost environment without SSL support.](#p-app-wont-work-on-a-localhost-environment-without-ssl-support) first.
-1) Configure static subdomain, localhost? see hosts file.
+1) Configure static subdomain, localhost? see [hosts](#p-app-wont-work-on-a-localhost-environment-without-ssl-support) file.
   * Create a new subdomain 'static' for your domainname and link it to your public_html directory.
   * HTTPS? Make sure the static subdomain has a working certificate as well.
 2) Have a fresh database name, user and password ready create these new credentials if necessary.
@@ -68,17 +68,17 @@ The following source code files should have been modified after a successful ins
   * /sw.js
   * /web/public/css/game.min.css
   * /web/public/css/homepage.min.css
-- Activates all /app/cronjob/ jobs on the web server.
+- Lastly, does not replace but Activates all /app/cronjob/ jobs on the web server. (Only if PHP's exec() function is enabled / allowed)
 
 You can backup the above modified source code files somewhere safe for later use.
-Overwrite these modified backup files after every merge and rebase to stay up-to-date with possible future updates.
+Overwrite or gitignore these modified backup files after every merge and rebase to stay up-to-date with possible future updates.
 This tactic won't update .css style changes, unless these files are changed manually.
 
 ## Troubleshooting common problems and answers
 Please keep the following in mind throughout some P) and A) topics defined below.
 - Try to change as little as possible manually especially during troubleshooting.
 - Only these globals should be changed freely SSL_ENABLED, DEVELOPMENT before install.
-- All good before installation = a working /install and blank / web root without any errors. (Ideal, use installer)
+- All good before installation = a working "/install" and blank "/" web root without any errors. (Ideal, use installer)
 
 ###### P) Application installer takes forever to load, than redirects me to a not found page.
 ###### A) You are trying to connect to a mysql host that is unreachable by the application.
@@ -91,7 +91,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 
 ###### P) App wont work on a localhost environment without SSL support.
 ###### A) Application can throw a server error due to 2 miss configurations set while browsing localhost.
-1) In /app/config/config.php edit SSL_ENABLED from true to false. (Not localhost, no SSL? Steps 2 and 4 not required)
+1) In /app/config/config.php edit SSL_ENABLED from true to false. (Not localhost but no SSL? Step 2 not required)
 2) Add the following lines to your hosts file: (Tested on xampp for Windows with php8.0.8)
 ```
     #C:/Windows/system32/drivers/etc/hosts (Windows) or /etc/hosts (Linux)
@@ -132,16 +132,16 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 ###### A) Will pop-up after a successful manual server installation but without a proper database connection.
 1) MySQL is not running on the configured web server. (Server side)
 2) The MySQL server database name and or database user and or password are incorrectly configured. (Server side)
-3) MySQL database not added to the MySQL user with the minimal permissions: DELETE, SELECT, DROP, INSERT, UPDATE (Server side)
+3) MySQL database is not added to the MySQL user with the minimal permissions: DELETE, SELECT, DROP, INSERT, UPDATE (Server side)
 4) OPTIONAL Remote MySQL? Make sure your web server IP address is whitelisted if remote connections are restricted. (MySQL Server side)
 5) The provided database credentials in /../credentials.php are invalid. (Application side)
-6) Double check any connection restrictions that might have been set.
+6) Double check any (remote) connection restrictions that might have been set.
 
 ###### P) 500 or above server error persists
 ###### A) Make sure the following requirements are met:
-- Missing resources can cause internal server error on strict configured web servers
-- Install any missing dependencies
-- Enable any missing extensions
+- [missing resources (download)](https://download.mafiasource.nl/web/downloads/public_html.zip) can cause internal server error on strict configured web servers
+- Install any missing [dependencies](#dependencies)
+- Enable any missing [extensions](#requirements)
 - Make sure PHP 8.0 or above is installed, any hints within php error_log?
 - Check if Apache2 is functioning correctly, any hints within apache error logs?
 - Remove /.htaccess to see if server error disappears. If so test piece by piece to find error causing lines.

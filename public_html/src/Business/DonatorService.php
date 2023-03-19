@@ -340,7 +340,7 @@ class DonatorService extends DonatorStatics
                 }
                 elseif($crDiff > 0 && $cr >= 100)
                 {
-                    $this->data->addCredits($crDiff);
+                    $this->data->addDonationCredits($crDiff);
                     $replacedMessage = $route->replaceMessagePart(number_format($crDiff, 0, '', ','), $l['DONATE_SUCCESS'], '/{credits}/');
                     $replacedMessage .= " " . $l['DONATE_SUCCESS_HIT_LIMIT'];
                 }
