@@ -9,6 +9,8 @@ use app\config\Routing;
  
 class FamilyMercenaryService
 {
+    private $data;
+    
     public int $price = 1000000;
     
     public function __construct()

@@ -627,9 +627,8 @@ class AdminDAO extends DBConfig
         // Backup database
         $adminReset = true;
         include_once DOC_ROOT . "/app/cronjob/dbbackup.php";
-        $adminReset = null;
-        $dbbackup = $saveFile;
-        $saveFile = null;
+        $dbbackup = $saveFile; // Path to created bakcup file
+        $saveFile = $adminReset = null;
         
         // Fetch and store hall of fame into new json object
         $statisticData = new StatisticDAO();
@@ -692,6 +691,7 @@ class AdminDAO extends DBConfig
         
         $hofObj['game'] = $gameObj;
         
+        // TO DO, remove denyKeys before foreach loop.
         foreach(array_keys($hof) AS $key)
         {
             $denyKeys = array("game", "members", "families", "startDate", "endDate");

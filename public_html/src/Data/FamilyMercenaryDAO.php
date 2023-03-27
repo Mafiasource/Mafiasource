@@ -12,6 +12,7 @@ use src\Entities\FamilyMercenaryLog;
 class FamilyMercenaryDAO extends DBConfig
 {
     protected $con = null;
+    private $lang = "en";
     private string $dateFormat = "%d-%m-%Y %H:%i:%s";
     
     private int $familyID;

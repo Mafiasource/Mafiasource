@@ -133,7 +133,7 @@ class HitlistService
         {
             $error = $langs['CANT_DO_THAT_TRAVELLING'];
         }
-        if(is_object($hitlistData) && $userData->getCash() < $hitlistData->getPrize())
+        if(isset($hitlistData) && is_object($hitlistData) && $userData->getCash() < $hitlistData->getPrize())
         {
             $error = $langs['NOT_ENOUGH_MONEY_CASH'];
         }

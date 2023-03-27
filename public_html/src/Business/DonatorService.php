@@ -325,7 +325,7 @@ class DonatorService extends DonatorStatics
                 $json = json_decode($result);
             }
             
-            if(is_object($json) && isset($json->status) && $json->status === "COMPLETED")
+            if(is_object($json) && isset($json->status) && is_string($json->status) && strtoupper($json->status) === "COMPLETED")
             {
                 $replacedMessage = $l['DONATE_SUCCESS_LIMIT'];
                 $dData = $this->data->getDonationData();
