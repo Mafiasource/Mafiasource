@@ -1,0 +1,41 @@
+<style type="text/css">
+    {% block css %}
+    {% endblock css %}
+</style>
+<button type="button" id="triggerModal" data-bs-toggle="modal" data-bs-target="#modal" data-toggle="modal" data-target="#modal">&nbsp;</button>
+<div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog {% block size %}modal-xl{% endblock size %}" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        {% block title %}
+            <h4 class="modal-title">Title</h4>
+        {% endblock title %}
+        <button type="button" class="btn-close close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="ajaxLoader"></div>
+        {% block content %}
+            <p>content.</p>
+        {% endblock content %}
+      </div>
+      <div class="modal-footer">
+        {% block footer %}
+            <button type="button" class="btn btn-default button" data-bs-dismiss="modal" data-dismiss="modal">{{ langs.CLOSE }}</button>
+        {% endblock footer %}
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+{% block js %}
+    $(document).ready(function(){
+        if($('#modal').hasClass('in') == false) {
+            $("#triggerModal").click();
+            $("#triggerModal").remove();
+        }
+        $('#modal').on('hidden.bs.modal', function () {
+            $("#openTab").empty();
+        });
+    });
+{% endblock js %}
+</script>

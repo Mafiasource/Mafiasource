@@ -90,14 +90,22 @@
     <link rel="apple-touch-startup-image" media="(width: 834px) and (height: 1194px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-167x167.png" />
     <link rel="apple-touch-startup-image" media="(width: 1024px) and (height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="{{ staticRoot }}/web/public/images/favicon/apple-icon-180x180.png" />
     <link rel="preload" href="{{ staticRoot }}/web/public/images/bg.webp" as="image" />
-    <link rel="preload" href="{{ staticRoot }}/web/public/bootstrap/css/bootstrap.min.css" as="style" />
+    <link rel="preload" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/css/bootstrap.min.css" as="style" />
     <link rel="preload" href="{{ staticRoot }}/web/public/css/homepage.min.css" as="style" />
-    <link rel="preload" href="https://fonts.googleapis.com/css?family=Sirin+Stencil%7CQuicksand&display=swap" as="style" />
-    <link rel="preload" href="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js" as="script" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&family=Quicksand:wght@300;400;500;600;700&display=swap" as="style" />
+    <link rel="preload" href="{{ staticRoot }}/web/vendor/components/jquery/jquery.min.js" as="script" />
+    {# <link rel="preload" href="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js" as="script" /> #}
+    {% if routing.getRouteName() == 'register' %}
+        <link rel="preload" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js" as="script" />
+    {% else %}
+        <link rel="preload" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/js/bootstrap.min.js" as="script" />
+    {% endif %}
     <link rel="preload" href="{{ staticRoot }}/web/public/js/outgame.js" as="script" />
-    <link rel="stylesheet" href="{{ staticRoot }}/web/public/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="{{ staticRoot }}/web/public/css/homepage.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil%7CQuicksand&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&family=Quicksand:wght@300;400;500;600;700&display=swap" />
     <style type="text/css">
         {% for donatorColor in statusDonatorColors.donatorColors %}
             .{{ donatorColor.getDonator|seoUrl }} {color:{{ donatorColor.getColorCode }};}
@@ -196,7 +204,13 @@
     {% endblock footer %}
 
     {# Bootstrap core JavaScript #}
-    <script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"></script>
+    <!-- <script type="text/javascript" src="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js"></script> -->
+    <script type="text/javascript" src="{{ staticRoot }}/web/vendor/components/jquery/jquery.min.js"></script>
+    {% if routing.getRouteName() == 'register' %}
+        <script type="text/javascript" src="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    {% else %}
+        <script type="text/javascript" src="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+    {% endif %}
     <script type="text/javascript">
         $("form").each(function(){
             $(this).find("input[name=security-token]").each(function(){

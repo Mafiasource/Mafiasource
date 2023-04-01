@@ -1,28 +1,11 @@
-<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ langs.HELPSYSTEM_FOR }} {{ prevPagename }}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        {{ helpContent|raw }}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script type="text/javascript">
-$(document).ready(function(){
-    if($('#modal').hasClass('in') == false){
-        $("#triggerModal").click();
-        $("#triggerModal").remove();
-    }
-    $('#modal').on('hidden.bs.modal', function () {
-        $("#openTab").empty();
-    });
-});
-</script>
+{% extends "/app/Resources/Views/modal.twig" %}
+
+{% block size %}modal-xs{% endblock size %}
+
+{% block title %}
+    <h4 class="modal-title">{{ langs.HELPSYSTEM_FOR }} {{ prevPagename }}</h4>
+{% endblock title %}
+
+{% block content %}
+    {{ helpContent|raw }}
+{% endblock content %}

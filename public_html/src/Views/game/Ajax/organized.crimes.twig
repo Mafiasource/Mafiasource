@@ -10,10 +10,10 @@
 <div class="content-container">
     <div id="crimes" class="row cols cf">
         <div class="c-70 column no-padding">
-            <div id="carousel-crimes" class="carousel slide" data-ride="carousel">
+            <div id="carousel-crimes" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
               <ol class="carousel-indicators">
                 {% for item in crimesPage.crimes %}
-                    <li data-target="#carousel-crimes" data-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
+                    <li data-bs-target="#carousel-crimes" data-bs-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>
                 {% endfor %}
               </ol>
               <div class="carousel-inner center">
@@ -142,11 +142,11 @@
                     </div>
                 {% endfor %}
               </div>
-              <a class="left carousel-control-prev" href="#carousel-crimes" role="button" data-slide="prev">
+              <a class="left carousel-control-prev" href="#carousel-crimes" role="button" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="sr-only">&nbsp;</span>
               </a>
-              <a class="right carousel-control-next" href="#carousel-crimes" role="button" data-slide="next">
+              <a class="right carousel-control-next" href="#carousel-crimes" role="button" data-bs-slide="next">
                 <span class="sr-only">&nbsp;</span>
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
               </a>

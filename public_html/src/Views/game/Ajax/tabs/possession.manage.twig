@@ -1,6 +1,8 @@
+{% extends "/app/Resources/Views/modal.twig" %}
+
 {% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
 
-<style type="text/css">
+{% block css %}
     div#possessions-container > div.possessions > div.row.even, div#possessions-container > div.possessions > div.row.odd {background-color: #e2e2e2 !important;color: #464646;padding: 5px;box-sizing: border-box;}
     div#possessions-container > div.possessions > div.row.odd {background-color: #ececec !important;}
     div#possessions-container > div.possessions > div.row:first-child {border-radius:5px 5px 0px 0px;}
@@ -21,215 +23,213 @@
     .possession-back-btn.active {display:inline-block;}
     input[type=text].username, input[type=number] {max-width: 110px;}
     #possessions-container select[name=friend] {max-width:75px;}
-</style>
-<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{% if lang == 'en' %}{{ langs.MANAGE }} {{ langs.POSSESSIONS }}{% else %}{{ langs.POSSESSIONS }} {{ langs.MANAGE }}{% endif %}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        <div id="possessions-container" class="content-container">
-            {% if transferedPossessions %} {# TRANSFERED POSSESSIONS ACCEPT / DENY #}
-                <div id="interactTransferedPossessionResponse"></div>
-                {% for p in transferedPossessions %}
-                    <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" method="POST" data-response="#interactTransferedPossessionResponse">
-                        <input type="hidden" name="id" value="{{ p.getPossessDetails.getId }}"/>
-                        <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                        <div class="table-reponsive">
-                            <table class="table table-sm table-dark table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="center" colspan="2">{{ langs.TRANSFER }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" class="icon" alt="{{ langs.LOCATION }}"/> {{ langs.LOCATION }}</td>
-                                        <td>{% if p.getPossessDetails.getState %}{% if p.getPossessDetails.getCity %}{{ p.getPossessDetails.getCity }}{% else %}{{ p.getPossessDetails.getState }}{% endif %}{% else %}{{ langs.THE_UNITED_STATES }}{% endif %}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.POSSESSION }}"/> {{ langs.POSSESSION }}</td>
-                                        <td>{{ p.getName }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_refresh.png" class="icon" alt="{{ langs.ACTIONS }}s"/> {{ langs.ACTION }}s</td>
-                                        <td><input type="submit" name="accept-transfer" value="{{ langs.ACCEPT }}"/> <input type="submit" name="deny-transfer" value="{{ langs.DENY }}"/></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </form>
-                    <br class="clear"/>
-                {% endfor %}
-            {% else %} {# STANDARD POSSESSIONS MANAGEMENT #}
-                {% if possessions is empty %}
-                    {{ alert.build('Info', 'alert-info', 'help', langs.NONE) }}
-                {% else %}
-                    <div class="possessions">
-                        {% for p in possessions %}
-                            <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}">
-                                <div class="c-75 column no-border">
-                                    <img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.POSSESSION }}" /> {{ p.getName }}{% if p.getPossessDetails.getState %} in {% if p.getPossessDetails.getCity %}{{ p.getPossessDetails.getCity }}{% else %}{{ p.getPossessDetails.getState }}{% endif %}{% endif %}
-                                </div>
-                                <div class="c-25 column no-border">
-                                    <div class="right">
-                                        <button type="button" class="btn btn-default button manage" rel="possession-{{ p.getPossessDetails.getId }}-manage">{{ langs.MANAGE }}</button>
-                                    </div>
+{% endblock css %}
+
+{% block size %}modal-xs{% endblock size %}
+
+{% block title %}
+    <h4 class="modal-title">{% if lang == 'en' %}{{ langs.MANAGE }} {{ langs.POSSESSIONS }}{% else %}{{ langs.POSSESSIONS }} {{ langs.MANAGE }}{% endif %}</h4>
+{% endblock title %}
+
+{% block content %}
+    <div id="possessions-container" class="content-container">
+        {% if transferedPossessions %} {# TRANSFERED POSSESSIONS ACCEPT / DENY #}
+            <div id="interactTransferedPossessionResponse"></div>
+            {% for p in transferedPossessions %}
+                <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" method="POST" data-response="#interactTransferedPossessionResponse">
+                    <input type="hidden" name="id" value="{{ p.getPossessDetails.getId }}"/>
+                    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                    <div class="table-reponsive">
+                        <table class="table table-sm table-dark table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="center" colspan="2">{{ langs.TRANSFER }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" class="icon" alt="{{ langs.LOCATION }}"/> {{ langs.LOCATION }}</td>
+                                    <td>{% if p.getPossessDetails.getState %}{% if p.getPossessDetails.getCity %}{{ p.getPossessDetails.getCity }}{% else %}{{ p.getPossessDetails.getState }}{% endif %}{% else %}{{ langs.THE_UNITED_STATES }}{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.POSSESSION }}"/> {{ langs.POSSESSION }}</td>
+                                    <td>{{ p.getName }}</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/arrow_refresh.png" class="icon" alt="{{ langs.ACTIONS }}s"/> {{ langs.ACTION }}s</td>
+                                    <td><input type="submit" name="accept-transfer" value="{{ langs.ACCEPT }}"/> <input type="submit" name="deny-transfer" value="{{ langs.DENY }}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                <br class="clear"/>
+            {% endfor %}
+        {% else %} {# STANDARD POSSESSIONS MANAGEMENT #}
+            {% if possessions is empty %}
+                {{ alert.build('Info', 'alert-info', 'help', langs.NONE) }}
+            {% else %}
+                <div class="possessions">
+                    {% for p in possessions %}
+                        <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}">
+                            <div class="c-75 column no-border">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.POSSESSION }}" /> {{ p.getName }}{% if p.getPossessDetails.getState %} in {% if p.getPossessDetails.getCity %}{{ p.getPossessDetails.getCity }}{% else %}{{ p.getPossessDetails.getState }}{% endif %}{% endif %}
+                            </div>
+                            <div class="c-25 column no-border">
+                                <div class="right">
+                                    <button type="button" class="btn btn-default button manage" rel="possession-{{ p.getPossessDetails.getId }}-manage">{{ langs.MANAGE }}</button>
                                 </div>
                             </div>
-                        {% endfor %}
-                    </div>
-                    <div class="possession-management">
-                        <div id="interactPossessionResponse"></div>
-                        {% for p in possessions %}
-                            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" method="POST" data-response="#interactPossessionResponse">
-                                <input type="hidden" name="id" value="{{ p.getPossessDetails.getId }}"/>
-                                <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                                <div class="possession-{{ p.getPossessDetails.getId }}-manage">
-                                    <div class="table-reponsive">
-                                        <table class="table table-sm table-dark table-bordered">
-                                            <thead>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="possession-management">
+                    <div id="interactPossessionResponse"></div>
+                    {% for p in possessions %}
+                        <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('interact-possession') }}" method="POST" data-response="#interactPossessionResponse">
+                            <input type="hidden" name="id" value="{{ p.getPossessDetails.getId }}"/>
+                            <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+                            <div class="possession-{{ p.getPossessDetails.getId }}-manage">
+                                <div class="table-reponsive">
+                                    <table class="table table-sm table-dark table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="center" colspan="2">{{ langs.MANAGE }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" class="icon" alt="{{ langs.LOCATION }}"/> {{ langs.LOCATION }}</td>
+                                                <td>{% if p.getPossessDetails.getState %}{% if p.getPossessDetails.getCity %}{{ p.getPossessDetails.getCity }}{% else %}{{ p.getPossessDetails.getState }}{% endif %}{% else %}{{ langs.THE_UNITED_STATES }}{% endif %}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.POSSESSION }}"/> {{ langs.POSSESSION }}</td>
+                                                <td>{{ p.getName }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.TOTAL_REVENUE }}"/> {{ langs.TOTAL_REVENUE }}</td>
+                                                <td>{{ p.getPossessDetails.getProfit|moneyFormat }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" class="icon" alt="{{ langs.PROFIT_HOUR }}"/> {{ langs.PROFIT_HOUR }}</td>
+                                                <td>{{ p.getPossessDetails.getProfitHour|moneyFormat }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.OWNER }}"/> {{ langs.OWNER }}</td>
+                                                <td><input type="text" name="username" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select><input type="submit" class="button" name="transfer" value="{{ langs.TRANSFER }}"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building_delete.png" class="icon" alt="{{ langs.DROP }}"/> {{ langs.DROP }}</td>
+                                                <td><input type="submit" class="button" name="drop" value="{{ langs.DROP }}"/></td>
+                                            </tr>
+                                            {% if p.getId == 1 %} {# BULLET FACTORY #}
                                                 <tr>
-                                                    <th scope="col" class="center" colspan="2">{{ langs.MANAGE }}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/world.png" class="icon" alt="{{ langs.LOCATION }}"/> {{ langs.LOCATION }}</td>
-                                                    <td>{% if p.getPossessDetails.getState %}{% if p.getPossessDetails.getCity %}{{ p.getPossessDetails.getCity }}{% else %}{{ p.getPossessDetails.getState }}{% endif %}{% else %}{{ langs.THE_UNITED_STATES }}{% endif %}</td>
+                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.BULLET }} {{ langs.PRICE }}"/> {{ langs.BULLET }} {{ langs.PRICE|lower }}</td>
+                                                    <td>$<input type="number" name="bullet-price" value="{{ p.getBulletFactoryDetails.getPriceEachBullet }}"/><input type="submit" name="change-bullet-price" value="{{ langs.EDIT }}"/></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.POSSESSION }}"/> {{ langs.POSSESSION }}</td>
-                                                    <td>{{ p.getName }}</td>
+                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.PRODUCTION }}"/> {{ langs.PRODUCTION }}</td>
+                                                    <td><select name="production" data-id="{{ p.getPossessDetails.getId }}">{% for production, costs in productionCosts %}<option value="{{ production }}"{% if p.getBulletFactoryDetails.getProduction == production %} selected="selected"{% endif %}>{{ production|valueFormat }} {{ langs.BULLETS|lower }} {{ costs|moneyFormat }}</option>{% endfor %}</select></td>
+                                                </tr>
+                                            {% endif %}
+                                            {% if p.getId == 2 %} {# RED LIGHT DISTRICT #}
+                                                <tr>
+                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.WINDOWS }}"/> {{ langs.WINDOWS }}</td>
+                                                    <td>{{ p.getRedLightDistrictDetails.getWindows|valueFormat }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.TOTAL_REVENUE }}"/> {{ langs.TOTAL_REVENUE }}</td>
-                                                    <td>{{ p.getPossessDetails.getProfit|moneyFormat }}</td>
+                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building_add.png" class="icon" alt="{{ langs.BUY_WINDOWS }}"/> {{ langs.BUY_WINDOWS|capitalize }}</td>
+                                                    <td><input type="submit" name="buy-windows" value="10,000 - $1,000,000" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins_add.png" class="icon" alt="{{ langs.PROFIT_HOUR }}"/> {{ langs.PROFIT_HOUR }}</td>
-                                                    <td>{{ p.getPossessDetails.getProfitHour|moneyFormat }}</td>
+                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.PRICE_EACH_WINDOW }}"/> {{ langs.PRICE_EACH_WINDOW }}</td>
+                                                    <td>$<input type="number" name="window-price" value="{{ p.getRedLightDistrictDetails.getPriceEachWindow }}"/><input type="submit" name="change-window-price" value="{{ langs.EDIT }}"/></td>
                                                 </tr>
+                                            {% endif %}
+                                            {% if p.getId == 12 %} {# TELECOM BUSINESS #}
                                                 <tr>
-                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/user.png" class="icon" alt="{{ langs.OWNER }}"/> {{ langs.OWNER }}</td>
-                                                    <td><input type="text" name="username" class="username" placeholder="{{ langs.WRITE_PLAYERNAME }}"/><select name="friend"><option value="0">{{ langs.FRIENDS }}</option>{% for f in friends %}<option value="{{ f.getUsername }}">{{ f.getUsername }}</option>{% endfor %}</select><input type="submit" class="button" name="transfer" value="{{ langs.TRANSFER }}"/></td>
+                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.AMOUNT }}"/> {{ langs.MASS_MESSAGE }} {{ langs.AMOUNT }}</td>
+                                                    <td><input type="number" name="stake" value="{{ p.getPossessDetails.getStake }}" /><input type="submit" name="change-stake" value="{{ langs.EDIT }}"/></td>
                                                 </tr>
+                                            {% endif %}
+                                            {% if p.getId >= 13 and p.getId <= 18 and p.getId != 18 %} {# CASINOS BUT !LOTTERY #}
                                                 <tr>
-                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building_delete.png" class="icon" alt="{{ langs.DROP }}"/> {{ langs.DROP }}</td>
-                                                    <td><input type="submit" class="button" name="drop" value="{{ langs.DROP }}"/></td>
+                                                    <td><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.MAXIMUM_STAKE }}"/> {{ langs.MAXIMUM_STAKE }}</td>
+                                                    <td><input type="number" name="stake" value="{{ p.getPossessDetails.getStake }}" /><input type="submit" name="change-stake" value="{{ langs.EDIT }}"/></td>
                                                 </tr>
-                                                {% if p.getId == 1 %} {# BULLET FACTORY #}
-                                                    <tr>
-                                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.BULLET }} {{ langs.PRICE }}"/> {{ langs.BULLET }} {{ langs.PRICE|lower }}</td>
-                                                        <td>$<input type="number" name="bullet-price" value="{{ p.getBulletFactoryDetails.getPriceEachBullet }}"/><input type="submit" name="change-bullet-price" value="{{ langs.EDIT }}"/></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.PRODUCTION }}"/> {{ langs.PRODUCTION }}</td>
-                                                        <td><select name="production" data-id="{{ p.getPossessDetails.getId }}">{% for production, costs in productionCosts %}<option value="{{ production }}"{% if p.getBulletFactoryDetails.getProduction == production %} selected="selected"{% endif %}>{{ production|valueFormat }} {{ langs.BULLETS|lower }} {{ costs|moneyFormat }}</option>{% endfor %}</select></td>
-                                                    </tr>
-                                                {% endif %}
-                                                {% if p.getId == 2 %} {# RED LIGHT DISTRICT #}
-                                                    <tr>
-                                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building.png" class="icon" alt="{{ langs.WINDOWS }}"/> {{ langs.WINDOWS }}</td>
-                                                        <td>{{ p.getRedLightDistrictDetails.getWindows|valueFormat }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/building_add.png" class="icon" alt="{{ langs.BUY_WINDOWS }}"/> {{ langs.BUY_WINDOWS|capitalize }}</td>
-                                                        <td><input type="submit" name="buy-windows" value="10,000 - $1,000,000" /></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.PRICE_EACH_WINDOW }}"/> {{ langs.PRICE_EACH_WINDOW }}</td>
-                                                        <td>$<input type="number" name="window-price" value="{{ p.getRedLightDistrictDetails.getPriceEachWindow }}"/><input type="submit" name="change-window-price" value="{{ langs.EDIT }}"/></td>
-                                                    </tr>
-                                                {% endif %}
-                                                {% if p.getId == 12 %} {# TELECOM BUSINESS #}
-                                                    <tr>
-                                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.AMOUNT }}"/> {{ langs.MASS_MESSAGE }} {{ langs.AMOUNT }}</td>
-                                                        <td><input type="number" name="stake" value="{{ p.getPossessDetails.getStake }}" /><input type="submit" name="change-stake" value="{{ langs.EDIT }}"/></td>
-                                                    </tr>
-                                                {% endif %}
-                                                {% if p.getId >= 13 and p.getId <= 18 and p.getId != 18 %} {# CASINOS BUT !LOTTERY #}
-                                                    <tr>
-                                                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/money.png" class="icon" alt="{{ langs.MAXIMUM_STAKE }}"/> {{ langs.MAXIMUM_STAKE }}</td>
-                                                        <td><input type="number" name="stake" value="{{ p.getPossessDetails.getStake }}" /><input type="submit" name="change-stake" value="{{ langs.EDIT }}"/></td>
-                                                    </tr>
-                                                {% endif %}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </form>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                            </div>
+                        </form>
+                    {% endfor %}
+                </div>
             {% endif %}
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default button possession-back-btn{% if id is not empty %} active{% endif %}">{{ langs.TO }} {{ langs.OVERVIEW|lower }}</button>&nbsp;
-        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script type="text/javascript">
-if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
-    var x = document.createElement('script');
-    x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
-    document.getElementsByTagName("body")[0].appendChild(x);
-}
-$('select[name=friend]').on('change', function() {
-    $('input[name=username]').val(this.value);
-});
-$(document).on( "change", "select[name=production]", function() {
-    if($("#ajaxLoader").length)
-    {
-        $('#ajaxLoader').show();
+        {% endif %}
+    </div>
+{% endblock content %}
+
+{% block footer %}
+    <button type="button" class="btn btn-default button possession-back-btn{% if id is not empty %} active{% endif %}">{{ langs.TO }} {{ langs.OVERVIEW|lower }}</button>&nbsp;
+    <button type="button" class="btn btn-default button" data-bs-dismiss="modal">{{ langs.CLOSE }}</button>
+{% endblock footer %}
+
+{% block js %}
+    if (!$("script[src='{{ staticRoot }}/web/public/js/ajax-form.js']").length){
+        var x = document.createElement('script');
+        x.src = '{{ staticRoot }}/web/public/js/ajax-form.js';
+        document.getElementsByTagName("body")[0].appendChild(x);
     }
-    var val = $("select[name=production] option:selected").val();
-    $.ajax(
-    {
-    	url : "{{ routing.getAjaxRouteByRouteName('interact-possession') }}",
-    	type: "POST",
-    	data : {id: $(this).attr("data-id"), 'security-token': "{{ securityToken }}", produce: val},
-    	success:function(data, textStatus, jqXHR) 
-    	{
- 	      if($("#ajaxLoader" ).length)
-          {
-            $('#ajaxLoader').hide();
-          }
-          $("#interactPossessionResponse").html(data)
-    	}
+    $('select[name=friend]').on('change', function() {
+        $('input[name=username]').val(this.value);
     });
-});
-$(document).ready(function(){
-    if($('#modal').hasClass('in') == false){
-        $("#triggerModal").click();
-        $("#triggerModal").remove();
-    }
-    $('#modal').on('hidden.bs.modal', function () {
-        $("#openTab").empty();
+    $(document).on( "change", "select[name=production]", function() {
+        if($("#ajaxLoader").length)
+        {
+            $('#ajaxLoader').show();
+        }
+        var val = $("select[name=production] option:selected").val();
+        $.ajax(
+        {
+        	url : "{{ routing.getAjaxRouteByRouteName('interact-possession') }}",
+        	type: "POST",
+        	data : {id: $(this).attr("data-id"), 'security-token': "{{ securityToken }}", produce: val},
+        	success:function(data, textStatus, jqXHR) 
+        	{
+     	      if($("#ajaxLoader" ).length)
+              {
+                $('#ajaxLoader').hide();
+              }
+              $("#interactPossessionResponse").html(data)
+        	}
+        });
     });
-    
-    $('.manage').click(function(e){
-        $("#possessions-container > .possessions").slideUp(250);
-        $("#possessions-container > .possession-management ."+$(this).attr('rel')).slideDown(0);
-        $("#possessions-container > .possession-management").slideDown(250);
-        $(".possession-back-btn").addClass('active');
-        e.preventDefault();
+    $(document).ready(function(){
+        if($('#modal').hasClass('in') == false){
+            $("#triggerModal").click();
+            $("#triggerModal").remove();
+        }
+        $('#modal').on('hidden.bs.modal', function () {
+            $("#openTab").empty();
+        });
+        
+        $('.manage').click(function(e){
+            $("#possessions-container > .possessions").slideUp(250);
+            $("#possessions-container > .possession-management ."+$(this).attr('rel')).slideDown(0);
+            $("#possessions-container > .possession-management").slideDown(250);
+            $(".possession-back-btn").addClass('active');
+            e.preventDefault();
+        });
+        $('.possession-back-btn').click(function(e){
+            $(".possession-management").slideUp(250);
+            {% for p in possessions %}
+                $(".possession-management .possession-{{ p.getPossessDetails.getId }}-manage").slideUp(250);
+            {% endfor %}
+            $("#possessions-container > .possessions").slideDown(250);
+            $(".possession-back-btn").removeClass('active');
+            $("#interactPossessionResponse").html('');
+            e.preventDefault();
+        });
     });
-    $('.possession-back-btn').click(function(e){
-        $(".possession-management").slideUp(250);
-        {% for p in possessions %}
-            $(".possession-management .possession-{{ p.getPossessDetails.getId }}-manage").slideUp(250);
-        {% endfor %}
-        $("#possessions-container > .possessions").slideDown(250);
-        $(".possession-back-btn").removeClass('active');
-        $("#interactPossessionResponse").html('');
-        e.preventDefault();
-    });
-});
-</script>
+{% endblock js %}

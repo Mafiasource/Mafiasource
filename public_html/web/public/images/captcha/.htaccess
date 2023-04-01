@@ -22,13 +22,12 @@
 # Captcha, only directory in our resources that requires the execution of a .php file
 # Hard code the file name for increased security.
 
-Order Allow,Deny
-Deny from all
+Require all denied
 ## Previous allowed files (/images/.htaccess) will be denied in order to allow new filesstack. (Likely not necessary with above deny all)
 <FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]|[Gg][Zz]|[Pp][Dd][Ff])$">
-    Deny from all
+    Require all denied
 </FilesMatch>
 # Only the following file extensionis allowed from here on..
 <FilesMatch "\.([Pp][Hh][Pp])$">
-    Allow from all
+    Require all granted
 </FilesMatch>

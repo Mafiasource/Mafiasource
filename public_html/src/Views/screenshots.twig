@@ -14,10 +14,11 @@
  
 {% block content %}
     <h1>{{ PAGE_TITLE|replace({' - Mafiasource': ''}) }}</h1>
-    <div id="carouselIndicators" class="carousel slide" data-ride="carousel">
+    
+    <div id="carouselIndicators" class="carousel slide" data-bs-ride="carousel">
       <ol class="carousel-indicators">
         {% for s in screenshots %}
-            <li data-target="#carouselIndicators" data-slide-to="{{ loop.index0 }}"{% if loop.first %} class="active"{% endif %}></li>
+            <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="{{ loop.index0 }}"{% if loop.first %} class="active"{% endif %}></button>
         {% endfor %}
       </ol>
       <div class="carousel-inner">
@@ -30,14 +31,14 @@
             </div>
         {% endfor %}
       </div>
-      <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicators" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
+        <span class="visually-hidden">Next</span>
+      </button>
     </div>
     <div class="push"></div>
 {% endblock content %}

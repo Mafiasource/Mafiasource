@@ -50,13 +50,12 @@ RewriteRule .* - [F]
 #RewriteRule \.(jpe?g?|png|gif|ico|pdf|flv|swf|gz)$ - [NC,F]
  
 ## Only the following file extensions are allowed from here on..
-Order Allow,Deny
-Deny from all
+Require all denied
 <FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]|[Cc][Ss][Ss]|[Jj][Ss]|[Pp][Hh][Pp]|[Gg][Zz]|[Pp][Dd][Ff]|[Ww][Oo][Ff][Ff]|[Ww][Oo][Ff][Ff]2|[Mm][Aa][Pp]|[Tt][Tt][Ff])$">
-    Allow from all
+    Require all granted
 </FilesMatch>
  
 ## Only allow GET, POST, OPTIONS HTTP methods
 <LimitExcept GET POST OPTIONS> 
-    Require all denied 
+    Require all denied
 </LimitExcept>

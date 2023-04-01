@@ -21,9 +21,6 @@ form.ajaxForm[action='/game/possession/interact']:not(form.ajaxForm[data-respons
 {% block javascripts %}
 <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
 <script type="text/javascript">
-    $('.carousel').carousel({
-      interval: false//1000 * 10
-    });
     $( document ).on( "change", "select[name=cityID]", function() {
         if($("#ajaxLoader").length)
         {

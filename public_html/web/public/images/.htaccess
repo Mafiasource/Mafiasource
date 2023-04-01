@@ -24,13 +24,12 @@
 
 ## Captcha sub directory also has it's own .htaccess to enable the viewing of only .php extensions in that directory.
 
-Order Allow,Deny
-Deny from all
+Require all denied
 ## Previous allowed files (/public/.htaccess) will be denied in order to allow new filesstack. (Likely not necessary with above deny all)
 <FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]|[Cc][Ss][Ss]|[Jj][Ss]|[Pp][Hh][Pp]|[Gg][Zz]|[Pp][Dd][Ff]|[Ww][Oo][Ff][Ff]|[Ww][Oo][Ff][Ff]2||[Tt][Tt][Ff])$">
-    Deny from all
+    Require all denied
 </FilesMatch>
 ## Only the following file extensions are allowed from here on..
 <FilesMatch "\.([Jj][Pp][Ee]?[Gg]?|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]|[Gg][Zz]|[Pp][Dd][Ff]|[Ii][Cc][Oo]|[Xx][Mm][Ll]|[Jj][Ss][Oo][Nn])$">
-    Allow from all
+    Require all granted
 </FilesMatch>

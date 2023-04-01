@@ -1,6 +1,8 @@
+{% extends "/app/Resources/Views/modal.twig" %}
+
 {% import "app/Resources/Views/macros/percent.bar.macro.twig" as percentBar %}
 
-<style type="text/css">
+{% block css %}
     div#vehicles-container > div.vehicles > div.row.even, div#vehicles-container > div.vehicles > div.row.odd {background-color: #e2e2e2 !important;color: #464646;padding: 5px;box-sizing: border-box;}
     div#vehicles-container > div.vehicles > div.row.odd {background-color: #ececec !important;}
     div#vehicles-container > div.vehicles > div.row:first-child {border-radius:5px 5px 0px 0px;}
@@ -20,116 +22,114 @@
     .vehicle-back-btn {display:none;}
     .vehicle-back-btn.active {display:inline-block;}
     #vehicles-container select[name=friend] {max-width:75px;}
-</style>
-<a href="#" id="triggerModal" data-toggle="modal" data-target="#modal"></a>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{ langs.TUNE }} in {{ langs.THE|lower }} garage {{ langs.OF|lower }} {{ userData.getState }}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        <div id="vehicles-container" class="content-container">
-          <div class="vehicles">
-            {% for v in vehicles %}
-            <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}">
-              <div class="c-75 column no-border">
-                <img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="{{ langs.VEHICLE }}" /> {{ v.vehicle.getName }}
-              </div>
-              <div class="c-25 column no-border">
-                <div class="right">
-                  <button type="button" class="btn btn-default button manage" rel="vehicle-{{ v.getId }}-manage">{{ langs.TUNE }}</button>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
+{% endblock css %}
+
+{% block size %}modal-xl{% endblock size %}
+
+{% block title %}
+    <h4 class="modal-title">{{ langs.TUNE }} in {{ langs.THE|lower }} garage {{ langs.OF|lower }} {{ userData.getState }}</h4>
+{% endblock title %}
+
+{% block content %}
+    <div id="vehicles-container" class="content-container">
+      <div class="vehicles">
+        {% for v in vehicles %}
+        <div class="row cols cf {{ cycle(['odd', 'even'], loop.index0) }}">
+          <div class="c-75 column no-border">
+            <img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="{{ langs.VEHICLE }}" /> {{ v.vehicle.getName }}
           </div>
-          <div class="vehicle-management">
-            {% for v in vehicles %}
-                <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('garage-interact-vehicle') }}" method="POST" data-response="#tuneVehicleResponse_{{ v.getId }}">
-                  <input type="hidden" name="action" value="tune"/>
-                  <input type="hidden" name="id" value="{{ v.getId }}"/>
-                  <input type="hidden" name="securityToken" value="{{ securityToken }}"/>
-                  <div class="vehicle-{{ v.getId }}-manage">
-                    <div class="table-reponsive">
-                      <table class="table table-sm table-dark table-bordered">
-                        <thead>
-                          <tr>
-                            <th scope="col" class="center" colspan="2">{% if lang == 'nl' %}{{ langs.VEHICLE }} {{ langs.TUNE }}{% else %}{{ langs.TUNE }} {{ langs.VEHICLE }}{% endif %}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="{{ langs.VEHICLE }}"/> {{ langs.VEHICLE }}</td>
-                            <td>{{ v.vehicle.getName }}</td>
-                          </tr>
-                          <tr>
-                            <td><img src="{{ staticRoot }}/foto/web/public/images/icons/car_add.png" class="icon" alt="{{ langs.HORSEPOWER }}"/> <small>{{ langs.HORSEPOWER }}</small></td>
-                            <td><span id="horsepower-{{ v.getId }}">{{ v.vehicle.getHorsepower }}</span></span><span id="horsepower-{{ v.getId }}Change"></span> {{ langs.HP|lower }}</td>
-                          </tr>
-                          <tr>
-                            <td><img src="{{ staticRoot }}/foto/web/public/images/icons/lightning.png" class="icon" alt="{{ langs.TOPSPEED }}"/> <small>{{ langs.TOPSPEED }}</small></td>
-                            <td><span id="topspeed-{{ v.getId }}">{{ v.vehicle.getTopspeed }}</span><span id="topspeed-{{ v.getId }}Change"></span> mph</td>
-                          </tr>
-                          <tr>
-                            <td><img src="{{ staticRoot }}/foto/web/public/images/icons/stats_curve.png" class="icon" alt="{{ langs.ACCELERATION }}"/> <small>{{ langs.ACCELERATION }}</small></td>
-                            <td><span id="accelerationPercent-{{v.getId }}">{{ percentBar.create(v.vehicle.getAcceleration, "bg-info") }}</span></td>
-                          </tr>
-                          <tr>
-                            <td><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.CONTROL }}"/> <small>{{ langs.CONTROL }}</small></td>
-                            <td><span id="controlPercent-{{v.getId }}">{{ percentBar.create(v.vehicle.getControl, "bg-info") }}</span></td>
-                          </tr>
-                          <tr>
-                            <td><img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" class="icon" alt="{{ langs.BREAKING }}"/> <small>{{ langs.BREAKING }}</small></td>
-                            <td><span id="breakingPercent-{{v.getId }}">{{ percentBar.create(v.vehicle.getBreaking, "bg-info") }}</span></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <br class="clear"/>
-                    <div id="tuneVehicleResponse_{{ v.getId }}">
-                        {% include "src/Views/game/Ajax/garage.tune.shop.twig" %}
-                    </div>
-                  </div>
-                </form>
-            {% endfor %}
+          <div class="c-25 column no-border">
+            <div class="right">
+              <button type="button" class="btn btn-default button manage" rel="vehicle-{{ v.getId }}-manage">{{ langs.TUNE }}</button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default button vehicle-back-btn{% if id is not empty %} active{% endif %}">{{ langs.TO }} {{ langs.OVERVIEW|lower }}</button>&nbsp;
-        <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<script type="text/javascript">
-$(document).ready(function(){
-    if($('#modal').hasClass('in') == false){
-        $("#triggerModal").click();
-        $("#triggerModal").remove();
-    }
-    $('#modal').on('hidden.bs.modal', function () {
-        $("#openTab").empty();
-    });
-    
-    $('.manage').click(function(e){
-        $("#vehicles-container > .vehicles").slideUp(250);
-        $("#vehicles-container > .vehicle-management ."+$(this).attr('rel')).slideDown(0);
-        $("#vehicles-container > .vehicle-management").slideDown(250);
-        $(".vehicle-back-btn").addClass('active');
-        e.preventDefault();
-    });
-    $('.vehicle-back-btn').click(function(e){
-        $(".vehicle-management").slideUp(250);
-        {% for v in vehicles %}
-            $(".vehicle-management .vehicle-{{ v.getId }}-manage").slideUp(250);
         {% endfor %}
-        $("#vehicles-container > .vehicles").slideDown(250);
-        $(".vehicle-back-btn").removeClass('active');
-        $("#interactVehicleResponse").html('');
-        e.preventDefault();
+      </div>
+      <div class="vehicle-management">
+        {% for v in vehicles %}
+            <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('garage-interact-vehicle') }}" method="POST" data-response="#tuneVehicleResponse_{{ v.getId }}">
+              <input type="hidden" name="action" value="tune"/>
+              <input type="hidden" name="id" value="{{ v.getId }}"/>
+              <input type="hidden" name="securityToken" value="{{ securityToken }}"/>
+              <div class="vehicle-{{ v.getId }}-manage">
+                <div class="table-reponsive">
+                  <table class="table table-sm table-dark table-bordered">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="center" colspan="2">{% if lang == 'nl' %}{{ langs.VEHICLE }} {{ langs.TUNE }}{% else %}{{ langs.TUNE }} {{ langs.VEHICLE }}{% endif %}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="{{ langs.VEHICLE }}"/> {{ langs.VEHICLE }}</td>
+                        <td>{{ v.vehicle.getName }}</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/car_add.png" class="icon" alt="{{ langs.HORSEPOWER }}"/> <small>{{ langs.HORSEPOWER }}</small></td>
+                        <td><span id="horsepower-{{ v.getId }}">{{ v.vehicle.getHorsepower }}</span></span><span id="horsepower-{{ v.getId }}Change"></span> {{ langs.HP|lower }}</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/lightning.png" class="icon" alt="{{ langs.TOPSPEED }}"/> <small>{{ langs.TOPSPEED }}</small></td>
+                        <td><span id="topspeed-{{ v.getId }}">{{ v.vehicle.getTopspeed }}</span><span id="topspeed-{{ v.getId }}Change"></span> mph</td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/stats_curve.png" class="icon" alt="{{ langs.ACCELERATION }}"/> <small>{{ langs.ACCELERATION }}</small></td>
+                        <td><span id="accelerationPercent-{{v.getId }}">{{ percentBar.create(v.vehicle.getAcceleration, "bg-info") }}</span></td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/cog.png" class="icon" alt="{{ langs.CONTROL }}"/> <small>{{ langs.CONTROL }}</small></td>
+                        <td><span id="controlPercent-{{v.getId }}">{{ percentBar.create(v.vehicle.getControl, "bg-info") }}</span></td>
+                      </tr>
+                      <tr>
+                        <td><img src="{{ staticRoot }}/foto/web/public/images/icons/anchor.png" class="icon" alt="{{ langs.BREAKING }}"/> <small>{{ langs.BREAKING }}</small></td>
+                        <td><span id="breakingPercent-{{v.getId }}">{{ percentBar.create(v.vehicle.getBreaking, "bg-info") }}</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br class="clear"/>
+                <div id="tuneVehicleResponse_{{ v.getId }}">
+                    {% include "src/Views/game/Ajax/garage.tune.shop.twig" %}
+                </div>
+              </div>
+            </form>
+        {% endfor %}
+      </div>
+    </div>
+{% endblock content %}
+
+{% block footer %}
+    <button type="button" class="btn btn-default button vehicle-back-btn{% if id is not empty %} active{% endif %}">{{ langs.TO }} {{ langs.OVERVIEW|lower }}</button>&nbsp;
+    <button type="button" class="btn btn-default button" data-dismiss="modal">{{ langs.CLOSE }}</button>
+{% endblock footer %}
+
+{% block js %}
+    $(document).ready(function(){
+        if($('#modal').hasClass('in') == false){
+            $("#triggerModal").click();
+            $("#triggerModal").remove();
+        }
+        $('#modal').on('hidden.bs.modal', function () {
+            $("#openTab").empty();
+        });
+        
+        $('.manage').click(function(e){
+            $("#vehicles-container > .vehicles").slideUp(250);
+            $("#vehicles-container > .vehicle-management ."+$(this).attr('rel')).slideDown(0);
+            $("#vehicles-container > .vehicle-management").slideDown(250);
+            $(".vehicle-back-btn").addClass('active');
+            e.preventDefault();
+        });
+        $('.vehicle-back-btn').click(function(e){
+            $(".vehicle-management").slideUp(250);
+            {% for v in vehicles %}
+                $(".vehicle-management .vehicle-{{ v.getId }}-manage").slideUp(250);
+            {% endfor %}
+            $("#vehicles-container > .vehicles").slideDown(250);
+            $(".vehicle-back-btn").removeClass('active');
+            $("#interactVehicleResponse").html('');
+            e.preventDefault();
+        });
     });
-});
-</script>
+{% endblock js %}

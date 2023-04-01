@@ -27,11 +27,11 @@
 <div class="top">{{ langs.CITY_POSSESSIONS }}</div>
 <div class="content-container">
     <!-- bootstrap carousel -->
-    <div id="carousel-cityPossessions" class="carousel slide" data-ride="carousel">
+    <div id="carousel-cityPossessions" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             {% for item in possessions.cityPossessions %}
-                <li data-target="#carousel-cityPossessions" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
+                <li data-bs-target="#carousel-cityPossessions" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
             {% endfor %}
         </ol>
         <!-- Wrapper for slides -->
@@ -85,11 +85,11 @@
             {% endfor %}
         </div>
         <!-- Controls left/right -->
-        <a class="left carousel-control-prev" href="#carousel-cityPossessions" role="button" data-slide="prev">
+        <a class="left carousel-control-prev" href="#carousel-cityPossessions" role="button" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="sr-only">&nbsp;</span>
         </a>
-        <a class="right carousel-control-next" href="#carousel-cityPossessions" role="button" data-slide="next">
+        <a class="right carousel-control-next" href="#carousel-cityPossessions" role="button" data-bs-slide="next">
           <span class="sr-only">&nbsp;</span>
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
         </a>
@@ -100,11 +100,11 @@
 <div class="top">{{ langs.STATE_POSSESSIONS }}</div>
 <div class="content-container">
     <!-- bootstrap carousel -->
-    <div id="carousel-statePossessions" class="carousel slide" data-ride="carousel">
+    <div id="carousel-statePossessions" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             {% for item in possessions.statePossessions %}
-                <li data-target="#carousel-statePossessions" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
+                <li data-bs-target="#carousel-statePossessions" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
             {% endfor %}
         </ol>
         <!-- Wrapper for slides -->
@@ -158,11 +158,11 @@
             {% endfor %}
         </div>
         <!-- Controls left/right -->
-        <a class="left carousel-control-prev" href="#carousel-statePossessions" role="button" data-slide="prev">
+        <a class="left carousel-control-prev" href="#carousel-statePossessions" role="button" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="sr-only">&nbsp;</span>
         </a>
-        <a class="right carousel-control-next" href="#carousel-statePossessions" role="button" data-slide="next">
+        <a class="right carousel-control-next" href="#carousel-statePossessions" role="button" data-bs-slide="next">
           <span class="sr-only">&nbsp;</span>
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
         </a>
@@ -173,11 +173,11 @@
 <div class="top">{{ langs.COUNTRY_POSSESSIONS }}</div>
 <div class="content-container">
     <!-- bootstrap carousel -->
-    <div id="carousel-positionlessPossessions" class="carousel slide" data-ride="carousel">
+    <div id="carousel-positionlessPossessions" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             {% for item in possessions.positionlessPossessions %}
-                <li data-target="#carousel-positionlessPossessions" data-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
+                <li data-bs-target="#carousel-positionlessPossessions" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}"></li>
             {% endfor %}
         </ol>
         <!-- Wrapper for slides -->
@@ -229,11 +229,11 @@
             {% endfor %}
         </div>
         <!-- Controls left/right -->
-        <a class="left carousel-control-prev" href="#carousel-positionlessPossessions" role="button" data-slide="prev">
+        <a class="left carousel-control-prev" href="#carousel-positionlessPossessions" role="button" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="sr-only">&nbsp;</span>
         </a>
-        <a class="right carousel-control-next" href="#carousel-positionlessPossessions" role="button" data-slide="next">
+        <a class="right carousel-control-next" href="#carousel-positionlessPossessions" role="button" data-bs-slide="next">
           <span class="sr-only">&nbsp;</span>
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
         </a>
