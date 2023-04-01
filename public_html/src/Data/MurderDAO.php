@@ -58,11 +58,17 @@ class MurderDAO extends DBConfig
                     $ids = $familyData->getImplodedFamilyMemberIds($fid);
                     
                     $row = $this->con->getDataSR("
-                        SELECT COUNT(`id`) AS `total` FROM `murder_log` WHERE (`attackerID` IN (".$ids.") OR `victimID` IN (".$ids.")) AND `active`='1' AND `deleted`='0' LIMIT 1
+                        SELECT COUNT(`id`) AS `total`,
+                            GREATEST(
+                                (SELECT COUNT(t1.`id`) AS `total` FROM `murder_log` AS `t1` WHERE `attackerID` IN (".$ids.") AND `active`='1' AND `deleted`='0' LIMIT 1),
+                                (SELECT COUNT(t2.`id`) AS `total` FROM `murder_log` AS `t2` WHERE `victimID` IN (".$ids.") AND `active`='1' AND `deleted`='0' LIMIT 1)
+                            ) AS `maxTotal`
+                        FROM `murder_log` WHERE (`attackerID` IN (".$ids.") OR `victimID` IN (".$ids.")) AND `active`='1' AND `deleted`='0' LIMIT 1
                     ");
                     break;
             }
         }
+        if(isset($row['maxTotal'])) return $row['maxTotal'];
         if(isset($row['total'])) return $row['total'];
     }
     

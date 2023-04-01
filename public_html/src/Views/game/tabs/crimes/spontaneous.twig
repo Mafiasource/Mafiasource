@@ -11,7 +11,7 @@
             <div id="crimes" class="row cols cf">
                 <div class="c-70 column no-padding">
                     
-                    <div id="carousel-crimes" class="carousel slide" data-ride="carousel">
+                    <div id="carousel-crimes" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
                       <ol class="carousel-indicators">
                         {% for item in crimesPage.crimes %}
                             <li data-bs-target="#carousel-crimes" data-bs-slide-to="{{ loop.index0 }}" class="{% if item.active == true %}active{% endif %}"></li>

@@ -24,13 +24,11 @@
 
 ## Secure some critical file extensions from being viewed
 <FilesMatch "\.(htpasswd|htaccess|ftpquota|ini|phps|fla|psd|log|sh|txt|twig)$">
-	Order Allow,Deny
-	Deny from all
+    Require all denied
 </FilesMatch>
 ## Only robots with a .txt extension should be viewable
 <FilesMatch "robots.txt">
-	Order Allow,Deny
-	Allow from all
+    Require all denied
 </FilesMatch>
 
 ## Disable server signature
@@ -40,17 +38,17 @@ ServerSignature Off
 AddDefaultCharset UTF-8
 
 ## php_values
-<ifModule mod_php4.c>
-    php_value zlib.output_compression 16386
-</ifModule>
-php_value upload_max_filesize 8M
-php_value post_max_size 16M
-php_value max_execution_time 200
-php_value max_input_time 200
-php_value allow_url_fopen Off
-php_value enable_dl Off
+#<ifModule mod_php4.c>
+#    php_value zlib.output_compression 16386
+#</ifModule>
+#php_value upload_max_filesize 8M
+#php_value post_max_size 16M
+#php_value max_execution_time 200
+#php_value max_input_time 200
+#php_value allow_url_fopen Off
+#php_value enable_dl Off
 #php_value SMTP mail.mafiasource.nl
-php_value smtp_port 587
+#php_value smtp_port 587
 #php_value sendmail_from no-reply@mafiasource.nl
 #php_value auth_username no-reply@mafiasource.nl
 #php_value auth_password noreplypwd

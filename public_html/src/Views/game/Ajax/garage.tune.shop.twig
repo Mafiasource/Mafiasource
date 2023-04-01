@@ -4,7 +4,7 @@
     </div>
 {% endif %}
 
-<div id="carousel-tune-shop-{{ v.getId }}" class="carousel slide" data-ride="carousel">
+<div id="carousel-tune-shop-{{ v.getId }}" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
   {# Indicators / Active always tires #}
   <ol class="carousel-indicators">
     {% for key, item in tuneShop %}
@@ -14,7 +14,7 @@
         {% elseif activeCarousel == key %}
             {% set carouselActive = true %}
         {% endif %}
-        <li data-target="#carousel-tune-shop-{{ v.getId }}" data-slide-to="{{ loop.index0 }}" class="{% if carouselActive %}active{% endif %}"></li>
+        <li data-bs-target="#carousel-tune-shop-{{ v.getId }}" data-bs-slide-to="{{ loop.index0 }}" class="{% if carouselActive %}active{% endif %}"></li>
     {% endfor %}
   </ol>
   {# Wrapper for slides #}

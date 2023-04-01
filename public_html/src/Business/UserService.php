@@ -100,9 +100,6 @@ class UserService
 
     public function validateLogin($post, $captcha = false)
     {
-        if(!in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS))
-            return "In development. Visit <a href=https://www.mafiasource.nl><strong>www.mafiasource.nl</strong></a> instead.";
-        
         global $security;
         global $language;
         global $langs;
@@ -151,9 +148,6 @@ class UserService
 
     public function validateRegister($post)
     {
-        if(!in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS))
-            return "In development. Visit <a href=https://www.mafiasource.nl><strong>www.mafiasource.nl</strong></a> instead.";
-        
         global $security;
         global $language;
         global $langs;
@@ -283,9 +277,6 @@ class UserService
 
     public function validateRecoverPassword($post)
     {
-        if(!in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS))
-            return "In development. Visit <a href=https://www.mafiasource.nl><strong>www.mafiasource.nl</strong></a> instead.";
-        
         global $security;
         global $language;
         global $langs;

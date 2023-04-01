@@ -92,7 +92,9 @@
     <link rel="preload" href="{{ staticRoot }}/web/public/images/bg.webp" as="image" />
     <link rel="preload" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/css/bootstrap.min.css" as="style" />
     <link rel="preload" href="{{ staticRoot }}/web/public/css/homepage.min.css" as="style" />
-    <link rel="preload" href="https://fonts.googleapis.com/css?family=Sirin+Stencil%7CQuicksand&display=swap" as="style" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&family=Quicksand:wght@300;400;500;600;700&display=swap" as="style" />
     <link rel="preload" href="{{ staticRoot }}/web/vendor/components/jquery/jquery.min.js" as="script" />
     {# <link rel="preload" href="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js" as="script" /> #}
     {% if routing.getRouteName() == 'register' %}
@@ -103,7 +105,7 @@
     <link rel="preload" href="{{ staticRoot }}/web/public/js/outgame.js" as="script" />
     <link rel="stylesheet" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="{{ staticRoot }}/web/public/css/homepage.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sirin+Stencil%7CQuicksand&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&family=Quicksand:wght@300;400;500;600;700&display=swap" />
     <style type="text/css">
         {% for donatorColor in statusDonatorColors.donatorColors %}
             .{{ donatorColor.getDonator|seoUrl }} {color:{{ donatorColor.getColorCode }};}

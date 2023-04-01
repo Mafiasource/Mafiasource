@@ -3,7 +3,7 @@
     {% endblock css %}
 </style>
 <button type="button" id="triggerModal" data-bs-toggle="modal" data-bs-target="#modal" data-toggle="modal" data-target="#modal">&nbsp;</button>
-<div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel">
+<div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalLabel">
   <div class="modal-dialog {% block size %}modal-xl{% endblock size %}" role="document">
     <div class="modal-content">
       <div class="modal-header">

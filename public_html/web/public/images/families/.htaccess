@@ -25,6 +25,5 @@ Options -ExecCGI -Indexes
 
 # Block double extensions from being uploaded or accessed, including htshells
 <FilesMatch ".*\.([^.]+)\.([^.]+)$">
-    Order Deny,Allow
-    Deny from all
+    Require all denied
 </FilesMatch>

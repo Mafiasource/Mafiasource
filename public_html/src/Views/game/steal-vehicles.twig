@@ -28,7 +28,7 @@
         <div id="vehicles" class="row cols cf">
             <div class="c-70 column no-padding"> 
                 <!-- bootstrap carousel -->
-                <div id="carousel-sv" class="carousel slide" data-ride="carousel">
+                <div id="carousel-sv" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
                     <!-- Indicators / Active always latest/hardest crime -->
                     <ol class="carousel-indicators">
                         {% for item in svPage.svehicles %}
@@ -83,9 +83,6 @@
 {% block javascripts %}
 <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
 <script type="text/javascript">
-$('.carousel').carousel({
-  interval: false//1000 * 10
-});
 $('.execbutton').on("click", function(){
     $("#stealVehicleResponse").empty();
 });
