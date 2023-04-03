@@ -214,31 +214,31 @@ class InstallService
             {
                 if(PROTOCOL === "https://")
                 {
-                    $htaccessReplacesMap[92] = '        RewriteCond %{HTTPS} off';
-                    $htaccessReplacesMap[93] = '        RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]';
-                    $htaccessReplacesMap[115] = '        RewriteCond %{REQUEST_URI} /favicon.ico [NC]';
-                    $htaccessReplacesMap[116] = '        RewriteRule (.*) https://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]';
+                    $htaccessReplacesMap[90] = '        RewriteCond %{HTTPS} off';
+                    $htaccessReplacesMap[91] = '        RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]';
+                    $htaccessReplacesMap[113] = '        RewriteCond %{REQUEST_URI} /favicon.ico [NC]';
+                    $htaccessReplacesMap[114] = '        RewriteRule (.*) https://%{HTTP_HOST}/web/public/images/favicon.ico [R=301,L]';
                 }
                 if(strpos($domain, "www.") === false)
                 {
                     $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       BASE_DOMAIN);     // Application runs without www.';
-                    $htaccessReplacesMap[95] = '    ## www to non www redirect';
-                    $htaccessReplacesMap[96] = '    #RewriteCond %{HTTPS}s ^on(s)|off [NC]';
-                    $htaccessReplacesMap[97] = '    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]';
-                    $htaccessReplacesMap[98] = '    RewriteRule ^(.*)$ http%{ENV:ADDSSL}://%1/$1 [R=301,L]';
+                    $htaccessReplacesMap[93] = '    ## www to non www redirect';
+                    $htaccessReplacesMap[94] = '    #RewriteCond %{HTTPS}s ^on(s)|off [NC]';
+                    $htaccessReplacesMap[95] = '    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]';
+                    $htaccessReplacesMap[96] = '    RewriteRule ^(.*)$ http%{ENV:ADDSSL}://%1/$1 [R=301,L]';
                 }
                 else
                 {
                     $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       "www.".BASE_DOMAIN);     // Application runs on www. variant';
-                    $htaccessReplacesMap[95] = '    ## Non www to www redirect';
-                    $htaccessReplacesMap[96] = '    RewriteCond %{HTTPS}s ^on(s)|off [NC]';
-                    $htaccessReplacesMap[97] = '    RewriteCond %{HTTP_HOST} !^(static|www)\.(.*)$ [NC]';
-                    $htaccessReplacesMap[98] = '    RewriteRule ^(.*)$ http%1://www.%{HTTP_HOST}/$1 [R=301,L]';
+                    $htaccessReplacesMap[93] = '    ## Non www to www redirect';
+                    $htaccessReplacesMap[94] = '    RewriteCond %{HTTPS}s ^on(s)|off [NC]';
+                    $htaccessReplacesMap[95] = '    RewriteCond %{HTTP_HOST} !^(static|www)\.(.*)$ [NC]';
+                    $htaccessReplacesMap[96] = '    RewriteRule ^(.*)$ http%1://www.%{HTTP_HOST}/$1 [R=301,L]';
                 }
                 if(strpos(PROTOCOL . $_SERVER['HTTP_HOST'], $replacedDomain) !== false)
                 {
                     $configReplacesMap[7] = 'define(\'BASE_DOMAIN\',      "' .  $replacedDomain . '");       // The primary domain';
-                    $htaccessReplacesMap[79] = '    RewriteCond %{HTTP_REFERER} !^' . PROTOCOL . '(www\.)?' . $replacedDomain . '/.*$ [NC]';
+                    $htaccessReplacesMap[77] = '    RewriteCond %{HTTP_REFERER} !^' . PROTOCOL . '(www\.)?' . $replacedDomain . '/.*$ [NC]';
                     $htaccessReplacesMap[142] = '    Header always set Content-Security-Policy "object-src \'none\'; script-src \'self\' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
                 }
             }
@@ -263,7 +263,7 @@ class InstallService
                 $credentialsReplacesMap[5] = 'define(\'DBPWD\', "' . $dbPwd . '");';
             
             if(!empty($email) && self::is_email($email))
-                $htaccessReplacesMap[60] = 'SetEnv SERVER_ADMIN ' . $email;
+                $htaccessReplacesMap[58] = 'SetEnv SERVER_ADMIN ' . $email;
             
             $findProtocol = PROTOCOL == "https://" ? "http://" : "https://";
             $replaceProtocol = PROTOCOL == "https://" ? "https://" : "http://";
