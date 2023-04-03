@@ -28,7 +28,7 @@
 </FilesMatch>
 ## Only robots with a .txt extension should be viewable
 <FilesMatch "robots.txt">
-    Require all denied
+    Require all granted
 </FilesMatch>
 
 ## Disable server signature
