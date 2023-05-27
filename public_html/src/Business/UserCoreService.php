@@ -22,7 +22,8 @@ class UserCoreService
             self::getIP(),
             FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE
         );
-        $this->ipValid = isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1' ? true : $this->ipValid;
+        $isLocalIP = $_SERVER['SERVER_ADDR'] === "::1" || $_SERVER['SERVER_ADDR'] === "127.0.0.1" ? TRUE : FALSE;
+        $this->ipValid = isset($_SERVER['SERVER_ADDR']) && $isLocalIP ? true : $this->ipValid;
         $this->dateFormat = $lang === 'en' ? "M j, g:i:s A" : $this->dateFormat; // PHP format
     }
 
