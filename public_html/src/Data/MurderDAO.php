@@ -282,6 +282,7 @@ class MurderDAO extends DBConfig
                     `weaponTraining`='0', `residence`='0', `residenceHistory`='', `power`='0', `cardio`='0', `luckybox`='0', `cCrimes`='0', `cWeaponTraining`='0',
                     `cGymTraining`='0', `cStealVehicles`='0', `cPimpWhores`='0', `cFamilyRaid`='0', `cFamilyCrimes`='0', `cBombardement`='0', `cTravelTime`='0'
                 WHERE `id`= :uid AND `statusID`<='7' AND `health`>='0' AND `active`='1' AND `deleted`='0' LIMIT 1;
+                DELETE FROM `hitlist` WHERE `userID`= :uid
             ", array(':uid' => $uid));
         }
     }

@@ -37,6 +37,7 @@ class HitlistService
         $prize = (int)round((int)$post['prize']);
         $anonymous = false;
         if(isset($_POST['anonymous'])) $anonymous = true;
+        $price = $anonymous ? $prize *= 1.3 : $prize;
         
         $userProfile = $userService->getUserProfile($post['username']);
         if(is_object($userProfile)) $userID = $userProfile->getId() ? $userProfile->getId() : FALSE;
@@ -54,7 +55,7 @@ class HitlistService
         {
             $error = $langs['CANT_DO_THAT_TRAVELLING'];
         }
-        if($userData->getCash() < $prize)
+        if($userData->getCash() < $price)
         {
             $error = $langs['NOT_ENOUGH_MONEY_CASH'];
         }
@@ -91,10 +92,6 @@ class HitlistService
         {
             global $route;
             $this->data->orderHitlistRecord($userID, $reason, $prize, $anonymous);
-            
-            $price = $prize;
-            if($anonymous !== false)
-                $price *= 1.3;
             
             $replaces = array(
                 array('part' => $userProfile->getUsername(), 'message' => $l['ORDER_HITLIST_RECORD_SUCCESS'], 'pattern' => '/{user}/'),
