@@ -21,3 +21,8 @@
     {% endif %}
     {{ alert.build('Info', 'alert-info', 'help', donateMsg) }}
 {% endblock content %}
+
+{% block footer %}
+    <button type="button" class="btn btn-default button" data-bs-dismiss="modal">{{ langs.CLOSE }}</button>
+    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+{% endblock footer %}

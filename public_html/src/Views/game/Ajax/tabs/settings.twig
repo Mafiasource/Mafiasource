@@ -69,7 +69,7 @@
             <hr />
             <form id="privateid-settings" class="account-settings" method="POST" action="{{ routing.getAjaxRouteByRouteName('save-settings') }}" data-response="#manage-settings"  autocomplete="off">
                 <input type="hidden" name="security-token" value="{{ securityToken }}"/>
-                <h4>PrivateID - Beta</h4>
+                <h4>PrivateID</h4>
                 <small>{{ langs.PRIVATEID_INFO|raw }}</small><br /><br />
                 {% if not pidActive %}
                     <input type="password" class="form-control" name="privateid_pass" placeholder="{{ langs.PASSWORD }}"/>&nbsp;

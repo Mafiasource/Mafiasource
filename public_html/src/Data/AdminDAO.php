@@ -397,6 +397,7 @@ class AdminDAO extends DBConfig
             if(isset($post['imageWidth'])) $imageWidth = $post['imageWidth'];
             if(isset($post['imageHeight'])) $imageHeight = $post['imageHeight'];
             include(DOC_ROOT . '/vendor/SimpleImage.php');
+            //$post = array_filter($post, fn($value) => !is_null($value) && $value !== '');
             foreach($post AS $key => $value)
             {
                 if(isset($files[$key]) && $files[$key]['error'] == UPLOAD_ERR_OK)
@@ -804,8 +805,8 @@ class AdminDAO extends DBConfig
             TRUNCATE TABLE `recover_password`;
             UPDATE `rld` SET `windows`='1', `priceEachWindow`='150';
             TRUNCATE TABLE `rld_whore`;
-            TRUNCATE TABLE `shoutbox_en`;
-            TRUNCATE TABLE `shoutbox_nl`;
+            -- TRUNCATE TABLE `shoutbox_en`;
+            -- TRUNCATE TABLE `shoutbox_nl`;
             TRUNCATE TABLE `smuggle_unit`;
             UPDATE `user`
               SET `restartDate`= :startDate, `isProtected`='1', `activeTime`='0', `referralProfits`='0', `warns`='0', `forumPosts`='0', `rankpoints`='0', `health`='100', `score`='0',
@@ -819,7 +820,7 @@ class AdminDAO extends DBConfig
                 `cHalvingTimes`='0', `cBribingPolice`='0',`cCrimes`='0', `cWeaponTraining`='0', `cGymTraining`='0', `cStealVehicles`='0', `cPimpWhores`='0',
                 `cFamilyRaid`='0', `cFamilyCrimes`='0', `cBombardement`='0', `cTravelTime`='0', `cPimpWhoresFor`='0';
             TRUNCATE TABLE `user_captcha`;
-            TRUNCATE TABLE `user_friend_block`;
+            -- TRUNCATE TABLE `user_friend_block`;
             TRUNCATE TABLE `user_garage`;
             TRUNCATE TABLE `user_mission_carjacker`;
             TRUNCATE TABLE `user_residence`;

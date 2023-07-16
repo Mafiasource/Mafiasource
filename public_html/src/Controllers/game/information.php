@@ -34,7 +34,7 @@ switch($route->getRouteName())
         $tab = "hall-of-fame";
         $round = "";
         if($route->getRouteName() == "information-hall-of-fame-round")
-            $round = (int) $route->requestGetParam(4, array('min' => 0, 'max' => 2)); // Increase max with total rounds
+            $round = (int) $route->requestGetParam(4, array('min' => 0, 'max' => 3)); // Increase max with total rounds
         
         $statistic = new StatisticService();
         $statistics = $statistic->getStatisticsPage($round);

@@ -41,7 +41,7 @@ class RedLightDistrictService
             $xpGained = (($hoesPimped * 100) / ($userLv * $hoesMax));
         }
         
-        if(strtotime("2023-01-02 14:00:00") < strtotime('now') && strtotime("2023-01-06 14:00:00") > strtotime('now'))
+        if(strtotime("2023-05-29 14:00:00") < strtotime('now') && strtotime("2023-06-05 14:00:00") > strtotime('now'))
             $xpGained *= 2;
         
         $newXp = $userXp+$xpGained;
