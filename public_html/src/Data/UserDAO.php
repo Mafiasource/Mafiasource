@@ -64,7 +64,7 @@ class UserDAO extends DBConfig
     public function checkEmail($email)
     { // Emails are encrypted, used in recoverPassword (see how we decrypt there) called through $userService->validateRecoverPassword
         global $security;
-        $email = $security->masterEncrypt($email);
+        $email = $security->masterEncrypt((string)strtolower($email));
         
         $saveDir = DOC_ROOT . "/app/Resources/masterCrypts/user/";
         $ourFileName = $saveDir . "emails.txt";
@@ -342,9 +342,9 @@ class UserDAO extends DBConfig
             $ourFileHandle = fopen($ourFileName, 'w');
             fwrite($ourFileHandle, $salt);
             fclose($ourFileHandle);
-            chmod($ourFileName, 0600);
+            //chmod($ourFileName, 0600);
             
-            $masterEncrypted = $security->masterEncrypt($email);
+            $masterEncrypted = $security->masterEncrypt((string)strtolower($email));
             
             $saveDir = DOC_ROOT . "/app/Resources/masterCrypts/user/";
             $ourFileName = $saveDir . "emails.txt";
@@ -356,7 +356,7 @@ class UserDAO extends DBConfig
             $ourFileHandle = fopen($ourFileName, 'w');
             fwrite($ourFileHandle, serialize($emails));
             fclose($ourFileHandle);
-            chmod($ourFileName, 0600);
+            //chmod($ourFileName, 0600);
         }
     }
     
@@ -574,7 +574,7 @@ class UserDAO extends DBConfig
                 DELETE FROM `change_email` WHERE `userID`= :uid
             ", array(':email' => $encrypted['encryption'], ':uid' => $changeEmailData->getId()));
             
-            $masterEncrypted = $security->masterEncrypt($changeEmailData->getEmail());
+            $masterEncrypted = $security->masterEncrypt((string)strtolower($changeEmailData->getEmail()));
             
             $saveDir = DOC_ROOT . "/app/Resources/masterCrypts/user/";
             $ourFileName = $saveDir . "emails.txt";
@@ -1125,8 +1125,9 @@ class UserDAO extends DBConfig
         {
             $statement = $this->dbh->prepare("
                 SELECT  u.`id`, u.`kills`, u.`deaths`, u.`headshots`, u.`honorPoints`, u.`whoresStreet`, u.`warns`, u.`weaponExperience`, u.`weaponTraining`, u.`power`, u.`cardio`,
-                    (SELECT COUNT(`id`) FROM `ground` WHERE `userID`= u.`id`) AS `ground`, u.`activeTime`, w.`name` AS `weapon`, p.`name` AS `protection`, a.`name` AS `airplane`,
-                    u.`bullets`, u.`restartDate`, u.`isProtected`, (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`
+                    u.`activeTime`, w.`name` AS `weapon`, p.`name` AS `protection`, a.`name` AS `airplane`, u.`bullets`, u.`restartDate`, u.`isProtected`,
+                    u.`cHalvingTimes`, u.`cBribingPolice`,
+                    (SELECT COUNT(`id`) FROM `ground` WHERE `userID`= u.`id`) AS `ground`, (SELECT SUM(`whores`) FROM `rld_whore` WHERE `userID`=u.`id`) AS `rld_whores`
                 FROM `user` AS u
                 LEFT JOIN `weapon` AS w
                 ON (u.`weapon`=w.`id`)
@@ -1168,6 +1169,8 @@ class UserDAO extends DBConfig
                 if($this->lang == "en" && $row['weapon'] == "Mes") $userObj->setWeapon("Knife");
                 $userObj->setProtection($row['protection']);
                 $userObj->setAirplane($row['airplane']);
+                $userObj->setCHalvingTimes($row['cHalvingTimes']);
+                $userObj->setCBribingPolice($row['cBribingPolice']);
                 
                 return $userObj;
             }

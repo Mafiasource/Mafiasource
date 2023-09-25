@@ -45,7 +45,7 @@ elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset(
     header('Location: ' . $route->getRoute(), TRUE, 301); // Redirect user to it's change pwd view with the correct key incase of errors
     exit(0);
 }
-elseif(isset($recoverPasswordData) && $route->requestGetParam(2) == "disable-privateid" || $reqPar3 == "disable-privateid")
+elseif(isset($recoverPasswordData) && is_object($recoverPasswordData) && ($route->requestGetParam(2) == "disable-privateid" || $reqPar3 == "disable-privateid"))
 {
     $userService->recoverPasswordDeactivatePrivateID($recoverPasswordData->getId());
     $route->createActionMessage($route->successMessage($langs['DEACTIVATE_PRIVATEID_SUCCESS']));

@@ -272,6 +272,26 @@
                     </a>
                 </div>
             </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.HALVING_TIMES }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="halvingTimes" href="{{ routing.getRouteByRouteName('donation-shop') }}">
+                        <span id="csHalvingTimes">{{ 'sHalvingTimes'|count(statusData.getCHalvingTimes)|raw }}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row cols cf">
+                <div class="c-50 column">
+                    <strong>{{ langs.BRIBING_BORDER_PATROL }}</strong>
+                </div>
+                <div class="c-50 column">
+                    <a id="bribingPolice" href="{{ routing.getRouteByRouteName('donation-shop') }}">
+                        <span id="csBribingPolice">{{ 'sBribingPolice'|count(userData.getCBribingPolice)|raw }}</span>
+                    </a>
+                </div>
+            </div>
         </div>
         <br class="clear"/>
     </div>

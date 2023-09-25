@@ -109,8 +109,8 @@ if($stream)
         $credentialsFile = DOC_ROOT . '/../credentials.php';
         $credentialsReplacesMap = array();
         $masterEncryption = InstallService::generateMasterEncryptionIvAndKey();
-        $credentialsReplacesMap[8] = "define('MASTERIV', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['iv'])) . "'));";
-        $credentialsReplacesMap[9] = "define('MASTERKEY', stripslashes('" . addslashes(str_replace(array("\r", "\n"), '', $masterEncryption['key'])) . "'));";
+        $credentialsReplacesMap[8] = "define('MASTERIV', base64_decode('" . base64_encode($masterEncryption['iv']) . "'));";
+        $credentialsReplacesMap[9] = "define('MASTERKEY', base64_decode('" . base64_encode($masterEncryption['key']) . "'));";
         InstallService::replaceLinesByLineNumbers($credentialsFile, $credentialsReplacesMap);
         $_SESSION['install']['masterEncryption'] = true;
         

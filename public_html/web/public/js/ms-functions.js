@@ -40,20 +40,20 @@ function number_format(number, decimals, dec_point, thousands_sep) {
   return s.join(dec);
 }
 
-function moneyDownFlash(e, t){
-    $(e).html("-$"+number_format(t, 0, "", ",")).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+function moneyDownFlash(elm, diff){
+    $(elm).hide().delay(200).html("-$"+number_format(diff, 0, "", ",")).css('color', "orangered").fadeIn(0).delay(4160).fadeOut(0);
 }
 
-function moneyUpFlash(e, t){
-    $(e).html("+$"+number_format(t, 0, "", ",")).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+function moneyUpFlash(elm, diff){
+    $(elm).hide().delay(200).html("+$"+number_format(diff, 0, "", ",")).css('color', "#00FF00").fadeIn(0).delay(4160).fadeOut(0);
 }
 
-function valueDownFlash(e, t){
-    $(e).html("-"+number_format(t, 0, "", ",")).css('color', "orangered").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+function valueDownFlash(elm, diff){
+    $(elm).hide().delay(200).html("-"+number_format(diff, 0, "", ",")).css('color', "orangered").fadeIn(0).delay(4160).fadeOut(0);
 }
 
-function valueUpFlash(e, t){
-    $(e).html("+"+number_format(t, 0, "", ",")).css('color', "#00FF00").hide().fadeIn("fast").delay(4120).fadeOut("fast");
+function valueUpFlash(elm, diff){
+    $(elm).hide().delay(200).html("+"+number_format(diff, 0, "", ",")).css('color', "#00FF00").fadeIn(0).delay(4160).fadeOut(0);
 }
 
 function checkMessages(receiver)

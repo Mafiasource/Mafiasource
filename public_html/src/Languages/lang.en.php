@@ -274,7 +274,7 @@ class GetLanguageContent
             'INVALID_EMAIL' => $registerLangs['INVALID_EMAIL'],
             'RECOVER_PASSWORD_EMAIL_MESSAGE' => "Dear {username}<br /><br />We received a request to recover your lost password, if this wassn't you than you can ignore this email.<br /><br />To set a new password you can click or copy the following URL in your address bar: <a href='".PROTOCOL.strtolower($route->settings['domain'])."/recover-password/key/{key}'>".PROTOCOL.strtolower($route->settings['domain'])."/recover-password/key/{key}</a><br />After that follow the instructions on your sreen.<br /><br />",
             'RECOVER_PASSWORD_EMAIL_MESSAGE_PRIVATEID' => "A PrivateID is set on your account. If you want to deactivate your PrivateID instead, than you can click or copy the following URL in your address bar: <a href='".PROTOCOL.strtolower($route->settings['domain'])."/recover-password/disable-privateid/{key}'>".PROTOCOL.strtolower($route->settings['domain'])."/recover-password/disable-privateid/{key}</a><br /><br />",
-            'RECOVER_PASSWORD_EMAIL_FOOTER' => "If you land on a not found page than the above link is expired. You can make a new request on <a href='".PROTOCOL.strtolower($route->settings['domain'])."/recover-password'>".PROTOCOL.strtolower($route->settings['domain'])."/recover-password</a><br /><br /><br />With kind regards<br />".ucfirst($route->settings['domain']),
+            'RECOVER_PASSWORD_EMAIL_FOOTER' => "If you land on a not found page than the above link is expired. You can make a new request on <a href='".PROTOCOL.strtolower($route->settings['domain'])."/recover-password'>".PROTOCOL.strtolower($route->settings['domain'])."/recover-password</a><br /><br /><br />With kind regards<br />".ucfirst($route->settings['domainBase']),
             'RECOVER_PASSWORD_EMAIL_SUBJECT' => "Recover password on ".$route->settings['gamename'],
             'RECOVER_PASSWORD_REQUEST_SUCCESS' => "We've send an email with further instructions to recover your lost password.<br />Beware! The link we've sent you will expire in 2 hours from now.",
             'NEW' => "New",
@@ -320,6 +320,7 @@ class GetLanguageContent
     
     public function statusLangs()
     {
+        $donationShopLangs = $this->donationShopLangs();
         global $route;
         $langs = array(
             'CLICK_FOR_REFERRAL_INFO' => "Click <strong>here</strong> to see the additional referral information!",
@@ -337,7 +338,9 @@ class GetLanguageContent
             'EQUIPMENT' => "Equipment",
             'RESIDENCE' => "Residence",
             'COPY' => "Copy",
-            'COPIED' => "Copied"
+            'COPIED' => "Copied",
+            'HALVING_TIMES' => $donationShopLangs['HALVING_TIMES'],
+            'BRIBING_BORDER_PATROL' => $donationShopLangs['BRIBING_BORDER_PATROL']
         );
         return $langs;
     }
@@ -1737,7 +1740,7 @@ class GetLanguageContent
             'CHANGE_EMAIL_NEED_TO_VERIFY' => "We've send an email change request to your previous email adress, a tip: {coveredEmail}<br />Beware! The link to change your email will expire in 2 hours from now.",
             'SAME_EMAIL_NO_CHANGE' => "You can't change the email in the current set email.",
             'CHANGE_EMAIL_DEACTIVATE_PRIVATEID' => "To change your email address, your PrivateID must first be deactivated. After the email change you can generate a new PrivateID.",
-            'CHANGE_EMAIL_MESSAGE' => "Dear {username}<br /><br />We received a request to change your email adres into: <strong>{newEmail}</strong>, if you did not request such change you can simply ignore this email.<br />If this is the case it's recommended to change your password asap to avoid further complications.<br /><br />To change your email adres click or copy the following URL in your address bar: <a href='".PROTOCOL.strtolower($route->settings['domain'])."/change-email/key/{key}'>".PROTOCOL.strtolower($route->settings['domain'])."/change-email/key/{key}</a><br />After that follow the instructions on your sreen.<br />If you land on a not found page than the above link is expired. You can make a new request in-game on ".strtolower($route->settings['domain'])."<br /><br /><br />With kind regards<br />".ucfirst($route->settings['domain']),
+            'CHANGE_EMAIL_MESSAGE' => "Dear {username}<br /><br />We received a request to change your email adres into: <strong>{newEmail}</strong><br />If you did not request such change it's recommended to change your password asap to avoid complications.<br /><br />To change your email adres click or copy the following URL in your address bar: <a href='".PROTOCOL.strtolower($route->settings['domain'])."/change-email/key/{key}'>".PROTOCOL.strtolower($route->settings['domain'])."/change-email/key/{key}</a><br />After that follow the instructions on your sreen.<br />If you land on a not found page than the above link is expired. You can make a new request in-game on ".strtolower($route->settings['domain'])."<br /><br /><br />With kind regards<br />".ucfirst($route->settings['domainBase']),
             'CHANGE_EMAIL_SUBJECT' => "Change your email on ".$route->settings['gamename']."",
             'TESTAMENT_NOT_FOR_OWN' => "You can't set your testament to your own account!",
             'CHANGE_TESTAMENT_SUCCESS' => "You have transfered your testament to <strong>{username}</strong>!",

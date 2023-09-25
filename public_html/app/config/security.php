@@ -164,7 +164,7 @@ class Security
         $str = (string)$str;
         $ciphering = "AES-128-CTR";
         $options = 0;
-        $encryption = openssl_encrypt($str, $ciphering, $this->masterKey, $options, $this->masterIv);
+        $encryption = base64_encode(openssl_encrypt($str, $ciphering, $this->masterKey, $options, $this->masterIv));
         
         return $encryption;
     }
@@ -173,7 +173,7 @@ class Security
     {
         $ciphering = "AES-128-CTR"; 
         $options = 0;
-        $decryption = openssl_decrypt($encryption, $ciphering, $this->masterKey, $options, $this->masterIv);
+        $decryption = openssl_decrypt(base64_decode($encryption), $ciphering, $this->masterKey, $options, $this->masterIv);
         
         return $decryption;
     }
@@ -188,7 +188,7 @@ class Security
         if(file_exists($ivFileName)) unlink($ivFileName);
         $ivFileHandle = fopen($ivFileName, 'w') or null;
         if($ivFileHandle)
-            fwrite($ivFileHandle, $iv);
+            fwrite($ivFileHandle, base64_encode($iv));
         
         fclose($ivFileHandle);
         chmod($ivFileName, 0600);
@@ -197,7 +197,7 @@ class Security
         if(file_exists($keyFileName)) unlink($keyFileName);
         $keyFileHandle = fopen($keyFileName, 'w') or null;
         if($keyFileHandle)
-            fwrite($keyFileHandle, $key);
+            fwrite($keyFileHandle, base64_encode($key));
         
         fclose($keyFileHandle);
         chmod($keyFileName, 0600);
@@ -211,7 +211,7 @@ class Security
         $iv = openssl_random_pseudo_bytes($ivlen);
         $key = openssl_digest($this->randStr(), 'MD5', TRUE);
         $encryption = openssl_encrypt($str, $ciphering, $key, OPENSSL_RAW_DATA, $iv);
-        return array('encryption' => $encryption, 'iv' => $iv, 'key' => $key);
+        return array('encryption' => base64_encode($encryption), 'iv' => $iv, 'key' => $key);
     }
     
     /* Decrypt sensitive user data */
@@ -232,11 +232,12 @@ class Security
         
         fclose($keyFile);
         
-        return array('iv' => $iv, 'key' => $key);
+        return array('iv' => base64_decode($iv), 'key' => base64_decode($key));
     }
     
     public function decrypt($encryption, $iv, $key)
     {
+        $encryption = base64_decode($encryption);
         $ciphering = "AES-128-CTR";
         $hmac = hash_hmac('sha256', $encryption, $key, true);
         $ciphertext = base64_encode($iv. $hmac . $encryption);

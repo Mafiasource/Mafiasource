@@ -6,8 +6,8 @@ define('DBUSR', "root");
 define('DBPWD', "");
 
 // Master crypto keys
-define('MASTERIV', stripslashes('Ð¤¡vìØüxÂ\05*î„Û'));
-define('MASTERKEY', stripslashes('?\0–Cä@Ÿ.¾ –Òæ'));
+define('MASTERIV', base64_decode('qXtgbgPju81x1bXUBeQKIQ=='));
+define('MASTERKEY', base64_decode('o2fstQvjl4tn0S5xmvI3nA=='));
 
 // Developper IP's get access in-game when game is set offline
 define('DEV_IPS', json_encode(
