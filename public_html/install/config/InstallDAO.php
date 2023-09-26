@@ -87,7 +87,7 @@ class InstallDAO extends DBConfig
             fclose($ourFileHandle);
             chmod($ourFileName, 0600);
             
-            $masterEncrypted = $security->masterEncrypt($email);
+            $masterEncrypted = $security->masterEncrypt((string)strtolower($email));
             
             $saveDir = DOC_ROOT . '/app/Resources/masterCrypts/user/';
             $ourFileName = $saveDir . "emails.txt";
