@@ -948,7 +948,7 @@ class GetLanguageContent
             'CAN_RECEIVE' => "Je kunt nog tot {credits} credits ontvangen als donatie beloning.",
             'LIMIT_RESET' => "Op {date} word je limiet terug op 5,000 gezet.",
             'DONATE_BTN_HEAD' => "<h4>Even je aandacht</h4><p>Ontvang onmiddellijk credits na een donatie van een willekeurig bedrag vanaf minstens 1 euro. Donaties die 50 euro overschrijden zullen enkel tot 5,000 credits opleveren elke maand met uitzondering van bonus credits en acties.</p><h4>Doneer veilig via PayPal</h4>",
-            'DONATE_BTN_FOOT' => "<small>Alle transacties zijn beveiligd en versleuteld voordat ze worden verzonden.</small><h4>Problemen?</h4><p>Contacteer een Administrator of <span style='color:#3498db'><a href='mailto:info@mafiasource.nl?subject=Mafiasource donatieshop probleem'><strong>stuur ons een email</strong></a></span> voor hulp.</p>",
+            'DONATE_BTN_FOOT' => "<small>Alle transacties zijn beveiligd en versleuteld voordat ze worden verzonden.</small><h4>Problemen?</h4><p>Contacteer een Administrator of <span style='color:#3498db'><a href='mailto:info@".$route->settings['domainBase']."?subject=".$route->settings['gamename']." donatieshop probleem'><strong>stuur ons een email</strong></a></span> voor hulp.</p>",
             'DONATE_REWARDED_ALREADY' => "Deze donatiebonus is al geclaimd!",
             'DONATE_ERROR' => "Er is een probleem opgetreden met je donatie, contacteer een Administrator voor hulp.",
             'DONATE_SUCCESS' => "Je donatie werd ontvangen en {credits} credits werden aan je account toegevoegd als beloning. Bedankt!",
