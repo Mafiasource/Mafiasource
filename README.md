@@ -8,7 +8,8 @@ Will you become the best gangster?
 Inspired by crimeclub.nl made open-source for all enthusiasts, enjoy a fork!
 Version 3 its development started in January 2016 starting from a custom MVC pattern design.
 The last known bug got fixed on June 26th 2021, all errors should log to all error_log files.
-Possible future updates and fixes will be pushed to the main branch along with our official website releases.
+Future bug fixes and security patches will be pushed to the main branch.
+Official website releases and feature developments were halted as of October 7th 2023.
 
 This project is not a professional application and shouldn't be used as such.
 Especially true for almost all security practices found inside this project.
