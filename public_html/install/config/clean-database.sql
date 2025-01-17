@@ -54,7 +54,7 @@ CREATE TABLE `bank_log`  (
   `receiverID` bigint NULL DEFAULT NULL,
   `amount` bigint NULL DEFAULT NULL,
   `message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `senderID`(`senderID`) USING BTREE,
   INDEX `receiverID`(`receiverID`) USING BTREE
@@ -93,12 +93,12 @@ INSERT INTO `bullet_factory` VALUES (6, 6, 10000, 2500, 0);
 DROP TABLE IF EXISTS `business`;
 CREATE TABLE `business`  (
   `id` mediumint NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `opening_price` float(6, 2) NOT NULL,
-  `last_price` float(6, 2) NOT NULL,
-  `close_price` float(6, 2) NOT NULL,
-  `high_price` float(6, 2) NOT NULL,
-  `low_price` float(6, 2) NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `opening_price` float(6, 2) NOT NULL DEFAULT 0,
+  `last_price` float(6, 2) NOT NULL DEFAULT 0,
+  `close_price` float(6, 2) NOT NULL DEFAULT 0,
+  `high_price` float(6, 2) NOT NULL DEFAULT 0,
+  `low_price` float(6, 2) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -142,11 +142,11 @@ INSERT INTO `business` VALUES (30, 'Ovondo', 25.02, 25.02, 25.02, 25.02, 25.02);
 DROP TABLE IF EXISTS `business_history`;
 CREATE TABLE `business_history`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `businessID` smallint NOT NULL,
-  `close_day` float(6, 2) NOT NULL,
-  `highest_day` float(6, 2) NOT NULL,
-  `lowest_day` float(6, 2) NOT NULL,
-  `date` date NOT NULL,
+  `businessID` smallint NOT NULL DEFAULT 0,
+  `close_day` float(6, 2) NOT NULL DEFAULT 0,
+  `highest_day` float(6, 2) NOT NULL DEFAULT 0,
+  `lowest_day` float(6, 2) NOT NULL DEFAULT 0,
+  `date` date NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 10891 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -162,8 +162,8 @@ CREATE TABLE `business_news`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `description_nl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `description_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `businessID` mediumint NOT NULL,
-  `type` tinyint(1) NOT NULL,
+  `businessID` mediumint NOT NULL DEFAULT 0,
+  `type` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -182,10 +182,10 @@ INSERT INTO `business_news` VALUES (5, 'de moord op de CEO zorgt voor een keerpu
 DROP TABLE IF EXISTS `business_stock`;
 CREATE TABLE `business_stock`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `userID` bigint NOT NULL,
-  `businessID` smallint NOT NULL,
-  `payed_ea` float(6, 2) NOT NULL,
-  `amount` int NOT NULL,
+  `userID` bigint NOT NULL DEFAULT 0,
+  `businessID` smallint NOT NULL DEFAULT 0,
+  `payed_ea` float(6, 2) NOT NULL DEFAULT 0,
+  `amount` int NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -199,10 +199,10 @@ CREATE TABLE `business_stock`  (
 DROP TABLE IF EXISTS `change_email`;
 CREATE TABLE `change_email`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `userID` bigint NOT NULL,
-  `key` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `new_mail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `date` datetime NOT NULL,
+  `userID` bigint NOT NULL DEFAULT 0,
+  `key` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `new_mail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -288,8 +288,8 @@ CREATE TABLE `crime`  (
   `description_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `picture` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'type=upload',
   `level` smallint NOT NULL DEFAULT 1,
-  `minProfit` int NOT NULL,
-  `maxProfit` int NOT NULL,
+  `minProfit` int NOT NULL DEFAULT 0,
+  `maxProfit` int NOT NULL DEFAULT 0,
   `difficulty` smallint NOT NULL DEFAULT 5,
   `maxRankPoints` tinyint(1) NOT NULL DEFAULT 1,
   `donatorID` tinyint(1) NULL DEFAULT 0 COMMENT 'couple=donator&factor=id&show=donator_nl',
@@ -357,19 +357,19 @@ INSERT INTO `crime` VALUES (48, 'Beroof MDev', 'Beroof het geld van de bankreken
 DROP TABLE IF EXISTS `crime_org`;
 CREATE TABLE `crime_org`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
-  `name_nl` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description_nl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `name_en` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_nl` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `description_nl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `name_en` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `description_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `picture` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'type=upload',
   `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'select=Alleen,Twee,Vier',
-  `minProfit` int NOT NULL,
-  `maxProfit` int NOT NULL,
+  `minProfit` int NOT NULL DEFAULT 0,
+  `maxProfit` int NOT NULL DEFAULT 0,
   `difficulty` smallint NOT NULL DEFAULT 5,
   `waitingTimeCompletion` smallint NOT NULL DEFAULT 120,
   `travelTimeCompletion` smallint NOT NULL DEFAULT 120,
   `prisonTimeBusted` smallint NOT NULL DEFAULT 150,
-  `position` int NOT NULL,
+  `position` int NOT NULL DEFAULT 0,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
@@ -391,9 +391,9 @@ CREATE TABLE `crime_org_prep`  (
   `orgCrimeID` int NOT NULL DEFAULT 0,
   `userID` bigint NOT NULL DEFAULT 0,
   `job` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'select=driver,raider',
-  `participantID` bigint NOT NULL,
+  `participantID` bigint NOT NULL DEFAULT 0,
   `participant2ID` bigint NOT NULL DEFAULT 0,
-  `participant3ID` bigint NOT NULL,
+  `participant3ID` bigint NOT NULL DEFAULT 0,
   `userReady` tinyint(1) NOT NULL DEFAULT 0,
   `participantReady` tinyint(1) NOT NULL DEFAULT 0,
   `participant2Ready` tinyint(1) NOT NULL DEFAULT 0,
@@ -437,7 +437,7 @@ CREATE TABLE `detective`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `userID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `victimID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
-  `startDate` datetime NULL DEFAULT NULL,
+  `startDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hours` tinyint NOT NULL DEFAULT 2,
   `timeFound` bigint NOT NULL DEFAULT 1800,
   `shadow` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
@@ -465,7 +465,7 @@ CREATE TABLE `donate`  (
   `amount` float(10, 2) NOT NULL DEFAULT 0.00,
   `net_amount` float(10, 2) NOT NULL DEFAULT 0.00,
   `credits` bigint NOT NULL DEFAULT 0,
-  `date` datetime NOT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -481,7 +481,7 @@ CREATE TABLE `donate`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `donator`;
 CREATE TABLE `donator`  (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `donator_nl` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `donator_en` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `colorCode` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -563,7 +563,7 @@ CREATE TABLE `family`  (
   `money` bigint NOT NULL DEFAULT 0,
   `image` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `startDate` datetime NOT NULL,
+  `startDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `join` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'type=yesno',
   `leaveCosts` int NOT NULL DEFAULT 0,
   `profile` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
@@ -620,7 +620,7 @@ CREATE TABLE `family_bank_log`  (
   `senderID` bigint NULL DEFAULT NULL,
   `receiverID` bigint NULL DEFAULT NULL,
   `amount` bigint NULL DEFAULT NULL,
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -638,7 +638,7 @@ CREATE TABLE `family_bf_donation_log`  (
   `userID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `amount` bigint NOT NULL DEFAULT 0,
   `amountAll` bigint NOT NULL DEFAULT 0,
-  `lastDonation` datetime NULL DEFAULT NULL,
+  `lastDonation` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -659,7 +659,7 @@ CREATE TABLE `family_bf_send_log`  (
   `senderID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `receiverID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `amount` int NULL DEFAULT NULL,
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -722,7 +722,7 @@ CREATE TABLE `family_donation_log`  (
   `userID` bigint NULL DEFAULT NULL,
   `amount` bigint NULL DEFAULT NULL,
   `amountAll` bigint NULL DEFAULT NULL,
-  `lastDonation` datetime NULL DEFAULT NULL,
+  `lastDonation` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -776,7 +776,7 @@ CREATE TABLE `family_mercenary_log`  (
   `familyID` int NOT NULL DEFAULT 0 COMMENT 'couple=family&factor=id&show=name',
   `userID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
   `mercenaries` smallint NULL DEFAULT NULL,
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -831,7 +831,7 @@ CREATE TABLE `fifty_game`  (
   `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'select=Contant,Hoeren,Eerpunten',
   `userID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `amount` bigint NULL DEFAULT NULL,
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -883,8 +883,8 @@ CREATE TABLE `forum_reaction`  (
   `topicID` int NOT NULL DEFAULT 0 COMMENT 'couple=forum_topic&factor=id&show=lang,title',
   `userID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
-  `date` datetime NULL DEFAULT NULL,
-  `lastEditTime` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastEditTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -948,7 +948,7 @@ CREATE TABLE `forum_topic`  (
   `lang` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'nl' COMMENT 'type=disabled',
   `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` tinyint(1) NOT NULL DEFAULT 2 COMMENT 'couple=forum_status&factor=id&show=status_nl',
   `lastMsgTime` bigint NOT NULL DEFAULT 0,
   `cleanUrl` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -1535,8 +1535,8 @@ CREATE TABLE `gym_competition`  (
   `stake` int NOT NULL DEFAULT 50,
   `participantID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
   `winnerID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
-  `startDate` datetime NULL DEFAULT NULL,
-  `endDate` datetime NULL DEFAULT NULL,
+  `startDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `endDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` bigint NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -1706,7 +1706,7 @@ CREATE TABLE `honorpoint_log`  (
   `receiverID` bigint NULL DEFAULT NULL,
   `amount` int NULL DEFAULT NULL,
   `message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -1738,9 +1738,9 @@ DROP TABLE IF EXISTS `login`;
 CREATE TABLE `login`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `userID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
-  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'type=disabled',
-  `date` datetime NOT NULL COMMENT 'type=disabled',
-  `time` bigint NOT NULL COMMENT 'type=disabled',
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'type=disabled',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'type=disabled',
+  `time` bigint NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `tries` int NOT NULL DEFAULT 1 COMMENT 'type=disabled',
   `cookieLogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
   `position` bigint NULL DEFAULT NULL,
@@ -1762,7 +1762,7 @@ CREATE TABLE `login_fail`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'type=disabled',
   `ip` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'type=disabled',
-  `date` datetime NULL DEFAULT NULL COMMENT 'type=disabled',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'type=disabled',
   `time` bigint NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `type` smallint NOT NULL DEFAULT 0 COMMENT 'select=Inloggegevens,Overtreding,Waarschuwing,Tijdelijke ban,Permanente ban',
   `cookieLogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
@@ -1821,7 +1821,7 @@ CREATE TABLE `market`  (
   `amount` int NOT NULL DEFAULT 0,
   `price` bigint NOT NULL DEFAULT 0,
   `anonymous` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -1840,7 +1840,7 @@ CREATE TABLE `member`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `password` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=disabled',
-  `status` int NOT NULL COMMENT 'couple=status&factor=id&show=status_nl',
+  `status` int NOT NULL DEFAULT 0 COMMENT 'couple=status&factor=id&show=status_nl',
   `naam` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `voornaam` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `adres` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
@@ -1866,7 +1866,7 @@ CREATE TABLE `message`  (
   `senderID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `receiverID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `message` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `read` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
   `inSenderInbox` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'type=yesno',
   `inReceiverInbox` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'type=yesno',
@@ -1911,7 +1911,7 @@ CREATE TABLE `news`  (
   `title_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `article_nl` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
   `article_en` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` bigint NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -1933,7 +1933,7 @@ CREATE TABLE `notification`  (
   `params` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `read` tinyint(1) NOT NULL DEFAULT 0,
   `inInbox` tinyint(1) NOT NULL DEFAULT 1,
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -1977,8 +1977,8 @@ CREATE TABLE `poll_question`  (
   `question_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `description_nl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `description_en` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `startDate` datetime NULL DEFAULT NULL,
-  `endDate` datetime NULL DEFAULT NULL,
+  `startDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `endDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -2000,7 +2000,7 @@ CREATE TABLE `poll_vote`  (
   `userID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `questionID` int NULL DEFAULT NULL COMMENT 'couple=poll_question&factor=id&show=question_nl',
   `answerID` int NULL DEFAULT NULL COMMENT 'couple=poll_answer&factor=id&show=answer_nl',
-  `date` datetime NULL DEFAULT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
@@ -2396,8 +2396,8 @@ DROP TABLE IF EXISTS `recover_password`;
 CREATE TABLE `recover_password`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `userID` bigint NOT NULL,
-  `key` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `date` datetime NOT NULL,
+  `key` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -2491,8 +2491,8 @@ DROP TABLE IF EXISTS `round`;
 CREATE TABLE `round`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `round` smallint NOT NULL DEFAULT 1,
-  `startDate` datetime NULL DEFAULT NULL,
-  `endDate` datetime NULL DEFAULT NULL,
+  `startDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `endDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hofJson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL,
   `dbBackup` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `position` int NULL DEFAULT NULL,
@@ -2554,11 +2554,11 @@ CREATE TABLE `shoutbox_en`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `userID` bigint NOT NULL COMMENT 'couple=user&factor=id&show=username',
   `familyID` int NOT NULL DEFAULT 0 COMMENT 'couple=family&factor=id&show=name',
-  `message` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `date` datetime NOT NULL,
+  `message` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` bigint NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
-  `deleted` tinyint(1) NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -2574,11 +2574,11 @@ CREATE TABLE `shoutbox_nl`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
   `userID` bigint NOT NULL COMMENT 'couple=user&factor=id&show=username',
   `familyID` int NOT NULL DEFAULT 0 COMMENT 'couple=family&factor=id&show=name',
-  `message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `date` datetime NOT NULL,
+  `message` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position` bigint NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
-  `deleted` tinyint(1) NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
@@ -2823,12 +2823,12 @@ INSERT INTO `steal_vehicle` VALUES (55, '', 'Steel een van de keizer', '', 'Stea
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
-  `username` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'type=disabled',
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'type=disabled',
-  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `registerDate` datetime NOT NULL,
-  `restartDate` datetime NOT NULL,
+  `username` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `password` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'type=disabled',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'type=disabled',
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `registerDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `restartDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `isProtected` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
   `lastclick` bigint NULL DEFAULT NULL,
   `activeTime` bigint NOT NULL DEFAULT 0,
@@ -2947,7 +2947,7 @@ CREATE TABLE `user`  (
 DROP TABLE IF EXISTS `user_friend_block`;
 CREATE TABLE `user_friend_block`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `inviterID` bigint NOT NULL COMMENT 'couple=user&factor=id&show=username',
+  `inviterID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=user&factor=id&show=username',
   `userID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `friendID` bigint NULL DEFAULT NULL COMMENT 'couple=user&factor=id&show=username',
   `type` enum('1','0') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
@@ -3017,7 +3017,7 @@ CREATE TABLE `user_residence`  (
 DROP TABLE IF EXISTS `vehicle`;
 CREATE TABLE `vehicle`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'type=cms',
   `picture` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'type=upload',
   `price` int NOT NULL DEFAULT 0,
