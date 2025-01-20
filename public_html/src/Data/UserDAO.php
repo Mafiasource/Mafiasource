@@ -658,8 +658,8 @@ class UserDAO extends DBConfig
     // This passchange function is related to the recovery option and also used for the ingame pass change option
         if($id == FALSE)
             $id = $this->getIdByUsername($username);
-        
-        $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/" . $id . ".txt" : null;
+
+        $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt" : null;
         if(isset($saltFile) && file_exists($saltFile))
         {
             // Remove old salt..
