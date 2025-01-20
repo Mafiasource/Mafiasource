@@ -27,7 +27,7 @@ class MemberDAO extends DBConfig
         if(!$id)
             return FALSE;
         
-        $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/'.$id.'.txt','r');
+        $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . (int) $id . '.txt','r');
         $salt = fgets($file);
         fclose($file);
         
@@ -86,7 +86,7 @@ class MemberDAO extends DBConfig
         
         $newMID = $this->dbh->lastInsertId();
         
-        $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/'.$newMID.'.txt';
+        $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/' . (int) $newMID . '.txt';
         $ourFileHandle = fopen($ourFileName, 'w') or die("Kan bestand niet aanmaken, meld dit aan de administrator samen met de URL waar de fout plaatsvond.");
         $stringData = $salt;
         fwrite($ourFileHandle, $stringData);
@@ -142,7 +142,7 @@ class MemberDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT m.`id`,m.`naam`,m.`voornaam`,m.`email`,m.`password`, s.`status_nl` FROM `member` AS m LEFT JOIN `status` AS s ON (m.status=s.id) WHERE m.`id` = :id AND m.`active`='1' AND m.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 1");
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
-            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/'.$id.'.txt','r');
+            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . (int) $id . '.txt','r');
             $salt = fgets($file);
             fclose($file);
             
@@ -209,7 +209,7 @@ class MemberDAO extends DBConfig
     {
         if(isset($_SESSION['cp-logon']['MID']))
         {
-            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . $_SESSION['cp-logon']['MID'] . '.txt', 'r');
+            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . (int) $_SESSION['cp-logon']['MID'] . '.txt', 'r');
             $salt = fgets($file);
             fclose($file);
             
@@ -243,7 +243,7 @@ class MemberDAO extends DBConfig
             $statement = $this->dbh->prepare("UPDATE `member` SET `password` = :password WHERE `id` = :id ");
             $statement->execute(array(':password' => $hash, ':id' => $_SESSION['cp-logon']['MID']));
             
-            $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/' . $_SESSION['cp-logon']['MID'] . '.txt';
+            $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/' . (int) $_SESSION['cp-logon']['MID'] . '.txt';
             $ourFileHandle = fopen($ourFileName, 'w') or die("Kan bestand niet opnenen, meld dit aan de administrator.");
             $stringData = $salt;
             fwrite($ourFileHandle, $stringData);
