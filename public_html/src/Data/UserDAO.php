@@ -94,7 +94,7 @@ class UserDAO extends DBConfig
         $id = $this->getIdByPrivateID($username);
         $id = is_numeric($id) && $id > 0 ? (int)$id : $this->getIdByUsername($username);
         
-        $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/".$id.".txt" : null;
+        $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt" : null;
         if($id !== FALSE && isset($saltFile) && file_exists($saltFile))
         {
             $file = fopen($saltFile, "r");
@@ -315,7 +315,7 @@ class UserDAO extends DBConfig
         {
             $encrypted = $security->encrypt($email);
             
-            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$_SESSION['UID']."/user/email/";
+            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/" . (int) $_SESSION['UID'] . "/user/email/";
             $security->storeEncryptionIvAndKey($saveDir, $encrypted['iv'], $encrypted['key']);
             
             // Random state
@@ -465,7 +465,7 @@ class UserDAO extends DBConfig
                 
                 $encrypted = $security->encrypt($email);
                 
-                $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$row['id']."/change_email/new_mail/";
+                $saveDir = DOC_ROOT . "/app/Resources/userCrypts/" . (int) $row['id'] . "/change_email/new_mail/";
                 $security->storeEncryptionIvAndKey($saveDir, $encrypted['iv'], $encrypted['key']);
                 
                 $statement = $this->dbh->prepare("INSERT INTO `change_email` (`userID`, `key`, `new_mail`, `date`) VALUES (:id, :key, :newMail, :date)");
@@ -479,7 +479,7 @@ class UserDAO extends DBConfig
                 
                 if(!UserService::is_email($sendTo))
                 {
-                    $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$row['id']."/user/email/";
+                    $saveDir = DOC_ROOT . "/app/Resources/userCrypts/" . (int) $row['id'] . "/user/email/";
                     $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
                     $sendTo = $security->decrypt($sendTo, $cryptKeys['iv'], $cryptKeys['key']);
                 }
@@ -514,7 +514,7 @@ class UserDAO extends DBConfig
                 return preg_replace('/(?<=.).(?=.*@)/u', '*', $row['email']);
             
             global $security;
-            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$row['id']."/user/email/";
+            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/" . (int) $row['id'] . "/user/email/";
             $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
             $decryptedEmail = $security->decrypt($row['email'], $cryptKeys['iv'], $cryptKeys['key']);
             
@@ -534,7 +534,7 @@ class UserDAO extends DBConfig
         {
             global $security;
             
-            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$row['uid']."/change_email/new_mail/";
+            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/" . (int) $row['uid'] . "/change_email/new_mail/";
             $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
             $decryptedEmail = $security->decrypt($row['new_mail'], $cryptKeys['iv'], $cryptKeys['key']);
             
@@ -625,7 +625,7 @@ class UserDAO extends DBConfig
     
     public function verifyPassword($pass)
     {
-        $saltFile = isset($_SESSION['UID']) ? DOC_ROOT . "/app/Resources/userSalts/".$_SESSION['UID'].".txt" : null;
+        $saltFile = isset($_SESSION['UID']) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $_SESSION['UID'] . ".txt" : null;
         if(isset($saltFile) && file_exists($saltFile))
         {
             $file = fopen($saltFile, "r");
@@ -713,7 +713,7 @@ class UserDAO extends DBConfig
         
         if(!UserService::is_email($sendTo))
         {
-            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/".$id."/user/email/";
+            $saveDir = DOC_ROOT . "/app/Resources/userCrypts/" . (int) $id . "/user/email/";
             $cryptKeys = $security->grabEncryptionIvAndKey($saveDir);
             $sendTo = $security->decrypt($sendTo, $cryptKeys['iv'], $cryptKeys['key']);
         }
@@ -783,7 +783,7 @@ class UserDAO extends DBConfig
             $prms = array(':uid' => $id, ':pid' => $hash);
             if($password)
             {
-                $file = fopen(DOC_ROOT . "/app/Resources/userSalts/".$id.".txt", "r");
+                $file = fopen(DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt", "r");
                 $salt = fgets($file);
                 fclose($file);
     
