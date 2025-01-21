@@ -17,7 +17,7 @@ if(isset($_POST['id']) && isset($_POST['amount']) && isset($_POST['type']) && in
     require_once __DIR__ . '/.valuesAnimation.php'; //Animate multiple values
     
     $userDataBefore = $userData;
-    $sDataBefore = $smuggle->getSmugglingPageInfo(array_search($_POST['type'], $tabs));
+    $sDataBefore = $smuggle->getSmugglingPageInfo(array_search(htmlentities($_POST['type'], ENT_QUOTES, 'UTF-8'), $tabs));
     $cashMoneyBefore = $userDataBefore->getCash();
     $profitsBefore = $sDataBefore['user']->getSmugglingProfit();
     $smugglingUnitsBefore = $sDataBefore['user']->getSmugglingUnits();
