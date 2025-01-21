@@ -29,7 +29,7 @@ if(isset($_POST['id']) && isset($_POST['amount']) && isset($_POST['type']) && in
     $response = $smuggle->buyOrSellSmuggleUnits($_POST);
     
     $userDataAfter = $user->getUserData();
-    $sDataAfter = $smuggle->getSmugglingPageInfo(array_search($_POST['type'], $tabs));
+    $sDataAfter = $smuggle->getSmugglingPageInfo(array_search(htmlentities($_POST['type'], ENT_QUOTES, 'UTF-8'), $tabs));
     $cashMoneyAfter = $userDataAfter->getCash();
     $profitsAfter = $sDataAfter['user']->getSmugglingProfit();
     $smugglingUnitsAfter = $sDataAfter['user']->getSmugglingUnits();
