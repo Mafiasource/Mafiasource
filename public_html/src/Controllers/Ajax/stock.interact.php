@@ -9,7 +9,7 @@ if(isset($_POST['security-token']) && isset($_POST['stocks']) && isset($_POST['b
     $stockExchange = new StockExchangeService();
     require_once __DIR__ . '/.valuesAnimation.php';
     $userDataBefore = $userData;
-    $businessDataBefore = $stockExchange->getBusinessStockByName($_POST['business']);
+    $businessDataBefore = $stockExchange->getBusinessStockByName(htmlentities($_POST['business'], ENT_QUOTES, 'UTF-8'));
     $businessID = $businessDataBefore->getId();
     $bankMoneyBefore = $userDataBefore->getBank();
     $stocksBefore = $stockExchange->getStocksInPossessionByBusinessID($businessID);
@@ -18,7 +18,7 @@ if(isset($_POST['security-token']) && isset($_POST['stocks']) && isset($_POST['b
     $response = $stockExchange->interactStock($_POST);
     
     $userDataAfter = $user->getUserData();
-    $businessDataAfter = $stockExchange->getBusinessStockByName($_POST['business']);
+    $businessDataAfter = $stockExchange->getBusinessStockByName(htmlentities($_POST['business'], ENT_QUOTES, 'UTF-8'));
     $bankMoneyAfter = $userDataAfter->getBank();
     $stocksAfter = $stockExchange->getStocksInPossessionByBusinessID($businessID);
     $priceAfter = $businessDataAfter->getLastPrice();
