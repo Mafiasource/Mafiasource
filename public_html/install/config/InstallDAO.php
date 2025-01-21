@@ -79,9 +79,10 @@ class InstallDAO extends DBConfig
             ", array(':stateID' => 1, ':cityID' => 1, ':lclick' => time(), ':position' => ($_SESSION['UID']-1), ':email' => $encrypted['encryption'],
                 ':uid' => $_SESSION['UID'])
             );
-            
-            $ourFileName = DOC_ROOT . '/app/Resources/userSalts/'.$_SESSION['UID'].'.txt';
-            $ourFileHandle = fopen($ourFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL: ".$_SERVER['REQUEST_URI'].".");
+
+            $saveDir = DOC_ROOT . '/app/Resources/userSalts/';
+            $ourFileName = $saveDir . (int) $_SESSION['UID'] . '.txt';
+            $ourFileHandle = fopen($ourFileName, 'w') or die("Failed to write to: ".$saveDir.".");
             $stringData = $salt;
             fwrite($ourFileHandle, $stringData);
             fclose($ourFileHandle);
@@ -99,7 +100,7 @@ class InstallDAO extends DBConfig
             $emails[$_SESSION['UID']] = $masterEncrypted;
             
             if(file_exists($ourFileName)) unlink($ourFileName);
-            $ourFileHandle = fopen($ourFileName, 'w') or die("Kan geheim bestand niet aanmaken, meld dit aan de administrator samen met de URL ".$_SERVER['REQUEST_URI'].".");
+            $ourFileHandle = fopen($ourFileName, 'w') or error_log("Failed to write to: ".$saveDir.".");
             fwrite($ourFileHandle, serialize($emails));
             fclose($ourFileHandle);
             chmod($ourFileName, 0600);
@@ -132,9 +133,10 @@ class InstallDAO extends DBConfig
         ));
         
         $newMID = $this->dbh->lastInsertId();
-        
-        $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/'.$newMID.'.txt';
-        $ourFileHandle = fopen($ourFileName, 'w') or die("Kan bestand niet aanmaken, meld dit aan de administrator samen met de URL waar de fout plaatsvond.");
+
+        $saveDir =  DOC_ROOT . '/app/Resources/memberSalts/';
+        $ourFileName =  $saveDir . (int) $newMID . '.txt';
+        $ourFileHandle = fopen($ourFileName, 'w') or error_log("Failed to write to: ".$saveDir.".");
         $stringData = $salt;
         fwrite($ourFileHandle, $stringData);
         fclose($ourFileHandle);
