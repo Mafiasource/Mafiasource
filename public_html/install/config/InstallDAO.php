@@ -100,7 +100,7 @@ class InstallDAO extends DBConfig
             $emails[$_SESSION['UID']] = $masterEncrypted;
             
             if(file_exists($ourFileName)) unlink($ourFileName);
-            $ourFileHandle = fopen($ourFileName, 'w') or error_log("Failed to write to: ".$saveDir.".");
+            $ourFileHandle = fopen($ourFileName, 'w') or die("Failed to write to: ".$saveDir.".");
             fwrite($ourFileHandle, serialize($emails));
             fclose($ourFileHandle);
             chmod($ourFileName, 0600);
@@ -136,7 +136,7 @@ class InstallDAO extends DBConfig
 
         $saveDir =  DOC_ROOT . '/app/Resources/memberSalts/';
         $ourFileName =  $saveDir . (int) $newMID . '.txt';
-        $ourFileHandle = fopen($ourFileName, 'w') or error_log("Failed to write to: ".$saveDir.".");
+        $ourFileHandle = fopen($ourFileName, 'w') or die("Failed to write to: ".$saveDir.".");
         $stringData = $salt;
         fwrite($ourFileHandle, $stringData);
         fclose($ourFileHandle);
