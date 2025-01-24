@@ -104,8 +104,8 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         // Get preferred language class & contents
         $uriLang = str_replace('/','', $route->requestGetParam(1));
         $lang = $route->adjustLang($lang); // Preferred
-        if(preg_match('^(nl|en)$', $lang)
-            require_once DOC_ROOT . '/src/Languages/lang.' . $lang . '.php'; // Require user's preferred language
+        $lang = $lang === 'en' ? 'en' : 'nl';
+        require_once DOC_ROOT . '/src/Languages/lang.'.$lang.'.php'; // Require user's preferred language
 
         $language = new GetLanguageContent(); // Class mostly used in all service classes (Business layer)
         $langs = $language->langMap; // Base langs available on every page, contents depend on a player in- or out-game
