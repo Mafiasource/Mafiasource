@@ -13,8 +13,7 @@ $honored = $statistics['honored'];
 $playersKilled = "<span class='red'>" . $statistics['playersKilled'] . "</span>";
 $unitsSmuggled = $statistics['unitsSmuggled'];
 $creditsWon = $statistics['creditsWon'] . " Credits";
-$roundInfo = "Vierde ronde sinds 12 Mei";
-if($lang == "en") $roundInfo = "Fourth round since May 12th";
+
 $langs["STATS"] = $cms->getCMSById(5, $lang);
 $langs["STATS"] = $route->replaceMessagePart("<strong>".$bestPlayer."</strong>", $langs["STATS"], '/{bestPlayer}/');
 $langs["STATS"] = $route->replaceMessagePart("<strong>".$newestMember."</strong>", $langs["STATS"], '/{newestMember}/');
@@ -25,4 +24,4 @@ $langs["STATS"] = $route->replaceMessagePart("<strong>".$honored."</strong>", $l
 $langs["STATS"] = $route->replaceMessagePart("<strong>".$playersKilled."</strong>", $langs["STATS"], '/{playersKilled}/');
 $langs["STATS"] = $route->replaceMessagePart("<strong>".$unitsSmuggled."</strong>", $langs["STATS"], '/{unitsSmuggled}/');
 $langs["STATS"] = $route->replaceMessagePart("<strong>".$creditsWon."</strong>", $langs["STATS"], '/{creditsWon}/');
-$langs["STATS"] = $route->replaceMessagePart("<strong>".$roundInfo."</strong>", $langs["STATS"], '/{roundInfo}/');
+
