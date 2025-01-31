@@ -1,6 +1,6 @@
 {% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
 
-{% apply spaceless %}
+
 {% set recieiver = '' %}
 {% for msg in lastMessage %}
 <div class="row cf {% if msg.receiver == true %}senderRow{% else %}receiverRow{% endif %}">
@@ -11,4 +11,4 @@
     </div>
 </div>
 {% endfor %}
-{% endapply %}
+
