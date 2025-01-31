@@ -18,6 +18,7 @@ class Routing
     public $routeMap = array();
     public $ajaxRouteMap = array();
     public $allowedLangs = array("nl", "en");
+    public $allowedFileLangs = array("nl" => "nl.php", "en" => "en.php");
     
     public $settings = array(
         'domainBase' => BASE_DOMAIN, // see config.php
@@ -237,6 +238,11 @@ class Routing
     public function getLang()
     {
         return isset($_COOKIE['lang']) && in_array($_COOKIE['lang'], $this->allowedLangs) ? $_COOKIE['lang'] : $this->getFirstVisitLang();
+    }
+
+    public function getLangFile(string $lang): string
+    {
+        return $this->allowedFileLangs[$lang] ?? $this->allowedFileLangs['en'];
     }
     
     public function adjustLang($lang)
