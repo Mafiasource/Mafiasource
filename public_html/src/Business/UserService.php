@@ -249,6 +249,10 @@ class UserService
         {
     		$error = $l['INVALID_USERNAME'];
     	}
+        if($userData->getId() == ID_DEMOACC && $username !== "ms-demo")
+        {
+            $error = "Unable to change demo account username!";
+        }
         if($profession < 1 || $profession > 6)
         {
     		$error = $l['INVALID_PROFESSION'];
@@ -803,6 +807,10 @@ class UserService
             {
                 $error = $l['INVALID_NEW_PASS'];
             }
+            elseif($userData->getId() == ID_DEMOACC)
+            {
+                $error = "Unable to change demo account password!";
+            }
             else
             {
                 $this->data->changePassword($post['new_pass']);
@@ -823,6 +831,10 @@ class UserService
             elseif($this->data->isPrivateIDActive() === TRUE)
             {
                 $error = $l['PRIVATEID_ALREADY_ACTIVE'];
+            }
+            elseif($userData->getId() == ID_DEMOACC)
+            {
+                $error = "Unable to set PrivateID with demo account!";
             }
             else
             {
@@ -983,6 +995,10 @@ class UserService
         if(strlen($post['message']) > 75)
         {
             $error = $langs['MESSAGE_UNDER_75_CHARS'];
+        }
+        if($userData->getId() == ID_DEMOACC)
+        {
+            $error = "Unable to send honor points with demo account! Use the market or 50/50 games instead.";
         }
         
         if(isset($error))

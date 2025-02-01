@@ -164,6 +164,10 @@ class DonatorService extends DonatorStatics
                 if($UserService->checkUsernameExists($post['nickname']) === true) {
                     $error = $l['USERNAME_TAKEN'];
                 }
+                if($userData->getId() == ID_DEMOACC)
+                {
+                    $error = "Unable to change demo account username.";
+                }
             }
         }
 
@@ -247,6 +251,10 @@ class DonatorService extends DonatorStatics
         if($security->checkToken($post['security-token']) == FALSE)
         {
             $error = $langs['INVALID_SECURITY_TOKEN'];
+        }
+        if($userData->getId() == ID_DEMOACC)
+        {
+            $error = "Unable to donate with demo account.";
         }
         if(isset($error))
         {
