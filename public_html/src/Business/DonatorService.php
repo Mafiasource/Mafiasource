@@ -247,6 +247,7 @@ class DonatorService extends DonatorStatics
         global $language;
         global $langs;
         $l = $language->donationShopLangs();
+        global $userData;
         
         if($security->checkToken($post['security-token']) == FALSE)
         {
