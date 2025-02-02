@@ -1,0 +1,5 @@
+<div id="sellGarageResponse"></div>
+<form id="sellGarage" class="ajaxForm sellGarage" action="{{ routing.getAjaxRouteByRouteName('sell-garage') }}" method="POST" data-response="#sellGarageResponse">
+    <input type="hidden" name="security-token" value="{{ securityToken }}"/>
+    <input type="submit" name="sell{% if type == 'Family' %}-family{% endif %}-garage" class="execbutton red small" value="{{ langs.SELL }} garage {{ (garageData.price * 0.7)|moneyFormat }}"/>
+</form>

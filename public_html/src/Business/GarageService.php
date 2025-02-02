@@ -268,6 +268,96 @@ class GarageService
         }
     }
     
+    public function sellGarage($post, $famID = FALSE)
+    {
+        global $security;
+        global $userData;
+        global $language;
+        global $langs;
+        $l          = $language->garageLangs();
+        $stateID    = $userData->getStateID();
+        $size       = $this->data->getGarageSizeByState($stateID);
+        $garageData = $size !== FALSE ? $this->garageOptions[$size] : false;
+        $spaceLeft  = $garageData !== false ? $this->data->spaceLeftInGarage($stateID, $garageData['space']) : 0;
+        $price      = $garageData !== false ? round($garageData['price'] * 0.7) : 0;
+        
+        if($security->checkToken($post['security-token']) == FALSE)
+        {
+            $error = $langs['INVALID_SECURITY_TOKEN'];
+        }
+        if($famID == FALSE)
+        {
+            if($size !== FALSE && !in_array($size, $this->allowedOptions))
+            {
+                $error = $l['GARAGE_OPTION_DOESNT_EXIST'];
+            }
+            if($size === FALSE)
+            {
+                $error = $l['NO_GARAGE_IN_STATE'];
+            }
+            if($size !== FALSE && $spaceLeft != $garageData['space'])
+            {
+                $error = $l['SELL_OR_MOVE_VEHICLES_FIRST'];
+                if($stateID == 1)
+                    $error .= " " .$l['ADD_TO_SELL_OR_MOVE_VEHICLES_FIRST'];
+            }
+        }
+        else
+        {
+            $family = new FamilyService();
+            $famData = $family->getFamilyDataByName($userData->getFamily());
+            $fl = $language->familyLangs();
+            $size       = $this->getFamilyGarageSize();
+            $garageData = $size !== FALSE ? $this->familyGarageOptions[$size] : false;
+            $spaceLeft  = $garageData !== false ? $this->spaceLeftInFamilyGarage($garageData['space']) : 0;
+            $price      = $garageData !== false ? round($garageData['price'] * 0.7) : 0;
+            
+            if($size !== FALSE && !in_array($size, $this->allowedOptions))
+            {
+                $error = $l['GARAGE_OPTION_DOESNT_EXIST'];
+            }
+            if($size === FALSE)
+            {
+                $error = $l['NO_FAMILY_GARAGE'];
+            }
+            if($userData->getFamilyBoss() !== true && $userData->getFamilyUnderboss() !== true)
+            {
+                $error = $fl['NO_RIGHTS_FAMILY_MANAGEMENT'];
+            }
+            if(!is_object($famData))
+            {
+                $error = $fl['FAMILY_DOESNT_EXIST'];
+            }
+            if($size !== FALSE && $spaceLeft != $garageData['space'])
+            {
+                $error = $l['SELL_OR_CRUSH_VEHICLES_FIRST'];
+            }
+        }
+        
+        if(isset($error))
+        {
+            return Routing::errorMessage($error);
+        }
+        else
+        {
+            global $route;
+            
+            if($famID == FALSE)
+            {
+                $this->data->sellGarageInState($size, $price, $stateID);
+                $replacedMessage = $route->replaceMessagePart($userData->getState(), $l['GARAGE_SOLD_IN_STATE'], '/{state}/');
+            }
+            else
+            {
+                $this->data->sellFamilyGarage($famID, $size, $price);
+                $replacedMessage = $l['FAMILY_GARAGE_SOLD'];
+            }
+            
+            return Routing::successMessage($replacedMessage);
+            
+        }
+    }
+    
     public function interactWithVehicle($post)
     {
         global $language;

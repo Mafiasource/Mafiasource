@@ -388,6 +388,17 @@ class GarageDAO extends DBConfig
         }
     }
     
+    public function sellGarageInState($size, $price, $stateID)
+    {
+        if(isset($_SESSION['UID']))
+        {
+            $this->con->setData("UPDATE `user_garage` SET `deleted`='1' WHERE `stateID`= :stateID AND `userID`= :uid AND `size`= :size;" . $this->userPlusCashQry, array(
+                ':stateID' => $stateID, ':uid' => $_SESSION['UID'], ':size' => $size,
+                ':val' => $price, ':uid' => $_SESSION['UID']
+            ));
+        }
+    }
+    
     public function buyFamilyGarage($famID, $size, $price, $pData)
     {
         if(isset($_SESSION['UID']))
@@ -399,6 +410,18 @@ class GarageDAO extends DBConfig
             $statement->execute(array(':price' => $price, ':fid' => $famID));
             
             $this->applyPossessionProfits($pData, $price);
+        }
+    }
+    
+    public function sellFamilyGarage($famID, $size, $value)
+    {
+        if(isset($_SESSION['UID']))
+        {
+            $statement = $this->dbh->prepare("UPDATE `family_garage` SET `deleted`='1' WHERE `familyID`= :fid AND `size`= :size");
+            $statement->execute(array(':fid' => $famID, ':size' => $size));
+            
+            $statement = $this->dbh->prepare("UPDATE `family` SET `money`=`money`+ :val WHERE `id`= :fid AND `active`='1' AND `deleted`='0' LIMIT 1");
+            $statement->execute(array(':val' => $value, ':fid' => $famID));
         }
     }
     

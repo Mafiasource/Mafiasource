@@ -15,6 +15,7 @@
     <div class="c-row cf">
         <div class="inner-c-container">
             <div id="ajaxLoader"></div>
+            {% include "/src/Views/game/tabs/garage/.sell-garage.twig" with {type: 'User'} %}
             {% if vehicles is not empty %}
                 {# HIER NOG AJAX FORM VOOR VOORZIEN
                 <a href="#" style="position: relative; display:inline-block;" class="button">{% if lang == 'nl' %}Alles {% endif %}{{ langs.REPAIR }}{% if lang == 'en' %} all{% endif %}</a>&nbsp;

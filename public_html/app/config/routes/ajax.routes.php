@@ -597,6 +597,13 @@ array(
         'controller' => 'Ajax/garage.buy.php'
     ),
     
+    'sell-garage'
+    =>
+    array(
+        'route' => '/game/sell-garage',
+        'controller' => 'Ajax/garage.sell.php'
+    ),
+    
     'garage-interact-vehicle'
     =>
     array(
