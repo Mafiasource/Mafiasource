@@ -248,10 +248,10 @@ class InstallService
                 if(strpos($dbHost, ':'))
                     $dbHost = "[" . $dbHost . "]";
                 
-                $configReplacesMap[21] = 'define(\'PDO_CONSTRING\', "mysql:host=' . $dbHost . ';dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
+                $configReplacesMap[22] = 'define(\'PDO_CONSTRING\', "mysql:host=' . $dbHost . ';dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
             }
             else
-                $configReplacesMap[21] = 'define(\'PDO_CONSTRING\', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
+                $configReplacesMap[22] = 'define(\'PDO_CONSTRING\', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
             
             if(!empty($dbName))
                 $credentialsReplacesMap[3] = 'define(\'DBNAME\', "' . $dbName . '");';
