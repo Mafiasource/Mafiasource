@@ -481,14 +481,14 @@ CREATE TABLE `donate`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `donator`;
 CREATE TABLE `donator`  (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
+  `id` int NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `donator_nl` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `donator_en` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `colorCode` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`, `colorCode`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
