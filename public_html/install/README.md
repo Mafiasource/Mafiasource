@@ -105,6 +105,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 ```
 3) Ready to install on a local non-secure environment at http://localhost/install or http://www.domainname.ex/install
 4) Still nothing? Maybe [500 or above server error persists](#p-500-or-above-server-error-persists) could help.
+
 A local non-secure environment was thoroughly tested on Xampp for Windows with PHP 8.2.12
 
 ###### P) Successful installation but still a blank application like initially.
