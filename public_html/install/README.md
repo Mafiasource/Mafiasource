@@ -92,7 +92,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 ###### P) App wont work on a localhost environment without SSL support.
 ###### A) Application can throw a server error due to 2 miss configurations set while browsing localhost.
 1) In /app/config/config.php edit SSL_ENABLED from true to false. (Not localhost but no SSL? Step 2 not required)
-2) Add the following lines to your hosts file: (Tested on xampp for Windows with php8.0.8)
+2) Add the following lines to your hosts file:
 ```
     #C:/Windows/system32/drivers/etc/hosts (Windows) or /etc/hosts (Linux)
     127.0.0.1 localhost
@@ -105,6 +105,7 @@ Or might even simply choose not to reply, both cases are quite hard to troublesh
 ```
 3) Ready to install on a local non-secure environment at http://localhost/install or http://www.domainname.ex/install
 4) Still nothing? Maybe [500 or above server error persists](#p-500-or-above-server-error-persists) could help.
+A local non-secure environment was thoroughly tested on Xampp for Windows with PHP 8.2.12
 
 ###### P) Successful installation but still a blank application like initially.
 ###### A) Standard configurations should be replaced everywhere, permissions and or restrictions could have avoided this.
