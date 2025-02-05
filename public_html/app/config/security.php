@@ -98,7 +98,7 @@ class Security
     
     public function xssEscape($input)
     {
-        $output = htmlentities(strip_tags($input), ENT_QUOTES, 'UTF-8');
+        $output = htmlentities($input, ENT_QUOTES, 'UTF-8');
         return $output;
     }
     
