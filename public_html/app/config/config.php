@@ -19,7 +19,7 @@ define('DEVELOPER_IPS',    json_decode(DEV_IPS));   // Array containing develope
 
 // Database credentials
 define('PDO_DATABASE',  DBNAME);                                      // Db name
-define('PDO_CONSTRING', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE
+define('PDO_CONSTRING', "mysql:host=".DBHOST.";dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE
 define('PDO_DBUSER',    DBUSR);                                       // Db user, generally a user with the least permissions
 define('PDO_DBPASS',    DBPWD);                                       // Db password
 

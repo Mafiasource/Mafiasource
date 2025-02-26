@@ -1,0 +1,86 @@
+services:
+  webserver:
+    container_name: webserver
+    build:
+      context: .
+      target: development
+    networks:
+      - app-network
+    restart: unless-stopped
+    ports:
+      - 80:80
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - db-password
+    environment:
+      - PASSWORD_FILE_PATH=/run/secrets/db-password
+      - DB_HOST=db
+      - DB_NAME=mafiasource
+      - DB_USER=root
+    develop:
+      watch:
+        - action: sync
+          path: ./public_html/
+          target: /var/www/html
+    volumes:
+      - ./public_html:/var/www/html
+  db:
+    container_name: Database
+    restart: unless-stopped
+    image: mariadb:latest
+    networks:
+      - app-network
+    user: root
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD_FILE=/run/secrets/db-password
+      - MARIADB_DATABASE=mafiasource
+    expose:
+      - 3306
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/usr/local/bin/healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    ports:
+      - 8080:80
+    networks:
+      - app-network
+    depends_on:
+      - db
+    environment:
+      - PMA_HOST=db
+  tunnel:
+    networks:
+      - app-network
+    container_name: cloudflared-tunnel
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=
+volumes:
+  db-data:
+networks:
+  app-network:
+    driver: bridge
+
+
+secrets:
+  db-password:
+    file: db/password.txt

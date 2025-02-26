@@ -1,9 +1,10 @@
 <?PHP
 
 // Database credentials
-define('DBNAME', "ms");
+define('DBNAME', "mafiasource");
 define('DBUSR', "root");
-define('DBPWD', "");
+define('DBPWD', "mafiasource");
+define('DBHOST', "db"); // db is define as docker network alias
 
 // Master crypto keys
 define('MASTERIV', base64_decode('qXtgbgPju81x1bXUBeQKIQ=='));
