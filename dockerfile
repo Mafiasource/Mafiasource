@@ -35,4 +35,3 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY ./credentials.php /var/www/credentials.php
 USER www-data
 
-FROM cloudflare/cloudflared

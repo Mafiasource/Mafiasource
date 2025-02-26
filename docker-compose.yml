@@ -65,15 +65,7 @@ services:
       - db
     environment:
       - PMA_HOST=db
-  tunnel:
-    networks:
-      - app-network
-    container_name: cloudflared-tunnel
-    image: cloudflare/cloudflared
-    restart: unless-stopped
-    command: tunnel run
-    environment:
-      - TUNNEL_TOKEN=
+
 volumes:
   db-data:
 networks:
