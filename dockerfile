@@ -18,8 +18,19 @@ RUN --mount=type=cache,target=/tmp/cache \
     --mount=type=bind,source=./public_html/web/composer.lock,target=web/composer.lock \
     composer install --no-interaction
 
+
 FROM php:8.2-apache as base
+
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zlib1g-dev \
+    libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd zip
 RUN docker-php-ext-install pdo pdo_mysql gd
+
 RUN a2enmod rewrite headers
 COPY ./public_html /var/www/html
 
