@@ -20,7 +20,7 @@ define('ID_DEMOACC',       0);                      // Demo account its UserID
 
 // Database credentials
 define('PDO_DATABASE',  DBNAME);                                      // Db name
-define('PDO_CONSTRING', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE
+define('PDO_CONSTRING', "mysql:host=".DBHOST.";dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE
 define('PDO_DBUSER',    DBUSR);                                       // Db user, generally a user with the least permissions
 define('PDO_DBPASS',    DBPWD);                                       // Db password
 
