@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/tmp/cache \
     composer install --no-interaction
 
 FROM php:8.2-apache as base
-RUN docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql gd
 RUN a2enmod rewrite headers
 COPY ./public_html /var/www/html
 
