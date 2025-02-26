@@ -1,10 +1,10 @@
 <?PHP
 
 // Mafiasource online mafia RPG, this software is inspired by Crimeclub.
-// Copyright © 2016 Michael Carrein, 2006 Crimeclub.nl
+// Copyright ï¿½ 2016 Michael Carrein, 2006 Crimeclub.nl
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the “Software”),
+// copy of this software and associated documentation files (the ï¿½Softwareï¿½),
 // to deal in the Software without restriction, including without limitation
 // the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the
@@ -13,7 +13,7 @@
 // The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// THE SOFTWARE IS PROVIDED ï¿½AS ISï¿½, WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
 // NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -109,8 +109,8 @@ if($stream)
         $credentialsFile = DOC_ROOT . '/../credentials.php';
         $credentialsReplacesMap = array();
         $masterEncryption = InstallService::generateMasterEncryptionIvAndKey();
-        $credentialsReplacesMap[8] = "define('MASTERIV', base64_decode('" . base64_encode($masterEncryption['iv']) . "'));";
-        $credentialsReplacesMap[9] = "define('MASTERKEY', base64_decode('" . base64_encode($masterEncryption['key']) . "'));";
+        $credentialsReplacesMap[9] = "define('MASTERIV', base64_decode('" . base64_encode($masterEncryption['iv']) . "'));";
+        $credentialsReplacesMap[10] = "define('MASTERKEY', base64_decode('" . base64_encode($masterEncryption['key']) . "'));";
         InstallService::replaceLinesByLineNumbers($credentialsFile, $credentialsReplacesMap);
         $_SESSION['install']['masterEncryption'] = true;
         
