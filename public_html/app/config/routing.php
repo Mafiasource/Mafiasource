@@ -164,7 +164,7 @@ class Routing
         $result = isset($this->routeMap[$this->routeName]) ? $this->routeMap[$this->routeName]['route'] : null;
         if($result != null)
         {
-            $_SESSION['PREV_ROUTE'] = $_SERVER['REQUEST_URI'];
+            $_SESSION['PREV_ROUTE'] = htmlentities($_SERVER['REQUEST_URI'], ENT_QUOTES, 'UTF-8');
             $this->setPrevRouteNameByRoute($result);
         }
         return TRUE;
