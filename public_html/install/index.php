@@ -127,7 +127,7 @@ if($stream)
         'settings' => $route->settings,
         'securityToken' => $security->getToken(),
         'message' => $message,
-        'domain' => $_SERVER['HTTP_HOST'],
+        'domain' => htmlentities($_SERVER['HTTP_HOST'], ENT_QUOTES, 'UTF-8'),
         'previousFields' => $_SESSION['install']['fields'],
         'encrypted' => $encrypted,
         'protocol' => PROTOCOL,
