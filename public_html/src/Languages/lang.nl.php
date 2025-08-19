@@ -1404,6 +1404,7 @@ class GetLanguageContent
             'LEAVE' => $this->familyLangs()['LEAVE'],
             'QUIT' => $this->familyRaidLangs()['QUIT'],
             'RESULTS' => "Uitslag",
+            'RACE_TYPE' => "Race type",
             'NO_VEHICLE_TO_RACE' => "Je hebt geen voertuig beschikbaar in jouw garages.",
             'ALREADY_PART_OF_RACE' => "Je doet al mee aan een ".strtolower($str)."!",
             'NO_PART_OF_RACE' => "Je doet nog niet mee aan een ".strtolower($str)."!",

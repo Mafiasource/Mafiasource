@@ -1,14 +1,40 @@
 {% extends "/app/Resources/Views/gamebase.twig" %}
 
 {% block content %}
-{#
 <div class="top">
-    Streetrace
+    {{ langs.TITLE }}
 </div>
 <div class="content-container">
     <div class="row">
-        Vroem
+        <p class="center">{{ langs.DESCRIPTION|raw }}</p>
     </div>
+    <div id="streetraceResponse"></div>
+    {% if vehicles is not empty %}
+        <form class="ajaxForm center" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-streetrace') }}" data-response="#streetraceResponse">
+            <input type="hidden" name="security-token" value="{{ securityToken }}" />
+            <div class="row">
+                {{ langs.VEHICLE }}:
+                <select name="vehicle">
+                    {% for g in vehicles %}
+                        <option value="{{ g.getId }}">{{ g.getVehicle.getName }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                {{ langs.RACE_TYPE }}:
+                <select name="type">
+                    {% for key, label in raceTypes %}
+                        <option value="{{ key }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                {{ langs.STAKE }}:&nbsp;<input type="number" name="stake" placeholder="{{ langs.STAKE }}" />
+                <input type="submit" name="streetrace" value="{{ langs.PLAY }}" />
+            </div>
+        </form>
+    {% else %}
+        <p class="center">{{ langs.NO_VEHICLE_TO_RACE }}</p>
+    {% endif %}
 </div>
-#}
 {% endblock content %}

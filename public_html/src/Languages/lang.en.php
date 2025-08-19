@@ -1404,6 +1404,7 @@ class GetLanguageContent
             'LEAVE' => $this->familyLangs()['LEAVE'],
             'QUIT' => $this->familyRaidLangs()['QUIT'],
             'RESULTS' => "Results",
+            'RACE_TYPE' => "Race type",
             'NO_VEHICLE_TO_RACE' => "You don't have a vehicle available in your garages.",
             'ALREADY_PART_OF_RACE' => "You're already part of a ".strtolower($str)."!",
             'NO_PART_OF_RACE' => "You're not part yet of a ".strtolower($str)."!",
