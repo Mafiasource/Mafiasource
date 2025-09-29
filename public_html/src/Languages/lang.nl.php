@@ -1397,7 +1397,7 @@ class GetLanguageContent
         $famCrimeLangs = $this->familyCrimeLangs();
         $langs = array(
             'TITLE' => ucfirst($str),
-            'DESCRIPTION' => "Er zijn 4 soorten ".strtolower($str)."s: Highway, Route66, Drift Race en City Race.<br />Voor elk soort race moet je auto goed zijn op andere punten.<br /><br />De winnaar van de ".strtolower($str)." krijgt 3 keer de inzet, en de nummer 2 krijgt zijn inzet terug.<br />De nummer 3 en 4 verliezen hun geld.",
+            'DESCRIPTION' => "Streetraces kunnen nu worden georganiseerd voor meerdere spelers. Kies een racetype, het aantal vereiste spelers en bepaal je inzet.<br />Zodra de lobby vol is start de race automatisch. Het voertuig met de beste gecombineerde statistieken voor het gekozen racetype wint de race. Bij een gelijke stand wordt de winnaar willekeurig gekozen.",
             'ORGANIZE' => $famCrimeLangs['ORGANIZE'],
             'PARTICIPANTS' => $famCrimeLangs['PARTICIPANTS'],
             'JOIN' => $famCrimeLangs['JOIN'],
@@ -1405,14 +1405,25 @@ class GetLanguageContent
             'QUIT' => $this->familyRaidLangs()['QUIT'],
             'RESULTS' => "Uitslag",
             'RACE_TYPE' => "Race type",
+            'PLAYERS_REQUIRED' => "Benodigde spelers",
+            'OPEN_RACES' => "Open streetraces",
+            'NO_OPEN_RACES' => "Er wachten momenteel geen streetraces op tegenstanders.",
+            'CURRENT_RACE' => "Jouw streetrace",
+            'NO_CURRENT_RACE' => "Je neemt momenteel niet deel aan een streetrace.",
+            'LATEST_RACE' => "Laatste streetrace",
+            'POSITION' => "Positie",
+            'SCORE' => "Score",
+            'PRIZE' => "Prijs",
             'NO_VEHICLE_TO_RACE' => "Je hebt geen voertuig beschikbaar in jouw garages.",
             'ALREADY_PART_OF_RACE' => "Je doet al mee aan een ".strtolower($str)."!",
             'NO_PART_OF_RACE' => "Je doet nog niet mee aan een ".strtolower($str)."!",
             'INVALID_RACE' => "Je hebt een ongeldige ".strtolower($str)." opgegeven!",
             'INVALID_RACE_TYPE' => "Je hebt een ongeldig race type opgegeven!",
             'INVALID_STAKE' => "Je hebt een ongeldige inzet gekozen!",
+            'INVALID_PLAYER_COUNT' => "Je hebt een ongeldig aantal spelers gekozen!",
             'INVALID_VEHICLE' => "Je hebt een onbekend voertuig gekozen!",
             'RACE_ALREADY_FULL' => "Deze ".strtolower($str)." zit al vol!",
+            'NOT_IN_SAME_STATE' => "Je bevindt je niet in dezelfde staat als deze ".strtolower($str)."!",
             'RACE_NOT_READY_YET' => "Deze ".strtolower($str)." is nog niet klaar om te starten!",
             'ORGANIZE_RACE_SUCCESS' => "Je hebt een ".strtolower($str)." gestart!",
             'JOIN_RACE_SUCCESS' => "Je doet nu mee aan deze ".strtolower($str)."!",
@@ -1420,7 +1431,8 @@ class GetLanguageContent
             'LEAVE_RACE_SUCCESS' => "Je bent uit de ".strtolower($str)." gestapt!",
             'RACE_SUCCESS_LOST_NTH' => "Je bent {nth} geworden in de ".strtolower($str)." en je hebt je inzet verloren!",
             'RACE_SUCCESS_EVEN_SECOND' => "Je bent tweede geworden in de ".strtolower($str)." en je hebt je inzet teruggekregen!",
-            'RACE_SUCCESS_WON_FIRST' => "Je bent eerste geworden in de ".strtolower($str)." en je hebt $&#8203;{price} gewonnen!"
+            'RACE_SUCCESS_WON_FIRST' => "Je bent eerste geworden in de ".strtolower($str)." en je hebt $&#8203;{price} gewonnen!",
+            'RACE_SUCCESS_WON_NTH' => "Je bent {nth} geworden in de ".strtolower($str)." en je hebt $&#8203;{price} gewonnen!"
         );
         return $langs;
     }
