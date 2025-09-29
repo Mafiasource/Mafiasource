@@ -36,8 +36,10 @@ class StreetraceService
 
     public function getOverview()
     {
+        global $userData;
+
         return array(
-            'openRaces' => $this->data->getOpenRaces(),
+            'openRaces' => $this->data->getOpenRaces($userData->getStateID()),
             'userRace' => $this->data->getUsersOpenRace(),
             'lastResult' => $this->data->getUserLastResult()
         );
@@ -69,6 +71,7 @@ class StreetraceService
         $type = isset($post['type']) ? $post['type'] : '';
         $vehicleId = isset($post['vehicle']) ? (int)$post['vehicle'] : 0;
         $requiredPlayers = isset($post['requiredPlayers']) ? (int)$post['requiredPlayers'] : 0;
+        $stateId = (int)$userData->getStateID();
 
         if($security->checkToken($post['security-token']) == false)
             $error = $langs['INVALID_SECURITY_TOKEN'];
@@ -84,9 +87,11 @@ class StreetraceService
             $error = $l['INVALID_STAKE'];
         if($userData->getCash() < $stake)
             $error = $langs['NOT_ENOUGH_MONEY_CASH'];
+        if($stateId < 1)
+            $error = $l['INVALID_RACE'];
         if(!isset($error) && $this->data->userHasOpenRace())
             $error = $l['ALREADY_PART_OF_RACE'];
-        if(!isset($error) && ($vehicle = $this->data->getUserVehicle($vehicleId)) == false)
+        if(!isset($error) && ($vehicle = $this->data->getUserVehicle($vehicleId, $stateId)) == false)
             $error = $l['INVALID_VEHICLE'];
 
         if(isset($error))
@@ -94,7 +99,7 @@ class StreetraceService
 
         try
         {
-            $this->data->createRace($type, $stake, $requiredPlayers, $vehicle);
+            $this->data->createRace($type, $stake, $requiredPlayers, $vehicle, $stateId);
             return Routing::successMessage($l['ORGANIZE_RACE_SUCCESS']);
         }
         catch(\Exception $e)
@@ -114,6 +119,7 @@ class StreetraceService
 
         $raceId = isset($post['race']) ? (int)$post['race'] : 0;
         $vehicleId = isset($post['vehicle']) ? (int)$post['vehicle'] : 0;
+        $userStateId = (int)$userData->getStateID();
 
         if($security->checkToken($post['security-token']) == false)
             $error = $langs['INVALID_SECURITY_TOKEN'];
@@ -121,6 +127,8 @@ class StreetraceService
             $error = $langs['CANT_DO_THAT_IN_PRISON'];
         if($userData->getTraveling())
             $error = $langs['CANT_DO_THAT_TRAVELLING'];
+        if($userStateId < 1)
+            $error = $l['INVALID_RACE'];
 
         $race = $this->data->getRaceById($raceId);
         if(!$race instanceof Streetrace || $race->getStatus() !== 'open')
@@ -135,7 +143,10 @@ class StreetraceService
         if(!isset($error) && $this->data->getUserParticipant($raceId))
             $error = $l['ALREADY_PART_OF_RACE'];
 
-        if(!isset($error) && ($vehicle = $this->data->getUserVehicle($vehicleId)) == false)
+        if(!isset($error) && $race->getStateID() != $userStateId)
+            $error = $l['RACE_WRONG_STATE'];
+
+        if(!isset($error) && ($vehicle = $this->data->getUserVehicle($vehicleId, $userStateId)) == false)
             $error = $l['INVALID_VEHICLE'];
 
         if(!isset($error) && $userData->getCash() < $race->getStake())
@@ -361,5 +372,10 @@ class StreetraceService
         }
         $msg = $route->replaceMessagePart($position, $l['RACE_SUCCESS_LOST_NTH'], '/{nth}/');
         return Routing::errorMessage($msg);
+    }
+
+    public function userHasOpenRace()
+    {
+        return $this->data->userHasOpenRace() !== false;
     }
 }
