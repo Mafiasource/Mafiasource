@@ -6,6 +6,7 @@ use app\config\Routing;
 use src\Business\GarageService;
 use src\Business\FamilyCrimeService;
 use src\Business\FamilyRaidService;
+use src\Business\StreetraceService;
 use src\Business\PossessionService;
 use src\Business\SmuggleService;
 use src\Business\PrisonService;
@@ -447,6 +448,7 @@ class StateService
         $stateID = $this->getStateIdByCityId($cityID);
         
         $famRaidService = new FamilyRaidService();
+        $streetraceService = new StreetraceService();
         
         if($_POST['security-token'] != $security->getToken())
         {
@@ -477,6 +479,11 @@ class StateService
         {
             if($userData->getStateID() !== $stateID)
                 $error = $l['CANNOT_TRAVEL_WHEN_IN_RAID'];
+        }
+
+        if(!isset($error) && $streetraceService->userHasOpenRace())
+        {
+            $error = $l['CANNOT_TRAVEL_WHEN_IN_RACE'];
         }
         
         $arr = $this->calculatePrice($userData->getCityID(), $cityID, $type, true);

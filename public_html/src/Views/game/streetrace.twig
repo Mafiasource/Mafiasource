@@ -59,6 +59,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>{{ langs.STATE }}</th>
                             <th>{{ langs.RACE_TYPE }}</th>
                             <th>{{ langs.STAKE }}</th>
                             <th>{{ langs.PLAYERS_REQUIRED }}</th>
@@ -70,6 +71,7 @@
                         {% set activeRaceId = userRace ? userRace.getId : 0 %}
                         {% for race in openRaces %}
                             <tr>
+                                <td>{{ race.getStateName|default('-') }}</td>
                                 <td>{{ raceTypes[race.getType]|default(race.getType|capitalize) }}</td>
                                 <td>$&#8203;{{ race.getStake|number_format(0, '', ',') }}</td>
                                 <td>{{ race.getRequiredPlayers }}</td>
@@ -109,7 +111,7 @@
         <div class="subtop">{{ langs.CURRENT_RACE }}</div>
         <div class="content-container">
             {% if userRace %}
-                <p class="center">{{ raceTypes[userRace.getType]|default(userRace.getType|capitalize) }} &mdash; $&#8203;{{ userRace.getStake|number_format(0, '', ',') }} &mdash; {{ userRace.getParticipantCount }}/{{ userRace.getRequiredPlayers }} {{ langs.PARTICIPANTS|lower }}</p>
+                <p class="center">{{ userRace.getStateName|default('-') }} &mdash; {{ raceTypes[userRace.getType]|default(userRace.getType|capitalize) }} &mdash; $&#8203;{{ userRace.getStake|number_format(0, '', ',') }} &mdash; {{ userRace.getParticipantCount }}/{{ userRace.getRequiredPlayers }} {{ langs.PARTICIPANTS|lower }}</p>
                 <table class="table">
                     <thead>
                         <tr>
@@ -152,7 +154,7 @@
         <div class="row">
             <div class="subtop">{{ langs.LATEST_RACE }}</div>
             <div class="content-container">
-                <p class="center">{{ raceTypes[lastResult.getType]|default(lastResult.getType|capitalize) }} &mdash; $&#8203;{{ lastResult.getStake|number_format(0, '', ',') }}</p>
+                <p class="center">{{ lastResult.getStateName|default('-') }} &mdash; {{ raceTypes[lastResult.getType]|default(lastResult.getType|capitalize) }} &mdash; $&#8203;{{ lastResult.getStake|number_format(0, '', ',') }}</p>
                 <table class="table">
                     <thead>
                         <tr>

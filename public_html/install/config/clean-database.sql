@@ -1557,12 +1557,14 @@ CREATE TABLE `streetrace_game`  (
   `type` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `stake` int NOT NULL DEFAULT 0,
   `requiredPlayers` tinyint NOT NULL DEFAULT 2,
+  `stateID` smallint NOT NULL,
   `status` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `started` datetime NULL DEFAULT NULL,
   `finished` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `organizerID` (`organizerID`)
+  KEY `organizerID` (`organizerID`),
+  KEY `stateID` (`stateID`)
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------

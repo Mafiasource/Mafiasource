@@ -14,6 +14,8 @@ class Streetrace
     private $created;
     private $started;
     private $finished;
+    private $stateID;
+    private $stateName;
     private $participantCount = 0;
     private $participants = array();
 
@@ -115,6 +117,26 @@ class Streetrace
     public function setFinished($finished)
     {
         $this->finished = $finished;
+    }
+
+    public function getStateID()
+    {
+        return $this->stateID;
+    }
+
+    public function setStateID($stateID)
+    {
+        $this->stateID = $stateID;
+    }
+
+    public function getStateName()
+    {
+        return $this->stateName;
+    }
+
+    public function setStateName($stateName)
+    {
+        $this->stateName = $stateName;
     }
 
     public function getParticipantCount()
