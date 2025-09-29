@@ -1593,8 +1593,7 @@ CREATE TABLE `streetrace_participant`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_game_user`(`gameID`, `userID`) USING BTREE,
   INDEX `gameID_idx`(`gameID`) USING BTREE,
-  INDEX `userID_idx`(`userID`) USING BTREE,
-  CONSTRAINT `streetrace_participant_ibfk_1` FOREIGN KEY (`gameID`) REFERENCES `streetrace_game` (`id`) ON DELETE CASCADE
+  INDEX `userID_idx`(`userID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------

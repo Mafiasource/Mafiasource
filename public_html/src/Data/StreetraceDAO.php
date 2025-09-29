@@ -109,6 +109,14 @@ class StreetraceDAO extends DBConfig
         {
             $this->dbh->beginTransaction();
 
+            $raceLock = $this->dbh->prepare("SELECT `id` FROM `streetrace_game` WHERE `id` = :raceID AND `status`='open' LIMIT 1 FOR UPDATE");
+            $raceLock->execute(array(':raceID' => $raceId));
+            if($raceLock->fetch() === false)
+            {
+                $this->dbh->rollBack();
+                throw new \RuntimeException('Race is no longer available.');
+            }
+
             $this->insertParticipant($raceId, $vehicle, $stake);
 
             $this->dbh->commit();
@@ -117,6 +125,12 @@ class StreetraceDAO extends DBConfig
         catch(PDOException $e)
         {
             $this->dbh->rollBack();
+            throw $e;
+        }
+        catch(\Exception $e)
+        {
+            if($this->dbh->inTransaction())
+                $this->dbh->rollBack();
             throw $e;
         }
     }
@@ -172,8 +186,41 @@ class StreetraceDAO extends DBConfig
         $count = $this->countParticipants($raceId);
         if($count === 0)
         {
-            $statement = $this->dbh->prepare("UPDATE `streetrace_game` SET `status`='cancelled', `finished`=NOW() WHERE `id` = :raceID LIMIT 1");
-            $statement->execute(array(':raceID' => $raceId));
+            $this->deleteRace($raceId, $count);
+        }
+    }
+
+    public function deleteRace($raceId, $participantCount = null)
+    {
+        if($participantCount === null)
+            $participantCount = $this->countParticipants($raceId);
+
+        if($participantCount > 0)
+            throw new \RuntimeException('Cannot delete race with active participants.');
+
+        try
+        {
+            $this->dbh->beginTransaction();
+
+            $raceLock = $this->dbh->prepare("SELECT `id` FROM `streetrace_game` WHERE `id` = :raceID LIMIT 1 FOR UPDATE");
+            $raceLock->execute(array(':raceID' => $raceId));
+            $raceExists = $raceLock->fetch() !== false;
+
+            $deleteParticipants = $this->dbh->prepare("DELETE FROM `streetrace_participant` WHERE `gameID` = :raceID");
+            $deleteParticipants->execute(array(':raceID' => $raceId));
+
+            if($raceExists)
+            {
+                $deleteRace = $this->dbh->prepare("DELETE FROM `streetrace_game` WHERE `id` = :raceID LIMIT 1");
+                $deleteRace->execute(array(':raceID' => $raceId));
+            }
+
+            $this->dbh->commit();
+        }
+        catch(PDOException $e)
+        {
+            $this->dbh->rollBack();
+            throw $e;
         }
     }
 
