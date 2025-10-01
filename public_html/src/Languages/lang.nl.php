@@ -1421,6 +1421,7 @@ class GetLanguageContent
             'INVALID_RACE' => "Je hebt een ongeldige ".strtolower($str)." opgegeven!",
             'INVALID_RACE_TYPE' => "Je hebt een ongeldig race type opgegeven!",
             'INVALID_STAKE' => "Je hebt een ongeldige inzet gekozen!",
+            'STAKE_TOO_HIGH' => "De inzet mag niet hoger zijn dan 2.147.483.647.",
             'INVALID_PLAYER_COUNT' => "Je hebt een ongeldig aantal spelers gekozen!",
             'INVALID_VEHICLE' => "Je hebt een voertuig gekozen dat niet beschikbaar is in deze staat!",
             'RACE_ALREADY_FULL' => "Deze ".strtolower($str)." zit al vol!",

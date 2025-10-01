@@ -10,6 +10,7 @@ use src\Entities\StreetraceParticipant;
 
 class StreetraceService
 {
+    private const MAX_STAKE = 2147483647;
     private $data;
     public $raceTypes = array(
         'highway' => 'Highway',
@@ -85,6 +86,8 @@ class StreetraceService
             $error = $l['INVALID_PLAYER_COUNT'];
         if($stake < 1)
             $error = $l['INVALID_STAKE'];
+        if($stake > self::MAX_STAKE)
+            $error = $l['STAKE_TOO_HIGH'];
         if($userData->getCash() < $stake)
             $error = $langs['NOT_ENOUGH_MONEY_CASH'];
         if($stateId < 1)

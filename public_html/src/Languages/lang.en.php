@@ -1421,6 +1421,7 @@ class GetLanguageContent
             'INVALID_RACE' => "You've choosen an invalid ".strtolower($str)."!",
             'INVALID_RACE_TYPE' => "You've choosen an invalid race type!",
             'INVALID_STAKE' => "You've choosen an invalid stake!",
+            'STAKE_TOO_HIGH' => "The stake cannot be higher than 2,147,483,647.",
             'INVALID_PLAYER_COUNT' => "You've choosen an invalid amount of players!",
             'INVALID_VEHICLE' => "You've choosen a vehicle that isn't available to you in this state!",
             'RACE_ALREADY_FULL' => "This ".strtolower($str)." is already full!",
