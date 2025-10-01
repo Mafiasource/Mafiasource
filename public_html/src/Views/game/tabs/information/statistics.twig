@@ -4,87 +4,89 @@
         {# stats.getGameStatistic|var_dump #}
         <div class="top">Site {{ langs.STATISTICS|lower }}</div>
         <div class="content-container">
-            <div class="row">
-                <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/site.png" class="middle" alt="Site {{ langs.STATISTICS }}"/>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.AMOUNT_OF_MEMBERS }}
+            <div class="inner-c-container">
+                <div class="row">
+                    <img src="{{ staticRoot }}/foto/web/public/images/statistics/{{ lang }}/site.png" class="middle" alt="Site {{ langs.STATISTICS }}"/>
                 </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalMembers|valueFormat }}  <small class="red">({{ stats.getGameStatistic.getTotalBanned|valueFormat }} {{ langs.OF_WHICH_ARE_BANNED|lower }})</small>
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.AMOUNT_OF_MEMBERS }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalMembers|valueFormat }}  <small class="red">({{ stats.getGameStatistic.getTotalBanned|valueFormat }} {{ langs.OF_WHICH_ARE_BANNED|lower }})</small>
+                    </div>
                 </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.TOTAL_CASH_MONEY }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.TOTAL_CASH_MONEY }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalCash|moneyFormat }}
+                    </div>
                 </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalCash|moneyFormat }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.TOTAL_BANK_MONEY }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalBank|moneyFormat }}
+                    </div>
                 </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.TOTAL_BANK_MONEY }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.TOTAL_MONEY }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalMoney|moneyFormat }}
+                    </div>
                 </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalBank|moneyFormat }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.AVERAGE_MONEY_MEMBER }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getAverageMoney|moneyFormat }}
+                    </div>
                 </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.TOTAL_MONEY }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.AMOUNT_OF_FAMILIES }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalFamilies|valueFormat }}
+                    </div>
                 </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalMoney|moneyFormat }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.TOTAL_MEMBER_BULLETS }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalBullets|valueFormat }}
+                    </div>
                 </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.AVERAGE_MONEY_MEMBER }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.AVERAGE_BULLETS_MEMBER }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getAverageBullets|valueFormat }}
+                    </div>
                 </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getAverageMoney|moneyFormat }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.DEAD_MEMBERS_NOW }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalDeathNow|valueFormat }}
+                    </div>
                 </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.AMOUNT_OF_FAMILIES }}
-                </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalFamilies|valueFormat }}
-                </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.TOTAL_MEMBER_BULLETS }}
-                </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalBullets|valueFormat }}
-                </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.AVERAGE_BULLETS_MEMBER }}
-                </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getAverageBullets|valueFormat }}
-                </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.DEAD_MEMBERS_NOW }}
-                </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalDeathNow|valueFormat }}
-                </div>
-            </div>
-            <div class="row cols cf">
-                <div class="c-50 column">
-                    {{ langs.TOTAL_BANNED_PLAYERS }}
-                </div>
-                <div class="c-50 column">
-                    {{ stats.getGameStatistic.getTotalBanned|valueFormat }}
+                <div class="row cols cf">
+                    <div class="c-50 column">
+                        {{ langs.TOTAL_BANNED_PLAYERS }}
+                    </div>
+                    <div class="c-50 column">
+                        {{ stats.getGameStatistic.getTotalBanned|valueFormat }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -351,7 +353,7 @@
         {% for g in stats.getPopulationStatistic %}
             {% if loop.index0 % 3 == 0 %}{% if not loop.first %}</div>{% endif %}<div class="c-row cf">{% endif %}
             <div class="c-row-33 col">
-                <div class="subtop">{{ g.getGroup }}</div>
+                <div class="top">{{ g.getGroup }}</div>
                 <div class="content-container">
                     {% for s in g.getStatistics %}
                         <div class="row cols cf">
