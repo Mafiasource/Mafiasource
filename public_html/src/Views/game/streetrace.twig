@@ -1,141 +1,165 @@
 {% extends "/app/Resources/Views/gamebase.twig" %}
 
 {% block content %}
-<div class="top">
-    {{ langs.TITLE }}
-</div>
-<div class="content-container">
-    <div class="row">
-        <p class="center">{{ langs.DESCRIPTION|raw }}</p>
+<div id="streetracePage">
+    <div class="top">
+        {{ langs.TITLE }}
     </div>
-    <div id="streetraceResponse"></div>
-
-    {% if vehicles is not empty %}
+    <div class="content-container cf">
         <div class="row">
-            <div class="subtop">{{ langs.ORGANIZE }}</div>
+            <p class="center">{{ langs.DESCRIPTION|raw }}</p>
+        </div>
+        <div id="streetraceResponse"></div>
+
+        {% if vehicles is not empty %}
+            <div class="row" id="organizeStreetrace">
+                <div class="subtop">{{ langs.ORGANIZE }}</div>
+                <div class="content-container">
+                    <form class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-streetrace') }}" data-response="#streetraceResponse">
+                        <input type="hidden" name="security-token" value="{{ securityToken }}" />
+                        <input type="hidden" name="action" value="organize" />
+                        <div class="row cols cf">
+                            <div class="c-30 column">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/car.png" class="icon" alt="{{ langs.VEHICLE }}" /> {{ langs.VEHICLE }}
+                            </div>
+                            <div class="c-70 column">
+                                <select name="vehicle">
+                                    {% for g in vehicles %}
+                                        <option value="{{ g.getId }}">{{ g.getVehicle.getName }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-30 column">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/flag_green.png" class="icon" alt="{{ langs.RACE_TYPE }}" /> {{ langs.RACE_TYPE }}
+                            </div>
+                            <div class="c-70 column">
+                                <select name="type">
+                                    {% for key, label in raceTypes %}
+                                        <option value="{{ key }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-30 column">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/group.png" class="icon" alt="{{ langs.PLAYERS_REQUIRED }}" /> {{ langs.PLAYERS_REQUIRED }}
+                            </div>
+                            <div class="c-70 column">
+                                <select name="requiredPlayers">
+                                    {% for amount in playerOptions %}
+                                        <option value="{{ amount }}">{{ amount }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row cols cf">
+                            <div class="c-30 column">
+                                <img src="{{ staticRoot }}/foto/web/public/images/icons/coins.png" class="icon" alt="{{ langs.STAKE }}" /> {{ langs.STAKE }}
+                            </div>
+                            <div class="c-70 column">
+                                <input type="number" name="stake" placeholder="{{ langs.STAKE }}" min="1" max="2147483647" />
+                            </div>
+                        </div>
+                        <div class="row cf">
+                            <input type="submit" name="streetrace" class="right" value="{{ langs.ORGANIZE }}" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <p class="center">{{ langs.NO_VEHICLE_TO_RACE }}</p>
+        {% endif %}
+
+        <div class="row">
+            <div class="subtop">{{ langs.OPEN_RACES }}</div>
             <div class="content-container">
-                <form class="ajaxForm center" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-streetrace') }}" data-response="#streetraceResponse">
-                    <input type="hidden" name="security-token" value="{{ securityToken }}" />
-                    <input type="hidden" name="action" value="organize" />
-                    <div class="row">
-                        {{ langs.VEHICLE }}:
-                        <select name="vehicle">
-                            {% for g in vehicles %}
-                                <option value="{{ g.getId }}">{{ g.getVehicle.getName }}</option>
-                            {% endfor %}
-                        </select>
+                {% if openRaces is not empty %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-dark table-bordered align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="top center"><strong>{{ langs.STATE }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.RACE_TYPE }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.STAKE }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.PLAYERS_REQUIRED }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.PARTICIPANTS }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.JOIN }}</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set activeRaceId = userRace ? userRace.getId : 0 %}
+                                {% for race in openRaces %}
+                                    <tr>
+                                        <td class="center">{{ race.getStateName|default('-') }}</td>
+                                        <td class="center">{{ raceTypes[race.getType]|default(race.getType|capitalize) }}</td>
+                                        <td class="center">$&#8203;{{ race.getStake|number_format(0, '', ',') }}</td>
+                                        <td class="center">{{ race.getRequiredPlayers }}</td>
+                                        <td class="center">{{ race.getParticipantCount }}/{{ race.getRequiredPlayers }}</td>
+                                        <td class="center">
+                                            {% if activeRaceId > 0 %}
+                                                <em>{{ langs.ALREADY_PART_OF_RACE }}</em>
+                                            {% elseif race.getParticipantCount >= race.getRequiredPlayers %}
+                                                <em>{{ langs.RACE_ALREADY_FULL }}</em>
+                                            {% elseif vehicles is empty %}
+                                                <em>{{ langs.NO_VEHICLE_TO_RACE }}</em>
+                                            {% else %}
+                                                <form class="ajaxForm inline" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-streetrace') }}" data-response="#streetraceResponse">
+                                                    <input type="hidden" name="security-token" value="{{ securityToken }}" />
+                                                    <input type="hidden" name="action" value="join" />
+                                                    <input type="hidden" name="race" value="{{ race.getId }}" />
+                                                    <select name="vehicle">
+                                                        {% for g in vehicles %}
+                                                            <option value="{{ g.getId }}">{{ g.getVehicle.getName }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <input type="submit" value="{{ langs.JOIN }}" />
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="row">
-                        {{ langs.RACE_TYPE }}:
-                        <select name="type">
-                            {% for key, label in raceTypes %}
-                                <option value="{{ key }}">{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="row">
-                        {{ langs.PLAYERS_REQUIRED }}:
-                        <select name="requiredPlayers">
-                            {% for amount in playerOptions %}
-                                <option value="{{ amount }}">{{ amount }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="row">
-                        {{ langs.STAKE }}:&nbsp;<input type="number" name="stake" placeholder="{{ langs.STAKE }}" min="1" max="2147483647" />
-                        <input type="submit" name="streetrace" value="{{ langs.ORGANIZE }}" />
-                    </div>
-                </form>
+                {% else %}
+                    <p class="center">{{ langs.NO_OPEN_RACES }}</p>
+                {% endif %}
             </div>
         </div>
-    {% else %}
-        <p class="center">{{ langs.NO_VEHICLE_TO_RACE }}</p>
-    {% endif %}
-
-    <div class="row">
-        <div class="subtop">{{ langs.OPEN_RACES }}</div>
-        <div class="content-container">
-            {% if openRaces is not empty %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{{ langs.STATE }}</th>
-                            <th>{{ langs.RACE_TYPE }}</th>
-                            <th>{{ langs.STAKE }}</th>
-                            <th>{{ langs.PLAYERS_REQUIRED }}</th>
-                            <th>{{ langs.PARTICIPANTS }}</th>
-                            <th>{{ langs.JOIN }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% set activeRaceId = userRace ? userRace.getId : 0 %}
-                        {% for race in openRaces %}
-                            <tr>
-                                <td>{{ race.getStateName|default('-') }}</td>
-                                <td>{{ raceTypes[race.getType]|default(race.getType|capitalize) }}</td>
-                                <td>$&#8203;{{ race.getStake|number_format(0, '', ',') }}</td>
-                                <td>{{ race.getRequiredPlayers }}</td>
-                                <td>{{ race.getParticipantCount }}/{{ race.getRequiredPlayers }}</td>
-                                <td class="center">
-                                    {% if activeRaceId > 0 %}
-                                        <em>{{ langs.ALREADY_PART_OF_RACE }}</em>
-                                    {% elseif race.getParticipantCount >= race.getRequiredPlayers %}
-                                        <em>{{ langs.RACE_ALREADY_FULL }}</em>
-                                    {% elseif vehicles is empty %}
-                                        <em>{{ langs.NO_VEHICLE_TO_RACE }}</em>
-                                    {% else %}
-                                        <form class="ajaxForm" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-streetrace') }}" data-response="#streetraceResponse">
-                                            <input type="hidden" name="security-token" value="{{ securityToken }}" />
-                                            <input type="hidden" name="action" value="join" />
-                                            <input type="hidden" name="race" value="{{ race.getId }}" />
-                                            <select name="vehicle">
-                                                {% for g in vehicles %}
-                                                    <option value="{{ g.getId }}">{{ g.getVehicle.getName }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <input type="submit" value="{{ langs.JOIN }}" />
-                                        </form>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p class="center">{{ langs.NO_OPEN_RACES }}</p>
-            {% endif %}
-        </div>
-    </div>
 
     <div class="row">
         <div class="subtop">{{ langs.CURRENT_RACE }}</div>
         <div class="content-container">
             {% if userRace %}
                 <p class="center">{{ userRace.getStateName|default('-') }} &mdash; {{ raceTypes[userRace.getType]|default(userRace.getType|capitalize) }} &mdash; $&#8203;{{ userRace.getStake|number_format(0, '', ',') }} &mdash; {{ userRace.getParticipantCount }}/{{ userRace.getRequiredPlayers }} {{ langs.PARTICIPANTS|lower }}</p>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{{ langs.PARTICIPANTS }}</th>
-                            <th>{{ langs.VEHICLE }}</th>
-                            <th>{{ langs.SCORE }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for participant in userRace.getParticipants %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-dark table-bordered align-middle">
+                        <thead>
                             <tr>
-                                <td>{{ participant.getUsername }}</td>
-                                <td>{{ participant.getVehicleName }}</td>
-                                <td>
-                                    {% if participant.getScore > 0 %}
-                                        {{ participant.getScore|number_format(0, '', ',') }}
-                                    {% else %}
-                                        -
-                                    {% endif %}
-                                </td>
+                                <th scope="col" class="top center"><strong>{{ langs.PARTICIPANTS }}</strong></th>
+                                <th scope="col" class="top center"><strong>{{ langs.VEHICLE }}</strong></th>
+                                <th scope="col" class="top center"><strong>{{ langs.SCORE }}</strong></th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for participant in userRace.getParticipants %}
+                                <tr>
+                                    <td class="center">{{ participant.getUsername }}</td>
+                                    <td class="center">{{ participant.getVehicleName }}</td>
+                                    <td class="center">
+                                        {% if participant.getScore > 0 %}
+                                            {{ participant.getScore|number_format(0, '', ',') }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 <div class="center">
                     <form class="ajaxForm inline" method="POST" action="{{ routing.getAjaxRouteByRouteName('play-streetrace') }}" data-response="#streetraceResponse">
                         <input type="hidden" name="security-token" value="{{ securityToken }}" />
@@ -150,41 +174,44 @@
         </div>
     </div>
 
-    {% if lastResult %}
-        <div class="row">
-            <div class="subtop">{{ langs.LATEST_RACE }}</div>
-            <div class="content-container">
-                <p class="center">{{ lastResult.getStateName|default('-') }} &mdash; {{ raceTypes[lastResult.getType]|default(lastResult.getType|capitalize) }} &mdash; $&#8203;{{ lastResult.getStake|number_format(0, '', ',') }}</p>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{{ langs.POSITION }}</th>
-                            <th>{{ langs.PARTICIPANTS }}</th>
-                            <th>{{ langs.VEHICLE }}</th>
-                            <th>{{ langs.SCORE }}</th>
-                            <th>{{ langs.PRIZE }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for participant in lastResult.getParticipants %}
-                            <tr>
-                                <td>{{ participant.getPosition }}</td>
-                                <td>{{ participant.getUsername }}</td>
-                                <td>{{ participant.getVehicleName }}</td>
-                                <td>{{ participant.getScore|number_format(0, '', ',') }}</td>
-                                <td>
-                                    {% if participant.getPrize > 0 %}
-                                        $&#8203;{{ participant.getPrize|number_format(0, '', ',') }}
-                                    {% else %}
-                                        -
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        {% if lastResult %}
+            <div class="row">
+                <div class="subtop">{{ langs.LATEST_RACE }}</div>
+                <div class="content-container">
+                    <p class="center">{{ lastResult.getStateName|default('-') }} &mdash; {{ raceTypes[lastResult.getType]|default(lastResult.getType|capitalize) }} &mdash; $&#8203;{{ lastResult.getStake|number_format(0, '', ',') }}</p>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-dark table-bordered align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="top center"><strong>{{ langs.POSITION }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.PARTICIPANTS }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.VEHICLE }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.SCORE }}</strong></th>
+                                    <th scope="col" class="top center"><strong>{{ langs.PRIZE }}</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for participant in lastResult.getParticipants %}
+                                    <tr>
+                                        <td class="center">{{ participant.getPosition }}</td>
+                                        <td class="center">{{ participant.getUsername }}</td>
+                                        <td class="center">{{ participant.getVehicleName }}</td>
+                                        <td class="center">{{ participant.getScore|number_format(0, '', ',') }}</td>
+                                        <td class="center">
+                                            {% if participant.getPrize > 0 %}
+                                                $&#8203;{{ participant.getPrize|number_format(0, '', ',') }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 </div>
 {% endblock content %}
