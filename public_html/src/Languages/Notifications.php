@@ -45,7 +45,11 @@ class Notifications
             "FIFTY_GAME_CHALLENGE_WIN_CASH" => "You've beat {user} in a 50/50 game and doubled your stake of $&#8203;{stake} {type}.",
             "FIFTY_GAME_CHALLENGE_LOSE" => "{user} beat you in a 50/50 game and you lost your stake of {stake} {type}.",
             "FIFTY_GAME_CHALLENGE_LOSE_CASH" => "{user} beat you in a 50/50 game and you lost your stake of $&#8203;{stake} {type}.",
-            
+
+            /* STREETRACE */
+            "STREETRACE_RESULT_PRIZE" => "You've finished in {placeOrdinal} in the {race} streetrace and received $&#8203;{prize}.",
+            "STREETRACE_RESULT_LOSS" => "You've finished in {placeOrdinal} in the {race} streetrace and lost your stake.",
+
             /* LOTTERY */
             "USER_WON_WEEKLY_LOTTERY" => "You won at no. {place} and received $&#8203;{prize} with the weekly superpot.",
             "USER_WON_DAILY_LOTTERY" => "You won at no. {place} and received $&#8203;{prize} with the daily lottery.",
@@ -145,7 +149,11 @@ class Notifications
             "FIFTY_GAME_CHALLENGE_WIN_CASH" => "Je hebt {user} verslagen in een 50/50 spel en je inzet van $&#8203;{stake} {type} verdubbeld.",
             "FIFTY_GAME_CHALLENGE_LOSE" => "Je hebt verloren van {user} in een 50/50 spel en je inzet van {stake} {type} verloren.",
             "FIFTY_GAME_CHALLENGE_LOSE_CASH" => "Je hebt verloren van {user} in een 50/50 spel en je inzet van $&#8203;{stake} {type} verloren.",
-            
+
+            /* STREETRACE */
+            "STREETRACE_RESULT_PRIZE" => "Je eindigde op de {placeNl} in de {race} streetrace en ontving $&#8203;{prize}.",
+            "STREETRACE_RESULT_LOSS" => "Je eindigde op de {placeNl} in de {race} streetrace en verloor je inzet.",
+
             /* LOTTERY */
             "USER_WON_WEEKLY_LOTTERY" => "Je hebt de {place}e prijs gewonnen t.w.v. $&#8203;{prize} met de wekelijkse superpot.",
             "USER_WON_DAILY_LOTTERY" => "Je hebt de {place}e prijs gewonnen t.w.v. $&#8203;{prize} met de dagelijkse loterij.",

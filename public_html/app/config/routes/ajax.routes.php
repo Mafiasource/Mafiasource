@@ -757,6 +757,13 @@ array(
         'route' => '/game/racetrack/play',
         'controller' => "Ajax/racetrack.play.php"
     ),
+
+    'play-streetrace'
+    =>
+    array(
+        'route' => '/game/streetrace/play',
+        'controller' => 'Ajax/streetrace.play.php'
+    ),
     
     'play-roulette'
     =>

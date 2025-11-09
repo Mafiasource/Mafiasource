@@ -1548,6 +1548,59 @@ CREATE TABLE `gym_competition`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for streetrace_game
+-- ----------------------------
+DROP TABLE IF EXISTS `streetrace_game`;
+CREATE TABLE `streetrace_game`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `organizerID` int NOT NULL,
+  `type` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `stake` int NOT NULL DEFAULT 0,
+  `requiredPlayers` tinyint NOT NULL DEFAULT 2,
+  `stateID` smallint NOT NULL,
+  `status` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `started` datetime NULL DEFAULT NULL,
+  `finished` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `organizerID` (`organizerID`),
+  KEY `stateID` (`stateID`)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of streetrace_game
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for streetrace_participant
+-- ----------------------------
+DROP TABLE IF EXISTS `streetrace_participant`;
+CREATE TABLE `streetrace_participant`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `gameID` int NOT NULL,
+  `userID` int NOT NULL,
+  `vehicleGarageID` int NOT NULL,
+  `vehicleName` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `horsepower` int NOT NULL,
+  `topspeed` int NOT NULL,
+  `acceleration` int NOT NULL,
+  `control` int NOT NULL,
+  `breaking` int NOT NULL,
+  `score` int NOT NULL DEFAULT 0,
+  `position` tinyint NOT NULL DEFAULT 0,
+  `prize` int NOT NULL DEFAULT 0,
+  `joined` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unique_game_user`(`gameID`, `userID`) USING BTREE,
+  INDEX `gameID_idx`(`gameID`) USING BTREE,
+  INDEX `userID_idx`(`userID`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of streetrace_participant
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for helpsystem
 -- ----------------------------
 DROP TABLE IF EXISTS `helpsystem`;

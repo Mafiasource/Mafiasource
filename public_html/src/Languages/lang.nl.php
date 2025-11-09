@@ -437,8 +437,9 @@ class GetLanguageContent
             'TRAVEL_VEHICLE_NO_GARAGE' => "Je hebt geen garage in de staat waar je wilt naar reizen.",
             'TRAVEL_VEHICLE_NO_VEHICLE' => "Geen voertuig geselecteerd om mee te reizen!",
             'INVALID_DESTINATION' => "Ongeldige bestemming geselecteerd!",
-            'CANNOT_TRAVEL_WHEN_IN_CRIME' => "Je kan niet reizen naar een andere staat terwijl je in een georganiseerde familie misdaad zit.",
+            'CANNOT_TRAVEL_WHEN_IN_CRIME' => "Je kan niet reizen naar een andere staat terwijl je in een georganiseerde familiemisdaad zit.",
             'CANNOT_TRAVEL_WHEN_IN_RAID' => "Je kan niet reizen naar een andere staat terwijl je in een georganiseerde familie overval zit.",
+            'CANNOT_TRAVEL_WHEN_IN_RACE' => "Je kan niet reizen terwijl je deelneemt aan een streetrace.",
             'CAUGHT_BY_BORDER_PATROL' => "Je bent betrapt tijdens het smokkelen van goederen, je werd voor opgepakt voor 2 minuten en al je smokkelwaar werd in beslag genomen!",
             'TRAVEL_TO_SUCCESS' => "Je bent op reis gegaan naar {state} voor $&#8203;{price}, je zal je bestemming bereiken in ongeveer {sec} seconden."
         );
@@ -1397,29 +1398,43 @@ class GetLanguageContent
         $famCrimeLangs = $this->familyCrimeLangs();
         $langs = array(
             'TITLE' => ucfirst($str),
-            'DESCRIPTION' => "Er zijn 4 soorten ".strtolower($str)."s: Highway, Route66, Drift Race en City Race.<br />Voor elk soort race moet je auto goed zijn op andere punten.<br /><br />De winnaar van de ".strtolower($str)." krijgt 3 keer de inzet, en de nummer 2 krijgt zijn inzet terug.<br />De nummer 3 en 4 verliezen hun geld.",
+            'DESCRIPTION' => "Streetraces kunnen nu worden georganiseerd voor meerdere spelers. Kies een racetype, het aantal vereiste spelers en bepaal je inzet.<br />Zodra de lobby vol is start de race automatisch. Het voertuig met de beste gecombineerde statistieken voor het gekozen racetype wint de race. Bij een gelijke stand wordt de winnaar willekeurig gekozen.",
             'ORGANIZE' => $famCrimeLangs['ORGANIZE'],
             'PARTICIPANTS' => $famCrimeLangs['PARTICIPANTS'],
             'JOIN' => $famCrimeLangs['JOIN'],
             'LEAVE' => $this->familyLangs()['LEAVE'],
             'QUIT' => $this->familyRaidLangs()['QUIT'],
             'RESULTS' => "Uitslag",
-            'NO_VEHICLE_TO_RACE' => "Je hebt geen voertuig beschikbaar in jouw garages.",
+            'RACE_TYPE' => "Race type",
+            'PLAYERS_REQUIRED' => "Benodigde spelers",
+            'OPEN_RACES' => "Open streetraces",
+            'NO_OPEN_RACES' => "Er wachten momenteel geen streetraces op tegenstanders.",
+            'CURRENT_RACE' => "Jouw streetrace",
+            'NO_CURRENT_RACE' => "Je neemt momenteel niet deel aan een streetrace.",
+            'LATEST_RACE' => "Laatste streetrace",
+            'POSITION' => "Positie",
+            'SCORE' => "Score",
+            'PRIZE' => "Prijs",
+            'NO_VEHICLE_TO_RACE' => "Je hebt geen voertuig beschikbaar in jouw garages in deze staat.",
             'ALREADY_PART_OF_RACE' => "Je doet al mee aan een ".strtolower($str)."!",
             'NO_PART_OF_RACE' => "Je doet nog niet mee aan een ".strtolower($str)."!",
             'INVALID_RACE' => "Je hebt een ongeldige ".strtolower($str)." opgegeven!",
             'INVALID_RACE_TYPE' => "Je hebt een ongeldig race type opgegeven!",
             'INVALID_STAKE' => "Je hebt een ongeldige inzet gekozen!",
-            'INVALID_VEHICLE' => "Je hebt een onbekend voertuig gekozen!",
+            'STAKE_TOO_HIGH' => "De inzet mag niet hoger zijn dan 2.147.483.647.",
+            'INVALID_PLAYER_COUNT' => "Je hebt een ongeldig aantal spelers gekozen!",
+            'INVALID_VEHICLE' => "Je hebt een voertuig gekozen dat niet beschikbaar is in deze staat!",
             'RACE_ALREADY_FULL' => "Deze ".strtolower($str)." zit al vol!",
             'RACE_NOT_READY_YET' => "Deze ".strtolower($str)." is nog niet klaar om te starten!",
             'ORGANIZE_RACE_SUCCESS' => "Je hebt een ".strtolower($str)." gestart!",
             'JOIN_RACE_SUCCESS' => "Je doet nu mee aan deze ".strtolower($str)."!",
             'QUIT_RACE_SUCCESS' => "Je hebt deze ".strtolower($str)." gestopt!",
             'LEAVE_RACE_SUCCESS' => "Je bent uit de ".strtolower($str)." gestapt!",
+            'RACE_WRONG_STATE' => "Je moet in dezelfde staat zijn als deze ".strtolower($str)."!",
             'RACE_SUCCESS_LOST_NTH' => "Je bent {nth} geworden in de ".strtolower($str)." en je hebt je inzet verloren!",
             'RACE_SUCCESS_EVEN_SECOND' => "Je bent tweede geworden in de ".strtolower($str)." en je hebt je inzet teruggekregen!",
-            'RACE_SUCCESS_WON_FIRST' => "Je bent eerste geworden in de ".strtolower($str)." en je hebt $&#8203;{price} gewonnen!"
+            'RACE_SUCCESS_WON_FIRST' => "Je bent eerste geworden in de ".strtolower($str)." en je hebt $&#8203;{price} gewonnen!",
+            'RACE_SUCCESS_WON_NTH' => "Je bent {nth} geworden in de ".strtolower($str)." en je hebt $&#8203;{price} gewonnen!"
         );
         return $langs;
     }

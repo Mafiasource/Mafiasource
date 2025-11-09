@@ -439,6 +439,7 @@ class GetLanguageContent
             'INVALID_DESTINATION' => "Invalid destination selected!",
             'CANNOT_TRAVEL_WHEN_IN_CRIME' => "You cannot travel to another state while you're active in an organized fazmily crime.",
             'CANNOT_TRAVEL_WHEN_IN_RAID' => "You cannot travel to another state while you're active in an organized fazmily raid.",
+            'CANNOT_TRAVEL_WHEN_IN_RACE' => "You cannot travel while you are participating in a streetrace.",
             'CAUGHT_BY_BORDER_PATROL' => "You were caught smuggling goods, you were arrested for 2 minutes and all your contraband was confiscated!",
             'TRAVEL_TO_SUCCESS' => "You are travelling to {state} for $&#8203;{price}, you will arive at your destination in approximately {sec} seconds."
         );
@@ -1397,29 +1398,43 @@ class GetLanguageContent
         $famCrimeLangs = $this->familyCrimeLangs();
         $langs = array(
             'TITLE' => ucfirst($str),
-            'DESCRIPTION' => "Er zijn 4 soorten ".strtolower($str)."s: Highway, Route66, Drift Race en City Race.<br />Voor elk soort race moet je auto goed zijn op andere punten.<br /><br />De winnaar van de ".strtolower($str)." krijgt 3 keer de inzet, en de nummer 2 krijgt zijn inzet terug.<br />De nummer 3 en 4 verliezen hun geld.",
+            'DESCRIPTION' => "Streetraces can now be organised for multiple players. Pick a race type, choose the amount of players required and set your stake.<br />Once the lobby is full the race will start automatically. The vehicle with the best combined stats for the selected race type wins the race. When there is a draw the winner is selected at random.",
             'ORGANIZE' => $famCrimeLangs['ORGANIZE'],
             'PARTICIPANTS' => $famCrimeLangs['PARTICIPANTS'],
             'JOIN' => $famCrimeLangs['JOIN'],
             'LEAVE' => $this->familyLangs()['LEAVE'],
             'QUIT' => $this->familyRaidLangs()['QUIT'],
             'RESULTS' => "Results",
-            'NO_VEHICLE_TO_RACE' => "You don't have a vehicle available in your garages.",
+            'RACE_TYPE' => "Race type",
+            'PLAYERS_REQUIRED' => "Players required",
+            'OPEN_RACES' => "Open streetraces",
+            'NO_OPEN_RACES' => "There are no streetraces waiting for opponents right now.",
+            'CURRENT_RACE' => "Your streetrace",
+            'NO_CURRENT_RACE' => "You are not participating in a streetrace right now.",
+            'LATEST_RACE' => "Latest streetrace",
+            'POSITION' => "Position",
+            'SCORE' => "Score",
+            'PRIZE' => "Prize",
+            'NO_VEHICLE_TO_RACE' => "You don't have a vehicle available in your garages in this state.",
             'ALREADY_PART_OF_RACE' => "You're already part of a ".strtolower($str)."!",
             'NO_PART_OF_RACE' => "You're not part yet of a ".strtolower($str)."!",
             'INVALID_RACE' => "You've choosen an invalid ".strtolower($str)."!",
             'INVALID_RACE_TYPE' => "You've choosen an invalid race type!",
             'INVALID_STAKE' => "You've choosen an invalid stake!",
-            'INVALID_VEHICLE' => "You've choosen an unknown vehicle!",
+            'STAKE_TOO_HIGH' => "The stake cannot be higher than 2,147,483,647.",
+            'INVALID_PLAYER_COUNT' => "You've choosen an invalid amount of players!",
+            'INVALID_VEHICLE' => "You've choosen a vehicle that isn't available to you in this state!",
             'RACE_ALREADY_FULL' => "This ".strtolower($str)." is already full!",
             'RACE_NOT_READY_YET' => "This ".strtolower($str)." is not ready yet to be started!",
             'ORGANIZE_RACE_SUCCESS' => "You started a ".strtolower($str)."!",
             'JOIN_RACE_SUCCESS' => "You are now participating in this ".strtolower($str)."!",
             'QUIT_RACE_SUCCESS' => "You've quit this ".strtolower($str)."!",
             'LEAVE_RACE_SUCCESS' => "You left the ".strtolower($str)."!",
+            'RACE_WRONG_STATE' => "You need to be in the same state as this ".strtolower($str)."!",
             'RACE_SUCCESS_LOST_NTH' => "You finished {nth} in the ".strtolower($str)." and lost your stake!",
             'RACE_SUCCESS_EVEN_SECOND' => "You finished second in the ".strtolower($str)." and won back your stake!",
-            'RACE_SUCCESS_WON_FIRST' => "You finished first place in the ".strtolower($str)." and won $&#8203;{price} cash!"
+            'RACE_SUCCESS_WON_FIRST' => "You finished first place in the ".strtolower($str)." and won $&#8203;{price} cash!",
+            'RACE_SUCCESS_WON_NTH' => "You finished {nth} in the ".strtolower($str)." and won $&#8203;{price} cash!"
         );
         return $langs;
     }
