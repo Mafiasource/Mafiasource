@@ -109,4 +109,16 @@ class CasinoDAO extends DBConfig
         }
         return true;
     }
+
+    // Add leave penalty in the form of staked amount deduction right away when starting a blackjack game
+    public function startBlackjackGame($stake, $uid)
+    {
+        $this->con->setData("UPDATE `user` SET `cash`=`cash`- :stake WHERE `id`= :uid AND `active`='1' AND `deleted`='0'", array(':uid' => $uid, ':stake' => $stake));
+    }
+
+    // Payback the leave penalty, return finished stake amount before actual game profits/losses returns
+    public function finishBlackjackGame($stake, $uid)
+    {
+        $this->con->setData("UPDATE `user` SET `cash`=`cash`+ :stake WHERE `id`= :uid AND `active`='1' AND `deleted`='0'", array(':uid' => $uid, ':stake' => $stake));
+    }
 }

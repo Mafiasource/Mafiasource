@@ -734,7 +734,10 @@ class CasinoService
         {
             global $twig;
             if(!isset($_SESSION['blackjack']['stake']))
+            {
                 $_SESSION['blackjack']['stake'] = $stake;
+                $this->data->startBlackjackGame($stake, $userData->getId());
+            }
             if(!isset($_SESSION['blackjack']['cards']) && !isset($_SESSION['blackjack']['computer_cards']))
                 $_SESSION['blackjack']['cards'] = $_SESSION['blackjack']['computer_cards'] = array();
             
@@ -808,7 +811,8 @@ class CasinoService
                 
                 $dailyChallengeService = new DailyChallengeService();
                 $dailyChallengeService->addToDailiesIfActive(7, $stake);
-            
+                
+                $this->data->finishBlackjackGame($stake, $userData->getId());
                 $gameResponse = $this->data->userPlayedCasinoGame($profitsLosses, $this->pData);
                 
                 if($profitsLosses == 0)
