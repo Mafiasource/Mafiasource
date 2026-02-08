@@ -1199,6 +1199,13 @@ array(
         'controller' => 'game/ranks-score.php'
     ),
     
+    'captcha_test'
+    =>
+    array(
+        'route' => '/game/captcha-test',
+        'controller' => 'game/captcha.test.php'
+    ),
+    
     'rest_in_peace'
     =>
     array(
@@ -1989,6 +1996,20 @@ array(
     array(
         'route' => '/admin/shoutbox-en/pagina/[1-9][0-9]{0,3}',
         'controller' => 'admin/shoutbox-en.php'
+    ),
+    
+    'admin-user-captcha'
+    =>
+    array(
+        'route' => '/admin/user-captcha',
+        'controller' => 'admin/user-captcha.php'
+    ),
+    
+    'admin-user-captcha-pagina'
+    =>
+    array(
+        'route' => '/admin/user-captcha/pagina/[1-9][0-9]{0,3}',
+        'controller' => 'admin/user-captcha.php'
     ),
     
     'admin-ip-ban'

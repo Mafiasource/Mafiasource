@@ -1,3 +1,5 @@
+{% import "app/Resources/Views/macros/cf.turnstile.macro.twig" as cfTurnstile %}
+
 {% extends "/app/Resources/Views/gamebase.twig" %}
 
 {% block stylesheets %}
@@ -41,6 +43,7 @@
 {% endblock content %}
 
 {% block javascripts %}
+{{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY) }}
 <script type="text/javascript" src="{{ staticRoot }}/web/public/js/ajax-form.js"></script>
 <script type="text/javascript">
     {% set swissLeft = bankData.getSwissBankMax - bankData.getSwissBank %}

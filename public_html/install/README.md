@@ -117,8 +117,8 @@ A local non-secure environment was thoroughly tested on Xampp for Windows with P
     - modify app/config/config.php remove one path traversal for credentials.php '../'
     - edit /.htaccess to deny all access to credentials.php (preferably after installation with GUI, keeps lines the same during install)
   - In .htaccess only the correct domainname is of concern.
-2) If your website works, manually find and replace all mafiasource.nl instances to solve styling / css issues.
-3) Import /install/config/clean-database.sql manually into your database.
+2) Import /install/config/clean-database.sql manually into your database.
+3) If your website works, manually find and replace all mafiasource.nl instances to solve styling / css issues.
 4) Configure /app/cronjob/ jobs on the web server to finalize installation.
 ```
     # Cronjobs: Replace brackets [..] with php binary locaction and the user directory (/[userDir]/public_html) name.
@@ -160,7 +160,6 @@ The license included by this software does NOT apply to the following resources 
 - /vendor/SessionManager.php (License top of file)
 - /vendor/SimpleImage.php (License top of file)
 - /web/public/foto.php (License top of file)
-- /web/public/images/captcha/fonts/ + All subdirectories and files (Unknown holders)
 - /web/public/images/users/ + All subdirectories and files (Unknown holders)
 - /web/public/images/families/ + All subdirectories and files (Unknown holders)
 

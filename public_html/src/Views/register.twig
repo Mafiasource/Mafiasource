@@ -1,11 +1,12 @@
 {% import "app/Resources/Views/macros/alert.macro.twig" as alert %}
+{% import "app/Resources/Views/macros/cf.turnstile.macro.twig" as cfTurnstile %}
 
 {% extends "/app/Resources/Views/base.twig" %}
 
 {% block stylesheets %}
 <style type="text/css">
 .ms-l {position:relative;}
-.ms-hp {position:absolute;opacity:0;z-index:0;max-width:323px;}
+.ms-hp {position:absolute;opacity:0;z-index:0;max-width:321px;}
 .input-submit{position:relative;z-index:2;}
 #forum, #login-full, #register, #slider, #stats {position:relative;z-index:1;}
 </style>
@@ -129,28 +130,14 @@
                                 <br />
                     		</td>
                     	</tr>
-                        {#
-                    		<tr>
-                    		<td class="va-top">
-                    			<table border="0" cellspacing="0" class="zeroMargin">
-                    	<tr>
-                    		<td>
-                    			<img src="{{ staticRoot }}/foto/web/public/images/icons/database_gear.png" alt="Code" border="0" />
-                    		</td>
-                    		<td>
-                    			&nbsp;Code:
-                    		</td>
+						<tr>
+                    		<td colspan="2">
+                    			{{ cfTurnstile.turnstile('right') }}
+                            </td>
                     	</tr>
-                    </table>		</td>
-                    		<td>
-                                { # Captchas nooit vanuit staticRoot ophalen! # }
-                    			<img id="captcha" src="{{ docRoot }}/web/public/images/captcha/captcha.php" alt="Captcha" />&nbsp;<a id="captcha-refresh" href="javascript:void(0);">{{ langs.REFRESH }}</a><br /><br /> <input type="text" name="captcha_code" size="5" class="code" maxlength="10" />		</td>
-                    	</tr>
-                        #}
                     	<tr>
                     		<td colspan="2">
                     			<br />
-                                {#<input type="hidden" name="security-token" value="{{ securityToken }}"/>#}
                     			<input type="submit" class="input-submit" name="submit_register" value="{{ langs.REGISTER_BTN_PAGE }}" />
                             </td>
                     	</tr>
@@ -213,17 +200,14 @@
 {% endblock bootstrapJs %}
 
 {% block javascripts %}
+{{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY) }}
 <script type="text/javascript">
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-    $(document).on("click", "a#captcha-refresh", function(e){
-        $("img#captcha").attr('src', '{{ docRoot }}/web/public/images/captcha/captcha.php?_t='+new Date().getTime());
-        e.preventDefault();
-    });
     $(document).ready(function(){
         $('input.ms-l, input.ms-hp').attr('autocomplete', 'off');
-    })
+    });
 </script>
 {% endblock javascripts %}

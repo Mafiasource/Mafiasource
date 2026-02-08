@@ -143,6 +143,63 @@ class Security
         }
         return FALSE;
     }
+
+    public function responseHasAlertSuccess(array $response): bool
+    {
+        foreach ($response as $key => $value) {
+            if ($key === 'alert' && is_array($value)) {
+                if (!empty($value['success']) && $value['success'] === true) {
+                    return true;
+                }
+            }
+
+            if (is_array($value)) {
+                if ($this->responseHasAlertSuccess($value)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function validateCFTurnstile($token = null)
+    {
+        $return = FALSE;
+        if(isset($token) && !empty($token))
+        {
+            $secret = CF_TURNSTILE_SECRETKEY;
+            $remote_addr = \src\Business\UserCoreService::getIP();
+            $cf_url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+            $data = array(
+                "secret" => $secret,
+                "response" => $token,
+                "remoteip" => $remote_addr
+            );
+
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $cf_url);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+            $response = curl_exec($curl);
+            if (curl_errno($curl)) {
+                $error_message = curl_error($curl);
+                error_log($error_message);
+            }else{
+                $response = json_decode($response,true);
+                if ($response['error-codes'] && count($response['error-codes']) > 0){
+                    return $return;
+                }
+                $return = $response['success'] === true;
+            }
+            curl_close($curl);
+            return $return;
+        }
+
+        return $return;
+    }
     
     public function checkSSL()
     {

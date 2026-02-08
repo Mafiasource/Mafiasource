@@ -84,7 +84,7 @@ class UserDAO extends DBConfig
         $statement->execute(array(':ip' => $ip));
         if($statement->rowCount()) return $statement;
         
-        $statement = $this->dbh->prepare("SELECT `id` FROM `login` WHERE `ip`= :ip LIMIT 1");
+        $statement = $this->dbh->prepare("SELECT `id` FROM `login` WHERE `ip`= :ip AND `userID` <> '" . ID_DEMOACC . "' LIMIT 1");
         $statement->execute(array(':ip' => $ip));
         if($statement->rowCount()) return $statement;
     }

@@ -17,7 +17,8 @@ $twigVars = array(
     'lastShoutboxID' => $lastShoutboxID,
     'lastFamilyShoutboxID' => $lastFamilyShoutboxID,
     'unvotedPoll' => $unvotedPoll,
-    'offline' => OFFLINE
+    'offline' => OFFLINE,
+    'CF_TURNSTILE_SITEKEY' => CF_TURNSTILE_SITEKEY
 );
 $twigVars['langs']['TRAVELING'] = $route->replaceMessagePart($travelCounter, $twigVars['langs']['TRAVELING'], '/{sec}/');
 if(strtotime("2023-05-29 14:00:00") < strtotime('now') && strtotime("2023-06-05 14:00:00") > strtotime('now'))

@@ -37,7 +37,6 @@ class GetLanguageContent
                 'COOKIES_ACCEPT' => "Our website uses cookies to improve your browsing experience, <a href='/privacy-policy'><strong>view privacy policy</strong></a> for more information.",
                 'LINK_PARTNERS_INFO' => "Get to know our <a href='".$route->getRouteByRouteName('link-partners')."'>link partners</a>.",
                 'DOWNLOAD_APP' => "Download the app",
-                'WRONG_CAPTCHA' => "You've entered the wrong security code!", // Use in & out-game
                 'INVALID_SECURITY_TOKEN' => "Invalid security token, please refresh the page (F5) and try again. If you block essential cookies, no valid security token can be granted.", // Use in & out-game
                 'INFORMATION' => "Information", // Use in & out-game
                 'TOPLIST' => "Toplist", // Use in & out-game
@@ -119,7 +118,6 @@ class GetLanguageContent
                 'LATEST' => "Latest",
                 'USERNAME' => "Username",
                 'USER' => "User",
-                'WRONG_CAPTCHA' => "You've entered the wrong security code!", // Use in & out-game
                 'INVALID_ACTION' => "You've selected an invalid action!",
                 'CANNOT_COMMIT_ACTION_SELF' => "You can't take that action on yourself.",
                 'INVALID_SECURITY_TOKEN' => "Invalid security token, please refresh the page (F5) and try again.", // Use in & out-game
@@ -870,7 +868,7 @@ class GetLanguageContent
             'USER_ALREADY_OWN_COUNTRY_POSSESSION' => "You already own a country possession.",
             'RECEIVER_ALREADY_OWN_COUNTRY_POSSESSION' => "This player already owns a country possession.",
             'BOUGHT_POSSESSION_SUCCESS' => "You paid {price} to the notary and you've become the new owner of {pName} in {location}!",
-            'DROP_POSSESS_CONFIRM' => "Are you sure you want to drop this possession?<br /><br /><form id='dropPossessionConfirm' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('drop-possession') ."' data-response='#dropPossessionResponse{id}'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='id' value='{id}'/><input type='submit' class='btn button alert-btn' name='drop-possess-confirm' value='Drop'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'DROP_POSSESS_CONFIRM' => "Are you sure you want to drop this possession?<br /><br /><form id='dropPossessionConfirm' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('drop-possession') ."' data-response='#dropPossessionResponse{id}'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='id' value='{id}'/><input type='submit' class='btn button alert-btn' name='drop-possess-confirm' value='Drop'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'DROP_POSSESS_SUCCESS' => "You have dropped your {pName}, it has been put back on sale.",
             'ALREADY_TRANSFERED_TO_RECEIVER' => "You already transfered this possession to this player.",
             'TRANSFER_POSSESS_REQUEST_SUCCESS' => "You've sent your {pName} in {location} to {user}, he has 48h time to handle this request.",
@@ -1218,9 +1216,9 @@ class GetLanguageContent
             'INVALID_WEAPON' => "You've selected and invalid weapon!",
             'INVALID_INTEL' => "You've selected an invalid intel package!",
             'READY_UP_ORGANIZED_CRIME_SUCCESS' => "You're now ready for this organized crime.",
-            'LEADER_STOP_ORGANIZED_CRIME_CONFIRM' => "Are you sure you want to stop this organized crime? Your crew will lose all (bought) preparations.<br /><br /><form id='interactOrganizedCrime' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('prepare-organized-crime') ."' data-response='#refreshCrimeResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='id' value='{id}'/><input type='submit' name='stop-confirm' class='button' value='Stop crime'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'LEADER_STOP_ORGANIZED_CRIME_CONFIRM' => "Are you sure you want to stop this organized crime? Your crew will lose all (bought) preparations.<br /><br /><form id='interactOrganizedCrime' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('prepare-organized-crime') ."' data-response='#refreshCrimeResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='id' value='{id}'/><input type='submit' name='stop-confirm' class='button' value='Stop crime'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'LEADER_STOP_ORGANIZED_CRIME_SUCCESS' => "You've stopped the organized crime.",
-            'PARTICIPANT_DENY_ORGANIZED_CRIME_CONFIRM' => "Are you sure you want to deny this organized crime?<br /><br /><form id='interactOrganizedCrime' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('prepare-organized-crime') ."' data-response='#refreshCrimeResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='id' value='{id}'/><input type='submit' name='deny-confirm' class='button' value='Deny crime'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'PARTICIPANT_DENY_ORGANIZED_CRIME_CONFIRM' => "Are you sure you want to deny this organized crime?<br /><br /><form id='interactOrganizedCrime' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('prepare-organized-crime') ."' data-response='#refreshCrimeResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='id' value='{id}'/><input type='submit' name='deny-confirm' class='button' value='Deny crime'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'PARTICIPANT_DENY_ORGANIZED_CRIME_SUCCESS' => "You've denied the organized crime.",
             'MEMBER_NOT_READY' => "{user} has to wait {waitingTime} more seconds.",
             'ONE_OR_MORE_IN_PRISON' => "There are one or more participants in prison.",
@@ -1522,7 +1520,7 @@ class GetLanguageContent
             'NO_FAMILY_MESSAGE' => "There's no family message available.",
             'ABOLISH' => "Abolish",
             'ABOLISH_FAMILY_AND_PROGRESS' => "Do you want to remove the family and it's progress?",
-            'ABOLISH_FAMILY_CONFIRM' => "Are you sure you want to abolish the entire family? <strong>{username}</strong> will miss the family!<br /><br /><form id='abolishFamilyConfirm' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('abolish-family') ."' data-response='#abolishFamilyResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='submit' class='btn button alert-btn' name='abolish-confirm' value='Abolish!'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'ABOLISH_FAMILY_CONFIRM' => "Are you sure you want to abolish the entire family? <strong>{username}</strong> will miss the family!<br /><br /><form id='abolishFamilyConfirm' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('abolish-family') ."' data-response='#abolishFamilyResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='submit' class='btn button alert-btn' name='abolish-confirm' value='Abolish!'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'ABOLISH_FAMILY_SUCCESS' => "You've deleted your family and their progress.",
             'UNLIMITED' => "Unlimited",
             'UP_TO' => "Up to",
@@ -1530,7 +1528,7 @@ class GetLanguageContent
             'FAMILY_MANAGEMENT_ONLY_BOSS' => "Only the family boss can manage this part of the settings.",
             'USER_ALREADY_IN_FAMILY_TOP' => "This member is already a part of the family top.",
             'FAMILY_BOSS_REQUIRED' => "A family boss is required, please see the option below to abolish your family!",
-            'FAMILY_BOSS_CHANGE_CONFIRM' => "Are you sure you want to transfer the family lead to <strong>{username}</strong>? You will lose all control over the family once you transfer leadership.<br /><br /><form id='manageFamilyBossConfirm' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('manage-family-top') ."' data-response='#manageFamilyTopResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='boss-confirm' value='{username}'/><input type='submit' class='btn button alert-btn' name='boss-change-confirm' value='".$this->langMap['TRANSFER']."'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'FAMILY_BOSS_CHANGE_CONFIRM' => "Are you sure you want to transfer the family lead to <strong>{username}</strong>? You will lose all control over the family once you transfer leadership.<br /><br /><form id='manageFamilyBossConfirm' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('manage-family-top') ."' data-response='#manageFamilyTopResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='boss-confirm' value='{username}'/><input type='submit' class='btn button alert-btn' name='boss-change-confirm' value='".$this->langMap['TRANSFER']."'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'FAMILY_NEEDS_VIP_STATUS' => "The family needs a VIP status for this. <a href='".$route->getRouteByRouteName('donation-shop')."'><strong>Click here</strong></a> to buy a VIP family status.",
             'FAMILY_TOP_STATUS_SET_TO_USER' => "You have set {username} as the new {statusName} of the family!",
             'FAMILY_TOP_STATUS_SET_EMPTY' => "You have removed the {statusName} of the family! This status is now empty again.",
@@ -1651,13 +1649,13 @@ class GetLanguageContent
             'NOT_IN_SAME_STATE_AS_RAID' => "You need to be in the state <strong>{state}</strong> to be able to participate in this raid.",
             'ALREADY_PREPARED' => "You're already prepared for this family raid!",
             'INVALID_EQUIPMENT' => "You selected invalid equipment!",
-            'QUIT_RAID_MESSAGE' => "Are you sure you want to quit this raid? You will lose all (bought) preparations.<br /><br /><form id='interactFriendsList' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('interact-family-raid') ."' data-response='#familyRaidResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='familyRaidID' value='{frid}'/><input type='submit' name='{typeRaw}-quit-confirm' class='button' value='Quit raid'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'QUIT_RAID_MESSAGE' => "Are you sure you want to quit this raid? You will lose all (bought) preparations.<br /><br /><form id='interactFriendsList' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('interact-family-raid') ."' data-response='#familyRaidResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='familyRaidID' value='{frid}'/><input type='submit' name='{typeRaw}-quit-confirm' class='button' value='Quit raid'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'PREPARE_RAID_TYPE_SUCCESS' => "You've prepared yourself as a {type} for this raid.",
             'DENY_RAID_SUCCESS' => "You denied to be a part of this raid.",
             'QUIT_RAID_SUCCESS' => "You've quitted the organized raid and lost all (bought) items.",
             'ONLY_LEADER_CAN_START_RAID' => "Only the raid leader can start this raid.",
             'RAID_PARTICIPANT_CHANGED' => "You've changed the participant of this raid.",
-            'LEADER_QUIT_RAID_CONFIRM' => "Are you sure you want to quit this raid? Your crew will lose all (bought) preparations.<br /><br /><form id='interactFriendsList' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('interact-family-raid') ."' data-response='#familyRaidResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='familyRaidID' value='{frid}'/><input type='submit' name='quit-confirm' class='button' value='Quit raid'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'LEADER_QUIT_RAID_CONFIRM' => "Are you sure you want to quit this raid? Your crew will lose all (bought) preparations.<br /><br /><form id='interactFriendsList' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('interact-family-raid') ."' data-response='#familyRaidResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='familyRaidID' value='{frid}'/><input type='submit' name='quit-confirm' class='button' value='Quit raid'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'LEADER_QUIT_RAID_SUCCESS' => "You've quitted this family raid, you and your crew are free to start a new one.",
             'RAID_NOT_READY_TO_START' => "Not all participants are ready yet to start this raid.",
             'ONE_OR_MORE_IN_PRISON' => $famCrimeLangs['ONE_OR_MORE_IN_PRISON'],
@@ -1747,7 +1745,7 @@ class GetLanguageContent
             'REQUIREMENTS' => "Requirements",
             'SHADOW' => "Shadow",
             'WITHOUT_PROTECTION' => "Without protection",
-            'RANKS_SCORE_INFO' => "<p>* Max. = maximum, Min. = minimum.</p><p>When you're attacked than you can always attack back atleast once within the 24h, no matter what rank.</p><p>Scums that haven't been online for over 5 days can always be attacked no matter your rank!</p><p>Dead players that haven't been online for over 7 days will come back to live every night.</p><p>The personal score is being checked and updated every hour.<br />The score is based on your amount of hoes, honor points, kills, ground area's on the ground map and your rank.<br />The more you have the more score you will receive, you can check your score each hour on the <a href='". $route->getRouteByRouteName('status') ."'><strong>status page</strong></a>.</p><p>Every <a href='". $route->getRouteByRouteName('gym') ."'><strong>gym</strong></a> competition always yields 25 ore more score.<br />In addition, score can occasionally be collected with <a href='". $route->getRouteByRouteName('daily-challenges') ."'><strong>daily challenges</strong></a> & missions >&nbsp;<a href='". $route->getRouteByRouteName('missions-public-mission') ."'><strong>public mission</strong></a>.</p>",
+            'RANKS_SCORE_INFO' => "<p>* Max. = maximum, Min. = minimum.</p><p>When you're attacked than you can always attack back atleast once within the 24h, no matter what rank.</p><p>Scums that haven't been online for over 5 days can always be attacked no matter your rank!</p><p>Dead players that haven't been online for over 7 days will come back to live every night.</p><p>The personal score is being checked and updated every hour.<br />The score is based on your amount of hoes, honor points, kills, ground area's on the ground map and your rank.<br />The more you have the more score you will receive, you can check your score each hour on the <a href='". $route->getRouteByRouteName('status') ."'><strong>status page</strong></a>.</p><p>Every <a href='". $route->getRouteByRouteName('gym') ."'><strong>gym</strong></a> competition always yields 25 or more score.<br />In addition, score can occasionally be collected with <a href='". $route->getRouteByRouteName('daily-challenges') ."'><strong>daily challenges</strong></a> & missions >&nbsp;<a href='". $route->getRouteByRouteName('missions-public-mission') ."'><strong>public mission</strong></a>.</p>",
         );
         return $langs;
     }
@@ -1850,7 +1848,7 @@ class GetLanguageContent
             'USER_MAX_FRIEND_BLOCK' => "You already have {max} friends / blocks!",
             'INVITE_FRIEND_SUCCESS' => "You've send a friend request to <strong>{user}</strong>.",
             'BLOCK_USER_SUCCESS' => "You successfully blocked {user}.",
-            'DELETE_FRIEND_CONFIRM' => "Are you sure you want to remove <strong>{username}</strong> as a friend?<br /><br /><form id='interactFriendsList' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('interact-friends-list') ."' data-response='#interactFriendslistResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='friend' value='{fid}'/><input type='submit' class='btn button alert-btn' name='delete-confirm' value='".$this->langMap['DELETE']."'/>&nbsp;<button type='button' class='button alert-btn' data-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
+            'DELETE_FRIEND_CONFIRM' => "Are you sure you want to remove <strong>{username}</strong> as a friend?<br /><br /><form id='interactFriendsList' class='ajaxForm' method='POST' action='". $route->getAjaxRouteByRouteName('interact-friends-list') ."' data-response='#interactFriendslistResponse'><input type='hidden' name='security-token' value='{securityToken}'/><input type='hidden' name='friend' value='{fid}'/><input type='submit' class='btn button alert-btn' name='delete-confirm' value='".$this->langMap['DELETE']."'/>&nbsp;<button type='button' class='button alert-btn' data-bs-dismiss='alert' aria-hidden='true'>".$this->langMap['CANCEL']."</button></form>",
             'FRIEND_DELETED' => "You have deleted <strong>{username}</strong> as a friend.",
             'BLOCK_DELETED' => "You have deleted <strong>{username}</strong> from your block list.",
             'FRIEND_REQUEST_ACCEPTED' => "You have accepted the friend request from <strong>{username}</strong>.",
@@ -1880,8 +1878,7 @@ class GetLanguageContent
     public function captchaTestLangs()
     {
         $langs = array(
-            'CAPTCHA_TEST_TITLE' => "Please verify this code before continuing",
-            'NEW_CODE' => "New code pls"
+            'CAPTCHA_TEST_TITLE' => "Please accept this challenge before continuing"
         );
         return $langs;
     }

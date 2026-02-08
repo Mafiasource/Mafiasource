@@ -98,7 +98,7 @@ class UserService
         return ""; // Nothing to prepend to message
     }
 
-    public function validateLogin($post, $captcha = false)
+    public function validateLogin($post)
     {
         global $security;
         global $language;
@@ -107,7 +107,6 @@ class UserService
         $l = $language->loginLangs();
         $username = $security->xssEscape($post['username']);
         $pass = $post['password'];
-        $code = isset($post['captcha_code']) ? (int)$post['captcha_code'] : null;
         $_SESSION['login-tries'] = !isset($_SESSION['login-tries']) ? 1 : $_SESSION['login-tries']++;
         $permBan = $user->checkPermBannedIP(UserCoreService::getIP());
         // $type 1=Credentials | 2=Violation | 3=Warning | 4=Temp. IP Ban | 5=Perm. IP Ban
@@ -122,9 +121,6 @@ class UserService
         
         if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
             $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 2
-        
-        if($captcha == true && (!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code))
-            $return = $langs['WRONG_CAPTCHA']; // Violation | Type 2
         
         if(in_array($type, array(4, 5)) || $permBan)
             $return = $l['TEMPORARILY_IP_BANNED'] . " "; // Type 4 & 5
@@ -156,7 +152,6 @@ class UserService
     	$mailadres = $security->xssEscape($post['email']);
     	$pass = $post['password'];
     	$pass_check = $post['password_check'];
-    	//$code = (int)$post['captcha_code'];
         $profession = (int)$post['type'];
 
     	if(!self::is_name($username))
@@ -213,14 +208,10 @@ class UserService
         {
             $error = $l['ALREADY_REGISTERED'];
         }
-        *
-        if(!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code)
-        {
-    		$error = $langs['WRONG_CAPTCHA'];
-    	}
         */
-        if($security->checkToken($post['security-token']) ==  FALSE)
-        {
+        if( $security->checkToken($post['security-token']) ==  FALSE ||
+            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+        ) {
             $error = $langs['INVALID_SECURITY_TOKEN']; 
         }
 
@@ -258,7 +249,7 @@ class UserService
     		$error = $l['INVALID_PROFESSION'];
     	}
         
-    	$nameExists = $username != $userData->getUsername() ? $this->checkUsernameExists($username) : null;
+    	$nameExists = strtolower($username) != strtolower($userData->getUsername()) ? $this->checkUsernameExists($username) : null;
         
     	if($nameExists === TRUE  || in_array(ucfirst(strtolower($username)), $this->unavailableUsernames))
         {
@@ -287,7 +278,6 @@ class UserService
         $l = $language->recoverPasswordLangs();
         if(isset($post['username']) && $post['username'] != "") $username = $security->xssEscape($post['username']);
         if(isset($post['email']) && $post['email'] != "") $email = $security->xssEscape($post['email']);
-        $code = (int)$post['captcha_code'];
         
         $nameSet = isset($username) ? $this->data->checkUsername($username) : null;
         $emailSet = isset($email) ? $this->data->checkEmail($email) : null;
@@ -304,12 +294,9 @@ class UserService
         {
             $error = $l['INVALID_USERNAME'];
         }
-        if(!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code)
-        {
-    		$error = $langs['WRONG_CAPTCHA'];
-    	}
-        if($security->checkToken($post['security-token']) ==  FALSE)
-        {
+        if( $security->checkToken($post['security-token']) ==  FALSE ||
+            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+        ) {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
         
@@ -343,7 +330,7 @@ class UserService
         $l = $language->registerLangs();
     	$pass = $post['new_password'];
     	$pass_check = $post['new_password_check'];
-    	$code = (int)$post['captcha_code'];
+    	//$code = (int)$post['captcha_code'];
         
     	if(strlen($pass) < 5 || strlen($pass) > 50)
         {
@@ -357,12 +344,15 @@ class UserService
         {
             $error = "We were unable to fetch your user data, please contact a Moderator for assistance.";
         }
+        /*
         if(!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code)
         {
     		$error = $langs['WRONG_CAPTCHA'];
     	}
-        if($security->checkToken($post['security-token']) ==  FALSE)
-        {
+        */
+        if( $security->checkToken($post['security-token']) ==  FALSE ||
+            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+        ) {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
 
@@ -380,7 +370,7 @@ class UserService
         $this->data->deactivatePrivateID($uid);
     }
 
-    public function validateEmailChange($post, $changeEmailData, $captcha = false)
+    public function validateEmailChange($post, $changeEmailData)
     {
         global $security;
         global $language;
@@ -388,7 +378,6 @@ class UserService
         $l = $language->loginLangs();
         if(is_object($changeEmailData)) $username = $changeEmailData->getUsername();
         $pass     = $post['password'];
-        if(isset($post['captcha_code'])) $code     = (int)$post['captcha_code'];
         
         if($username) $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
         if(!isset($id) || (isset($id) && $id == FALSE))
@@ -399,10 +388,6 @@ class UserService
         {
             $error = "We were unable to fetch your user data, please contact a Moderator for assistance.";
         }
-        if($captcha == true && (!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code))
-        {
-    		$error = $langs['WRONG_CAPTCHA'];
-    	}
         if($security->checkToken($post['security-token']) ==  FALSE)
         {
             $error = $langs['INVALID_SECURITY_TOKEN'];
@@ -479,19 +464,10 @@ class UserService
         $l = $language->bankLangs();
         $post['amount'] = (int)$post['amount'];
         $post['message'] = $security->xssEscape($post['message']);
-        $code = (int)$post['captcha_code'];
         
         $receiverProfile = $this->data->getUserProfile($post['receiver']);
         if(is_object($receiverProfile)) $receiverID = $receiverProfile->getId() ? $receiverProfile->getId() : FALSE;
-        
-        if($security->checkToken($post['security-token']) == FALSE)
-        {
-            $error = $langs['INVALID_SECURITY_TOKEN'];
-        }
-        if(!isset($_SESSION['code_captcha']) || $_SESSION['code_captcha'] != $code)
-        {
-    		$error = $langs['WRONG_CAPTCHA'];
-    	}
+
         if($post['amount'] < 100 || $post['amount'] >999999999)
         {
             $error = $langs['BETWEEN_100_AND_999M'];
@@ -507,6 +483,11 @@ class UserService
         if(isset($receiverID) && !is_bool($receiverID) && $_SESSION['UID'] == $receiverID)
         {
             $error = $l['CANNOT_SEND_MONEY_SELF'];
+        }
+        if( $security->checkToken($post['security-token']) ==  FALSE ||
+            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+        ) {
+            $error = $langs['INVALID_SECURITY_TOKEN'];
         }
 
         if(isset($error))

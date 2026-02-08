@@ -18,7 +18,7 @@ if(isset($recoverPasswordData) && $recoverPasswordData == FALSE) $route->headTo(
 
 $langs = array_merge($langs, $language->recoverPasswordLangs());
 
-if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST['email'])) && isset($_POST['captcha_code']) && isset($_POST['security-token']))
+if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST['email'])) && isset($_POST['cf-turnstile-response']) && isset($_POST['security-token']))
 {
     // Handle recover lost password form
     $response = $userService->validateRecoverPassword($_POST);
@@ -30,7 +30,7 @@ if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST
     $route->headTo('recover-password');
     exit(0);
 }
-elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset($_POST['new_password']) && isset($_POST['new_password_check'])) && isset($_POST['captcha_code']) && isset($_POST['security-token']))
+elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset($_POST['new_password']) && isset($_POST['new_password_check'])) && isset($_POST['cf-turnstile-response']) && isset($_POST['security-token']))
 {
     // Handle recovery key form
     $response = $userService->validateNewRecoveredPassword($_POST, $recoverPasswordData);

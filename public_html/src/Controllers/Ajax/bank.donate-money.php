@@ -4,7 +4,7 @@ use src\Business\UserService;
 
 require_once __DIR__ . '/.inc.head.ajax.php';
 
-if(isset($_POST['amount']) && isset($_POST['receiver']) && isset($_POST['security-token']) && isset($_POST['captcha_code']))
+if(isset($_POST['amount']) && isset($_POST['receiver']) && isset($_POST['security-token']) && isset($_POST['cf-turnstile-response']))
 {
     $userService = new UserService();
     

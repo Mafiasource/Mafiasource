@@ -125,7 +125,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
             
             try
             {
-                $denyPrevRouteSaves = array('notfound.php', 'languageSelect.php', 'game/rest.in.peace.php');
+                $denyPrevRouteSaves = array('notfound.php', 'languageSelect.php', 'game/rest.in.peace.php', 'game/captcha.test.php');
                 include_once $controller;
                 if(!in_array($route->getController(), $denyPrevRouteSaves)) $route->setPrevRoute(); // Save previous route
             }

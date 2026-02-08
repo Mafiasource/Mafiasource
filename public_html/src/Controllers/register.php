@@ -31,7 +31,7 @@ if(isset($_POST['referral-username']))
 }
 if(
     isset($_POST) && !empty($_POST) && isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password']) &&
-    isset($_POST['password_check']) /*&& isset($_POST['captcha_code'])*/ && isset($_POST['type']) && isset($_POST['security-token']) && $blockPost === false
+    isset($_POST['password_check']) && isset($_POST['cf-turnstile-response']) && isset($_POST['type']) && isset($_POST['security-token']) && $blockPost === false
 )
 {
     $response = $userService->validateRegister($_POST);

@@ -292,8 +292,8 @@ class MurderDAO extends DBConfig
         if(isset($_SESSION['UID']))
         {
             $row = $this->con->getDataSR("SELECT `testamentHolder` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1", array(':uid' => $vid));
-            if(isset($row['testementHolder']) && is_numeric($row['testemantHolder']) && $row['testemantHolder'] > 0)
-                return $row['testemantHolder'];
+            if(isset($row['testamentHolder']) && is_numeric($row['testamentHolder']) && $row['testamentHolder'] > 0)
+                return $row['testamentHolder'];
         }
         return false;
     }

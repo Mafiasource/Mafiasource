@@ -21,6 +21,7 @@ $twigVars = array(
     "PAGE_SUBJECT" => $pageSubject,
     "AUTHOR" => $pageAuthor,
     "PAGE_KEYWORDS" => $pageKeywords,
-    'offline' => OFFLINE
+    'offline' => OFFLINE,
+    'CF_TURNSTILE_SITEKEY' => CF_TURNSTILE_SITEKEY
 );
 if(isset($userData)) $twigVars['userData'] = $userData;

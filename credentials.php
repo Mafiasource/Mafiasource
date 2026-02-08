@@ -30,3 +30,7 @@ define('PP_SECRET', $secret);
 define('PP_ENV', $env);
 define('PP_BTN_ID', $buttonID);
 $client = $secret = $env = $buttonID = null;
+
+// Cloudflare Turnstile key
+define('CF_TURNSTILE_SITEKEY', '1x00000000000000000000AA'); // Your SITE KEY here
+define('CF_TURNSTILE_SECRETKEY', '1x0000000000000000000000000000000AA'); // Your SECRET KEY here

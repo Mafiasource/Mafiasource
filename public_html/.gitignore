@@ -17,7 +17,6 @@
 /web/composer.lock
 /web/public/images/*
 !web/public/images/.htaccess
-!web/public/images/captcha/
 !web/public/images/users/.htaccess
 !web/public/images/families/.htaccess
 

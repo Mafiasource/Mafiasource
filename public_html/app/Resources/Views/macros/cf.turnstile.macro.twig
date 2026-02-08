@@ -1,0 +1,18 @@
+{% macro turnstile(class = '') %}
+    <div id="cf-turnstile" class="{{ class }}"></div>
+    <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response" />
+{% endmacro %}
+
+{% macro turnstileScript(siteKey = '') %}
+    <script type="text/javascript" src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
+    <script type="text/javascript">
+        window.onloadTurnstileCallback = function () {
+            turnstile.render("#cf-turnstile", {
+                sitekey: "{{ siteKey }}",
+                callback: function (token) {
+                document.getElementById('cf-turnstile-response').value = token;
+                },
+            });
+        };
+    </script>
+{% endmacro %}

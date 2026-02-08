@@ -8,7 +8,6 @@ The license included by this software does NOT apply to the following resources 
 - /vendor/SessionManager.php (License top of file)
 - /vendor/SimpleImage.php (License top of file)
 - /web/public/foto.php (License top of file)
-- /web/public/images/captcha/fonts/ + All subdirectories and files (Unknown holders)
 - /web/public/images/users/ + All subdirectories and files (Unknown holders)
 - /web/public/images/families/ + All subdirectories and files (Unknown holders)
 

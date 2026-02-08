@@ -19,7 +19,7 @@ class StatisticDAO extends DBConfig
     private $dateFormat = "%d-%m-%y %H:%i:%s";
     private $phpDateFormat = "d-m-Y H:i:s";
     
-    public $roundStartDate = "2023-05-12 22:30:00"; // Fill with current round start date
+    public $roundStartDate = "2023-10-07 19:00:00"; // Fill with current round start date
     
     public function __construct()
     {
