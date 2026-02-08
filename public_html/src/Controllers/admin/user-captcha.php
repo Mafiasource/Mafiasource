@@ -15,4 +15,4 @@ require_once __DIR__ . '/.inc.foot.php';
 $twigVars['user_captcha'] = $captcha;
 $twigVars['pagination'] = $pagination;
 
-echo $twig->render('/src/Views/admin/user-captcha.twig', $twigVars);
+print_r($twig->render('/src/Views/admin/user-captcha.twig', $twigVars));

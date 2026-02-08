@@ -58,5 +58,5 @@ else
     
     $twigVars['langs'] = array_merge($twigVars['langs'], $language->captchaTestLangs());
     
-    echo $twig->render('/src/Views/game/captcha.test.twig', $twigVars);
+    print_r($twig->render('/src/Views/game/captcha.test.twig', $twigVars));
 }
