@@ -16,6 +16,6 @@
         "doctrine/common": "^3.1",
         "twig/twig": "^3.0",
         "voku/anti-xss": "^4.1",
-        "phpmailer/phpmailer": "^6.5"
+        "phpmailer/phpmailer": "^7.0"
     }
 }
