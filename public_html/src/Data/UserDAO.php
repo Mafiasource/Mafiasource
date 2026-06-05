@@ -2,6 +2,7 @@
 
 namespace src\Data;
 
+use app\config\PasswordHasher;
 use src\Business\UserCoreService;
 use src\Business\UserService;
 use src\Business\StateService;
@@ -97,50 +98,28 @@ class UserDAO extends DBConfig
         $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt" : null;
         if($id !== FALSE && isset($saltFile) && file_exists($saltFile))
         {
-            $file = fopen($saltFile, "r");
-            $salt = fgets($file);
-            fclose($file);
-            
-            $hash = hash('sha256', $salt . hash('sha256', $pass));
+            $salt = trim((string)file_get_contents($saltFile));
             
             if($this->verifyPrivateID($username, $pass, $id) == TRUE)
             {
-                $qry = "SELECT `id`, `username`, `email`, `password` FROM `user` WHERE `id`= :uid AND `password`= :password AND `active`='1' AND `deleted`='0' LIMIT 1";
-                $prms = array(':uid' => $id, ':password' => $hash);
+                $qry = "SELECT `id`, `username`, `email`, `password` FROM `user` WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1";
+                $prms = array(':uid' => $id);
             }
             elseif(!$this->isPrivateIDActive($id))
             {
-                $qry = "SELECT `id`, `email`, `password` FROM `user` WHERE `username`= :username AND `password`= :password AND `active`='1' AND `deleted`='0' LIMIT 1";
-                $prms = array(':username' => $username, ':password' => $hash);
+                $qry = "SELECT `id`, `email`, `password` FROM `user` WHERE `username`= :username AND `active`='1' AND `deleted`='0' LIMIT 1";
+                $prms = array(':username' => $username);
             }
             $row = isset($qry) ? $this->con->getDataSR($qry, $prms) : null;
-            if(isset($row['id']) && $row['id'] == $id)
+            if(isset($row['id']) && $row['id'] == $id && $this->verifyPasswordHash($pass, $row['password'], $salt))
             {
                 if(isset($row['username']) && $row['username'] != "")
                     $username = $row['username']; // Dealing with privateID $username, replace with registered username for temp. branch below:
                 
-                // 25% Chance on successful login at generating a new password hash for the same password
-                // Immediately re-fetch details for remember cookie
-                // Branch will logout user on all previously logged in devices
-                // User will stay logged in on current device for as long he does not login atleast once again
-                // Ideal scenario loggs out user on all devices every 4th login
-                // Temporarily increased login security? | Atleast untill outgame IP based captchas are developed
-                global $security;
-                
-                if($security->randInt(0, 100) <= 25) // >= 75)
+                if(PasswordHasher::needsRehash($row['password']))
                 {
-                    $this->changePasswordByUsername($pass, $username, $id);
-                    
-                    $file = fopen($saltFile, "r");
-                    $salt = fgets($file); //Re-set
-                    fclose($file);
-                    
-                    $hash = hash('sha256', $salt . hash('sha256', $pass)); //Re-set
-                    
-                    $prms[':password'] = $hash; // Re-set pass hash required for successful re-fetch
-                    $row = $this->con->getDataSR($qry, $prms); // Re-fetch
+                    $row['password'] = $this->setPasswordHash($id, $pass);
                 }
-                // /End temporarily increased login security?
                 
                 global $route;
                 $hash2 = hash('sha256',$salt.$row['email'].$row['password'].$salt);
@@ -284,12 +263,10 @@ class UserDAO extends DBConfig
     
     public function createUser($username, $pass, $email, $profession)
     { // This function is one of the 2 password related functions for users, here the passwords get's created the first time
-        $hash = hash('sha256', $pass);
+        $hash = PasswordHasher::hash($pass);
         
         global $security;
         $salt = $security->createSalt();
-        
-        $hash = hash('sha256', $salt . $hash);
         
         $statement = $this->dbh->prepare(
             "INSERT INTO `user`
@@ -628,17 +605,17 @@ class UserDAO extends DBConfig
         $saltFile = isset($_SESSION['UID']) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $_SESSION['UID'] . ".txt" : null;
         if(isset($saltFile) && file_exists($saltFile))
         {
-            $file = fopen($saltFile, "r");
-            $salt = fgets($file);
-            fclose($file);
+            $salt = trim((string)file_get_contents($saltFile));
 
-            $hash = hash('sha256', $salt . hash('sha256', $pass));
-
-            $statement = $this->dbh->prepare("SELECT `id` FROM `user` WHERE `id`= :id AND `password`= :password  AND `active`='1' AND `deleted`='0' LIMIT 1");
-            $statement->execute(array(':id' => $_SESSION['UID'], ':password' => $hash));
+            $statement = $this->dbh->prepare("SELECT `id`, `password` FROM `user` WHERE `id`= :id AND `active`='1' AND `deleted`='0' LIMIT 1");
+            $statement->execute(array(':id' => $_SESSION['UID']));
             $row = $statement->fetch();
-            if(isset($row['id']) && $row['id'] > 0)
+            if(isset($row['id']) && $row['id'] > 0 && $this->verifyPasswordHash($pass, $row['password'], $salt))
+            {
+                if(PasswordHasher::needsRehash($row['password']))
+                    $this->setPasswordHash((int)$_SESSION['UID'], $pass);
                 return TRUE;
+            }
         }
         return FALSE;
     }
@@ -659,29 +636,9 @@ class UserDAO extends DBConfig
         if($id == FALSE)
             $id = $this->getIdByUsername($username);
 
-        $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt" : null;
-        if(isset($saltFile) && file_exists($saltFile))
+        if(isset($id) && $id !== FALSE)
         {
-            // Remove old salt..
-            unlink($saltFile);
-            
-            $hash = hash('sha256', $pass);
-            
-            global $security;
-            $salt = $security->createSalt();
-            
-            $hash = hash('sha256', $salt . $hash);
-    
-            $statement = $this->dbh->prepare("UPDATE `user` SET `password`= :hash WHERE `id`= :uid");
-            $statement->execute(array(':hash' => $hash, ':uid' => $id));
-    
-            // Save new salt
-            $ourFileHandle = fopen($saltFile, 'w');
-            $stringData = $salt;
-            fwrite($ourFileHandle, $stringData);
-            fclose($ourFileHandle);
-            chmod($saltFile, 0600);
-            
+            $this->setPasswordHash((int)$id, $pass);
             $this->removeRecoverPasswordByUserID($id);
         }
     }
@@ -783,20 +740,20 @@ class UserDAO extends DBConfig
             $prms = array(':uid' => $id, ':pid' => $hash);
             if($password)
             {
-                $file = fopen(DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt", "r");
-                $salt = fgets($file);
-                fclose($file);
-    
-                $passHash = hash('sha256', $salt . hash('sha256', $password));
+                $saltFile = DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt";
+                $salt = file_exists($saltFile) ? trim((string)file_get_contents($saltFile)) : '';
                 
-                $qry = "SELECT `id` FROM `user` WHERE `id`= :uid AND `privateID`= :pid AND `password`= :password AND `active`='1' AND `deleted`='0' LIMIT 1";
-                $prms = array(':uid' => $id, ':pid' => $hash, ':password' => $passHash);
+                $qry = "SELECT `id`, `password` FROM `user` WHERE `id`= :uid AND `privateID`= :pid AND `active`='1' AND `deleted`='0' LIMIT 1";
+                $prms = array(':uid' => $id, ':pid' => $hash);
             }
             $statement = $this->dbh->prepare($qry);
             $statement->execute($prms);
             $row = $statement->fetch();
             if(isset($row['id']) && $row['id'] > 0)
-                return TRUE;
+            {
+                if(!$password || (isset($row['password']) && $this->verifyPasswordHash($password, $row['password'], $salt)))
+                    return TRUE;
+            }
         }
         return FALSE;
     }
@@ -1890,5 +1847,21 @@ class UserDAO extends DBConfig
                 UPDATE `user` SET `credits`=`credits`+ :c, `creditsWon`=`creditsWon`+ :c WHERE `id`= :uid AND `active`='1' AND `deleted`='0' LIMIT 1
             ", array(':c' => $credits, ':uid' => $_SESSION['UID']));
         }
+    }
+
+    private function verifyPasswordHash(string $password, string $hash, string $salt): bool
+    {
+        if(PasswordHasher::verify($password, $hash))
+            return TRUE;
+
+        return $salt !== '' && PasswordHasher::verifyLegacySha256Salt($password, $hash, $salt);
+    }
+
+    private function setPasswordHash(int $id, string $password): string
+    {
+        $hash = PasswordHasher::hash($password);
+        $statement = $this->dbh->prepare("UPDATE `user` SET `password`= :hash WHERE `id`= :uid");
+        $statement->execute(array(':hash' => $hash, ':uid' => $id));
+        return $hash;
     }
 }

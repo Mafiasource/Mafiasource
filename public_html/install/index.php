@@ -54,6 +54,8 @@ if($stream)
     // Enable Autoloading with doctrine
     $classLoader = new ClassLoader('install'   ,   DOC_ROOT);
     $classLoader->register();
+    $classLoader = new ClassLoader('app'   ,   DOC_ROOT);
+    $classLoader->register();
     $classLoader = null;
     
     // Start a (non-secure) installation session (Allow 'temp' sessions in install env)

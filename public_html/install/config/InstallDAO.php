@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace install\config;
 
+use app\config\PasswordHasher;
 use install\config\DBConfig;
 
 class InstallDAO extends DBConfig
@@ -41,11 +42,9 @@ class InstallDAO extends DBConfig
         global $security;
         
         // Register game account | Copy paste UserService
-        $hash = hash('sha256', $password);
+        $hash = PasswordHasher::hash($password);
         
         $salt = $security->createSalt();
-        
-        $hash = hash('sha256', $salt . $hash);
         
         $statement = $this->dbh->prepare(
             "INSERT INTO `user`
@@ -108,13 +107,9 @@ class InstallDAO extends DBConfig
         // //Register game account
         
         // Regiter Administrator account | Copy paste MemberService
-        $hash = null; // Re-init
-        
-        $hash = hash('sha256', $password);
+        $hash = PasswordHasher::hash($password);
         
         $salt = $security->createSalt();
-        
-        $hash = hash('sha256', $salt . $hash);
         
         $statement = $this->dbh->prepare(
             "INSERT INTO `member`

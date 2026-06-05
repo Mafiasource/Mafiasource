@@ -2,6 +2,7 @@
 
 namespace src\Data;
 
+use app\config\PasswordHasher;
 use src\Data\config\DBConfig;
 
 class MemberDAO extends DBConfig
@@ -27,20 +28,21 @@ class MemberDAO extends DBConfig
         if(!$id)
             return FALSE;
         
-        $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . (int) $id . '.txt','r');
-        $salt = fgets($file);
-        fclose($file);
+        $saltFile = DOC_ROOT . '/app/Resources/memberSalts/' . (int) $id . '.txt';
+        $salt = file_exists($saltFile) ? trim((string)file_get_contents($saltFile)) : '';
         
-        $hash = hash('sha256', $salt . hash('sha256', $password));
-        
-        $statement = $this->dbh->prepare("SELECT m.`id`,m.`naam`,m.`voornaam`,m.`email`,m.`password`, s.`status_nl` FROM `member` AS m LEFT JOIN `status` AS s ON (m.status=s.id) WHERE m.`email` = :email AND m.`password` = :password AND m.`active`='1' AND m.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 0,1");
-        $statement->execute(array(':email' => $email, ':password' => $hash));
+        $statement = $this->dbh->prepare("SELECT m.`id`,m.`naam`,m.`voornaam`,m.`email`,m.`password`, s.`status_nl` FROM `member` AS m LEFT JOIN `status` AS s ON (m.status=s.id) WHERE m.`email` = :email AND m.`active`='1' AND m.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 0,1");
+        $statement->execute(array(':email' => $email));
         $row = $statement->fetch();
-        if(isset($row['id']) && $row['id'] > 0)
+        if(isset($row['id']) && $row['id'] > 0 && $this->verifyPasswordHash($password, $row['password'], $salt))
         {
             $_SESSION['cp-logon']['naam'] = $row['naam'];
             $_SESSION['cp-logon']['voornaam'] = $row['voornaam'];
             $_SESSION['cp-logon']['MID'] = $row['id'];
+            if(PasswordHasher::needsRehash($row['password']))
+            {
+                $row['password'] = $this->setPasswordHash($row['id'], $password);
+            }
             $_SESSION['cp-logon']['status'] = $row['status_nl'];
             $hash2 = hash('sha256',$salt.$row['email'].$row['password'].$salt);
             if($remember == 'remember-me')
@@ -61,12 +63,10 @@ class MemberDAO extends DBConfig
     
     public function createMember($email, $password, $naam = "", $voornaam = "", $adres = "", $gemeente = "", $postcode = "")
     {
-        $hash = hash('sha256', $password);
+        $hash = PasswordHasher::hash($password);
         
         global $security;
         $salt = $security->createSalt();
-        
-        $hash = hash('sha256', $salt . $hash);
         
         $statement = $this->dbh->prepare("
             INSERT INTO `member`
@@ -209,23 +209,20 @@ class MemberDAO extends DBConfig
     {
         if(isset($_SESSION['cp-logon']['MID']))
         {
-            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . (int) $_SESSION['cp-logon']['MID'] . '.txt', 'r');
-            $salt = fgets($file);
-            fclose($file);
+            $id = (int) $_SESSION['cp-logon']['MID'];
+            $saltFile = DOC_ROOT . '/app/Resources/memberSalts/' . $id . '.txt';
+            $salt = file_exists($saltFile) ? trim((string)file_get_contents($saltFile)) : '';
             
-            $hash = hash('sha256', $salt . hash('sha256', $password));
-            
-            $statement = $this->dbh->prepare("SELECT `id` FROM `member` WHERE `password` = :password LIMIT 0,1");
-            $statement->execute(array(':password' => $hash));
+            $statement = $this->dbh->prepare("SELECT `id`, `password` FROM `member` WHERE `id` = :id LIMIT 1");
+            $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
-            if(isset($row['id']) && $row['id'] > 0)
+            if(isset($row['id']) && $row['id'] > 0 && $this->verifyPasswordHash($password, $row['password'], $salt))
             {
+                if(PasswordHasher::needsRehash($row['password']))
+                    $this->setPasswordHash($id, $password);
                 return TRUE;
             }
-            else
-            {
-                return FALSE;
-            }
+            return FALSE;
         }
     }
     
@@ -233,21 +230,22 @@ class MemberDAO extends DBConfig
     {
         if(isset($_SESSION['cp-logon']['MID']))
         {
-            $hash = hash('sha256', $password);
-            
-            global $security;
-            $salt = $security->createSalt();
-            
-            $hash = hash('sha256', $salt . $hash);
-            
-            $statement = $this->dbh->prepare("UPDATE `member` SET `password` = :password WHERE `id` = :id ");
-            $statement->execute(array(':password' => $hash, ':id' => $_SESSION['cp-logon']['MID']));
-            
-            $ourFileName = DOC_ROOT . '/app/Resources/memberSalts/' . (int) $_SESSION['cp-logon']['MID'] . '.txt';
-            $ourFileHandle = fopen($ourFileName, 'w') or die("Kan bestand niet opnenen, meld dit aan de administrator.");
-            $stringData = $salt;
-            fwrite($ourFileHandle, $stringData);
-            fclose($ourFileHandle);
+            $this->setPasswordHash((int)$_SESSION['cp-logon']['MID'], $password);
         }
+    }
+    private function verifyPasswordHash(string $password, string $hash, string $salt): bool
+    {
+        if(PasswordHasher::verify($password, $hash))
+            return TRUE;
+
+        return $salt !== '' && PasswordHasher::verifyLegacySha256Salt($password, $hash, $salt);
+    }
+
+    private function setPasswordHash(int $id, string $password): string
+    {
+        $hash = PasswordHasher::hash($password);
+        $statement = $this->dbh->prepare("UPDATE `member` SET `password` = :password WHERE `id` = :id ");
+        $statement->execute(array(':password' => $hash, ':id' => $id));
+        return $hash;
     }
 }

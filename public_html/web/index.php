@@ -66,6 +66,8 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         // Enable Autoloading with doctrine
         $classLoader = new ClassLoader('src'   ,   DOC_ROOT);
         $classLoader->register();
+        $classLoader = new ClassLoader('app'   ,   DOC_ROOT);
+        $classLoader->register();
         $classLoader = null;
         // Start a session except for cookieless routes
         if(!str_starts_with($route->getRouteName(), '_'))
