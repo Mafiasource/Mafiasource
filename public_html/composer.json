@@ -13,9 +13,9 @@
         {"name": "Michael Carrein", "email": "michael.carrein@hotmail.com"}
     ],
     "require": {
-        "doctrine/common": "^3.1",
-        "twig/twig": "^3.0",
+        "doctrine/common": "^3.5",
+        "twig/twig": "^3.27",
         "voku/anti-xss": "^4.1",
-        "phpmailer/phpmailer": "^7.0"
+        "phpmailer/phpmailer": "^7.1"
     }
 }
