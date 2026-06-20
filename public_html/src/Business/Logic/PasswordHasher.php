@@ -13,8 +13,7 @@ class PasswordHasher
 
     public static function hash(string $password): string
     {
-        self::assertArgon2idSupport();
-        return \password_hash($password, self::ALGORITHM, self::OPTIONS);
+        return \password_hash($password, self::algorithm(), self::options());
     }
 
     public static function verify(string $password, string $hash): bool
@@ -27,8 +26,7 @@ class PasswordHasher
 
     public static function needsRehash(string $hash): bool
     {
-        self::assertArgon2idSupport();
-        return \password_needs_rehash($hash, self::ALGORITHM, self::OPTIONS);
+        return \password_needs_rehash($hash, self::algorithm(), self::options());
     }
 
     public static function legacySha256SaltHash(string $password, string $salt): string
@@ -41,9 +39,16 @@ class PasswordHasher
         return \hash_equals($hash, self::legacySha256SaltHash($password, $salt));
     }
 
-    private static function assertArgon2idSupport(): void
+    private static function algorithm(): string
     {
-        if(!\in_array(self::ALGORITHM, \password_algos(), true))
-            throw new \RuntimeException('PHP password hashing must be compiled with Argon2id support.');
+        if(\in_array(self::ALGORITHM, \password_algos(), true))
+            return self::ALGORITHM;
+
+        return PASSWORD_DEFAULT;
+    }
+
+    private static function options(): array
+    {
+        return self::algorithm() === self::ALGORITHM ? self::OPTIONS : array();
     }
 }
