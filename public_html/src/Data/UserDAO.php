@@ -2,7 +2,7 @@
 
 namespace src\Data;
 
-use app\config\PasswordHasher;
+use src\Business\Logic\PasswordHasher;
 use src\Business\UserCoreService;
 use src\Business\UserService;
 use src\Business\StateService;

@@ -1,6 +1,6 @@
 <?PHP
 
-namespace app\config;
+namespace src\Business\Logic;
 
 class PasswordHasher
 {

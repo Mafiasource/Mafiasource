@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace install\config;
 
-use app\config\PasswordHasher;
+use src\Business\Logic\PasswordHasher;
 use install\config\DBConfig;
 
 class InstallDAO extends DBConfig
