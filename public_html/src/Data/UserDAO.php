@@ -96,9 +96,10 @@ class UserDAO extends DBConfig
         $id = is_numeric($id) && $id > 0 ? (int)$id : $this->getIdByUsername($username);
         
         $saltFile = isset($id) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $id . ".txt" : null;
-        if($id !== FALSE && isset($saltFile) && file_exists($saltFile))
+        if($id !== FALSE && isset($saltFile))
         {
-            $salt = trim((string)file_get_contents($saltFile));
+            // Empty salt means no legacy SHA-256 fallback is available; modern password_hash() values remain self-salted.
+            $salt = isset($saltFile) && file_exists($saltFile) ? trim((string) file_get_contents($saltFile)) : '';
             
             if($this->verifyPrivateID($username, $pass, $id) == TRUE)
             {
@@ -602,20 +603,21 @@ class UserDAO extends DBConfig
     
     public function verifyPassword($pass)
     {
-        $saltFile = isset($_SESSION['UID']) ? DOC_ROOT . "/app/Resources/userSalts/" . (int) $_SESSION['UID'] . ".txt" : null;
-        if(isset($saltFile) && file_exists($saltFile))
-        {
-            $salt = trim((string)file_get_contents($saltFile));
+        if(!isset($_SESSION['UID']))
+            return FALSE;
 
-            $statement = $this->dbh->prepare("SELECT `id`, `password` FROM `user` WHERE `id`= :id AND `active`='1' AND `deleted`='0' LIMIT 1");
-            $statement->execute(array(':id' => $_SESSION['UID']));
-            $row = $statement->fetch();
-            if(isset($row['id']) && $row['id'] > 0 && $this->verifyPasswordHash($pass, $row['password'], $salt))
-            {
-                if(PasswordHasher::needsRehash($row['password']))
-                    $this->setPasswordHash((int)$_SESSION['UID'], $pass);
-                return TRUE;
-            }
+        $saltFile = DOC_ROOT . "/app/Resources/userSalts/" . (int) $_SESSION['UID'] . ".txt";
+        // Empty salt means no legacy SHA-256 fallback is available; modern password_hash() values remain self-salted.
+        $salt = isset($saltFile) && file_exists($saltFile) ? trim((string) file_get_contents($saltFile)) : '';
+
+        $statement = $this->dbh->prepare("SELECT `id`, `password` FROM `user` WHERE `id`= :id AND `active`='1' AND `deleted`='0' LIMIT 1");
+        $statement->execute(array(':id' => $_SESSION['UID']));
+        $row = $statement->fetch();
+        if(isset($row['id']) && $row['id'] > 0 && $this->verifyPasswordHash($pass, $row['password'], $salt))
+        {
+            if(PasswordHasher::needsRehash($row['password']))
+                $this->setPasswordHash((int)$_SESSION['UID'], $pass);
+            return TRUE;
         }
         return FALSE;
     }

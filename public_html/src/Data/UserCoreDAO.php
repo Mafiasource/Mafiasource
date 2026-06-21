@@ -101,27 +101,23 @@ class UserCoreDAO extends DBConfig
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
             $saltFile = DOC_ROOT . "/app/Resources/userSalts/".$id.".txt";
-            if(file_exists($saltFile))
+            // Empty salt matches the remember-me hash emitted at login for accounts without legacy salt files.
+            $salt = file_exists($saltFile) ? trim((string) file_get_contents($saltFile)) : '';
+
+            if(hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
             {
-                $file = fopen($saltFile, "r");
-                $salt = fgets($file);
-                fclose($file);
+                $_SESSION['UID'] = $id;
+                $_SESSION['logon']['cookiehash'] = $hash;
                 
-                if(hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
-                {
-                    $_SESSION['UID'] = $id;
-                    $_SESSION['logon']['cookiehash'] = $hash;
-                    
-                    $this->con->setData("
-                        INSERT INTO `login` (`userID`,`ip`,`date`,`time`,`tries`, `cookieLogin`) VALUES (:id, :ip, :date, :time, :tries, 1)
-                    ", array(':id' => $_SESSION['UID'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => 1));
-                    
-                    global $security;
-                    $security->generateNewToken();
-                    $security->generateNewSession();
-                    
-                    return TRUE;
-                }
+                $this->con->setData("
+                    INSERT INTO `login` (`userID`,`ip`,`date`,`time`,`tries`, `cookieLogin`) VALUES (:id, :ip, :date, :time, :tries, 1)
+                ", array(':id' => $_SESSION['UID'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':tries' => 1));
+
+                global $security;
+                $security->generateNewToken();
+                $security->generateNewSession();
+
+                return TRUE;
             }
             global $route;
             $this->con->setData("

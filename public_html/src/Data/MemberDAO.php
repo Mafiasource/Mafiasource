@@ -142,9 +142,9 @@ class MemberDAO extends DBConfig
             $statement = $this->dbh->prepare("SELECT m.`id`,m.`naam`,m.`voornaam`,m.`email`,m.`password`, s.`status_nl` FROM `member` AS m LEFT JOIN `status` AS s ON (m.status=s.id) WHERE m.`id` = :id AND m.`active`='1' AND m.`deleted` = '0' AND s.`active`='1' AND (s.`deleted`='0' OR s.`deleted`='-1') LIMIT 1");
             $statement->execute(array(':id' => $id));
             $row = $statement->fetch();
-            $file = fopen(DOC_ROOT . '/app/Resources/memberSalts/' . (int) $id . '.txt','r');
-            $salt = fgets($file);
-            fclose($file);
+            $saltFile = DOC_ROOT . '/app/Resources/memberSalts/' . (int) $id . '.txt';
+            // Empty salt matches the remember-me hash emitted at login for accounts without legacy salt files.
+            $salt = file_exists($saltFile) ? trim((string) file_get_contents($saltFile)) : '';
             
             if(hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
             {
