@@ -27,14 +27,13 @@ const assets = [
 const OFFLINE_VERSION = "1.0.1"; // 1.0 offline_url changes? Incerement.
 const OFFLINE_NAME = "mafiasource-offline-v" + OFFLINE_VERSION;
 const OFFLINE_ASSETS_VERSION = "1.0.2"; // 1.0 assets changes? Increment.
-const OFFLINE_ASSETS = "mafiasource-offline-v " + + OFFLINE_VERSION + "-assets-v" + OFFLINE_ASSETS_VERSION;
+const OFFLINE_ASSETS = "mafiasource-offline-v " + OFFLINE_VERSION + "-assets-v" + OFFLINE_ASSETS_VERSION;
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
-      caches.open(OFFLINE_ASSETS).then(cache => {
-        cache.addAll(assets)
-      });
+      const assetsCache = await caches.open(OFFLINE_ASSETS);
+      await assetsCache.addAll(assets);
       const cache = await caches.open(OFFLINE_NAME);
       // Setting {cache: 'reload'} in the new request will ensure that the
       // response isn't fulfilled from the HTTP cache; i.e., it will be from
