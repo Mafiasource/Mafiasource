@@ -3,6 +3,8 @@
 namespace src\Data;
 
 use src\Business\Logic\PasswordHasher;
+use src\Business\Logic\LoginAbuseService;
+use src\Business\UserCoreService;
 use src\Data\config\DBConfig;
 
 class MemberDAO extends DBConfig
@@ -57,8 +59,74 @@ class MemberDAO extends DBConfig
                 global $route;
                 setcookie('email', $email, time()+25478524, '/', $route->settings['domain'], SSL_ENABLED, true);
             }
+
+            $this->logSuccessfulLogin($row['id'], 0);
             return TRUE;
         }
+    }
+
+    private function logSuccessfulLogin($memberID, $cookieLogin = 0)
+    {
+        $this->con->setData("
+            INSERT INTO `login_admin` (`memberID`,`ip`,`date`,`time`,`cookieLogin`) VALUES (:id, :ip, :date, :time, :cookieLogin)
+        ", array(
+            ':id' => $memberID,
+            ':ip' => UserCoreService::getIP(),
+            ':date' => date('Y-m-d H:i:s'),
+            ':time' => time(),
+            ':cookieLogin' => $cookieLogin
+        ));
+    }
+
+    public function loginFailed($email, $type)
+    {
+        $this->con->setData("
+            INSERT INTO `login_admin_fail` (`email`,`ip`,`date`,`time`,`type`) VALUES (:email, :ip, :date, :time, :type)
+        ", array(':email' => $email, ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => $type));
+    }
+
+    public function getLoginFailedCountByIP($ipAddr, $type = false)
+    {
+        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-24 hours')));
+        $whereAdd = "";
+        if($type != false && $type >= 1 && $type <= 5)
+        {
+            $whereAdd = "AND `type`= :type";
+            $prms[':type'] = $type;
+        }
+        $row = $this->con->getDataSR("
+            SELECT COUNT(`id`) AS `total` FROM `login_admin_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (4, 5) $whereAdd LIMIT 1
+        ", $prms);
+        if(isset($row['total']) && $row['total'] >= 0)
+            return (int)$row['total'];
+
+        return 0;
+    }
+
+    public function checkTempBannedIP($ipAddr)
+    {
+        $loginAbuse = new LoginAbuseService($this);
+        $qry = "SELECT COUNT(`id`) AS `total` FROM `login_admin_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :dateTo AND `type` NOT IN (4, 5) LIMIT 1";
+        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours')), ':dateTo' => date('Y-m-d H:i:s', strtotime('-48 hours')));
+        $row = $this->con->getDataSR($qry, $prms);
+        if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $loginAbuse->maxLogin24h))
+        {
+            $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-48 hours'));
+            $prms[':dateTo'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
+            $row = $this->con->getDataSR($qry, $prms);
+        }
+        if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $loginAbuse->maxLogin24h))
+        {
+            $qry = "SELECT COUNT(`id`) AS `total` FROM `login_admin_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (4, 5) LIMIT 1";
+            $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
+            unset($prms[':dateTo']);
+            $row = $this->con->getDataSR($qry, $prms);
+        }
+
+        if(isset($row['total']) && $row['total'] >= $loginAbuse->maxLogin24h)
+            return TRUE;
+
+        return FALSE;
     }
     
     public function createMember($email, $password, $naam = "", $voornaam = "", $adres = "", $gemeente = "", $postcode = "")
@@ -153,6 +221,8 @@ class MemberDAO extends DBConfig
                 $_SESSION['cp-logon']['MID'] = $row['id'];
                 $_SESSION['cp-logon']['status'] = $row['status_nl'];
                 $_SESSION['cp-logon']['cookiehash'] = $hash;
+
+                $this->logSuccessfulLogin($row['id'], 1);
                 return TRUE;
             }
         }

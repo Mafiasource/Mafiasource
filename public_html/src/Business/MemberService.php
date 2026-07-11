@@ -2,6 +2,8 @@
 
 namespace src\Business;
 
+use src\Business\Logic\LoginAbuseService;
+use src\Business\UserCoreService;
 use src\Data\MemberDAO;
 
 class MemberService
@@ -342,20 +344,45 @@ class MemberService
     public function login($email, $password, $securityToken, $remember = false)
     {
         global $security;
-        if($security->checkToken($securityToken) == FALSE)
+        global $language;
+        global $langs;
+        global $user;
+        $l = $language->loginLangs();
+        $l['NONE'] = $langs['NONE'];
+        $loginAbuse = new LoginAbuseService($this->data);
+        $ipAddr = UserCoreService::getIP();
+        $permBan = $user->checkPermBannedIP($ipAddr);
+        // $type 1=Credentials | 2=Violation | 3=Warning | 4=Temp. IP Ban | 5=Perm. IP Ban
+        $laMsg = $loginAbuse->getAttemptsMessage($l);
+        $type = $loginAbuse->getFailureType($laMsg, $l['TEMPORARILY_IP_BANNED'], $permBan);
+
+        if($security->checkToken($securityToken) == FALSE || !$user->ipValid)
             $error = "Ongeldige security token, als dit probleem blijft aanhouden zorg dan voor een constante verbinding met dezelfde modem.";
+
+        if(in_array($type, array(4, 5)) || $permBan)
+            $error = $l['TEMPORARILY_IP_BANNED'] . " ";
+
+        if(isset($error))
+        {
+            $this->data->loginFailed($email, $type);
+            return $laMsg === $error ? $laMsg : $laMsg . $error;
+        }
+
+        if($this->data->emailExists($email) == FALSE)
+        {
+            $this->data->loginFailed($email, 1);
+            $error = "Ongeldige gebruikersnaam of wachtwoord.";
+        }
         else
         {
-            if($this->data->emailExists($email) == FALSE)
-                $error = "Ongeldige gebruikersnaam of wachtwoord.";
-            else
+            if($this->data->login($email, $password, $remember) == FALSE)
             {
-                if($this->data->login($email, $password, $remember) == FALSE)
-                    $error = "Ongeldige gebruikersnaam of wachtwoord.";
+                $this->data->loginFailed($email, 1);
+                $error = "Ongeldige gebruikersnaam of wachtwoord.";
             }
         }
         if(isset($error))
-            return $error;
+            return $laMsg . $error;
         else
             return TRUE;
     }

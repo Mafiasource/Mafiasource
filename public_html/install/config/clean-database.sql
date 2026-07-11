@@ -1808,6 +1808,49 @@ CREATE TABLE `login`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for login_admin
+-- ----------------------------
+DROP TABLE IF EXISTS `login_admin`;
+CREATE TABLE `login_admin`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
+  `memberID` bigint NOT NULL DEFAULT 0 COMMENT 'couple=member&factor=id&show=email',
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'type=disabled',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'type=disabled',
+  `time` bigint NOT NULL DEFAULT 0 COMMENT 'type=disabled',
+  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
+  `position` bigint NULL DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `id`(`memberID`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of login_admin
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for login_admin_fail
+-- ----------------------------
+DROP TABLE IF EXISTS `login_admin_fail`;
+CREATE TABLE `login_admin_fail`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'type=disabled',
+  `email` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'type=disabled',
+  `ip` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT 'type=disabled',
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'type=disabled',
+  `time` bigint NOT NULL DEFAULT 0 COMMENT 'type=disabled',
+  `type` smallint NOT NULL DEFAULT 0 COMMENT 'select=Inloggegevens,Overtreding,Waarschuwing,Tijdelijke ban,Permanente ban',
+  `position` int NULL DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of login_admin_fail
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for login_fail
 -- ----------------------------
 DROP TABLE IF EXISTS `login_fail`;

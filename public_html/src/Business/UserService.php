@@ -3,6 +3,7 @@
 namespace src\Business;
 
 use app\config\Routing;
+use src\Business\Logic\LoginAbuseService;
 use src\Business\UserCoreService;
 use src\Business\GarageService;
 use src\Business\StateService;
@@ -81,21 +82,10 @@ class UserService
     
     private function getLoginAttemptsMessage($langs = array())
     {
-        $ipAddr = UserCoreService::getIP();
-        $tempBan = $this->data->checkTempBannedIP($ipAddr);
-        if($tempBan)
-            return $langs['TEMPORARILY_IP_BANNED'] . " ";
-
-        global $route;
-        $lfc = $this->data->getLoginFailedCountByIP($ipAddr);
-        if($lfc >= $this->minLogin24h && $lfc < $this->maxLogin24h)
-        {
-            $incPossibleSuccess = (int)($this->maxLogin24h - 1) - $lfc;
-            $replace = $incPossibleSuccess !== 0 ? $incPossibleSuccess : strtolower($langs['NONE']);
-            return $route->replaceMessagePart($replace, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
-        }
-
-        return ""; // Nothing to prepend to message
+        $loginAbuse = new LoginAbuseService($this->data);
+        $loginAbuse->maxLogin24h = $this->maxLogin24h;
+        $loginAbuse->minLogin24h = $this->minLogin24h;
+        return $loginAbuse->getAttemptsMessage($langs);
     }
 
     public function validateLogin($post)
@@ -110,14 +100,9 @@ class UserService
         $_SESSION['login-tries'] = !isset($_SESSION['login-tries']) ? 1 : $_SESSION['login-tries']++;
         $permBan = $user->checkPermBannedIP(UserCoreService::getIP());
         // $type 1=Credentials | 2=Violation | 3=Warning | 4=Temp. IP Ban | 5=Perm. IP Ban
-        $type = $permBan ? 5 : 2;
         $l['NONE'] = $langs['NONE'];
         $laMsg = $this->getLoginAttemptsMessage($l);
-        if($laMsg !== "") // Default LOGIN_FAILED_WARNING | Type 3
-            $type = 3;
-        
-        if($laMsg == $l['TEMPORARILY_IP_BANNED'] . " ")
-            $type = $permBan ? 5 : 4;
+        $type = (new LoginAbuseService($this->data))->getFailureType($laMsg, $l['TEMPORARILY_IP_BANNED'], $permBan);
         
         if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
             $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 2
