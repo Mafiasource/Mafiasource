@@ -104,7 +104,7 @@ class UserCoreDAO extends DBConfig
             // Empty salt matches the remember-me hash emitted at login for accounts without legacy salt files.
             $salt = file_exists($saltFile) ? trim((string) file_get_contents($saltFile)) : '';
 
-            if(hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
+            if(isset($row['id']) && hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
             {
                 $_SESSION['UID'] = $id;
                 $_SESSION['logon']['cookiehash'] = $hash;
@@ -120,9 +120,10 @@ class UserCoreDAO extends DBConfig
                 return TRUE;
             }
             global $route;
+            $username = isset($row['username']) ? $row['username'] : null;
             $this->con->setData("
                 INSERT INTO `login_fail` (`username`,`ip`,`date`,`time`,`type`, `cookieLogin`) VALUES (:username, :ip, :date, :time, :type, 1)
-            ", array(':username' => $row['username'], ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => 1)); // $type 1 = Credentials
+            ", array(':username' => $username, ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => 1)); // $type 1 = Credentials
             setcookie('remember', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
             setcookie('UID', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
         }
