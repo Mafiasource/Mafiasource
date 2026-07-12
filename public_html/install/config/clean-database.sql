@@ -1840,6 +1840,7 @@ CREATE TABLE `login_admin_fail`  (
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'type=disabled',
   `time` bigint NOT NULL DEFAULT 0 COMMENT 'type=disabled',
   `type` smallint NOT NULL DEFAULT 0 COMMENT 'select=Inloggegevens,Overtreding,Waarschuwing,Tijdelijke ban,Permanente ban',
+  `cookieLogin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'type=yesno',
   `position` int NULL DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
