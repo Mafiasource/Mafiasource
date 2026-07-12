@@ -353,13 +353,14 @@ class MemberService
         $ipAddr = UserCoreService::getIP();
         $permBan = $user->checkPermBannedIP($ipAddr);
         // $type 1=Credentials | 2=Violation | 3=Warning | 4=Temp. IP Ban | 5=Perm. IP Ban
-        $laMsg = $loginAbuse->getAttemptsMessage($l);
-        $type = $loginAbuse->getFailureType($laMsg, $l['TEMPORARILY_IP_BANNED'], $permBan);
+        $loginAbuseState = $loginAbuse->getLoginAbuseState($l, $permBan);
+        $laMsg = $loginAbuseState['message'];
+        $type = $loginAbuseState['type'];
 
         if($security->checkToken($securityToken) == FALSE || !$user->ipValid)
             $error = "Ongeldige security token, als dit probleem blijft aanhouden zorg dan voor een constante verbinding met dezelfde modem.";
 
-        if(in_array($type, array(4, 5)) || $permBan)
+        if($loginAbuseState['blocked'])
             $error = $l['TEMPORARILY_IP_BANNED'] . " ";
 
         if(isset($error))

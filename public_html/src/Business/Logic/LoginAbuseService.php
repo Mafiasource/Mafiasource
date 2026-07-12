@@ -18,33 +18,37 @@ class LoginAbuseService
         $this->data = $data;
     }
 
-    public function getAttemptsMessage($langs = array())
-    {
-        $ipAddr = UserCoreService::getIP();
-        if($this->data->checkTempBannedIP($ipAddr))
-            return $langs['TEMPORARILY_IP_BANNED'] . " ";
-
-        global $route;
-        $lfc = $this->data->getLoginFailedCountByIP($ipAddr);
-        if($lfc >= $this->minLogin24h && $lfc < $this->maxLogin24h)
-        {
-            $incPossibleSuccess = (int)($this->maxLogin24h - 1) - $lfc;
-            $replace = $incPossibleSuccess !== 0 ? $incPossibleSuccess : strtolower($langs['NONE']);
-            return $route->replaceMessagePart($replace, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
-        }
-
-        return "";
-    }
-
-    public function getFailureType($attemptsMessage, $tempBannedMessage, $permBan = false)
+    public function getLoginAbuseState($langs = array(), $permBan = false)
     {
         $type = $permBan ? 5 : 2;
-        if($attemptsMessage !== "")
-            $type = 3;
+        $blocked = $permBan;
+        $message = "";
+        $ipAddr = UserCoreService::getIP();
+        $lfc = $this->data->getLoginFailedCountByIP($ipAddr);
+        $attemptsLeft = max(0, (int)($this->maxLogin24h - 1) - $lfc);
 
-        if($attemptsMessage == $tempBannedMessage . " ")
+        if($this->data->checkTempBannedIP($ipAddr))
+        {
             $type = $permBan ? 5 : 4;
+            $blocked = true;
+            $message = $langs['TEMPORARILY_IP_BANNED'] . " ";
+        }
+        else
+        {
+            global $route;
+            if($lfc >= $this->minLogin24h && $lfc < $this->maxLogin24h)
+            {
+                $type = $permBan ? 5 : 3;
+                $replace = $attemptsLeft !== 0 ? $attemptsLeft : strtolower($langs['NONE']);
+                $message = $route->replaceMessagePart($replace, $langs['LOGIN_FAILED_WARNING'], '/{attempts}/') . " ";
+            }
+        }
 
-        return $type;
+        return array(
+            'message' => $message,
+            'type' => $type,
+            'blocked' => $blocked,
+            'attemptsLeft' => $attemptsLeft,
+        );
     }
 }

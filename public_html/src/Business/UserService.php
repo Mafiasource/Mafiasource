@@ -79,14 +79,6 @@ class UserService
         
         return TRUE;
     }
-    
-    private function getLoginAttemptsMessage($langs = array())
-    {
-        $loginAbuse = new LoginAbuseService($this->data);
-        $loginAbuse->maxLogin24h = $this->maxLogin24h;
-        $loginAbuse->minLogin24h = $this->minLogin24h;
-        return $loginAbuse->getAttemptsMessage($langs);
-    }
 
     public function validateLogin($post)
     {
@@ -101,13 +93,17 @@ class UserService
         $permBan = $user->checkPermBannedIP(UserCoreService::getIP());
         // $type 1=Credentials | 2=Violation | 3=Warning | 4=Temp. IP Ban | 5=Perm. IP Ban
         $l['NONE'] = $langs['NONE'];
-        $laMsg = $this->getLoginAttemptsMessage($l);
-        $type = (new LoginAbuseService($this->data))->getFailureType($laMsg, $l['TEMPORARILY_IP_BANNED'], $permBan);
+        $loginAbuse = new LoginAbuseService($this->data);
+        $loginAbuse->maxLogin24h = $this->maxLogin24h;
+        $loginAbuse->minLogin24h = $this->minLogin24h;
+        $loginAbuseState = $loginAbuse->getLoginAbuseState($l, $permBan);
+        $laMsg = $loginAbuseState['message'];
+        $type = $loginAbuseState['type'];
         
         if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
             $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 2
         
-        if(in_array($type, array(4, 5)) || $permBan)
+        if($loginAbuseState['blocked'])
             $return = $l['TEMPORARILY_IP_BANNED'] . " "; // Type 4 & 5
         
         if(isset($return))
