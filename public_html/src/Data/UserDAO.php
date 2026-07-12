@@ -181,27 +181,8 @@ class UserDAO extends DBConfig
     public function checkTempBannedIP($ipAddr)
     {
         $userService = new UserService();
-        $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :dateTo AND `cookieLogin`='0' AND `type` NOT IN (4, 5) LIMIT 1";
-        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours')), ':dateTo' => date('Y-m-d H:i:s', strtotime('-48 hours')));
-        $row = $this->con->getDataSR($qry, $prms);
-        if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $userService->maxLogin24h))
-        {
-            $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-48 hours'));
-            $prms[':dateTo'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
-            $row = $this->con->getDataSR($qry, $prms);
-        }
-        if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $userService->maxLogin24h))
-        {
-            $qry = "SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `cookieLogin`='0' AND `type` NOT IN (4, 5) LIMIT 1";
-            $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
-            unset($prms[':dateTo']);
-            $row = $this->con->getDataSR($qry, $prms);
-        }
-        
-        if(isset($row['total']) && $row['total'] >= $userService->maxLogin24h)
-            return TRUE;
-        
-        return FALSE;
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->checkTempBannedFailedLoginIP($ipAddr, 'login_fail', $userService->maxLogin24h, array('cookieLogin' => 'cookieLogin'));
     }
 
     public function verifyValidOwner($id = false, $ip = false)
@@ -320,7 +301,7 @@ class UserDAO extends DBConfig
             $ourFileHandle = fopen($ourFileName, 'w');
             fwrite($ourFileHandle, $salt);
             fclose($ourFileHandle);
-            //chmod($ourFileName, 0600);
+            chmod($ourFileName, 0600);
             
             $masterEncrypted = $security->masterEncrypt((string)strtolower($email));
             
@@ -334,7 +315,7 @@ class UserDAO extends DBConfig
             $ourFileHandle = fopen($ourFileName, 'w');
             fwrite($ourFileHandle, serialize($emails));
             fclose($ourFileHandle);
-            //chmod($ourFileName, 0600);
+            chmod($ourFileName, 0600);
         }
     }
     

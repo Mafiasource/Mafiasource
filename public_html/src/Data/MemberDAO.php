@@ -3,7 +3,6 @@
 namespace src\Data;
 
 use src\Business\Logic\PasswordHasher;
-use src\Business\Logic\LoginAbuseService;
 use src\Business\UserCoreService;
 use src\Data\config\DBConfig;
 
@@ -105,28 +104,8 @@ class MemberDAO extends DBConfig
 
     public function checkTempBannedIP($ipAddr)
     {
-        $loginAbuse = new LoginAbuseService($this);
-        $qry = "SELECT COUNT(`id`) AS `total` FROM `login_admin_fail` WHERE `ip`= :ip AND `date`> :datePast AND `date`< :dateTo AND `type` NOT IN (4, 5) LIMIT 1";
-        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-72 hours')), ':dateTo' => date('Y-m-d H:i:s', strtotime('-48 hours')));
-        $row = $this->con->getDataSR($qry, $prms);
-        if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $loginAbuse->maxLogin24h))
-        {
-            $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-48 hours'));
-            $prms[':dateTo'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
-            $row = $this->con->getDataSR($qry, $prms);
-        }
-        if(!isset($row['total']) || (isset($row['total']) && $row['total'] < $loginAbuse->maxLogin24h))
-        {
-            $qry = "SELECT COUNT(`id`) AS `total` FROM `login_admin_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (4, 5) LIMIT 1";
-            $prms[':datePast'] = date('Y-m-d H:i:s', strtotime('-24 hours'));
-            unset($prms[':dateTo']);
-            $row = $this->con->getDataSR($qry, $prms);
-        }
-
-        if(isset($row['total']) && $row['total'] >= $loginAbuse->maxLogin24h)
-            return TRUE;
-
-        return FALSE;
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->checkTempBannedFailedLoginIP($ipAddr, 'login_admin_fail');
     }
     
     public function createMember($email, $password, $naam = "", $voornaam = "", $adres = "", $gemeente = "", $postcode = "")
