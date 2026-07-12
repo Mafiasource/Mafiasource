@@ -67,7 +67,7 @@ class UserCoreService
         
         if(!isset($_SESSION['UID']) && isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
         {
-            if($this->data->getCookieLoginFailedCountByIP($ipAddr) >= 2)
+            if($this->data->cookieLoginAbuseRequiresPermanentBan($ipAddr))
             {
                 $this->data->addPermanentBannedIP($ipAddr);
                 return FALSE;

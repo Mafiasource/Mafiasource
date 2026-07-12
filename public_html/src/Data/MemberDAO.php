@@ -77,11 +77,18 @@ class MemberDAO extends DBConfig
         ));
     }
 
-    public function loginFailed($email, $type)
+    public function loginFailed($email, $type, $cookieLogin = 0)
     {
         $this->con->setData("
-            INSERT INTO `login_admin_fail` (`email`,`ip`,`date`,`time`,`type`) VALUES (:email, :ip, :date, :time, :type)
-        ", array(':email' => $email, ':ip' => UserCoreService::getIP(), ':date' => date('Y-m-d H:i:s'), ':time' => time(), ':type' => $type));
+            INSERT INTO `login_admin_fail` (`email`,`ip`,`date`,`time`,`type`, `cookieLogin`) VALUES (:email, :ip, :date, :time, :type, :cookieLogin)
+        ", array(
+            ':email' => $email,
+            ':ip' => UserCoreService::getIP(),
+            ':date' => date('Y-m-d H:i:s'),
+            ':time' => time(),
+            ':type' => $type,
+            ':cookieLogin' => $cookieLogin
+        ));
     }
 
     public function getLoginFailedCountByIP($ipAddr, $type = false)
@@ -94,7 +101,7 @@ class MemberDAO extends DBConfig
             $prms[':type'] = $type;
         }
         $row = $this->con->getDataSR("
-            SELECT COUNT(`id`) AS `total` FROM `login_admin_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (4, 5) $whereAdd LIMIT 1
+            SELECT COUNT(`id`) AS `total` FROM `login_admin_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (4, 5) AND `cookieLogin`='0' $whereAdd LIMIT 1
         ", $prms);
         if(isset($row['total']) && $row['total'] >= 0)
             return (int)$row['total'];
@@ -105,9 +112,33 @@ class MemberDAO extends DBConfig
     public function checkTempBannedIP($ipAddr)
     {
         $loginAbuseData = new LoginAbuseDAO();
-        return $loginAbuseData->checkTempBannedFailedLoginIP($ipAddr, 'login_admin_fail');
+        return $loginAbuseData->checkTempBannedFailedLoginIP($ipAddr, 'login_admin_fail', 20, array('cookieLogin' => 'cookieLogin'));
     }
-    
+
+    public function getCookieLoginFailedCountByIP($ipAddr, $type = false)
+    {
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->getCookieLoginFailedCountByIP($ipAddr, 'login_admin_fail', $type);
+    }
+
+    public function cookieLoginAbuseRequiresPermanentBan($ipAddr)
+    {
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->cookieLoginAbuseRequiresPermanentBan($ipAddr, 'login_admin_fail');
+    }
+
+    public function addPermanentBannedIP($ipAddr)
+    {
+        $loginAbuseData = new LoginAbuseDAO();
+        $loginAbuseData->addPermanentBannedIP($ipAddr);
+    }
+
+    public function checkPermBannedIP($ipAddr)
+    {
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->checkPermBannedIP($ipAddr);
+    }
+
     public function createMember($email, $password, $naam = "", $voornaam = "", $adres = "", $gemeente = "", $postcode = "")
     {
         $hash = PasswordHasher::hash($password);
@@ -193,7 +224,7 @@ class MemberDAO extends DBConfig
             // Empty salt matches the remember-me hash emitted at login for accounts without legacy salt files.
             $salt = file_exists($saltFile) ? trim((string) file_get_contents($saltFile)) : '';
             
-            if(hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
+            if(isset($row['id']) && hash_equals($hash, hash('sha256',$salt.$row['email'].$row['password'].$salt)))
             {
                 $_SESSION['cp-logon']['naam'] = $row['naam'];
                 $_SESSION['cp-logon']['voornaam'] = $row['voornaam'];
@@ -204,6 +235,12 @@ class MemberDAO extends DBConfig
                 $this->logSuccessfulLogin($row['id'], 1);
                 return TRUE;
             }
+
+            global $route;
+            $email = isset($row['email']) ? $row['email'] : null;
+            $this->loginFailed($email, 1, 1); // $type 1 = Credentials
+            setcookie('rememberme', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
+            setcookie('MID', "", time()-25478524, '/', $route->settings['domain'], SSL_ENABLED, true); // UNSET
         }
         else
         {

@@ -136,35 +136,26 @@ class UserCoreDAO extends DBConfig
     
     public function getCookieLoginFailedCountByIP($ipAddr, $type = false)
     {
-        $prms = array(':ip' => $ipAddr, ':datePast' => date('Y-m-d H:i:s', strtotime('-5 minutes')));
-        $whereAdd = "";
-        if($type != false && $type >= 1 && $type <= 5)
-        {
-            $whereAdd = "AND `type`= :type";
-            $prms[':type'] = $type;
-        }
-        $row = $this->con->getDataSR("
-            SELECT COUNT(`id`) AS `total` FROM `login_fail` WHERE `ip`= :ip AND `date`> :datePast AND `type` NOT IN (4, 5) AND `cookieLogin`='1' $whereAdd LIMIT 1
-        ", $prms);
-        if(isset($row['total']) && $row['total'] >= 0)
-            return (int)$row['total'];
-        
-        return 0;
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->getCookieLoginFailedCountByIP($ipAddr, 'login_fail', $type);
+    }
+
+    public function cookieLoginAbuseRequiresPermanentBan($ipAddr)
+    {
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->cookieLoginAbuseRequiresPermanentBan($ipAddr, 'login_fail');
     }
     
     public function addPermanentBannedIP($ipAddr)
     {
-        if(!$this->checkPermBannedIP($ipAddr))
-            $this->con->setData("INSERT INTO `ip_ban` (`ip`) VALUES (:ip)", array(':ip' => $ipAddr));
+        $loginAbuseData = new LoginAbuseDAO();
+        $loginAbuseData->addPermanentBannedIP($ipAddr);
     }
     
     public function checkPermBannedIP($ipAddr)
     {
-        $row = $this->con->getDataSR("SELECT `id` FROM `ip_ban` WHERE `ip`= :ip LIMIT 1", array(':ip' => $ipAddr));
-        if(isset($row['id']) && $row['id'] >= 1)
-            return TRUE;
-        
-        return FALSE;
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->checkPermBannedIP($ipAddr);
     }
     
     public function getUserData()

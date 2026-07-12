@@ -403,6 +403,9 @@ class MemberService
         global $route;
         if(!isset($_SESSION['cp-logon']) && isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
         {
+            if($this->adminCookieLoginAbuseBlocked())
+                $route->headTo('admin-login');
+
             if(!$this->data->verifyCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
                 $route->headTo('admin-login');
         }
@@ -415,11 +418,26 @@ class MemberService
         global $route;
         if(!isset($_SESSION['cp-logon']) && isset($_COOKIE['rememberme']) && isset($_COOKIE['MID']))
         {
+            if($this->adminCookieLoginAbuseBlocked())
+                return;
+
             if($this->data->verifyCookieHash($_COOKIE['rememberme'], $_COOKIE['MID']))
                 return $route->headTo('admin');
         }
         if(isset($_SESSION['cp-logon']))
             return $route->headTo('admin');
+    }
+
+    private function adminCookieLoginAbuseBlocked()
+    {
+        $ipAddr = UserCoreService::getIP();
+        if($this->data->cookieLoginAbuseRequiresPermanentBan($ipAddr))
+        {
+            $this->data->addPermanentBannedIP($ipAddr);
+            return TRUE;
+        }
+
+        return FALSE;
     }
     
     public function getStatus($id = "")
