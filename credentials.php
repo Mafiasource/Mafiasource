@@ -34,3 +34,5 @@ $client = $secret = $env = $buttonID = null;
 // Cloudflare Turnstile key
 define('CF_TURNSTILE_SITEKEY', '1x00000000000000000000AA'); // Your SITE KEY here
 define('CF_TURNSTILE_SECRETKEY', '1x0000000000000000000000000000000AA'); // Your SECRET KEY here
+define('CF_TURNSTILE_LOGIN_SITEKEY', '1x00000000000000000000BB'); // Invisible demo SITE KEY for login rate limiting
+define('CF_TURNSTILE_LOGIN_SECRETKEY', '1x0000000000000000000000000000000AA'); // Demo SECRET KEY for login rate limiting

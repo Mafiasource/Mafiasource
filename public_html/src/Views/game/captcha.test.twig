@@ -22,7 +22,7 @@
             <div class="clear">
                 <h4>{{ langs.CAPTCHA_TEST_TITLE|raw }}</h4>
                 <div class="cf-container">
-                    {{ cfTurnstile.turnstile() }}
+                    {{ cfTurnstile.turnstile('', APP_ISOLATED) }}
                 </div>
             </div>
             <br class="clear"/>
@@ -34,5 +34,5 @@
 {% endblock content %}
 
 {% block javascripts %}
-    {{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY) }}
+    {{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY, APP_ISOLATED) }}
 {% endblock javascripts %}

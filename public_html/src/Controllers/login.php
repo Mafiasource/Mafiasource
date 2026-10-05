@@ -10,7 +10,13 @@ if(OFFLINE && !in_array($_SERVER['REMOTE_ADDR'], DEVELOPER_IPS)) $route->headTo(
 require_once __DIR__ . '/.inc.statistics.php';
 
 // Handle login
-if(isset($_POST) && !empty($_POST) && isset($_POST['username']) && isset($_POST['password']) && isset($_POST['security-token']))
+if (
+    $_POST !== array()
+    && isset($_POST['username']) === true
+    && isset($_POST['password']) === true
+    && isset($_POST['security-token']) === true
+    && isset($_POST['cf-turnstile-response']) === true
+)
 {
     $userService = new UserService();
     $response = $userService->validateLogin($_POST);

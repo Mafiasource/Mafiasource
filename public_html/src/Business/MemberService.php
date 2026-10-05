@@ -341,7 +341,7 @@ class MemberService
     	}
     }
     
-    public function login($email, $password, $securityToken, $remember = false)
+    public function login($email, $password, $securityToken, $remember = false, $turnstileToken = null)
     {
         global $security;
         global $language;
@@ -357,32 +357,37 @@ class MemberService
         $laMsg = $loginAbuseState['message'];
         $type = $loginAbuseState['type'];
 
-        if($security->checkToken($securityToken) == FALSE || !$user->ipValid)
+        if ($security->validateCFTurnstile($turnstileToken, CF_TURNSTILE_LOGIN_SECRETKEY) === false) {
+            $error = "De beveiligingscontrole is niet voltooid. Wacht even en probeer het opnieuw.";
+            $type = 2;
+        }
+
+        if ($security->checkToken($securityToken) === false || $user->ipValid === false)
             $error = "Ongeldige security token, als dit probleem blijft aanhouden zorg dan voor een constante verbinding met dezelfde modem.";
 
-        if($loginAbuseState['blocked'])
+        if ($loginAbuseState['blocked'] === true)
             $error = $l['TEMPORARILY_IP_BANNED'] . " ";
 
-        if(isset($error))
+        if (isset($error) === true)
         {
             $this->data->loginFailed($email, $type);
             return $laMsg === $error ? $laMsg : $laMsg . $error;
         }
 
-        if($this->data->emailExists($email) == FALSE)
+        if ($this->data->emailExists($email) === false)
         {
             $this->data->loginFailed($email, 1);
             $error = "Ongeldige gebruikersnaam of wachtwoord.";
         }
         else
         {
-            if($this->data->login($email, $password, $remember) == FALSE)
+            if ($this->data->login($email, $password, $remember) === false)
             {
                 $this->data->loginFailed($email, 1);
                 $error = "Ongeldige gebruikersnaam of wachtwoord.";
             }
         }
-        if(isset($error))
+        if (isset($error) === true)
             return $laMsg . $error;
         else
             return TRUE;

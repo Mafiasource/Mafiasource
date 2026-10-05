@@ -1,4 +1,5 @@
 {% extends "/app/Resources/Views/base.admin.twig" %}
+{% import "app/Resources/Views/macros/cf.turnstile.macro.twig" as cfTurnstile %}
 
 {% block header %}{% endblock header %}
 
@@ -17,7 +18,7 @@
             {{ message|raw }}
         {% endif %}
     {% endblock actionMessage %}
-      <form class="form-signin" action="{{ routing.getRouteByRouteName('admin-login') }}" method="POST">
+      <form id="admin-login-form" class="form-signin" action="{{ routing.getRouteByRouteName('admin-login') }}" method="POST">
         <input type="hidden" name="security-token" value="{{ securityToken }}"/>
         <div class="content-box-header">
             <div class="panel-title">Inloggen</div>
@@ -39,10 +40,16 @@
             <input class="form-check-input" name="remember" type="checkbox" value="remember-me" id="remember" />
             <label class="form-check-label" for="remember">Aangemeld blijven</label>
           </div>
-          <button class="btn btn-lg btn-primary btn-block" name="submit-login" type="submit">Inloggen</button>
+          {{ cfTurnstile.turnstile('', APP_ISOLATED) }}
+          <button class="btn btn-lg btn-primary btn-block" name="submit-login" type="submit"{% if not APP_ISOLATED %} disabled{% endif %}>Inloggen</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 {% endblock main %}
+
+{% block javascripts %}
+  {{ parent() }}
+  {{ cfTurnstile.turnstileScript(CF_TURNSTILE_LOGIN_SITEKEY, APP_ISOLATED, '#admin-login-form') }}
+{% endblock javascripts %}

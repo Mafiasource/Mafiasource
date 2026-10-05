@@ -10,7 +10,8 @@ $twigVars = array(
     'lang' => $lang,
     'userData' => $userData,
     'time' => time(),
-    'CF_TURNSTILE_SITEKEY' => CF_TURNSTILE_SITEKEY
+    'CF_TURNSTILE_SITEKEY' => CF_TURNSTILE_SITEKEY,
+    'APP_ISOLATED' => APP_ISOLATED
 );
 
 /** Trigger a captcha security +1 count on any ajax success message **/

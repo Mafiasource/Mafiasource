@@ -210,6 +210,7 @@ class GetLanguageContent
     {
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "You've entered the wrong username or password!",
+            'TURNSTILE_NOT_READY' => "The security check was not completed. Please wait a moment and try again.",
             'LOGIN_FAILED_WARNING' => "You have {attempts} login attempts left!",
             'TEMPORARILY_IP_BANNED' => "You have no more login attempts left, this can take up to 72 hours.",
             'PRE_TITLE_TXT' => "Login to",
@@ -947,6 +948,7 @@ class GetLanguageContent
             'CAN_RECEIVE' => "You can receive up to {credits} more credits as a donation reward.",
             'LIMIT_RESET' => "On {date} your limit will be reset to 5,000.",
             'DONATE_BTN_HEAD' => "<h4>Please note</h4><p>Receive credits immediately after a donation of any amount starting from at least 1 euro (&euro;). Donations exceeding 50 euros (&euro;) will only yield up to 5,000 credits each month with the exception of bonus credits and promotions.</p><h4>Safely donate through PayPal</h4>",
+            'DONATE_UNAVAILABLE_ISOLATED' => "PayPal donations are unavailable while isolated mode is enabled.",
             'DONATE_BTN_FOOT' => "<small>All transactions are secured and encrypted before transit.</small><h4>Trouble?</h4><p>Contact an Administrator or <span style='color:#3498db'><a href='mailto:info@".$route->settings['domainBase']."?subject=".$route->settings['gamename']." donation shop trouble'><strong>send us an email</strong></a></span> for help.</p>",
             'DONATE_REWARDED_ALREADY' => "This donation bonus has already been claimed!",
             'DONATE_ERROR' => "An error occured with your donation, contact an Administrator for asistance.",

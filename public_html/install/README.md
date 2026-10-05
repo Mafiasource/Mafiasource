@@ -43,6 +43,8 @@ Some libraries not governed by composer package manager:
 - /vendor/SimpleImage.php
 - /vendor/SessionManager.php
 
+The required resources archive provides the Quicksand and Sirin Stencil font files and their licenses in `/web/public/fonts/`. Keep those files in generated `public_html.zip` packages so the website and installer do not depend on Google Fonts.
+
 Customize your [ckeditor(game)](https://ckeditor.com/ckeditor-4/download/)
 
 ## Built in simplified installation process
@@ -59,6 +61,10 @@ No SSL support? Skip to [App wont work on a localhost environment without SSL su
 A successful installation should render a fresh copy of Mafiasource on your web server www.domainname.ex without issues. (CTRL + F5 might be required)
 Remove the entire /install/ directory in public_html if this is the case.
 Otherwise, refer to [Successful installation but still a blank application like initially.](#p-successful-installation-but-still-a-blank-application-like-initially)
+
+### Isolated installations
+
+Set `APP_ISOLATED` to `true` in `/app/config/config.php` when the application runs without internet access. Isolated mode bypasses Cloudflare Turnstile and disables PayPal donations, while leaving local authentication and registration available. Keep this option set to `false` on internet-connected public installations so that Turnstile continues to protect public forms.
 
 The following source code files should have been modified after a successful installation:
 - /../credentials.php

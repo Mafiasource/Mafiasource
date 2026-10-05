@@ -239,7 +239,7 @@ class InstallService
                 {
                     $configReplacesMap[7] = 'define(\'BASE_DOMAIN\',      "' .  $replacedDomain . '");       // The primary domain';
                     $htaccessReplacesMap[77] = '    RewriteCond %{HTTP_REFERER} !^' . PROTOCOL . '(www\.)?' . $replacedDomain . '/.*$ [NC]';
-                    $htaccessReplacesMap[142] = '    Header always set Content-Security-Policy "object-src \'none\'; script-src \'self\' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com https://challenges.cloudflare.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
+                    $htaccessReplacesMap[142] = '    Header always set Content-Security-Policy "object-src \'none\'; script-src \'self\' https://www.paypalobjects.com https://challenges.cloudflare.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
                 }
             }
             
@@ -248,10 +248,10 @@ class InstallService
                 if(strpos($dbHost, ':'))
                     $dbHost = "[" . $dbHost . "]";
                 
-                $configReplacesMap[22] = 'define(\'PDO_CONSTRING\', "mysql:host=' . $dbHost . ';dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
+                $configReplacesMap[23] = 'define(\'PDO_CONSTRING\', "mysql:host=' . $dbHost . ';dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
             }
             else
-                $configReplacesMap[22] = 'define(\'PDO_CONSTRING\', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
+                $configReplacesMap[23] = 'define(\'PDO_CONSTRING\', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
             
             if(!empty($dbName))
                 $credentialsReplacesMap[3] = 'define(\'DBNAME\', "' . $dbName . '");';
