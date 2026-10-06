@@ -1,4 +1,5 @@
 {% import "app/Resources/Views/macros/user.tag.macro.twig" as userTagManager %}
+{% import "app/Resources/Views/macros/cf.turnstile.macro.twig" as cfTurnstile %}
 
 <!DOCTYPE html>
 <html lang="{{ lang }}">
@@ -91,9 +92,7 @@
     <link rel="preload" href="{{ staticRoot }}/web/public/images/bg.webp" as="image" />
     <link rel="preload" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/css/bootstrap.min.css" as="style" />
     <link rel="preload" href="{{ staticRoot }}/web/public/css/homepage.min.css" as="style" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&family=Quicksand:wght@300;400;500;600;700&display=swap" as="style" />
+    <link rel="preload" href="{{ staticRoot }}/web/public/fonts/fonts.css" as="style" />
     <link rel="preload" href="{{ staticRoot }}/web/vendor/components/jquery/jquery.min.js" as="script" />
     {# <link rel="preload" href="{{ staticRoot }}/web/public/js/default/jquery.popper.bootstrap.min.js" as="script" /> #}
     {% if routing.getRouteName() == 'register' %}
@@ -104,7 +103,7 @@
     <link rel="preload" href="{{ staticRoot }}/web/public/js/outgame.js" as="script" />
     <link rel="stylesheet" href="{{ staticRoot }}/web/vendor/twbs/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="{{ staticRoot }}/web/public/css/homepage.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&family=Quicksand:wght@300;400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="{{ staticRoot }}/web/public/fonts/fonts.css" />
     <style type="text/css">
         {% for donatorColor in statusDonatorColors.donatorColors %}
             .{{ donatorColor.getDonator|seoUrl }} {color:{{ donatorColor.getColorCode }};}
@@ -154,10 +153,13 @@
                     </div>
                 {% elseif not offline %}
                     <aside id="login">
-                        <form action="/login" method="POST" class="headLogin" autocomplete="off">
+                        <form id="header-login-form" action="/login" method="POST" class="headLogin" autocomplete="off">
                             <input type="text" name="username" placeholder="{{ langs.USERNAME }}" value="{{ username }}"/>
                             <input type="password" name="password" placeholder="{{ langs.PASSWORD }}" value=""/>
-                            <button type="submit" name="submit_login" class="button small-1-icon"><img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" width="16" height="16" class="icon" alt="{{ langs.LOGIN }}"/></button>
+                            {% if LOGIN_TURNSTILE_ENABLED %}
+                                {{ cfTurnstile.turnstile('', false, 'header-login') }}
+                            {% endif %}
+                            <button type="submit" name="submit_login" class="button small-1-icon"{% if LOGIN_TURNSTILE_ENABLED %} disabled{% endif %}><img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" width="16" height="16" class="icon" alt="{{ langs.LOGIN }}"/></button>
                         </form>
                     </aside>
                 {% endif %}
@@ -219,6 +221,9 @@
         });
     </script>
     <script type="text/javascript" src="{{ staticRoot }}/web/public/js/outgame.js"></script>
+    {% if userData is empty and not offline and LOGIN_TURNSTILE_ENABLED %}
+        {{ cfTurnstile.turnstileScript(CF_TURNSTILE_LOGIN_SITEKEY, false, '#header-login-form', 'header-login') }}
+    {% endif %}
     {# Twig javascripts #}
     {% block javascripts %}{% endblock %}
 </body>

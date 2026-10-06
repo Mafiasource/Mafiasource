@@ -48,16 +48,26 @@ class InstallService
         file_put_contents($file, $lines);
     }
     
+    static function replacePhpConstants($file, array $replacements): void
+    {
+        $contents = file_get_contents($file);
+        foreach ($replacements as $constant => $replacement) {
+            $pattern = '/^define\(\'' . preg_quote($constant, '/') . '\'.*$/m';
+            $contents = preg_replace($pattern, $replacement, $contents);
+        }
+        file_put_contents($file, $contents);
+    }
+
     static function findAndReplaceInFile($file, $find, $replaceWith): void
     {
-        if($find !== $replaceWith)
-        {
-            $contents = file_get_contents($file);
-            $contents = str_replace($find, $replaceWith, $contents);
-            file_put_contents($file, $contents);
-        }
+        if($find === $replaceWith)
+            return;
+
+        $contents = file_get_contents($file);
+        $contents = str_replace($find, $replaceWith, $contents);
+        file_put_contents($file, $contents);
     }
-    
+
     static function createCronjobs(): void
     {
         function cronjobExists($command)
@@ -208,7 +218,7 @@ class InstallService
             $configReplacesMap = $credentialsReplacesMap = $htaccessReplacesMap = array();
             
             if(!empty($gameName))
-                $configReplacesMap[9] = 'define(\'APP_GAMENAME\',     "' . $gameName . '");          // Gamename, obviously';
+                $configReplacesMap['APP_GAMENAME'] = 'define(\'APP_GAMENAME\',     "' . $gameName . '");          // Gamename, obviously';
             
             if(!empty($domain))
             {
@@ -221,7 +231,7 @@ class InstallService
                 }
                 if(strpos($domain, "www.") === false)
                 {
-                    $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       BASE_DOMAIN);     // Application runs without www.';
+                    $configReplacesMap['APP_DOMAIN'] = 'define(\'APP_DOMAIN\',       BASE_DOMAIN);     // Application runs without www.';
                     $htaccessReplacesMap[93] = '    ## www to non www redirect';
                     $htaccessReplacesMap[94] = '    #RewriteCond %{HTTPS}s ^on(s)|off [NC]';
                     $htaccessReplacesMap[95] = '    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]';
@@ -229,7 +239,7 @@ class InstallService
                 }
                 else
                 {
-                    $configReplacesMap[10] = 'define(\'APP_DOMAIN\',       "www.".BASE_DOMAIN);     // Application runs on www. variant';
+                    $configReplacesMap['APP_DOMAIN'] = 'define(\'APP_DOMAIN\',       "www.".BASE_DOMAIN);     // Application runs on www. variant';
                     $htaccessReplacesMap[93] = '    ## Non www to www redirect';
                     $htaccessReplacesMap[94] = '    RewriteCond %{HTTPS}s ^on(s)|off [NC]';
                     $htaccessReplacesMap[95] = '    RewriteCond %{HTTP_HOST} !^(static|www)\.(.*)$ [NC]';
@@ -237,7 +247,7 @@ class InstallService
                 }
                 if(strpos(PROTOCOL . $_SERVER['HTTP_HOST'], $replacedDomain) !== false)
                 {
-                    $configReplacesMap[7] = 'define(\'BASE_DOMAIN\',      "' .  $replacedDomain . '");       // The primary domain';
+                    $configReplacesMap['BASE_DOMAIN'] = 'define(\'BASE_DOMAIN\',      "' .  $replacedDomain . '");       // The primary domain';
                     $htaccessReplacesMap[77] = '    RewriteCond %{HTTP_REFERER} !^' . PROTOCOL . '(www\.)?' . $replacedDomain . '/.*$ [NC]';
                     $htaccessReplacesMap[142] = '    Header always set Content-Security-Policy "object-src \'none\'; script-src \'self\' https://fonts.googleapis.com https://www.gstatic.com https://www.google.com https://www.paypalobjects.com https://challenges.cloudflare.com ' . PROTOCOL . 'static.' . $replacedDomain . ' \'unsafe-inline\' \'unsafe-eval\'"';
                 }
@@ -248,37 +258,39 @@ class InstallService
                 if(strpos($dbHost, ':'))
                     $dbHost = "[" . $dbHost . "]";
                 
-                $configReplacesMap[22] = 'define(\'PDO_CONSTRING\', "mysql:host=' . $dbHost . ';dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
+                $configReplacesMap['PDO_CONSTRING'] = 'define(\'PDO_CONSTRING\', "mysql:host=' . $dbHost . ';dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
             }
             else
-                $configReplacesMap[22] = 'define(\'PDO_CONSTRING\', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
+                $configReplacesMap['PDO_CONSTRING'] = 'define(\'PDO_CONSTRING\', "mysql:host=localhost;dbname=".PDO_DATABASE); // Db conection string DO NOT CHANGE';
             
             if(!empty($dbName))
-                $credentialsReplacesMap[3] = 'define(\'DBNAME\', "' . $dbName . '");';
+                $credentialsReplacesMap['DBNAME'] = 'define(\'DBNAME\', "' . $dbName . '");';
             
             if(!empty($dbUser))
-                $credentialsReplacesMap[4] = 'define(\'DBUSR\', "' . $dbUser . '");';
+                $credentialsReplacesMap['DBUSR'] = 'define(\'DBUSR\', "' . $dbUser . '");';
             
             if(!empty($dbPwd))
-                $credentialsReplacesMap[5] = 'define(\'DBPWD\', "' . $dbPwd . '");';
+                $credentialsReplacesMap['DBPWD'] = 'define(\'DBPWD\', "' . $dbPwd . '");';
             
             if(!empty($email) && self::is_email($email))
                 $htaccessReplacesMap[58] = 'SetEnv SERVER_ADMIN ' . $email;
-            
-            $findProtocol = PROTOCOL == "https://" ? "http://" : "https://";
-            $replaceProtocol = PROTOCOL == "https://" ? "https://" : "http://";
-            self::findAndReplaceInFile(DOC_ROOT . '/sw.js', $findProtocol . "static.", $replaceProtocol . "static.");
-            self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/game.min.css', $findProtocol . "static.", $replaceProtocol . "static.");
-            self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/homepage.min.css', $findProtocol . "static.", $replaceProtocol . "static.");
-            if($route->settings['domainBase'] !== $replacedDomain)
-            {
-                self::findAndReplaceInFile(DOC_ROOT . '/sw.js', $route->settings['domainBase'], $replacedDomain);
-                self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/game.min.css', $route->settings['domainBase'], $replacedDomain);
-                self::findAndReplaceInFile(DOC_ROOT . '/web/public/css/homepage.min.css', $route->settings['domainBase'], $replacedDomain);
+
+            $findProtocol = PROTOCOL === "https://" ? "http://" : "https://";
+            $replaceProtocol = PROTOCOL === "https://" ? "https://" : "http://";
+            $staticFiles = array(
+                DOC_ROOT . '/sw.js',
+                DOC_ROOT . '/web/public/css/game.min.css',
+                DOC_ROOT . '/web/public/css/homepage.min.css',
+            );
+            foreach ($staticFiles as $staticFile) {
+                self::findAndReplaceInFile($staticFile, $findProtocol . "static.", $replaceProtocol . "static.");
+                if($route->settings['domainBase'] !== $replacedDomain) {
+                    self::findAndReplaceInFile($staticFile, $route->settings['domainBase'], $replacedDomain);
+                }
             }
             
-            self::replaceLinesByLineNumbers($configFile, $configReplacesMap);
-            self::replaceLinesByLineNumbers($credentialsFile, $credentialsReplacesMap);
+            self::replacePhpConstants($configFile, $configReplacesMap);
+            self::replacePhpConstants($credentialsFile, $credentialsReplacesMap);
             self::replaceLinesByLineNumbers($htaccessFile, $htaccessReplacesMap);
             self::createCronjobs();
             if(isset($dbName) && isset($dbUser) && isset($dbPwd))

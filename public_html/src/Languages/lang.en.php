@@ -210,6 +210,8 @@ class GetLanguageContent
     {
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "You've entered the wrong username or password!",
+            'TURNSTILE_NOT_READY' => "The security check was not completed. Please wait a moment and try again.",
+            'LOGIN_RATE_LIMITED' => "Please wait at least two seconds before trying to log in again.",
             'LOGIN_FAILED_WARNING' => "You have {attempts} login attempts left!",
             'TEMPORARILY_IP_BANNED' => "You have no more login attempts left, this can take up to 72 hours.",
             'PRE_TITLE_TXT' => "Login to",
@@ -275,6 +277,7 @@ class GetLanguageContent
             'RECOVER_PASSWORD_EMAIL_FOOTER' => "If you land on a not found page than the above link is expired. You can make a new request on <a href='".PROTOCOL.strtolower($route->settings['domain'])."/recover-password'>".PROTOCOL.strtolower($route->settings['domain'])."/recover-password</a><br /><br /><br />With kind regards<br />".ucfirst($route->settings['domainBase']),
             'RECOVER_PASSWORD_EMAIL_SUBJECT' => "Recover password on ".$route->settings['gamename'],
             'RECOVER_PASSWORD_REQUEST_SUCCESS' => "We've send an email with further instructions to recover your lost password.<br />Beware! The link we've sent you will expire in 2 hours from now.",
+            'EMAIL_UNAVAILABLE_ISOLATED' => "Email-based account recovery is unavailable while isolated mode is enabled.",
             'NEW' => "New",
             'UPDATE_PASSWORD' => "Update password",
             'RECOVER_PASSWORD_SUCCESS' => "You successfully changed your password.",
@@ -947,6 +950,7 @@ class GetLanguageContent
             'CAN_RECEIVE' => "You can receive up to {credits} more credits as a donation reward.",
             'LIMIT_RESET' => "On {date} your limit will be reset to 5,000.",
             'DONATE_BTN_HEAD' => "<h4>Please note</h4><p>Receive credits immediately after a donation of any amount starting from at least 1 euro (&euro;). Donations exceeding 50 euros (&euro;) will only yield up to 5,000 credits each month with the exception of bonus credits and promotions.</p><h4>Safely donate through PayPal</h4>",
+            'DONATE_UNAVAILABLE_ISOLATED' => "PayPal donations are unavailable while isolated mode is enabled.",
             'DONATE_BTN_FOOT' => "<small>All transactions are secured and encrypted before transit.</small><h4>Trouble?</h4><p>Contact an Administrator or <span style='color:#3498db'><a href='mailto:info@".$route->settings['domainBase']."?subject=".$route->settings['gamename']." donation shop trouble'><strong>send us an email</strong></a></span> for help.</p>",
             'DONATE_REWARDED_ALREADY' => "This donation bonus has already been claimed!",
             'DONATE_ERROR' => "An error occured with your donation, contact an Administrator for asistance.",
@@ -1755,6 +1759,7 @@ class GetLanguageContent
         global $route;
         $langs = array(
             'EMAIL_UNKNOWN_IP_DETECTED' => "You can't change your email because your IP is not recognized as safe just yet. This takes up to 24 hours after a new IP address is detected.",
+            'EMAIL_UNAVAILABLE_ISOLATED' => "Email address changes are unavailable while isolated mode is enabled.",
             'CHANGE_EMAIL_NEED_TO_VERIFY' => "We've send an email change request to your previous email adress, a tip: {coveredEmail}<br />Beware! The link to change your email will expire in 2 hours from now.",
             'SAME_EMAIL_NO_CHANGE' => "You can't change the email in the current set email.",
             'CHANGE_EMAIL_DEACTIVATE_PRIVATEID' => "To change your email address, your PrivateID must first be deactivated. After the email change you can generate a new PrivateID.",
