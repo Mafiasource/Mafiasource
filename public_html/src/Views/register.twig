@@ -19,7 +19,7 @@
             <div class="col-lg-6">
                 <section id="register" class="middle">
                     <h1 class="right">{{ langs.PRE_TITLE_TXT }} <span class="black">Mafia</span>source</h1>
-                    <form name="register" action="{{ routing.getRouteByRouteName('register') }}" method="POST" autocomplete="off">
+                    <form id="register-form" name="register" action="{{ routing.getRouteByRouteName('register') }}" method="POST" autocomplete="off">
                     <table cellspacing="3" class="register-table" width="100%">
                         {% if referral is not empty %}
                         <tr>
@@ -132,7 +132,7 @@
                     	</tr>
 						<tr>
                     		<td colspan="2">
-                    			{{ cfTurnstile.turnstile('right') }}
+							{{ cfTurnstile.turnstile('right', APP_ISOLATED, 'register') }}
                             </td>
                     	</tr>
                     	<tr>
@@ -200,7 +200,7 @@
 {% endblock bootstrapJs %}
 
 {% block javascripts %}
-{{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY) }}
+{{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY, APP_ISOLATED, '#register-form', 'register') }}
 <script type="text/javascript">
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

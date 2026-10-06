@@ -34,3 +34,6 @@ $client = $secret = $env = $buttonID = null;
 // Cloudflare Turnstile key
 define('CF_TURNSTILE_SITEKEY', '1x00000000000000000000AA'); // Your SITE KEY here
 define('CF_TURNSTILE_SECRETKEY', '1x0000000000000000000000000000000AA'); // Your SECRET KEY here
+define('CF_TURNSTILE_LOGIN_ENABLED', false); // Optional additional bot protection for login endpoints
+define('CF_TURNSTILE_LOGIN_SITEKEY', ''); // Your login Turnstile SITE KEY here
+define('CF_TURNSTILE_LOGIN_SECRETKEY', ''); // Your login Turnstile SECRET KEY here
