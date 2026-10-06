@@ -367,6 +367,10 @@ class UserDAO extends DBConfig
     
     public static function email($sendFrom, $sendFromName, $message, $css, $sendTo, $subject)
     { // All app email to user through here:
+        if (APP_ISOLATED === true) {
+            return false;
+        }
+
         global $twig;
         $message = $twig->render('/app/Resources/Views/email.twig', array('css' => $css, 'message' => $message));
         $mail = new PHPMailer();

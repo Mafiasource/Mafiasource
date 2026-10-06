@@ -15,6 +15,7 @@ define('APP_GP_PAGE',      "+MafiasourceBe-Nl-En"); // Google plus page UNUSED
 define('SSL_ENABLED',      true);                   // HTTPS? true :-) / false :-( ?
 define('DEVELOPMENT',      true);                   // Development mode true = on | false = off
 define('OFFLINE',          false);                  // Website online / offline for userlogin / game access
+define('APP_ISOLATED',     false);                  // Disable services that require internet access (Turnstile, PayPal)
 define('DEVELOPER_IPS',    json_decode(DEV_IPS));   // Array containing developer IP addresses
 define('ID_DEMOACC',       0);                      // Demo account its UserID
 

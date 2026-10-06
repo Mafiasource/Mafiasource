@@ -100,20 +100,27 @@ class UserService
         $laMsg = $loginAbuseState['message'];
         $type = $loginAbuseState['type'];
         
-        if($security->checkToken($post['security-token']) ==  FALSE || !$this->ipValid)
+        $turnstileToken = $post['cf-turnstile-response'] ?? null;
+        $turnstileSecret = APP_ISOLATED === true ? null : CF_TURNSTILE_LOGIN_SECRETKEY;
+        if ($security->validateCFTurnstile($turnstileToken, $turnstileSecret) === false) {
+            $return = $l['TURNSTILE_NOT_READY'];
+            $type = 2;
+        }
+
+        if ($security->checkToken($post['security-token']) === false || $this->ipValid === false)
             $return = $langs['INVALID_SECURITY_TOKEN']; // Violation | Type 2
         
-        if($loginAbuseState['blocked'])
+        if ($loginAbuseState['blocked'] === true)
             $return = $l['TEMPORARILY_IP_BANNED'] . " "; // Type 4 & 5
         
-        if(isset($return))
+        if (isset($return) === true)
         {
             $this->data->loginFailed($username, $type);
             return $laMsg === $return ? $laMsg : $laMsg . $return;
         }
         
         $id = $this->data->verifyLoginGetIdOnSuccess($username, $pass);
-        if($id == FALSE)
+        if ($id === false)
         {
             $this->data->loginFailed($username, 1); // Credentials | Type 1
             return $laMsg . $l['WRONG_USERNAME_OR_PASS'];
@@ -171,7 +178,7 @@ class UserService
     		$error = $l['EMAIL_TAKEN'];
     	}
         
-        if(!$this->ipValid)
+        if($this->ipValid === false)
         {
             $error = $langs['INVALID_SECURITY_TOKEN']; 
         }
@@ -191,7 +198,7 @@ class UserService
         }
         */
         if( $security->checkToken($post['security-token']) ==  FALSE ||
-            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+            $security->validateCFTurnstile($post['cf-turnstile-response'] ?? null) === false
         ) {
             $error = $langs['INVALID_SECURITY_TOKEN']; 
         }
@@ -332,7 +339,7 @@ class UserService
     	}
         */
         if( $security->checkToken($post['security-token']) ==  FALSE ||
-            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+            $security->validateCFTurnstile($post['cf-turnstile-response'] ?? null) === false
         ) {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
@@ -466,7 +473,7 @@ class UserService
             $error = $l['CANNOT_SEND_MONEY_SELF'];
         }
         if( $security->checkToken($post['security-token']) ==  FALSE ||
-            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+            $security->validateCFTurnstile($post['cf-turnstile-response'] ?? null) === false
         ) {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }

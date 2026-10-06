@@ -18,12 +18,13 @@ class UserCoreService
         global $lang;
         
         $this->data = new UserCoreDAO();
-        $this->ipValid = filter_var(
-            self::getIP(),
-            FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE
-        );
-        $isLocalIP = $_SERVER['SERVER_ADDR'] === "::1" || $_SERVER['SERVER_ADDR'] === "127.0.0.1" ? TRUE : FALSE;
-        $this->ipValid = isset($_SERVER['SERVER_ADDR']) && $isLocalIP ? true : $this->ipValid;
+        $validationFlags = APP_ISOLATED === true
+            ? 0
+            : FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+        $validatedIp = filter_var(self::getIP(), FILTER_VALIDATE_IP, $validationFlags);
+        $serverAddress = $_SERVER['SERVER_ADDR'] ?? '';
+        $serverIsLocal = $serverAddress === '::1' || $serverAddress === '127.0.0.1';
+        $this->ipValid = $validatedIp !== false || $serverIsLocal === true;
         $this->dateFormat = $lang === 'en' ? "M j, g:i:s A" : $this->dateFormat; // PHP format
     }
 
@@ -62,7 +63,7 @@ class UserCoreService
     public function checkLoggedSession($update = true)
     {
         $ipAddr = self::getIP();
-        if($this->data->checkPermBannedIP($ipAddr) || !$this->ipValid)
+        if($this->data->checkPermBannedIP($ipAddr) === true || $this->ipValid === false)
             return FALSE;
         
         if(!isset($_SESSION['UID']) && isset($_COOKIE['remember']) && isset($_COOKIE['UID']))
