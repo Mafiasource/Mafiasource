@@ -1875,6 +1875,22 @@ CREATE TABLE `login_fail`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for login_rate_limit
+-- ----------------------------
+DROP TABLE IF EXISTS `login_rate_limit`;
+CREATE TABLE `login_rate_limit`  (
+  `scope` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `ip` varchar(45) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `attemptTime` bigint NOT NULL DEFAULT 0,
+  `attemptToken` char(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+  PRIMARY KEY (`scope`, `ip`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = ascii COLLATE = ascii_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of login_rate_limit
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for lottery
 -- ----------------------------
 DROP TABLE IF EXISTS `lottery`;

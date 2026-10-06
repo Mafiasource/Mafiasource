@@ -18,12 +18,13 @@ class UserCoreService
         global $lang;
         
         $this->data = new UserCoreDAO();
-        $this->ipValid = filter_var(
-            self::getIP(),
-            FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_NULL_ON_FAILURE
-        );
-        $isLocalIP = $_SERVER['SERVER_ADDR'] === "::1" || $_SERVER['SERVER_ADDR'] === "127.0.0.1" ? TRUE : FALSE;
-        $this->ipValid = isset($_SERVER['SERVER_ADDR']) && $isLocalIP ? true : $this->ipValid;
+        $validationFlags = APP_ISOLATED === true
+            ? 0
+            : FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+        $validatedIp = filter_var(self::getIP(), FILTER_VALIDATE_IP, $validationFlags);
+        $serverAddress = $_SERVER['SERVER_ADDR'] ?? '';
+        $serverIsLocal = $serverAddress === '::1' || $serverAddress === '127.0.0.1';
+        $this->ipValid = $validatedIp !== false || $serverIsLocal === true;
         $this->dateFormat = $lang === 'en' ? "M j, g:i:s A" : $this->dateFormat; // PHP format
     }
 
@@ -48,6 +49,95 @@ class UserCoreService
         return $ip;
     }
 
+    public static function getRateLimitIP()
+    {
+        $remoteAddress = $_SERVER['REMOTE_ADDR'] ?? '';
+        if (filter_var($remoteAddress, FILTER_VALIDATE_IP) === false) {
+            return 'invalid';
+        }
+
+        if (self::isAddressInRanges($remoteAddress, TRUSTED_CLOUDFLARE_PROXY_CIDRS) === true) {
+            return self::getValidatedHeaderAddress('HTTP_CF_CONNECTING_IP', $remoteAddress);
+        }
+        if (self::isAddressInRanges($remoteAddress, TRUSTED_PROXY_CIDRS) === true) {
+            return self::getForwardedAddress($remoteAddress);
+        }
+
+        return $remoteAddress;
+    }
+
+    private static function getValidatedHeaderAddress($header, $fallback)
+    {
+        $address = $_SERVER[$header] ?? '';
+        return filter_var($address, FILTER_VALIDATE_IP) === false ? $fallback : $address;
+    }
+
+    private static function getForwardedAddress($fallback)
+    {
+        $forwardedFor = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+        if (is_string($forwardedFor) === false || $forwardedFor === '') {
+            return $fallback;
+        }
+
+        $addresses = array_reverse(array_map('trim', explode(',', $forwardedFor)));
+        foreach ($addresses as $address) {
+            if (filter_var($address, FILTER_VALIDATE_IP) !== false
+                && self::isAddressInRanges($address, TRUSTED_PROXY_CIDRS) === false) {
+                return $address;
+            }
+        }
+
+        return $fallback;
+    }
+
+    private static function isAddressInRanges($address, array $ranges)
+    {
+        foreach ($ranges as $range) {
+            if (self::isAddressInRange($address, $range) === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static function isAddressInRange($address, $range)
+    {
+        if (is_string($range) === false || $range === '') {
+            return false;
+        }
+
+        $parts = explode('/', $range, 2);
+        $network = $parts[0];
+        $addressBinary = inet_pton($address);
+        $networkBinary = inet_pton($network);
+        if ($addressBinary === false || $networkBinary === false || strlen($addressBinary) !== strlen($networkBinary)) {
+            return false;
+        }
+
+        $prefix = isset($parts[1]) === true ? filter_var($parts[1], FILTER_VALIDATE_INT) : strlen($networkBinary) * 8;
+        return self::binaryAddressMatchesPrefix($addressBinary, $networkBinary, $prefix);
+    }
+
+    private static function binaryAddressMatchesPrefix($address, $network, $prefix)
+    {
+        $maximumPrefix = strlen($address) * 8;
+        if (is_int($prefix) === false || $prefix < 0 || $prefix > $maximumPrefix) {
+            return false;
+        }
+
+        $wholeBytes = intdiv($prefix, 8);
+        if (substr($address, 0, $wholeBytes) !== substr($network, 0, $wholeBytes)) {
+            return false;
+        }
+        if ($prefix % 8 === 0) {
+            return true;
+        }
+
+        $mask = 0xFF << (8 - ($prefix % 8));
+        return (ord($address[$wholeBytes]) & $mask) === (ord($network[$wholeBytes]) & $mask);
+    }
+
     public function notIngame()
     {
         if(preg_match('{^/forum/game-forum.*$}', $_SERVER['REQUEST_URI']))
@@ -62,7 +152,7 @@ class UserCoreService
     public function checkLoggedSession($update = true)
     {
         $ipAddr = self::getIP();
-        if($this->data->checkPermBannedIP($ipAddr) || !$this->ipValid)
+        if($this->data->checkPermBannedIP($ipAddr) === true || $this->ipValid === false)
             return FALSE;
         
         if(!isset($_SESSION['UID']) && isset($_COOKIE['remember']) && isset($_COOKIE['UID']))

@@ -43,6 +43,8 @@ Some libraries not governed by composer package manager:
 - /vendor/SimpleImage.php
 - /vendor/SessionManager.php
 
+The required resources archive provides `Quicksand-Variable.ttf` and `SirinStencil-Regular.ttf` in `/web/public/fonts/`. Keep these files in generated `public_html.zip` packages so local font styles work without Google Fonts.
+
 Customize your [ckeditor(game)](https://ckeditor.com/ckeditor-4/download/)
 
 ## Built in simplified installation process

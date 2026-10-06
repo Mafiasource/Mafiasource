@@ -1,0 +1,17 @@
+.fa::before,
+.fas::before {
+  display: inline-block;
+  min-width: 1em;
+  content: '\203A';
+  text-align: center;
+}
+
+.fa-check::before { content: '\2713'; }
+.fa-edit::before { content: '\270E'; }
+.fa-home::before { content: '\2302'; }
+.fa-power-off::before { content: '\23FB'; }
+.fa-question-circle::before { content: '?'; }
+.fa-sort::before { content: '\2195'; }
+.fa-sync::before { content: '\21BB'; }
+.fa-times::before { content: '\00D7'; }
+.fa-trash-alt::before { content: '\232B'; }

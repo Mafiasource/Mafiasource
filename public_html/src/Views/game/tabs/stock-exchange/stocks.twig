@@ -181,12 +181,25 @@
                 </div>
             </div>
         </div>
-        <div id="chart_div"></div>
+        {% if APP_ISOLATED %}
+            <table class="table">
+                <thead>
+                    <tr><th>{{ langs.DAY }}</th><th>{{ langs.PRICE }}</th></tr>
+                </thead>
+                <tbody>
+                    {% for history in stockHistory %}
+                        <tr><td>{{ history.getDate }}</td><td>{{ history.getAverageDay }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div id="chart_div"></div>
+        {% endif %}
     </div>
 {% endif %}
 
 {% block javascripts %}
-    {% if stock %}
+    {% if stock and not APP_ISOLATED %}
         {% set daysPriceVar = "['{{ langs.DAY }}', '{{ langs.PRICE }}']," %}
         {% set days, prices = [], [] %}
         {% for h in stockHistory %}

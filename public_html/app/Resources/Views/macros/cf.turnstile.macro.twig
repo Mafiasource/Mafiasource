@@ -1,18 +1,35 @@
-{% macro turnstile(class = '') %}
-    <div id="cf-turnstile" class="{{ class }}"></div>
-    <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response" />
+{% macro turnstile(class = '', isolated = false) %}
+    {% if isolated %}
+        <input type="hidden" name="cf-turnstile-response" value="isolated" />
+    {% else %}
+        <div id="cf-turnstile" class="{{ class }}"></div>
+        <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response" />
+    {% endif %}
 {% endmacro %}
 
-{% macro turnstileScript(siteKey = '') %}
+{% macro turnstileScript(siteKey = '', isolated = false, protectedForm = '') %}
+    {% if not isolated %}
     <script type="text/javascript" src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
     <script type="text/javascript">
         window.onloadTurnstileCallback = function () {
+            const protectedForm = {% if protectedForm %}document.querySelector("{{ protectedForm|e('js') }}"){% else %}null{% endif %};
+            const submitButton = protectedForm ? protectedForm.querySelector('[type="submit"]') : null;
+
             turnstile.render("#cf-turnstile", {
                 sitekey: "{{ siteKey }}",
                 callback: function (token) {
-                document.getElementById('cf-turnstile-response').value = token;
+                    document.getElementById('cf-turnstile-response').value = token;
+                    if (submitButton !== null) {
+                        submitButton.disabled = false;
+                    }
                 },
+                'expired-callback': function () {
+                    if (submitButton !== null) {
+                        submitButton.disabled = true;
+                    }
+                }
             });
         };
     </script>
+    {% endif %}
 {% endmacro %}

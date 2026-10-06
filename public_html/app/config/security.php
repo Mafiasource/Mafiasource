@@ -130,7 +130,11 @@ class Security
     
     public function checkCaptcha($num = false, $userCS = false)
     {
-        $num = isset($num) && is_numeric($num) ? (int)round($num) : 5;
+        if (APP_ISOLATED === true) {
+            return false;
+        }
+
+        $num = isset($num) === true && is_numeric($num) === true ? (int)round($num) : 5;
         if($num !== false && $userCS !== false)
         {
             if($userCS >= $num)
@@ -138,7 +142,7 @@ class Security
         }
         else
         {
-            if(isset($_SESSION['captcha_security']) && $_SESSION['captcha_security'] >= $num)
+            if(isset($_SESSION['captcha_security']) === true && $_SESSION['captcha_security'] >= $num)
                 return TRUE;
         }
         return FALSE;
@@ -165,10 +169,27 @@ class Security
 
     public function validateCFTurnstile($token = null)
     {
-        $return = FALSE;
-        if(isset($token) && !empty($token))
+        if (APP_ISOLATED === true) {
+            return true;
+        }
+
+        return $this->verifyCFTurnstileToken($token, CF_TURNSTILE_SECRETKEY);
+    }
+
+    public function validateLoginTurnstile($token = null)
+    {
+        if (LOGIN_TURNSTILE_ENABLED === false) {
+            return true;
+        }
+
+        return $this->verifyCFTurnstileToken($token, CF_TURNSTILE_LOGIN_SECRETKEY);
+    }
+
+    private function verifyCFTurnstileToken($token, $secret)
+    {
+        $return = false;
+        if(isset($token) === true && $token !== '')
         {
-            $secret = CF_TURNSTILE_SECRETKEY;
             $remote_addr = \src\Business\UserCoreService::getIP();
             $cf_url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
             $data = array(
@@ -184,12 +205,12 @@ class Security
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
             $response = curl_exec($curl);
-            if (curl_errno($curl)) {
+            if (curl_errno($curl) !== 0) {
                 $error_message = curl_error($curl);
                 error_log($error_message);
             }else{
                 $response = json_decode($response,true);
-                if ($response['error-codes'] && count($response['error-codes']) > 0){
+                if (empty($response['error-codes']) === false && count($response['error-codes']) > 0){
                     return $return;
                 }
                 $return = $response['success'] === true;
