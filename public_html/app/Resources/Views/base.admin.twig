@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="{{ docRoot }}/web/public/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="{{ docRoot }}/web/public/css/admin.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
+    <link href="{{ docRoot }}/web/public/css/admin.icons.css" rel="stylesheet" />
+    {% if not APP_ISOLATED %}
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
+    {% endif %}
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
-    
     <link rel="icon" href="{{ docRoot }}/web/public/images/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="{{ docRoot }}/web/public/images/favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="{{ docRoot }}/web/public/images/favicon.ico" />

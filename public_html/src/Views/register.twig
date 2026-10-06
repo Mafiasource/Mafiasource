@@ -132,7 +132,7 @@
                     	</tr>
 						<tr>
                     		<td colspan="2">
-                    			{{ cfTurnstile.turnstile('right') }}
+							{{ cfTurnstile.turnstile('right', APP_ISOLATED) }}
                             </td>
                     	</tr>
                     	<tr>
@@ -200,7 +200,7 @@
 {% endblock bootstrapJs %}
 
 {% block javascripts %}
-{{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY) }}
+{{ cfTurnstile.turnstileScript(CF_TURNSTILE_SITEKEY, APP_ISOLATED) }}
 <script type="text/javascript">
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

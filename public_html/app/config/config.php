@@ -15,6 +15,17 @@ define('APP_GP_PAGE',      "+MafiasourceBe-Nl-En"); // Google plus page UNUSED
 define('SSL_ENABLED',      true);                   // HTTPS? true :-) / false :-( ?
 define('DEVELOPMENT',      true);                   // Development mode true = on | false = off
 define('OFFLINE',          false);                  // Website online / offline for userlogin / game access
+define('APP_ISOLATED',     false);                  // Disable services that require internet access (Turnstile, PayPal)
+if (defined('CF_TURNSTILE_LOGIN_ENABLED') === false) define('CF_TURNSTILE_LOGIN_ENABLED', false);
+if (defined('CF_TURNSTILE_LOGIN_SITEKEY') === false) define('CF_TURNSTILE_LOGIN_SITEKEY', '');
+if (defined('CF_TURNSTILE_LOGIN_SECRETKEY') === false) define('CF_TURNSTILE_LOGIN_SECRETKEY', '');
+define(
+    'LOGIN_TURNSTILE_ENABLED',
+    APP_ISOLATED === false
+    && CF_TURNSTILE_LOGIN_ENABLED === true
+    && CF_TURNSTILE_LOGIN_SITEKEY !== ''
+    && CF_TURNSTILE_LOGIN_SECRETKEY !== ''
+);
 define('DEVELOPER_IPS',    json_decode(DEV_IPS));   // Array containing developer IP addresses
 define('ID_DEMOACC',       0);                      // Demo account its UserID
 

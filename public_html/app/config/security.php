@@ -33,6 +33,17 @@ class Security
         if(!isset($_SESSION['security_token'])) $_SESSION['security_token'] = $this->createToken();
         $this->token = $_SESSION['security_token'];
     }
+
+    public static function sendContentSecurityPolicy()
+    {
+        if (APP_ISOLATED === true) {
+            header("Content-Security-Policy: default-src 'self'; object-src 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'");
+            return;
+        }
+
+        $staticDomain = PROTOCOL . STATIC_SUBDOMAIN . '.' . BASE_DOMAIN;
+        header("Content-Security-Policy: object-src 'none'; script-src 'self' https://www.gstatic.com https://www.google.com https://www.paypalobjects.com https://challenges.cloudflare.com " . $staticDomain . " 'unsafe-inline' 'unsafe-eval'");
+    }
     
     public function generateNewSession()
     {
@@ -130,7 +141,11 @@ class Security
     
     public function checkCaptcha($num = false, $userCS = false)
     {
-        $num = isset($num) && is_numeric($num) ? (int)round($num) : 5;
+        if (APP_ISOLATED === true) {
+            return false;
+        }
+
+        $num = isset($num) === true && is_numeric($num) === true ? (int)round($num) : 5;
         if($num !== false && $userCS !== false)
         {
             if($userCS >= $num)
@@ -138,7 +153,7 @@ class Security
         }
         else
         {
-            if(isset($_SESSION['captcha_security']) && $_SESSION['captcha_security'] >= $num)
+            if(isset($_SESSION['captcha_security']) === true && $_SESSION['captcha_security'] >= $num)
                 return TRUE;
         }
         return FALSE;
@@ -163,42 +178,66 @@ class Security
         return false;
     }
 
-    public function validateCFTurnstile($token = null)
+    public function validateCFTurnstile($token = null, $secret = null)
     {
-        $return = FALSE;
-        if(isset($token) && !empty($token))
-        {
-            $secret = CF_TURNSTILE_SECRETKEY;
-            $remote_addr = \src\Business\UserCoreService::getIP();
-            $cf_url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-            $data = array(
-                "secret" => $secret,
-                "response" => $token,
-                "remoteip" => $remote_addr
-            );
-
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $cf_url);
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-            $response = curl_exec($curl);
-            if (curl_errno($curl)) {
-                $error_message = curl_error($curl);
-                error_log($error_message);
-            }else{
-                $response = json_decode($response,true);
-                if ($response['error-codes'] && count($response['error-codes']) > 0){
-                    return $return;
-                }
-                $return = $response['success'] === true;
-            }
-            curl_close($curl);
-            return $return;
+        if (APP_ISOLATED === true) {
+            return true;
         }
 
-        return $return;
+        if (is_string($token) === false || $token === '') {
+            return false;
+        }
+        if (is_string($secret) === false || $secret === '') {
+            $secret = CF_TURNSTILE_SECRETKEY;
+        }
+
+        $data = array(
+            'secret' => $secret,
+            'response' => $token,
+            'remoteip' => \src\Business\UserCoreService::getIP()
+        );
+        $curl = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+        if ($curl === false) {
+            return false;
+        }
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+
+        $response = curl_exec($curl);
+        $errorMessage = curl_error($curl);
+        curl_close($curl);
+
+        if ($response === false) {
+            error_log($errorMessage);
+            return false;
+        }
+
+        $decodedResponse = json_decode($response, true);
+        if (is_array($decodedResponse) === false || isset($decodedResponse['success']) === false) {
+            return false;
+        }
+        if (
+            isset($decodedResponse['error-codes']) === true
+            && is_array($decodedResponse['error-codes']) === true
+            && count($decodedResponse['error-codes']) > 0
+        ) {
+            return false;
+        }
+
+        return $decodedResponse['success'] === true;
+    }
+
+    public function validateLoginTurnstile($token = null)
+    {
+        if (LOGIN_TURNSTILE_ENABLED === false) {
+            return true;
+        }
+
+        return $this->validateCFTurnstile($token, CF_TURNSTILE_LOGIN_SECRETKEY);
     }
     
     public function checkSSL()
