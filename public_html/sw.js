@@ -15,9 +15,10 @@ Copyright 2015, 2019, 2020, 2021 Google LLC. All Rights Reserved.
 const offline_url = "offline.html";
 // Customize assets needed for above URL if needed.
 const assets = [
-  "https://static.mafiasource.nl/web/public/css/offline.css",
-  "https://fonts.googleapis.com/css?family=Quicksand&display=swap",
-  "https://static.mafiasource.nl/web/public/images/favicon/ms-icon-70x70.png"
+  "/web/public/css/offline.css",
+  "/web/public/fonts/fonts.css",
+  "/web/public/fonts/Quicksand-Variable.ttf",
+  "/web/public/images/favicon/ms-icon-70x70.png"
 ];
 // Incrementing OFFLINE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
@@ -26,7 +27,7 @@ const assets = [
 // eslint-disable-next-line no-unused-vars
 const OFFLINE_VERSION = "1.0.1"; // 1.0 offline_url changes? Incerement.
 const OFFLINE_NAME = "mafiasource-offline-v" + OFFLINE_VERSION;
-const OFFLINE_ASSETS_VERSION = "1.0.2"; // 1.0 assets changes? Increment.
+const OFFLINE_ASSETS_VERSION = "1.0.3"; // 1.0 assets changes? Increment.
 const OFFLINE_ASSETS = "mafiasource-offline-v " + OFFLINE_VERSION + "-assets-v" + OFFLINE_ASSETS_VERSION;
 
 self.addEventListener("install", (event) => {
@@ -48,6 +49,15 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
+      const currentCaches = [OFFLINE_NAME, OFFLINE_ASSETS];
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((cacheName) => {
+        if (cacheName.startsWith("mafiasource-offline-") && !currentCaches.includes(cacheName)) {
+          return caches.delete(cacheName);
+        }
+        return Promise.resolve(false);
+      }));
+
       // Enable navigation preload if it's supported.
       // See https://developers.google.com/web/updates/2017/02/navigation-preload
       if ("navigationPreload" in self.registration) {

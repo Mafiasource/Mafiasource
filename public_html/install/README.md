@@ -43,6 +43,8 @@ Some libraries not governed by composer package manager:
 - /vendor/SimpleImage.php
 - /vendor/SessionManager.php
 
+The required resources archive provides the Quicksand and Sirin Stencil font files and their licenses in `/web/public/fonts/`. Keep those files in generated `public_html.zip` packages so the website and installer do not depend on Google Fonts.
+
 Customize your [ckeditor(game)](https://ckeditor.com/ckeditor-4/download/)
 
 ## Built in simplified installation process
@@ -60,14 +62,18 @@ A successful installation should render a fresh copy of Mafiasource on your web 
 Remove the entire /install/ directory in public_html if this is the case.
 Otherwise, refer to [Successful installation but still a blank application like initially.](#p-successful-installation-but-still-a-blank-application-like-initially)
 
+### Isolated installations
+
+Set `APP_ISOLATED` to `true` in `/app/config/config.php` when the application runs without internet access. Isolated mode uses same-origin assets, accepts private-network clients, bypasses Cloudflare Turnstile and gameplay CAPTCHA scheduling, and disables PayPal donations, outbound email, and reverse-DNS language detection. Existing valid recovery and email-confirmation links remain usable. Keep this option set to `false` on internet-connected public installations so external services retain their normal behavior.
+
+Player and administrator login attempts are always rate limited locally, including in isolated mode. Optional login Turnstile protection is disabled by default; configure real login site/secret keys in `/../credentials.php` and set `CF_TURNSTILE_LOGIN_ENABLED` to `true` to enable it. Cloudflare demo keys are intended only for testing and must not be used as the rate limiter.
+
+The login limiter uses the direct connection address by default. If the web server does not already replace `REMOTE_ADDR` with a verified client address, add only proxy networks you control to `TRUSTED_PROXY_CIDRS`. Requests from those networks resolve `X-Forwarded-For` from right to left, skipping configured proxy addresses. For Cloudflare, add Cloudflare's current published networks to `TRUSTED_CLOUDFLARE_PROXY_CIDRS`; only connections from those networks may use `CF-Connecting-IP`. Both lists are empty by default, and `Client-IP` is never trusted.
+
 The following source code files should have been modified after a successful installation:
 - /../credentials.php
 - /.htaccess
 - /app/config/config.php
-- Replaces all hard coded static.mafiasource.nl instances in:
-  * /sw.js
-  * /web/public/css/game.min.css
-  * /web/public/css/homepage.min.css
 - Lastly, does not replace but Activates all /app/cronjob/ jobs on the web server. (Only if PHP's exec() function is enabled / allowed)
 
 You can backup the above modified source code files somewhere safe for later use.

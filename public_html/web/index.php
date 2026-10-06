@@ -84,6 +84,7 @@ if($stream && $_SERVER['HTTP_HOST'] == $route->settings['domain'])
         
         // Define PROTOCOL used throughout the application http / https? see: app/config/config.php
         if($route->settings['ssl'] === true) define('PROTOCOL', 'https://'); else define('PROTOCOL', 'http://');
+        Security::sendContentSecurityPolicy();
         
         // Enable Twig engine & set some custom filters used throughout the application
         $loader = new \Twig\Loader\FilesystemLoader(DOC_ROOT); // Root templates folder to DOC root (Because we have tmpls in app/ and src/ )

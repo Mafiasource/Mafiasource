@@ -109,6 +109,12 @@ class MemberDAO extends DBConfig
         return 0;
     }
 
+    public function claimLoginAttempt($ipAddr, $scope, $minimumIntervalSeconds)
+    {
+        $loginAbuseData = new LoginAbuseDAO();
+        return $loginAbuseData->claimLoginAttempt($ipAddr, $scope, $minimumIntervalSeconds);
+    }
+
     public function checkTempBannedIP($ipAddr)
     {
         $loginAbuseData = new LoginAbuseDAO();

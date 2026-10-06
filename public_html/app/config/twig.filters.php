@@ -4,7 +4,10 @@ use src\Business\SeoService;
 
 /* TWIG GLOBALS */
 $twig->addGlobal('docRoot', PROTOCOL . $_SERVER['HTTP_HOST']);
-$twig->addGlobal('staticRoot', PROTOCOL . STATIC_SUBDOMAIN . "." . $route->settings['domainBase']);
+$staticRoot = APP_ISOLATED === true
+    ? PROTOCOL . $_SERVER['HTTP_HOST']
+    : PROTOCOL . STATIC_SUBDOMAIN . "." . $route->settings['domainBase'];
+$twig->addGlobal('staticRoot', $staticRoot);
 
 /* Twig filter functions (Can be used in the entire application by their PHP func name too, required in front-controller) */
 function isstr($str)

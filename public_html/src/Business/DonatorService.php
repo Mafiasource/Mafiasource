@@ -248,6 +248,10 @@ class DonatorService extends DonatorStatics
         global $langs;
         $l = $language->donationShopLangs();
         global $userData;
+
+        if (APP_ISOLATED === true) {
+            return $route->errorMessage($l['DONATE_UNAVAILABLE_ISOLATED']);
+        }
         
         if($security->checkToken($post['security-token']) == FALSE)
         {
@@ -282,6 +286,10 @@ class DonatorService extends DonatorStatics
         global $language;
         global $langs;
         $l = $language->donationShopLangs();
+
+        if (APP_ISOLATED === true) {
+            return $route->errorMessage($l['DONATE_UNAVAILABLE_ISOLATED']);
+        }
         
         $paymentID = $post['tx'];
 
