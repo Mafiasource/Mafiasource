@@ -18,13 +18,11 @@ define('OFFLINE',          false);                  // Website online / offline 
 define('APP_ISOLATED',     false);                  // Disable services that require internet access (Turnstile, PayPal)
 define('TRUSTED_PROXY_CIDRS', array());             // Proxies allowed to supply X-Forwarded-For
 define('TRUSTED_CLOUDFLARE_PROXY_CIDRS', array());  // Cloudflare ranges allowed to supply CF-Connecting-IP
-if (defined('CF_TURNSTILE_LOGIN_ENABLED') === false) define('CF_TURNSTILE_LOGIN_ENABLED', false);
 if (defined('CF_TURNSTILE_LOGIN_SITEKEY') === false) define('CF_TURNSTILE_LOGIN_SITEKEY', '');
 if (defined('CF_TURNSTILE_LOGIN_SECRETKEY') === false) define('CF_TURNSTILE_LOGIN_SECRETKEY', '');
 define(
     'LOGIN_TURNSTILE_ENABLED',
     APP_ISOLATED === false
-    && CF_TURNSTILE_LOGIN_ENABLED === true
     && CF_TURNSTILE_LOGIN_SITEKEY !== ''
     && CF_TURNSTILE_LOGIN_SECRETKEY !== ''
 );

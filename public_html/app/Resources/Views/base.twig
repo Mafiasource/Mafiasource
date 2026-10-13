@@ -156,10 +156,10 @@
                         <form id="header-login-form" action="/login" method="POST" class="headLogin" autocomplete="off">
                             <input type="text" name="username" placeholder="{{ langs.USERNAME }}" value="{{ username }}"/>
                             <input type="password" name="password" placeholder="{{ langs.PASSWORD }}" value=""/>
+                            <button type="submit" name="submit_login" class="button small-1-icon"{% if LOGIN_TURNSTILE_ENABLED %} disabled{% endif %}><img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" width="16" height="16" class="icon" alt="{{ langs.LOGIN }}"/></button>
                             {% if LOGIN_TURNSTILE_ENABLED %}
                                 {{ cfTurnstile.turnstile('', false, 'header-login') }}
                             {% endif %}
-                            <button type="submit" name="submit_login" class="button small-1-icon"{% if LOGIN_TURNSTILE_ENABLED %} disabled{% endif %}><img src="{{ staticRoot }}/foto/web/public/images/icons/monitor_go.png" width="16" height="16" class="icon" alt="{{ langs.LOGIN }}"/></button>
                         </form>
                     </aside>
                 {% endif %}
