@@ -8,6 +8,7 @@ use src\Business\UserCoreService;
 
 class LoginAbuseService
 {
+    public const MINIMUM_LOGIN_INTERVAL_SECONDS = 2;
     public $maxLogin24h = 20; // Unsuccessful attempts within 24 hours before a 72 hour IP ban.
     public $minLogin24h = 5; // Unsuccessful attempts within 24 hours before warning.
 
@@ -50,5 +51,10 @@ class LoginAbuseService
             'blocked' => $blocked,
             'attemptsLeft' => $attemptsLeft,
         );
+    }
+
+    public function loginAttemptAllowed($ipAddr, $scope)
+    {
+        return $this->data->claimLoginAttempt($ipAddr, $scope, self::MINIMUM_LOGIN_INTERVAL_SECONDS) === true;
     }
 }

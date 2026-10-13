@@ -10,11 +10,18 @@ $twigVars = array(
     'lang' => $lang,
     'userData' => $userData,
     'time' => time(),
-    'CF_TURNSTILE_SITEKEY' => CF_TURNSTILE_SITEKEY
+    'CF_TURNSTILE_SITEKEY' => APP_ISOLATED === true ? '' : CF_TURNSTILE_SITEKEY,
+    'APP_ISOLATED' => APP_ISOLATED
 );
 
 /** Trigger a captcha security +1 count on any ajax success message **/
-if (!empty($_POST) && isset($response) && is_array($response) && $security->responseHasAlertSuccess($response)) {
+if (
+    APP_ISOLATED === false
+    && $_POST !== array()
+    && isset($response) === true
+    && is_array($response) === true
+    && $security->responseHasAlertSuccess($response) === true
+) {
     $captchaService = new CaptchaService();
     $captchaService->setUserCaptcha();
 

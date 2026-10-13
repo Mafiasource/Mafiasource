@@ -9,10 +9,14 @@
 {% block content %}
     <div id="donateResponse">
         {{ donatePage|raw }}
+        {% if APP_ISOLATED %}
+            {{ alert.build('Info', 'alert-info', 'help', langs.DONATE_UNAVAILABLE_ISOLATED) }}
+        {% else %}
         <form class="ajaxForm" action="{{ routing.getAjaxRouteByRouteName('donate') }}" method="POST" data-response="#donateResponse">
             <input type="hidden" name="security-token" value="{{ securityToken }}"/>
             <input type="submit" name="donate" value="{{ langs.CONTINUE }}"/>
         </form>
+        {% endif %}
     </div>
     <br class="clear"/>
     {% set donateMsg = langs.CAN_RECEIVE %}
@@ -24,5 +28,7 @@
 
 {% block footer %}
     <button type="button" class="btn btn-default button" data-bs-dismiss="modal">{{ langs.CLOSE }}</button>
-    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+    {% if not APP_ISOLATED %}
+        <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+    {% endif %}
 {% endblock footer %}

@@ -208,10 +208,17 @@ class Routing
     
     function getLanguageByIp()
     {
+        if (APP_ISOLATED === true) {
+            return "English";
+        }
+
         $user = new UserCoreService();
-        $host = $user->ipValid ? gethostbyaddr(UserCoreService::getIP()) : null;
+        $host = $user->ipValid === true ? gethostbyaddr(UserCoreService::getIP()) : null;
         $language = "English";
-        if(isset($host) && (preg_match("/nl$/", $host) || preg_match("/be$/", $host) || preg_match("/arpa$/", $host)))
+        if (
+            is_string($host) === true
+            && (preg_match("/nl$/", $host) === 1 || preg_match("/be$/", $host) === 1 || preg_match("/arpa$/", $host) === 1)
+        )
             $language = "Dutch";
         
         return $language;

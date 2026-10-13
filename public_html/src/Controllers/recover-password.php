@@ -18,10 +18,17 @@ if(isset($recoverPasswordData) && $recoverPasswordData == FALSE) $route->headTo(
 
 $langs = array_merge($langs, $language->recoverPasswordLangs());
 
-if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST['email'])) && isset($_POST['cf-turnstile-response']) && isset($_POST['security-token']))
+if (
+    $_POST !== array()
+    && (isset($_POST['username']) === true || isset($_POST['email']) === true)
+    && (APP_ISOLATED === true || isset($_POST['cf-turnstile-response']) === true)
+    && isset($_POST['security-token']) === true
+)
 {
     // Handle recover lost password form
-    $response = $userService->validateRecoverPassword($_POST);
+    $response = APP_ISOLATED === true
+        ? $langs['EMAIL_UNAVAILABLE_ISOLATED']
+        : $userService->validateRecoverPassword($_POST);
     if(is_bool($response) && $response === TRUE)
         $route->createActionMessage($route->successMessage($langs['RECOVER_PASSWORD_REQUEST_SUCCESS']));
     else
@@ -30,7 +37,14 @@ if(isset($_POST) && !empty($_POST) && (isset($_POST['username']) || isset($_POST
     $route->headTo('recover-password');
     exit(0);
 }
-elseif(isset($recoverPasswordData) && isset($_POST) && !empty($_POST) && (isset($_POST['new_password']) && isset($_POST['new_password_check'])) && isset($_POST['cf-turnstile-response']) && isset($_POST['security-token']))
+elseif(
+    isset($recoverPasswordData) === true
+    && $_POST !== array()
+    && isset($_POST['new_password']) === true
+    && isset($_POST['new_password_check']) === true
+    && (APP_ISOLATED === true || isset($_POST['cf-turnstile-response']) === true)
+    && isset($_POST['security-token']) === true
+)
 {
     // Handle recovery key form
     $response = $userService->validateNewRecoveredPassword($_POST, $recoverPasswordData);

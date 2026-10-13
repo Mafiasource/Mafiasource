@@ -30,8 +30,15 @@ if(isset($_POST['referral-username']))
     unset($_POST['referral-username']);
 }
 if(
-    isset($_POST) && !empty($_POST) && isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password']) &&
-    isset($_POST['password_check']) && isset($_POST['cf-turnstile-response']) && isset($_POST['type']) && isset($_POST['security-token']) && $blockPost === false
+    $_POST !== array()
+    && isset($_POST['username']) === true
+    && isset($_POST['email']) === true
+    && isset($_POST['password']) === true
+    && isset($_POST['password_check']) === true
+    && (APP_ISOLATED === true || isset($_POST['cf-turnstile-response']) === true)
+    && isset($_POST['type']) === true
+    && isset($_POST['security-token']) === true
+    && $blockPost === false
 )
 {
     $response = $userService->validateRegister($_POST);

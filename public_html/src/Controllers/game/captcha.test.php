@@ -11,6 +11,11 @@ if(!$user->checkLoggedSession())
     $route->headTo('home');
     exit(0);
 }
+elseif (APP_ISOLATED === true)
+{
+    $route->headTo('game');
+    exit(0);
+}
 else
 {
     $captchaService = new CaptchaService();

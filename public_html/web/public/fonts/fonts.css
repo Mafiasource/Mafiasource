@@ -1,0 +1,15 @@
+@font-face {
+  font-family: 'Quicksand';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('./Quicksand-Variable.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Sirin Stencil';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./SirinStencil-Regular.ttf') format('truetype');
+}

@@ -210,6 +210,8 @@ class GetLanguageContent
     {
         $langs = array(
             'WRONG_USERNAME_OR_PASS' => "Je hebt een ongeldige gebruikersnaam of wachtwoord ingevoerd!",
+            'TURNSTILE_NOT_READY' => "De beveiligingscontrole is niet voltooid. Wacht even en probeer het opnieuw.",
+            'LOGIN_RATE_LIMITED' => "Wacht minstens twee seconden voordat je opnieuw probeert in te loggen.",
             'LOGIN_FAILED_WARNING' => "Je hebt {attempts} inlogpogingen over!",
             'TEMPORARILY_IP_BANNED' => "Je hebt geen login pogingen meer over dit kan tot 72 uur aanhouden.",
             'PRE_TITLE_TXT' => "Inloggen op",
@@ -275,6 +277,7 @@ class GetLanguageContent
             'RECOVER_PASSWORD_EMAIL_FOOTER' => "Indien je op een niet gevonden pagina beland dan zijn bovenstaande link(s) verlopen. Je kan een nieuwe aanvraag doen op <a href='".PROTOCOL.strtolower($route->settings['domain'])."'>".PROTOCOL.strtolower($route->settings['domain'])."/recover-password</a><br /><br /><br />Met vriendelijke groeten<br />".ucfirst($route->settings['domainBase']),
             'RECOVER_PASSWORD_EMAIL_SUBJECT' => "Wachtwoord herstellen op ".$route->settings['gamename'],
             'RECOVER_PASSWORD_REQUEST_SUCCESS' => "We hebben een email verzonden met verdere instructies om je verloren wachtwoord te herstellen.<br />Pas op! De link die we je verstuurden zal vervallen binnen 2 uren vanaf nu.",
+            'EMAIL_UNAVAILABLE_ISOLATED' => "Accountherstel via e-mail is niet beschikbaar zolang de geisoleerde modus is ingeschakeld.",
             'NEW' => "Nieuw",
             'UPDATE_PASSWORD' => "Wachtwoord aanpassen",
             'RECOVER_PASSWORD_SUCCESS' => "Je hebt je wachtwoord succesvol aangepast.",
@@ -947,6 +950,7 @@ class GetLanguageContent
             'CAN_RECEIVE' => "Je kunt nog tot {credits} credits ontvangen als donatie beloning.",
             'LIMIT_RESET' => "Op {date} word je limiet terug op 5,000 gezet.",
             'DONATE_BTN_HEAD' => "<h4>Even je aandacht</h4><p>Ontvang onmiddellijk credits na een donatie van een willekeurig bedrag vanaf minstens 1 euro. Donaties die 50 euro overschrijden zullen enkel tot 5,000 credits opleveren elke maand met uitzondering van bonus credits en acties.</p><h4>Doneer veilig via PayPal</h4>",
+            'DONATE_UNAVAILABLE_ISOLATED' => "PayPal-donaties zijn niet beschikbaar zolang de geisoleerde modus is ingeschakeld.",
             'DONATE_BTN_FOOT' => "<small>Alle transacties zijn beveiligd en versleuteld voordat ze worden verzonden.</small><h4>Problemen?</h4><p>Contacteer een Administrator of <span style='color:#3498db'><a href='mailto:info@".$route->settings['domainBase']."?subject=".$route->settings['gamename']." donatieshop probleem'><strong>stuur ons een email</strong></a></span> voor hulp.</p>",
             'DONATE_REWARDED_ALREADY' => "Deze donatiebonus is al geclaimd!",
             'DONATE_ERROR' => "Er is een probleem opgetreden met je donatie, contacteer een Administrator voor hulp.",
@@ -1755,6 +1759,7 @@ class GetLanguageContent
         global $route;
         $langs = array(
             'EMAIL_UNKNOWN_IP_DETECTED' => "Je kan je email adres niet veranderen omdat je IP nog niet als veilig word erkend. Dit kan tot 24 uur duren nadat een nieuw IP-adres is gedetecteerd.",
+            'EMAIL_UNAVAILABLE_ISOLATED' => "E-mailadreswijzigingen zijn niet beschikbaar zolang de geisoleerde modus is ingeschakeld.",
             'CHANGE_EMAIL_NEED_TO_VERIFY' => "We hebben je een email verstuurd met verdere instructies naar je oude email adres, kleine tip: {coveredEmail}<br />Pas op! De link om uw email aan te passen zal vervallen binnen 2 uren vanaf nu.",
             'SAME_EMAIL_NO_CHANGE' => "Je kan het email adres niet veranderen omdat dit het huidige email adres is.",
             'CHANGE_EMAIL_DEACTIVATE_PRIVATEID' => "Om je email adres te wijzigen moet eerst je PrivateID gedeactiveerd worden. Na de email wijziging kan je een nieuwe PrivateID genereren.",

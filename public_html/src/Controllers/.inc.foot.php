@@ -22,6 +22,9 @@ $twigVars = array(
     "AUTHOR" => $pageAuthor,
     "PAGE_KEYWORDS" => $pageKeywords,
     'offline' => OFFLINE,
-    'CF_TURNSTILE_SITEKEY' => CF_TURNSTILE_SITEKEY
+    'CF_TURNSTILE_SITEKEY' => APP_ISOLATED === true ? '' : CF_TURNSTILE_SITEKEY,
+    'CF_TURNSTILE_LOGIN_SITEKEY' => LOGIN_TURNSTILE_ENABLED === true ? CF_TURNSTILE_LOGIN_SITEKEY : '',
+    'LOGIN_TURNSTILE_ENABLED' => LOGIN_TURNSTILE_ENABLED,
+    'APP_ISOLATED' => APP_ISOLATED
 );
 if(isset($userData)) $twigVars['userData'] = $userData;

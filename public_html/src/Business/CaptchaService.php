@@ -32,17 +32,29 @@ class CaptchaService
     
     public function setUserCaptcha()
     {
+        if (APP_ISOLATED === true) {
+            return false;
+        }
+
         return $this->data->setUserCaptcha();
     }
     
     public function addOneUnsolvedUserCaptcha()
     {
+        if (APP_ISOLATED === true) {
+            return false;
+        }
+
         return $this->data->addOneUnsolvedUserCaptcha();
     }
     
     public function addOneSolvedUserCaptchaByType($type)
     {
-        if(in_array($type, array('success', 'fail')))
+        if (APP_ISOLATED === true) {
+            return false;
+        }
+
+        if(in_array($type, array('success', 'fail'), true) === true)
             return $this->data->addOneSolvedUserCaptchaByType($type); 
     }
 
@@ -101,13 +113,17 @@ class CaptchaService
         global $security;
         global $langs;
 
-        if( $security->checkToken($post['security-token']) ==  FALSE ||
-            $security->validateCFTurnstile($post['cf-turnstile-response']) == FALSE
+        if (APP_ISOLATED === true) {
+            return true;
+        }
+
+        if( $security->checkToken($post['security-token']) === false ||
+            $security->validateCFTurnstile($post['cf-turnstile-response'] ?? null) === false
         ) {
             $error = $langs['INVALID_SECURITY_TOKEN'];
         }
 
-        if(isset($error))
+        if(isset($error) === true)
         {
             $this->data->addOneSolvedUserCaptchaByType('fail');
             return $error;

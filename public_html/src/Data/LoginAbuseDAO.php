@@ -19,6 +19,34 @@ class LoginAbuseDAO extends DBConfig
         $this->con = $connection;
     }
 
+    public function claimLoginAttempt($ipAddr, $scope, $minimumIntervalSeconds)
+    {
+        $attemptTime = (int)floor(microtime(true) * 1000);
+        $cutoffTime = $attemptTime - ((int)$minimumIntervalSeconds * 1000);
+        $attemptToken = bin2hex(random_bytes(16));
+        $this->con->setData("
+            INSERT INTO `login_rate_limit` (`scope`, `ip`, `attemptTime`, `attemptToken`)
+            VALUES (:scope, :ip, :attemptTime, :attemptToken)
+            ON DUPLICATE KEY UPDATE
+                `attemptToken`=IF(`attemptTime` <= :tokenCutoff, :updatedToken, `attemptToken`),
+                `attemptTime`= :updatedTime
+        ", array(
+            ':scope' => $scope,
+            ':ip' => $ipAddr,
+            ':attemptTime' => $attemptTime,
+            ':attemptToken' => $attemptToken,
+            ':tokenCutoff' => $cutoffTime,
+            ':updatedToken' => $attemptToken,
+            ':updatedTime' => $attemptTime,
+        ));
+        $row = $this->con->getDataSR(
+            "SELECT `attemptToken` FROM `login_rate_limit` WHERE `scope`= :scope AND `ip`= :ip LIMIT 1",
+            array(':scope' => $scope, ':ip' => $ipAddr)
+        );
+
+        return isset($row['attemptToken']) === true && hash_equals($row['attemptToken'], $attemptToken) === true;
+    }
+
     public function checkTempBannedFailedLoginIP($ipAddr, $failedLoginTable, $maxLogin24h = 20, array $columns = array())
     {
         $columns = array_merge(array(
